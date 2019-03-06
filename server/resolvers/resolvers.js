@@ -30,5 +30,25 @@ module.exports = {
 				expiresIn: 1
 			};
 		}
+	},
+	Mutation: {
+		signUp: async (root,args,context) => {
+			console.log(args);
+			if (!args.email || !args.name || !args.password){
+				throw new Error("Either email,name or password is missing/empty");
+			}
+			const hashed_password = await bcrypt.hash(args.password,saltRounds);
+			const user = await context.prisma.createUser({
+				email: args.email,
+				name: args.name,
+				password: hashed_password,
+				role: "MEMBER"
+			});
+			return {
+				userId: user.id,
+				token: createToken(user.id),
+				expiresIn: 1
+			};
+		}
 	}
 }
