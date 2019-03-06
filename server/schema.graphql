@@ -1,0 +1,71 @@
+
+enum Platform {
+  IOS
+  ANDROID
+}
+
+enum AccountType {
+	MEMBER
+	ADMIN
+}
+
+type AppCategory {
+  id: ID!
+  name: String!
+}
+
+type AppVersion {
+  id: ID!
+  version: String!
+  order: Int!
+}
+
+type File {
+  id: ID!
+  url: String!
+}
+
+type AuthData {
+	userId: Int!
+	token: String!
+	expiresIn: Int!
+}
+
+type User {
+  id: ID!
+  email: String!
+  name: String!
+  password: String!
+  role: AccountType!
+}
+
+type App {
+  id: ID!
+  createBy: User!
+  name: String!
+  description: String
+  company: String!
+  platform: Platform!
+  logo: File
+  versions: [AppVersion!]!
+  category: AppCategory!
+}
+
+type Query {
+	login(email: String!, password: String!): AuthData
+	users: [User!]!
+}
+
+type Mutation {
+	signUp(email: String!,name: String!,password: String!): AuthData
+	createApp(
+		name: String!
+		description: String
+		company: String!
+		platform: Platform!
+		logo: String!
+		file: String!
+		version: Float!
+		category: String!
+	): App
+}
