@@ -1,0 +1,57 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+var prisma_lib_1 = require("prisma-client-lib");
+var typeDefs = require("./prisma-schema").typeDefs;
+
+var models = [
+  {
+    name: "User",
+    embedded: false
+  },
+  {
+    name: "App",
+    embedded: false
+  },
+  {
+    name: "AppCategory",
+    embedded: false
+  },
+  {
+    name: "AppVersion",
+    embedded: false
+  },
+  {
+    name: "File",
+    embedded: false
+  },
+  {
+    name: "Story",
+    embedded: false
+  },
+  {
+    name: "StoryCategory",
+    embedded: false
+  },
+  {
+    name: "StoryElement",
+    embedded: false
+  },
+  {
+    name: "Library",
+    embedded: false
+  },
+  {
+    name: "Platform",
+    embedded: false
+  },
+  {
+    name: "AccountType",
+    embedded: false
+  }
+];
+exports.Prisma = prisma_lib_1.makePrismaClientClass({
+  typeDefs,
+  models,
+  endpoint: `https://eu1.prisma.sh/gjergj-kadriu-c6f550/stories/dev`
+});
+exports.prisma = new exports.Prisma();
