@@ -1,0 +1,73 @@
+
+enum Platform {
+  IOS
+  ANDROID
+}
+
+enum AccountType {
+	MEMBER
+	ADMIN
+}
+
+type User {
+  id: ID! @unique
+  email: String! @unique
+  name: String!
+  password: String!
+  role: AccountType!
+}
+
+type App {
+  id: ID! @unique
+  createBy: User!
+  name: String!
+  description: String
+  company: String!
+  platform: Platform!
+  logo: File
+  versions: [AppVersion!]!
+  category: AppCategory!
+}
+
+type AppCategory {
+  id: ID! @unique
+  name: String!
+}
+
+type AppVersion {
+  id: ID! @unique
+  version: String!
+  order: Int!
+}
+
+type File {
+  id: ID! @unique
+  url: String!
+}
+
+type Story {
+  id: ID! @unique
+  createBy: User!
+  video: File! @relation(name: "StoryVideoRel")
+  thumbnail: File! @relation(name: "StoryThumbnailRel")
+  versions: [AppVersion!]!
+  categories: [StoryCategory!]!
+  elements: [StoryElement!]!
+}
+
+type StoryCategory {
+  id: ID! @unique
+  name: String!
+}
+
+type StoryElement {
+  id: ID! @unique
+  name: String!
+}
+
+type Library {
+  id: ID! @unique
+  createBy: User!
+  name: String!
+  stories: [Story!]!
+}
