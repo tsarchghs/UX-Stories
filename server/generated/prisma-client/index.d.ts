@@ -541,21 +541,19 @@ export type FileOrderByInput =
   | "updatedAt_ASC"
   | "updatedAt_DESC";
 
-export type AppVersionOrderByInput =
+export type StoryOrderByInput =
   | "id_ASC"
   | "id_DESC"
-  | "version_ASC"
-  | "version_DESC"
-  | "order_ASC"
-  | "order_DESC"
   | "createdAt_ASC"
   | "createdAt_DESC"
   | "updatedAt_ASC"
   | "updatedAt_DESC";
 
-export type StoryOrderByInput =
+export type AppVersionOrderByInput =
   | "id_ASC"
   | "id_DESC"
+  | "version_ASC"
+  | "version_DESC"
   | "createdAt_ASC"
   | "createdAt_DESC"
   | "updatedAt_ASC"
@@ -658,7 +656,6 @@ export interface UserWhereInput {
 
 export interface AppVersionUpdateManyDataInput {
   version?: String;
-  order?: Int;
 }
 
 export interface AppCategoryWhereInput {
@@ -952,7 +949,6 @@ export interface LibraryUpdateManyMutationInput {
 
 export interface AppVersionCreateInput {
   version: String;
-  order: Int;
 }
 
 export interface StoryScalarWhereInput {
@@ -1171,7 +1167,6 @@ export interface FileSubscriptionWhereInput {
 
 export interface AppVersionUpdateDataInput {
   version?: String;
-  order?: Int;
 }
 
 export interface AppSubscriptionWhereInput {
@@ -1224,14 +1219,6 @@ export interface AppVersionScalarWhereInput {
   version_not_starts_with?: String;
   version_ends_with?: String;
   version_not_ends_with?: String;
-  order?: Int;
-  order_not?: Int;
-  order_in?: Int[] | Int;
-  order_not_in?: Int[] | Int;
-  order_lt?: Int;
-  order_lte?: Int;
-  order_gt?: Int;
-  order_gte?: Int;
   AND?: AppVersionScalarWhereInput[] | AppVersionScalarWhereInput;
   OR?: AppVersionScalarWhereInput[] | AppVersionScalarWhereInput;
   NOT?: AppVersionScalarWhereInput[] | AppVersionScalarWhereInput;
@@ -1536,7 +1523,6 @@ export interface LibraryWhereInput {
 
 export interface AppVersionUpdateInput {
   version?: String;
-  order?: Int;
 }
 
 export interface StoryCategoryUpdateManyDataInput {
@@ -1545,7 +1531,6 @@ export interface StoryCategoryUpdateManyDataInput {
 
 export interface AppVersionUpdateManyMutationInput {
   version?: String;
-  order?: Int;
 }
 
 export interface UserSubscriptionWhereInput {
@@ -1620,14 +1605,6 @@ export interface AppVersionWhereInput {
   version_not_starts_with?: String;
   version_ends_with?: String;
   version_not_ends_with?: String;
-  order?: Int;
-  order_not?: Int;
-  order_in?: Int[] | Int;
-  order_not_in?: Int[] | Int;
-  order_lt?: Int;
-  order_lte?: Int;
-  order_gt?: Int;
-  order_gte?: Int;
   AND?: AppVersionWhereInput[] | AppVersionWhereInput;
   OR?: AppVersionWhereInput[] | AppVersionWhereInput;
   NOT?: AppVersionWhereInput[] | AppVersionWhereInput;
@@ -1683,13 +1660,11 @@ export interface UserPreviousValuesSubscription
 export interface AppVersion {
   id: ID_Output;
   version: String;
-  order: Int;
 }
 
 export interface AppVersionPromise extends Promise<AppVersion>, Fragmentable {
   id: () => Promise<ID_Output>;
   version: () => Promise<String>;
-  order: () => Promise<Int>;
 }
 
 export interface AppVersionSubscription
@@ -1697,7 +1672,6 @@ export interface AppVersionSubscription
     Fragmentable {
   id: () => Promise<AsyncIterator<ID_Output>>;
   version: () => Promise<AsyncIterator<String>>;
-  order: () => Promise<AsyncIterator<Int>>;
 }
 
 export interface AppConnection {
@@ -2242,7 +2216,6 @@ export interface StoryCategorySubscription
 export interface AppVersionPreviousValues {
   id: ID_Output;
   version: String;
-  order: Int;
 }
 
 export interface AppVersionPreviousValuesPromise
@@ -2250,7 +2223,6 @@ export interface AppVersionPreviousValuesPromise
     Fragmentable {
   id: () => Promise<ID_Output>;
   version: () => Promise<String>;
-  order: () => Promise<Int>;
 }
 
 export interface AppVersionPreviousValuesSubscription
@@ -2258,7 +2230,6 @@ export interface AppVersionPreviousValuesSubscription
     Fragmentable {
   id: () => Promise<AsyncIterator<ID_Output>>;
   version: () => Promise<AsyncIterator<String>>;
-  order: () => Promise<AsyncIterator<Int>>;
 }
 
 export interface UserSubscriptionPayload {

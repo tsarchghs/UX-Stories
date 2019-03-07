@@ -264,7 +264,6 @@ input AppUpdateManyMutationInput {
 type AppVersion {
   id: ID!
   version: String!
-  order: Int!
 }
 
 type AppVersionConnection {
@@ -275,7 +274,6 @@ type AppVersionConnection {
 
 input AppVersionCreateInput {
   version: String!
-  order: Int!
 }
 
 input AppVersionCreateManyInput {
@@ -293,8 +291,6 @@ enum AppVersionOrderByInput {
   id_DESC
   version_ASC
   version_DESC
-  order_ASC
-  order_DESC
   createdAt_ASC
   createdAt_DESC
   updatedAt_ASC
@@ -304,7 +300,6 @@ enum AppVersionOrderByInput {
 type AppVersionPreviousValues {
   id: ID!
   version: String!
-  order: Int!
 }
 
 input AppVersionScalarWhereInput {
@@ -336,14 +331,6 @@ input AppVersionScalarWhereInput {
   version_not_starts_with: String
   version_ends_with: String
   version_not_ends_with: String
-  order: Int
-  order_not: Int
-  order_in: [Int!]
-  order_not_in: [Int!]
-  order_lt: Int
-  order_lte: Int
-  order_gt: Int
-  order_gte: Int
   AND: [AppVersionScalarWhereInput!]
   OR: [AppVersionScalarWhereInput!]
   NOT: [AppVersionScalarWhereInput!]
@@ -369,17 +356,14 @@ input AppVersionSubscriptionWhereInput {
 
 input AppVersionUpdateDataInput {
   version: String
-  order: Int
 }
 
 input AppVersionUpdateInput {
   version: String
-  order: Int
 }
 
 input AppVersionUpdateManyDataInput {
   version: String
-  order: Int
 }
 
 input AppVersionUpdateManyInput {
@@ -396,7 +380,6 @@ input AppVersionUpdateManyInput {
 
 input AppVersionUpdateManyMutationInput {
   version: String
-  order: Int
 }
 
 input AppVersionUpdateManyWithWhereNestedInput {
@@ -444,14 +427,6 @@ input AppVersionWhereInput {
   version_not_starts_with: String
   version_ends_with: String
   version_not_ends_with: String
-  order: Int
-  order_not: Int
-  order_in: [Int!]
-  order_not_in: [Int!]
-  order_lt: Int
-  order_lte: Int
-  order_gt: Int
-  order_gte: Int
   AND: [AppVersionWhereInput!]
   OR: [AppVersionWhereInput!]
   NOT: [AppVersionWhereInput!]
