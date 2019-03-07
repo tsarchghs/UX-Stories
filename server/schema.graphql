@@ -78,4 +78,5 @@ type Mutation {
 		category: String!
 	): App
   createAppCategory(appCategoryInput: AppCategoryInput): AppCategory!
+  createAppVersion(appVersionInput: AppVersionInput): AppVersion!
 }
