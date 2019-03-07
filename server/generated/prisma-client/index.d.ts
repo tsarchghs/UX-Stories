@@ -765,6 +765,7 @@ export interface StoryUpdateDataInput {
 
 export type AppCategoryWhereUniqueInput = AtLeastOne<{
   id: ID_Input;
+  name?: String;
 }>;
 
 export interface StoryUpdateWithWhereUniqueNestedInput {
@@ -1634,6 +1635,7 @@ export interface AppVersionWhereInput {
 
 export type AppVersionWhereUniqueInput = AtLeastOne<{
   id: ID_Input;
+  version?: String;
 }>;
 
 export interface StoryCategoryUpsertWithWhereUniqueNestedInput {
