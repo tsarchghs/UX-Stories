@@ -51,6 +51,15 @@ type App {
   category: AppCategory!
 }
 
+input AppVersionInput {
+  version: String!
+  order: Int!
+}
+
+input AppCategoryInput {
+  name: String!
+}
+
 type Query {
 	login(email: String!, password: String!): AuthData
 	users: [User!]!
@@ -68,5 +77,5 @@ type Mutation {
 		version: String!
 		category: String!
 	): App
-  createAppCategory(name: String!): AppCategory!
+  createAppCategory(appCategoryInput: AppCategoryInput): AppCategory!
 }
