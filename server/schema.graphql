@@ -65,7 +65,8 @@ type Mutation {
 		platform: Platform!
 		logo: String!
 		file: String!
-		version: Float!
+		version: String!
 		category: String!
 	): App
+  createAppCategory(name: String!): AppCategory!
 }
