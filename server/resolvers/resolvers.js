@@ -49,6 +49,19 @@ module.exports = {
 				token: createToken(user.id),
 				expiresIn: 1
 			};
+		},
+		createAppCategory: async (root,args,context) => {
+			if (!args.name) {
+				throw new Error("name argument is missing/empty")
+			}
+			const exists = await context.prisma.appCategories({where:{name:args.name}});
+			if (exists.length){
+				throw new Error("Category already exists (use different name)");
+			}
+			const appCategory = await context.prisma.createAppCategory({
+				name: args.name
+			})
+			return appCategory
 		}
 	}
 }
