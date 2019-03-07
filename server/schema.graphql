@@ -17,7 +17,6 @@ type AppCategory {
 type AppVersion {
   id: ID!
   version: String!
-  order: Int!
 }
 
 type File {
@@ -53,11 +52,21 @@ type App {
 
 input AppVersionInput {
   version: String!
-  order: Int!
 }
 
 input AppCategoryInput {
   name: String!
+}
+
+input AppInput {
+  name: String!
+  description: String
+  company: String!
+  platform: Platform!
+  logo: String!
+  file: String!
+  version: String!
+  category: String!
 }
 
 type Query {
@@ -67,16 +76,7 @@ type Query {
 
 type Mutation {
 	signUp(email: String!,name: String!,password: String!): AuthData
-	createApp(
-		name: String!
-		description: String
-		company: String!
-		platform: Platform!
-		logo: String!
-		file: String!
-		version: String!
-		category: String!
-	): App
+	createApp(appInput: AppInput): App!
   createAppCategory(appCategoryInput: AppCategoryInput): AppCategory!
   createAppVersion(appVersionInput: AppVersionInput): AppVersion!
 }
