@@ -2,6 +2,7 @@ const authResolvers = require("./authentication");
 const appCategoryResolvers = require("./models/AppCategory");
 const appVersionResolvers = require("./models/AppVersion");
 const appResolvers = require("./models/App");
+const fileResolvers = require("./models/File");
 
 module.exports = {
 	Query: {
@@ -11,6 +12,7 @@ module.exports = {
 		signUp: authResolvers.signUp,
 		createAppCategory: appCategoryResolvers.createAppCategory,
 		createAppVersion: appVersionResolvers.createAppVersion,
-		createApp: appResolvers.createApp
+		createApp: appResolvers.createApp,
+		uploadFile: fileResolvers.uploadFile
 	}
 }
