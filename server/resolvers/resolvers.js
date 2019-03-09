@@ -2,6 +2,7 @@ const authResolvers = require("./authentication");
 const appCategoryResolvers = require("./models/AppCategory");
 const appVersionResolvers = require("./models/AppVersion");
 const appResolvers = require("./models/App");
+const appStoryCategoryResolvers = require("./models/StoryCategory");
 const fileResolvers = require("./models/File");
 
 module.exports = {
@@ -13,6 +14,7 @@ module.exports = {
 		createAppCategory: appCategoryResolvers.createAppCategory,
 		createAppVersion: appVersionResolvers.createAppVersion,
 		createApp: appResolvers.createApp,
-		uploadFile: fileResolvers.uploadFile
+		uploadFile: fileResolvers.uploadFile,
+		createStoryCategory: appStoryCategoryResolvers.createStoryCategory
 	}
 }
