@@ -1,4 +1,6 @@
 
+scalar Upload
+
 enum Platform {
   IOS
   ANDROID
@@ -79,4 +81,5 @@ type Mutation {
 	createApp(appInput: AppInput): App!
   createAppCategory(appCategoryInput: AppCategoryInput): AppCategory!
   createAppVersion(appVersionInput: AppVersionInput): AppVersion!
+  uploadFile(file: Upload!): File!
 }
