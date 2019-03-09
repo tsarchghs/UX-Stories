@@ -41,7 +41,12 @@ type AppVersion {
 
 type File {
   id: ID! @unique
-  url: String!
+  createdAt: DateTime!
+  updatedAt: DateTime!
+  filename: String!
+  mimetype: String!
+  encoding: String!
+  url: String! @unique
 }
 
 type Story {
