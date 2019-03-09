@@ -21,6 +21,11 @@ type AppVersion {
   version: String!
 }
 
+type StoryCategory {
+  id: ID!
+  name: String!
+}
+
 type File {
   id: ID!
   url: String!
@@ -47,7 +52,7 @@ type App {
   description: String
   company: String!
   platform: Platform!
-  logo: File
+  logo: File!
   versions: [AppVersion!]!
   category: AppCategory!
 }
@@ -60,6 +65,9 @@ input AppCategoryInput {
   name: String!
 }
 
+input StoryCategoryInput {
+  name: String!
+}
 input AppInput {
   name: String!
   description: String
@@ -81,5 +89,6 @@ type Mutation {
 	createApp(appInput: AppInput): App!
   createAppCategory(appCategoryInput: AppCategoryInput): AppCategory!
   createAppVersion(appVersionInput: AppVersionInput): AppVersion!
+  createStoryCategory(storyCategoryInput: StoryCategoryInput!): StoryCategory!
   uploadFile(file: Upload!): File!
 }
