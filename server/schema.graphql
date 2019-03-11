@@ -74,7 +74,7 @@ input StoryElementInput {
 }
 
 type StoryElement {
-  id: ID! @unique
+  id: ID!
   name: String!
 }
 
