@@ -12,8 +12,10 @@ module.exports = {
 	},
 	Mutation: {
 		signUp: authResolvers.signUp,
-		createAppCategory: appCategoryResolvers.createAppCategory,
 
+		createAppCategory: appCategoryResolvers.createAppCategory,
+		editAppCategory: appCategoryResolvers.editAppCategory,
+		
 		createAppVersion: appVersionResolvers.createAppVersion,
 		editAppVersion: appVersionResolvers.editAppVersion,
 
