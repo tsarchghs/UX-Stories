@@ -97,8 +97,12 @@ input StoryElementInput {
 }
 
 input EditStoryElementInput {
-  id: String!
+  id: ID!
   name: String!
+}
+
+input DeleteStoryElementInput {
+  id: ID!
 }
 
 type StoryElement {
@@ -138,8 +142,9 @@ type Mutation {
   editStoryCategory(editStoryCategoryInput: EditStoryCategoryInput!): StoryCategory!
   deleteStoryCategory(deleteStoryCategoryInput: DeleteStoryCategoryInput): StoryCategory!
 
-  createStoryElement(storyElementInput:StoryElementInput!): StoryElement!
-  editStoryElement(editStoryElementInput:EditStoryElementInput!): StoryElement!
+  createStoryElement(storyElementInput: StoryElementInput!): StoryElement!
+  editStoryElement(editStoryElementInput: EditStoryElementInput!): StoryElement!
+  deleteStoryElement(deleteStoryElementInput: DeleteStoryElementInput!): StoryElement!
 
   uploadFile(file: Upload!): File!
 }

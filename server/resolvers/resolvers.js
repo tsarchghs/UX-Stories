@@ -16,7 +16,7 @@ module.exports = {
 		createAppCategory: appCategoryResolvers.createAppCategory,
 		editAppCategory: appCategoryResolvers.editAppCategory,
 		deleteAppCategory: appCategoryResolvers.deleteAppCategory,
-		
+
 		createAppVersion: appVersionResolvers.createAppVersion,
 		editAppVersion: appVersionResolvers.editAppVersion,
 
@@ -28,6 +28,7 @@ module.exports = {
 		deleteStoryCategory: storyCategoryResolvers.deleteStoryCategory,
 
 		createStoryElement: storyElementResolvers.createStoryElement,
-		editStoryElement: storyElementResolvers.editStoryElement
+		editStoryElement: storyElementResolvers.editStoryElement,
+		deleteStoryElement: storyElementResolvers.deleteStoryElement
 	}
 }

@@ -24,7 +24,19 @@ const editStoryElement = async (root,args,context) => {
 	return storyElement
 }
 
+const deleteStoryElement = async (root,args,context) => {
+	if (!args.deleteStoryElementInput.id) {
+		throw new Error("Please check that all of your arguments are not empty!")
+	}
+	const storyElement = await context.prisma.deleteStoryElement({
+		id: args.deleteStoryElementInput.id
+	})
+	return storyElement;
+}
+
+
 module.exports = {
 	createStoryElement,
-	editStoryElement
+	editStoryElement,
+	deleteStoryElement
 }
