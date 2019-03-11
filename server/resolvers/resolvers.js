@@ -15,7 +15,8 @@ module.exports = {
 
 		createAppCategory: appCategoryResolvers.createAppCategory,
 		editAppCategory: appCategoryResolvers.editAppCategory,
-
+		deleteAppCategory: appCategoryResolvers.deleteAppCategory,
+		
 		createAppVersion: appVersionResolvers.createAppVersion,
 		editAppVersion: appVersionResolvers.editAppVersion,
 

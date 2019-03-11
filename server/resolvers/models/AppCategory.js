@@ -28,7 +28,18 @@ const editAppCategory = async (root,args,context) => {
 	return appCategory
 }
 
+const deleteAppCategory = async (root,args,context) => {
+	if (!args.deleteAppCategoryInput.id) {
+		throw new Error("id argument is empty")
+	}
+	const appCategory = await context.prisma.deleteAppCategory({
+		id: args.deleteAppCategoryInput.id
+	})
+	return appCategory
+}
+
 module.exports = {
 	createAppCategory,
-	editAppCategory
+	editAppCategory,
+	deleteAppCategory
 }
