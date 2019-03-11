@@ -26,7 +26,19 @@ const editStoryCategory = async (root,args,context) => {
 	return storyCategory;
 } 
 
+const deleteStoryCategory = async (root,args,context) => {
+	if (!args.deleteStoryCategoryInput.id) {
+		throw new Error("id argument is empty!");
+	}
+	const storyCategory = await context.prisma.deleteStoryCategory({
+		id: args.deleteStoryCategoryInput.id
+	})
+	return storyCategory
+}
+
+
 module.exports = {
 	createStoryCategory,
-	editStoryCategory
+	editStoryCategory,
+	deleteStoryCategory
 }
