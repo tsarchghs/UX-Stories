@@ -13,11 +13,16 @@ module.exports = {
 	Mutation: {
 		signUp: authResolvers.signUp,
 		createAppCategory: appCategoryResolvers.createAppCategory,
+
 		createAppVersion: appVersionResolvers.createAppVersion,
+		editAppVersion: appVersionResolvers.editAppVersion,
+
 		createApp: appResolvers.createApp,
 		uploadFile: fileResolvers.uploadFile,
+
 		createStoryCategory: storyCategoryResolvers.createStoryCategory,
 		editStoryCategory: storyCategoryResolvers.editStoryCategory,
+
 		createStoryElement: storyElementResolvers.createStoryElement,
 		editStoryElement: storyElementResolvers.editStoryElement
 	}
