@@ -61,6 +61,11 @@ input AppVersionInput {
   version: String!
 }
 
+input EditAppVersionInput {
+  id: ID!
+  version: String!
+}
+
 input AppCategoryInput {
   name: String!
 }
@@ -105,8 +110,10 @@ type Mutation {
   createApp(appInput: AppInput!): App!
   
   createAppCategory(appCategoryInput: AppCategoryInput!): AppCategory!
+
   createAppVersion(appVersionInput: AppVersionInput!): AppVersion!
-  
+  editAppVersion(editAppVersionInput: EditAppVersionInput!): AppVersion!
+
   createStoryCategory(storyCategoryInput: StoryCategoryInput!): StoryCategory!
   editStoryCategory(editStoryElementInput: EditStoryElementInput!): StoryCategory!
 
