@@ -17,6 +17,8 @@ module.exports = {
 		createApp: appResolvers.createApp,
 		uploadFile: fileResolvers.uploadFile,
 		createStoryCategory: storyCategoryResolvers.createStoryCategory,
-		createStoryElement: storyElementResolvers.createStoryElement
+		editStoryCategory: storyCategoryResolvers.editStoryCategory,
+		createStoryElement: storyElementResolvers.createStoryElement,
+		editStoryElement: storyElementResolvers.editStoryElement
 	}
 }
