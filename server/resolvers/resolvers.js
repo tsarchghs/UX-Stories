@@ -2,8 +2,9 @@ const authResolvers = require("./authentication");
 const appCategoryResolvers = require("./models/AppCategory");
 const appVersionResolvers = require("./models/AppVersion");
 const appResolvers = require("./models/App");
-const appStoryCategoryResolvers = require("./models/StoryCategory");
+const storyCategoryResolvers = require("./models/StoryCategory");
 const fileResolvers = require("./models/File");
+const storyElementResolvers = require("./models/StoryElement");
 
 module.exports = {
 	Query: {
@@ -15,6 +16,7 @@ module.exports = {
 		createAppVersion: appVersionResolvers.createAppVersion,
 		createApp: appResolvers.createApp,
 		uploadFile: fileResolvers.uploadFile,
-		createStoryCategory: appStoryCategoryResolvers.createStoryCategory
+		createStoryCategory: storyCategoryResolvers.createStoryCategory,
+		createStoryElement: storyElementResolvers.createStoryElement
 	}
 }
