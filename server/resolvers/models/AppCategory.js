@@ -13,6 +13,22 @@ const createAppCategory = async (root,args,context) => {
 	return appCategory
 }
 
+const editAppCategory = async (root,args,context) => {
+	if (!args.editAppCategoryInput.name || !args.editAppCategoryInput.id) {
+		throw new Error("Please check that all of your arguments are not empty!")
+	}
+	const appCategory = await context.prisma.updateAppCategory({
+		where:{
+			id: args.editAppCategoryInput.id
+		},
+		data: {
+			name: args.editAppCategoryInput.name
+		}
+	})
+	return appCategory
+}
+
 module.exports = {
-	createAppCategory
+	createAppCategory,
+	editAppCategory
 }
