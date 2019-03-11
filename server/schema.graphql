@@ -68,6 +68,16 @@ input AppCategoryInput {
 input StoryCategoryInput {
   name: String!
 }
+
+input StoryElementInput {
+  name: String!
+}
+
+type StoryElement {
+  id: ID! @unique
+  name: String!
+}
+
 input AppInput {
   name: String!
   description: String
@@ -86,9 +96,10 @@ type Query {
 
 type Mutation {
 	signUp(email: String!,name: String!,password: String!): AuthData
-	createApp(appInput: AppInput): App!
-  createAppCategory(appCategoryInput: AppCategoryInput): AppCategory!
-  createAppVersion(appVersionInput: AppVersionInput): AppVersion!
+	createApp(appInput: AppInput!): App!
+  createAppCategory(appCategoryInput: AppCategoryInput!): AppCategory!
+  createAppVersion(appVersionInput: AppVersionInput!): AppVersion!
   createStoryCategory(storyCategoryInput: StoryCategoryInput!): StoryCategory!
+  createStoryElement(storyElementInput:StoryElementInput!): StoryElement!
   uploadFile(file: Upload!): File!
 }
