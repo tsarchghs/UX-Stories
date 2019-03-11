@@ -84,6 +84,10 @@ input EditStoryCategoryInput {
   name: String!
 }
 
+input DeleteStoryCategoryInput {
+  id: ID!
+}
+
 input StoryElementInput {
   name: String!
 }
@@ -127,6 +131,7 @@ type Mutation {
 
   createStoryCategory(storyCategoryInput: StoryCategoryInput!): StoryCategory!
   editStoryCategory(editStoryCategoryInput: EditStoryCategoryInput!): StoryCategory!
+  deleteStoryCategory(deleteStoryCategoryInput: DeleteStoryCategoryInput): StoryCategory!
 
   createStoryElement(storyElementInput:StoryElementInput!): StoryElement!
   editStoryElement(editStoryElementInput:EditStoryElementInput!): StoryElement!
