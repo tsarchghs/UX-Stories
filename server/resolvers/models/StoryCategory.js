@@ -11,21 +11,20 @@ const createStoryCategory = async (root,args,context) => {
 }
 
 const editStoryCategory = async (root,args,context) => {
-	console.log(args.editStoryElementInput);
-	if (!args.editStoryElementInput.name || !args.editStoryElementInput.id) {
+	console.log(args.editStoryCategoryInput);
+	if (!args.editStoryCategoryInput.name || !args.editStoryCategoryInput.id) {
 		throw new Error("name or id argument is empty!");
 	}
 	const storyCategory = await context.prisma.updateStoryCategory({
 		where: {
-			id: args.editStoryElementInput.id
+			id: args.editStoryCategoryInput.id
 		},
 		data: {
-			name: args.editStoryElementInput.name
+			name: args.editStoryCategoryInput.name
 		}
 	})
 	return storyCategory;
 } 
-
 
 module.exports = {
 	createStoryCategory,
