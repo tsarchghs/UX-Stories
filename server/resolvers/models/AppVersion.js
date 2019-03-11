@@ -2,7 +2,7 @@
 
 const createAppVersion = async (root,args,context) => {
 	if (!args.appVersionInput.version) {
-		throw new Error("version/id argument is empty")
+		throw new Error("version argument is empty")
 	}
 	const appVersion = await context.prisma.createAppVersion({
 		version: args.appVersionInput.version,
@@ -24,7 +24,19 @@ const editAppVersion = async (root,args,context) => {
 	})
 	return appVersion
 }
+
+const deleteAppVersion = async (root,args,context) => {
+	if (!args.deleteAppVersionInput.id) {
+		throw new Error("id argument is empty")
+	}
+	const appVersion = await context.prisma.deleteAppVersion({
+		id: args.deleteAppVersionInput.id
+	})
+	return appVersion
+}
+
 module.exports = {
 	createAppVersion,
-	editAppVersion
+	editAppVersion,
+	deleteAppVersion
 }
