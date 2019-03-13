@@ -117,8 +117,7 @@ input AppInput {
   description: String
   company: String!
   platform: Platform!
-  logo: String!
-  file: String!
+  logo_url: String!
   version: String!
   category: String!
 }
