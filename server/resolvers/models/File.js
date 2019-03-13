@@ -1,8 +1,8 @@
-const { proccessUpload } = require("../../modules/fileApi");
+const { processUpload } = require("../../modules/fileApi");
 
 const uploadFile = async (parent,{ file },context,info) => {
 	var file = await file;
-	return proccessUpload(file, ctx);
+	return processUpload(file, context);
 }
 
 module.exports = {
