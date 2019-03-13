@@ -1,6 +1,4 @@
 
-scalar Upload
-
 enum Platform {
   IOS
   ANDROID
@@ -151,5 +149,5 @@ type Mutation {
   editStoryElement(editStoryElementInput: EditStoryElementInput!): StoryElement!
   deleteStoryElement(deleteStoryElementInput: DeleteStoryElementInput!): StoryElement!
 
-  uploadFile(file: Upload!): File!
+  uploadFile(file: String!): File!
 }
