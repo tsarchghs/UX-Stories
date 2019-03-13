@@ -1,47 +1,41 @@
 const uuid = require("uuid");
 const aws = require("aws-sdk");
+const fs = require("fs");
 
-const s3 = new aws.S3({
-	accessKeyId: "foo",
-	secretAccessKey: "bar",
-	params: {
-		Bucket: "com.prisma.s3"
-	},
-	endpoint: new aws.Endpoint("http://localhost:4569")
-})
+const get_extension = (encoded) => {
+	if (encoded[0] == "/"){
+		return "jpg"
+	} else if (encoded[0] == "i") {
+		return "png"
+	} else if (encoded[0] == "R"){
+		return "gif"
+	} else if (encoded[0] == "U") {
+		return "webp"
+	}
+} 
 
 exports.processUpload = async (upload,context) => {
 	if (!upload) {
 		return console.log("ERROR: No file received");
 	}
-	const { stream, filename, mimetype, encoding } = await upload 
-	const key = uuid() + '-' + filename
+	const imgdata = upload
+	const extension = get_extension(imgdata)
+	const filename = `img-${uuid()}`;
+	const path = `/images/${filename}.${extension}`
 
-	const response = await s3
-		.upload({
-			Key: key,
-			ACL: "public-read",
-			Body: stream
-		}).promise()
-	const url = response.Location;
+	const base64Data = imgdata.replace(/^data:([A-Za-z-+/]+);base64,/, '');
+
+	fs.writeFileSync(__dirname + "../../public" + path, base64Data,  {encoding: 'base64'});
+
 
 	const data = {
-		filename,
-		mimetype,
-		encoding,
-		url
+		filename: filename, 
+		mimetype: "todo",
+		encoding: imgdata,
+		url: "http://localhost:4000/static" + path
 	}
-	const { id } = await context.prisma.createFile({
+	const file = await context.prisma.createFile({
 		...data
 	})
-	const file = {
-		id,
-		filename,
-		mimetype,
-		encoding,
-		url
-	}
-	console.log("Saved prisma file:");
-	console.log(file);
 	return file;
 }
