@@ -1,7 +1,7 @@
 
 const createApp = async (root,args,context) => {
-	if (!args.appInput.name || !args.appInput.description || !args.appInput.platform || !args.appInput.logo
-		|| !args.appInput.file || !args.appInput.version || !args.appInput.category) {
+	if (!args.appInput.name || !args.appInput.description || !args.appInput.platform || !args.appInput.logo_url
+		 || !args.appInput.version || !args.appInput.category) {
 		throw new Error("Please check that all of your arguments are not empty!")
 	}
 	const appCategory = await context.prisma.appCategory({name:args.appInput.category});
@@ -12,10 +12,10 @@ const createApp = async (root,args,context) => {
 	if (!appVersion){
 		throw new Error(`Version <${args.appInput.version}> doesn't exist.`);
 	}
-	const logo = await context.prisma.file({url:"asd.png"});
+	const logo = await context.prisma.file({url:args.appInput.logo_url});
 	if (!logo) {
-		throw new Error(`File <${args.appInput.logo}> doesn't exist`);
-	}	
+		throw new Error(`Logo <${args.appInput.logo_url}> doesn't exist`);
+	}
 	const userId = "cjsxdc4kg35h90b3039qediof";
 	const createBy = await context.prisma.user({id:userId});
 	const app = await context.prisma.createApp({
@@ -44,6 +44,9 @@ const createApp = async (root,args,context) => {
 		},
 		platform: args.appInput.platform
 	})
+	app.logo = logo	
+	app.versions = [appVersion]	
+	app.category = appCategory
 	return app
 }
 
