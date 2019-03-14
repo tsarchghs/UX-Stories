@@ -4,6 +4,10 @@ const createStoryCategory = async (root,args,context) => {
 	if (!args.storyCategoryInput.name) {
 		throw new Error("name argument is empty!");
 	}
+	const exists = await context.prisma.storyCategories({where:{name:args.storyCategoryInput.name}});
+	if (exists.length){
+		throw new Error("Story category already exists (use different name)");
+	}
 	const storyCategory = await context.prisma.createStoryCategory({
 		name: args.storyCategoryInput.name
 	})
@@ -11,7 +15,6 @@ const createStoryCategory = async (root,args,context) => {
 }
 
 const editStoryCategory = async (root,args,context) => {
-	console.log(args.editStoryCategoryInput);
 	if (!args.editStoryCategoryInput.name || !args.editStoryCategoryInput.id) {
 		throw new Error("name or id argument is empty!");
 	}
@@ -24,7 +27,7 @@ const editStoryCategory = async (root,args,context) => {
 		}
 	})
 	return storyCategory;
-} 
+}
 
 const deleteStoryCategory = async (root,args,context) => {
 	if (!args.deleteStoryCategoryInput.id) {
