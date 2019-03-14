@@ -14,18 +14,18 @@ const get_extension = (encoded) => {
 	}
 } 
 
-exports.processUpload = async (upload,context) => {
+const processUpload = async (upload,context	) => {
 	if (!upload) {
 		return console.log("ERROR: No file received");
 	}
 	const imgdata = upload
 	const extension = get_extension(imgdata)
-	const filename = `img-${uuid()}`;
-	const path = `/images/${filename}.${extension}`
+	const filename = `file-${uuid()}`;
+	const path = `/file/${filename}.${extension}`
 
 	const base64Data = imgdata.replace(/^data:([A-Za-z-+/]+);base64,/, '');
 
-	fs.writeFileSync(__dirname + "../../public" + path, base64Data,  {encoding: 'base64'});
+	fs.writeFileSync(__dirname + "/../public" + path, base64Data,  {encoding: 'base64'});
 
 
 	const data = {
@@ -34,8 +34,13 @@ exports.processUpload = async (upload,context) => {
 		encoding: imgdata,
 		url: "http://localhost:4000/static" + path
 	}
-	const file = await context.prisma.createFile({
+	const file = context.prisma.createFile({
 		...data
 	})
 	return file;
+}
+
+module.exports = {
+	get_extension,
+	processUpload
 }
