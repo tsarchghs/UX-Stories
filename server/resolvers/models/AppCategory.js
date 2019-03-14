@@ -5,7 +5,7 @@ const createAppCategory = async (root,args,context) => {
 	}
 	const exists = await context.prisma.appCategories({where:{name:args.appCategoryInput.name}});
 	if (exists.length){
-		throw new Error("Category already exists (use different name)");
+		throw new Error("App Category already exists (use different name)");
 	}
 	const appCategory = await context.prisma.createAppCategory({
 		name: args.appCategoryInput.name
