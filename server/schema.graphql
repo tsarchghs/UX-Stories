@@ -29,6 +29,11 @@ type File {
   url: String!
 }
 
+input FileInput {
+  mimetype: String!
+  base64: String!
+}
+
 type AuthData {
 	userId: Int!
 	token: String!
@@ -66,8 +71,8 @@ type Story {
 }
 
 input CreateStoryInput {
-  video: String!
-  thumbnail: String!
+  video: FileInput!
+  thumbnail: FileInput!
   versions: [ID!]!
   categories: [ID!]!
 }
@@ -167,5 +172,5 @@ type Mutation {
 
   createStory(createStoryInput: CreateStoryInput!): Story!
 
-  uploadFile(file: String!): File!
+  uploadFile(file: FileInput!): File!
 }
