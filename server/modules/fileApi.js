@@ -14,24 +14,24 @@ const get_extension = (encoded) => {
 	}
 } 
 
-const processUpload = async (upload,context	) => {
+const processUpload = async (upload,mimetype,context,save_encoding=false) => {
 	if (!upload) {
 		return console.log("ERROR: No file received");
 	}
 	const imgdata = upload
 	const extension = get_extension(imgdata)
 	const filename = `file-${uuid()}`;
-	const path = `/file/${filename}.${extension}`
-
+	const path = `/file/${filename}.${mimetype.split("/")[1]}`
 	const base64Data = imgdata.replace(/^data:([A-Za-z-+/]+);base64,/, '');
 
 	fs.writeFileSync(__dirname + "/../public" + path, base64Data,  {encoding: 'base64'});
-
+	
+	const encoding = save_encoding ? imgdata : "notsaved"
 
 	const data = {
 		filename: filename, 
-		mimetype: "todo",
-		encoding: imgdata,
+		mimetype: mimetype,
+		encoding: encoding,
 		url: "http://localhost:4000/static" + path
 	}
 	const file = context.prisma.createFile({
