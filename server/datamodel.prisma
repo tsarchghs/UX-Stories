@@ -31,7 +31,7 @@ type App {
 
 type AppCategory {
   id: ID! @unique
-  name: String! @unique
+  name: String!
 }
 
 type AppVersion {
