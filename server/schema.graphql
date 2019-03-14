@@ -55,6 +55,23 @@ type App {
   category: AppCategory!
 }
 
+type Story {
+  id: ID! 
+  createBy: User!
+  video: File!
+  thumbnail: File!
+  versions: [AppVersion!]!
+  categories: [StoryCategory!]!
+  elements: [StoryElement!]!
+}
+
+input CreateStoryInput {
+  video: String!
+  thumbnail: String!
+  versions: [ID!]!
+  categories: [ID!]!
+}
+
 input AppVersionInput {
   version: String!
 }
@@ -147,6 +164,8 @@ type Mutation {
   createStoryElement(storyElementInput: StoryElementInput!): StoryElement!
   editStoryElement(editStoryElementInput: EditStoryElementInput!): StoryElement!
   deleteStoryElement(deleteStoryElementInput: DeleteStoryElementInput!): StoryElement!
+
+  createStory(createStoryInput: CreateStoryInput!): Story!
 
   uploadFile(file: String!): File!
 }
