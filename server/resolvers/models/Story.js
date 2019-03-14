@@ -11,8 +11,13 @@ const createStory = async (root,args,context) => {
 	}
 	const userId = "cjsxdc4kg35h90b3039qediof";
 	const createBy = await context.prisma.user({id:userId});
-	const video = await fileHandling.processUpload(args.createStoryInput.video,context);
-	const thumbnail = await fileHandling.processUpload(args.createStoryInput.thumbnail,context);
+	createBy.password = null
+	const video = await fileHandling.processUpload(args.createStoryInput.video.base64,
+													args.createStoryInput.video.mimetype,
+													context);
+	const thumbnail = await fileHandling.processUpload(args.createStoryInput.thumbnail.base64,
+														args.createStoryInput.thumbnail.mimetype,
+														context);
 
 	const connectAppVersions = args.createStoryInput.versions.map(x => ({id: x}));
 	const connectAppCategories = args.createStoryInput.categories.map(x => ({id: x}));
@@ -39,6 +44,11 @@ const createStory = async (root,args,context) => {
 			connect: [...connectAppCategories]
 		}
 	})
+	story.video = video
+	story.thumbnail = thumbnail
+	story.createBy = createBy
+	story.categories = args.createStoryInput.categories.map(async categoryId => { return await context.prisma.storyCategory({id:categoryId}) });
+	story.versions = args.createStoryInput.versions.map(async versionId => { return await context.prisma.storyCategory({id:versionId}) });
 	return story
 }
 
