@@ -1541,6 +1541,7 @@ export interface AppCategoryUpdateDataInput {
 
 export type StoryCategoryWhereUniqueInput = AtLeastOne<{
   id: ID_Input;
+  name?: String;
 }>;
 
 export interface AppCategoryUpsertNestedInput {
@@ -1550,6 +1551,7 @@ export interface AppCategoryUpsertNestedInput {
 
 export type StoryElementWhereUniqueInput = AtLeastOne<{
   id: ID_Input;
+  name?: String;
 }>;
 
 export interface AppUpdateManyMutationInput {
@@ -1561,6 +1563,7 @@ export interface AppUpdateManyMutationInput {
 
 export type AppCategoryWhereUniqueInput = AtLeastOne<{
   id: ID_Input;
+  name?: String;
 }>;
 
 export interface StoryCategoryCreateInput {

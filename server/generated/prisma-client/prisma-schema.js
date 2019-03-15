@@ -175,6 +175,7 @@ input AppCategoryWhereInput {
 
 input AppCategoryWhereUniqueInput {
   id: ID
+  name: String
 }
 
 type AppConnection {
@@ -1139,6 +1140,7 @@ input StoryCategoryWhereInput {
 
 input StoryCategoryWhereUniqueInput {
   id: ID
+  name: String
 }
 
 type StoryConnection {
@@ -1339,6 +1341,7 @@ input StoryElementWhereInput {
 
 input StoryElementWhereUniqueInput {
   id: ID
+  name: String
 }
 
 enum StoryOrderByInput {
