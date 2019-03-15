@@ -70,6 +70,7 @@ type App {
   versions: [AppVersion!]!
   category: AppCategory!
   stories: [Story!]!
+  libraries: [Library!]!
 }
 
 type Story {

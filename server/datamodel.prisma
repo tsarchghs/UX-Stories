@@ -66,6 +66,7 @@ type Story {
   versions: [AppVersion!]!
   categories: [StoryCategory!]!
   elements: [StoryElement!]!
+  libraries: [Library!]!
 }
 
 type StoryCategory {
