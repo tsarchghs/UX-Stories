@@ -201,7 +201,7 @@ type Library {
 
 type Query {
 	login(email: String!, password: String!): AuthData
-	users: [User!]!
+  apps: [App!]!
 }
 
 type Mutation {
