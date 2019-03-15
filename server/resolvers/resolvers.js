@@ -22,7 +22,7 @@ module.exports = {
 		editAppVersion: appVersionResolvers.editAppVersion,
 		deleteAppVersion: appVersionResolvers.deleteAppVersion,
 		appVersionToApp: appVersionResolvers.appVersionToApp,
-		linkAppVersionToStory: appVersionResolvers.linkAppVersionToStory,
+		appVersionToStory: appVersionResolvers.appVersionToStory,
 
 		createApp: appResolvers.createApp,
 		uploadFile: fileResolvers.uploadFile,

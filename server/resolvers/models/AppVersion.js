@@ -25,15 +25,15 @@ const appVersionToApp = async (root,args,context) => {
 	return app
 
 }
-const linkAppVersionToStory = async (root,args,context) => {
-	if (!args.linkAppVersionToStoryInput.appVersion || !args.linkAppVersionToStoryInput.story) {
+const appVersionToStory = async (root,args,context) => {
+	if (!args.appVersionToStoryInput.appVersion || !args.appVersionToStoryInput.story) {
 		throw new Error("appVersion and/or story argument is empty")
 	}
 	const story = await context.prisma.updateStory({
-		where: {id:args.linkAppVersionToStoryInput.story},
+		where: {id:args.appVersionToStoryInput.story},
 		data: {
 			versions: {
-				connect: { id: args.linkAppVersionToStoryInput.appVersion }
+				[args.appVersionToStoryInput.type]: { id: args.appVersionToStoryInput.appVersion }
 			}
 		}
 	})
@@ -70,5 +70,5 @@ module.exports = {
 	editAppVersion,
 	deleteAppVersion,
 	appVersionToApp,
-	linkAppVersionToStory
+	appVersionToStory
 }
