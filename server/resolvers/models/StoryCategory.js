@@ -4,10 +4,6 @@ const createStoryCategory = async (root,args,context) => {
 	if (!args.storyCategoryInput.name) {
 		throw new Error("name argument is empty!");
 	}
-	const exists = await context.prisma.storyCategories({where:{name:args.storyCategoryInput.name}});
-	if (exists.length){
-		throw new Error("Story category already exists (use different name)");
-	}
 	const storyCategory = await context.prisma.createStoryCategory({
 		name: args.storyCategoryInput.name
 	})
