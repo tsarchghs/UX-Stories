@@ -57,25 +57,33 @@ module.exports = {
 			})
 		},
 		async createBy(parent,args,context) {
-			const user = await context.prisma.users({
+			const user = context.prisma.users({
 				where: {	
 					apps_some: {
 						id: parent.id
 					}
 				}
 			});
-			console.log(user,1);
 			return user[0];
 		},
 		async versions(parent,args,context){
-			const versions = await context.prisma.appVersions({
+			return  await context.prisma.appVersions({
 				where: {
 					apps_some: {
 						id: parent.id
 					}
 				}
 			})
-			return versions
+		},
+		async category(parent,args,context){
+			const category = await context.prisma.appCategories({
+				where: {
+					apps_some: {
+						id: parent.id
+					}
+				}
+			})
+			return category[0];
 		}
 	}
 }
