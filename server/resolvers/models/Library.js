@@ -46,7 +46,7 @@ const editLibrary = async (root,args,context) => {
 	return library
 }
 
-const deleteLibrary = async (root,args,context,info) => {
+const deleteLibrary = async (root,args,context) => {
 	if (!args.deleteLibraryInput.id) {
 		throw new Error("Please check that all of your arguments are not empty!")
 	}
@@ -60,9 +60,21 @@ const deleteLibrary = async (root,args,context,info) => {
 	return library
 }
 
+const createBy = async (parent,args,context) => {
+	const user = await context.prisma.users({
+		where:{
+			libraries_some:{
+				id: parent.id
+			}
+		}
+	})
+	return user[0]
+}
+
 module.exports = {
 	libraries,
 	createLibrary,
 	editLibrary,
-	deleteLibrary
+	deleteLibrary,
+	createBy
 }

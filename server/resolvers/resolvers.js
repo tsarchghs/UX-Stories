@@ -64,5 +64,8 @@ module.exports = {
 		thumbnail: storyResolvers.thumbnail,
 		app: storyResolvers.app,
 		createBy: storyResolvers.createBy
+	},
+	Library: {
+		createBy: libraryResolvers.createBy
 	}
 }
