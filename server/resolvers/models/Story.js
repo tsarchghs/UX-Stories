@@ -142,11 +142,23 @@ const elements = async (parent,args,context) => {
 	return storyElements
 }
 
+const categories = async (parent,args,context) => {
+	const storyCategories = await context.prisma.storyCategories({
+		where:{
+			stories_some:{
+				id: parent.id
+			}
+		}
+	})
+	return storyCategories
+}
+
 module.exports = {
 	stories,
 	createStory,
 	storyToLibrary,
 	storyToApp,
 	video,
-	elements
+	elements,
+	categories
 }
