@@ -143,6 +143,7 @@ input DeleteStoryElementInput {
 type StoryElement {
   id: ID!
   name: String!
+  stories: [Story!]!
 }
 
 input AppInput {
