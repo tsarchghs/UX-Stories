@@ -161,15 +161,16 @@ input appVersionToStoryInput {
   type: LinkType!
 }
 
-input LinkStoryElementToStoryInput {
+input StoryElementToStoryInput {
   storyElement: ID!
-  story: ID!  
+  story: ID!
+  type: LinkType! 
 }
 
 input StoryCategoryToStoryInput {
   storyCategory: ID!
   story: ID!
-  type: LinkType!
+  type: LinkType! 
 }
 
 type Query {
@@ -200,7 +201,7 @@ type Mutation {
   createStoryElement(storyElementInput: StoryElementInput!): StoryElement!
   editStoryElement(editStoryElementInput: EditStoryElementInput!): StoryElement!
   deleteStoryElement(deleteStoryElementInput: DeleteStoryElementInput!): StoryElement!
-  linkStoryElementToStory(linkStoryElementToStoryInput: LinkStoryElementToStoryInput!): Story!
+  storyElementToStory(storyElementToStoryInput: StoryElementToStoryInput!): Story!
 
   createStory(createStoryInput: CreateStoryInput!): Story!
 
