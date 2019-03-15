@@ -52,6 +52,23 @@ const createStory = async (root,args,context) => {
 	return story
 }
 
+
+const storyToLibrary = async (root,args,context,info) => {
+	if (!args.storyToLibraryInput.story || !args.storyToLibraryInput.library) {
+		throw new Error("Please check that all of your arguments are not empty!")
+	}
+	const library = await context.prisma.updateLibrary({
+		where: { id: args.storyToLibraryInput.library },
+		data: {
+			stories: {
+				[args.storyToLibraryInput.type]: { id:args.storyToLibraryInput.story }
+			}
+		}
+	})
+	return library;
+}
+
 module.exports = {
-	createStory
+	createStory,
+	storyToLibrary
 }
