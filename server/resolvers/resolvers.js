@@ -66,6 +66,7 @@ module.exports = {
 		createBy: storyResolvers.createBy
 	},
 	Library: {
-		createBy: libraryResolvers.createBy
+		createBy: libraryResolvers.createBy,
+		stories: libraryResolvers.stories
 	}
 }

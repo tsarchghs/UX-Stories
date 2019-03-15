@@ -71,10 +71,22 @@ const createBy = async (parent,args,context) => {
 	return user[0]
 }
 
+const stories = async (parent,args,context) => {
+	const stories = await context.prisma.stories({
+		where:{
+			libraries_some: {
+				id: parent.id
+			}
+		}
+	})
+	return stories
+}
+
 module.exports = {
 	libraries,
 	createLibrary,
 	editLibrary,
 	deleteLibrary,
-	createBy
+	createBy,
+	stories
 }
