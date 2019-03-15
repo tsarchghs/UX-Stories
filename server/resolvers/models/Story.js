@@ -176,6 +176,17 @@ const thumbnail = async (parent,args,context) => {
 	return thumbnail[0];
 }
 
+const app = async (parent,args,context) => {
+	const app = await context.prisma.apps({
+		where:{
+			stories_some:{
+				id: parent.id
+			}
+		}
+	})
+	return app[0];
+}
+
 module.exports = {
 	stories,
 	createStory,
@@ -185,5 +196,6 @@ module.exports = {
 	elements,
 	categories,
 	versions,
-	thumbnail
+	thumbnail,
+	app
 }

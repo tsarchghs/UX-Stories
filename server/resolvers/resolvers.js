@@ -60,6 +60,7 @@ module.exports = {
 		elements: storyResolvers.elements,
 		categories: storyResolvers.categories,
 		versions: storyResolvers.versions,
-		thumbnail: storyResolvers.thumbnail 
+		thumbnail: storyResolvers.thumbnail,
+		app: storyResolvers.app
 	}
 }
