@@ -222,6 +222,7 @@ type Query {
 	login(email: String!, password: String!): AuthData
   apps: [App!]!
   stories(storiesInput: StoriesInput!): [Story!]!
+  libraries: [Library!]!
 }
 
 type Mutation {
