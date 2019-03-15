@@ -178,6 +178,7 @@ input CreateLibraryInput {
 }
 
 input EditLibraryInput {
+  id: ID!
   name: String!  
 }
 
