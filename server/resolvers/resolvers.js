@@ -54,5 +54,8 @@ module.exports = {
 		versions: appResolvers.versions,
 		category: appResolvers.category,
 		logo: appResolvers.logo
+	},
+	Story: {
+		video: storyResolvers.video
 	}
 }

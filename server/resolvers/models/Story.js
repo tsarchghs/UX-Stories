@@ -1,10 +1,10 @@
 const fileHandling = require("../../modules/fileApi");
 
-const stories = async (root,args,context,info) => {
+const stories = async (root,args,context) => {
 	if (!args.storiesInput.app) {
 		throw new Error("Please check that all of your arguments are not empty!")
 	}
-	const userId = "cjta8e79lpwxm0b79o5zw71rd";
+	const userId = "cjtabbnzyqlww0b79zgo8k7ku";
 	const createBy = await context.prisma.user({id:userId});
 	const stories = await context.prisma.stories({
 		where: {
@@ -16,6 +16,7 @@ const stories = async (root,args,context,info) => {
 
 const createStory = async (root,args,context) => {
 	if (
+		!args.createStoryInput.app || 
 		!args.createStoryInput.video ||
 		!args.createStoryInput.thumbnail || 
 		!args.createStoryInput.versions ||
@@ -23,7 +24,7 @@ const createStory = async (root,args,context) => {
 	){
 		throw new Error("Please make sure that all of your arguments are non empty!");
 	}
-	const userId = "cjta8e79lpwxm0b79o5zw71rd";
+	const userId = "cjtabbnzyqlww0b79zgo8k7ku";
 	const createBy = await context.prisma.user({id:userId});
 	createBy.password = null
 	const video = await fileHandling.processUpload(args.createStoryInput.video.base64,
@@ -39,6 +40,11 @@ const createStory = async (root,args,context) => {
 		createBy: {
 			connect: {
 				id: createBy.id
+			}
+		},
+		app: {
+			connect: {
+				id: args.createStoryInput.app
 			}
 		},
 		video: {
@@ -58,16 +64,32 @@ const createStory = async (root,args,context) => {
 			connect: [...connectAppCategories]
 		}
 	})
-	story.video = video
-	story.thumbnail = thumbnail
-	story.createBy = createBy
-	story.categories = args.createStoryInput.categories.map(async categoryId => { return await context.prisma.storyCategory({id:categoryId}) });
-	story.versions = args.createStoryInput.versions.map(async versionId => { return await context.prisma.storyCategory({id:versionId}) });
+	await context.prisma.updateFile({
+		where: { id: thumbnail.id },
+		data: {
+			stories: {
+				connect: { id: story.id }
+			}
+		}
+	})
+	await context.prisma.updateFile({
+		where: { id: video.id },
+		data: {
+			stories: {
+				connect: { id: story.id }
+			}
+		}
+	})
+	// story.video = video
+	// story.thumbnail = thumbnail
+	// story.createBy = createBy
+	// story.categories = args.createStoryInput.categories.map(async categoryId => { return await context.prisma.storyCategory({id:categoryId}) });
+	// story.versions = args.createStoryInput.versions.map(async versionId => { return await context.prisma.storyCategory({id:versionId}) });
 	return story
 }
 
 
-const storyToLibrary = async (root,args,context,info) => {
+const storyToLibrary = async (root,args,context) => {
 	if (!args.storyToLibraryInput.story || !args.storyToLibraryInput.library) {
 		throw new Error("Please check that all of your arguments are not empty!")
 	}
@@ -82,7 +104,7 @@ const storyToLibrary = async (root,args,context,info) => {
 	return library;
 }
 
-const storyToApp = async (root,args,context,info) => {
+const storyToApp = async (root,args,context) => {
 	if (!args.storyToAppInput.story || !args.storyToAppInput.app) {
 		throw new Error("Please check that all of your arguments are not empty!")
 	}
@@ -97,9 +119,22 @@ const storyToApp = async (root,args,context,info) => {
 	return app;
 }
 
+const video = async (parent,args,context) => {
+	const video = await context.prisma.files({
+		where: {
+			stories_some: {
+				id: parent.id
+			},
+			mimetype_contains:"video"
+		}
+	})
+	return video[0];
+}
+
 module.exports = {
 	stories,
 	createStory,
 	storyToLibrary,
-	storyToApp
+	storyToApp,
+	video
 }
