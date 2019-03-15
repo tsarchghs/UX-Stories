@@ -149,6 +149,11 @@ input LinkAppVersionToAppInput {
   app: ID!  
 }
 
+input LinkAppVersionToStoryInput {
+  appVersion: ID!
+  story: ID! 
+}
+
 type Query {
 	login(email: String!, password: String!): AuthData
 	users: [User!]!
@@ -167,6 +172,7 @@ type Mutation {
   editAppVersion(editAppVersionInput: EditAppVersionInput!): AppVersion!
   deleteAppVersion(deleteAppVersionInput: DeleteAppVersionInput!): AppVersion!
   linkAppVersionToApp(linkAppVersionToAppInput: LinkAppVersionToAppInput!): App!
+  linkAppVersionToStory(linkAppVersionToStoryInput: LinkAppVersionToStoryInput!): App!
 
   createStoryCategory(storyCategoryInput: StoryCategoryInput!): StoryCategory!
   editStoryCategory(editStoryCategoryInput: EditStoryCategoryInput!): StoryCategory!
