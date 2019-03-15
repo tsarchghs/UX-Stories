@@ -61,6 +61,7 @@ module.exports = {
 		categories: storyResolvers.categories,
 		versions: storyResolvers.versions,
 		thumbnail: storyResolvers.thumbnail,
-		app: storyResolvers.app
+		app: storyResolvers.app,
+		createBy: storyResolvers.createBy
 	}
 }

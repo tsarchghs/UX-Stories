@@ -187,6 +187,19 @@ const app = async (parent,args,context) => {
 	return app[0];
 }
 
+const createBy = async (parent,args,context) => {
+	const user = await context.prisma.users({
+		where:{
+			apps_some:{
+				stories_some: {
+					id: parent.id
+				}
+			}
+		}
+	})
+	return user[0];
+}
+
 module.exports = {
 	stories,
 	createStory,
@@ -197,5 +210,6 @@ module.exports = {
 	categories,
 	versions,
 	thumbnail,
-	app
+	app,
+	createBy
 }
