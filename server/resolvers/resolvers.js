@@ -34,7 +34,8 @@ module.exports = {
 		createStoryElement: storyElementResolvers.createStoryElement,
 		editStoryElement: storyElementResolvers.editStoryElement,
 		deleteStoryElement: storyElementResolvers.deleteStoryElement,
-
+		linkStoryElementToStory: storyElementResolvers.linkStoryElementToStory,
+		
 		createStory: storyResolvers.createStory
 	}
 }
