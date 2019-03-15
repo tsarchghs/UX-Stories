@@ -51,6 +51,7 @@ type User {
   name: String!
   password: String
   role: AccountType!
+  apps: [App!]!
 }
 
 type App {
@@ -63,10 +64,12 @@ type App {
   logo: File!
   versions: [AppVersion!]!
   category: AppCategory!
+  stories: [Story!]!
 }
 
 type Story {
   id: ID! 
+  app: App!
   createBy: User!
   video: File!
   thumbnail: File!
@@ -141,7 +144,7 @@ type StoryElement {
 
 input AppInput {
   name: String!
-  description: String
+  description: String!
   company: String!
   platform: Platform!
   logo_url: String!
@@ -192,6 +195,10 @@ input StoryToLibraryInput {
   type: LinkType!
 }
 
+input StoriesInput {
+  app: ID!  
+}
+
 type Library {
   id: ID!
   createBy: User!
@@ -202,6 +209,7 @@ type Library {
 type Query {
 	login(email: String!, password: String!): AuthData
   apps: [App!]!
+  stories(storiesInput: StoriesInput!): [Story!]!
 }
 
 type Mutation {
