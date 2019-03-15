@@ -166,9 +166,10 @@ input LinkStoryElementToStoryInput {
   story: ID!  
 }
 
-input LinkStoryCategoryToStoryInput {
+input StoryCategoryToStoryInput {
   storyCategory: ID!
   story: ID!
+  type: LinkType!
 }
 
 type Query {
@@ -194,7 +195,7 @@ type Mutation {
   createStoryCategory(storyCategoryInput: StoryCategoryInput!): StoryCategory!
   editStoryCategory(editStoryCategoryInput: EditStoryCategoryInput!): StoryCategory!
   deleteStoryCategory(deleteStoryCategoryInput: DeleteStoryCategoryInput): StoryCategory!
-  linkStoryCategoryToStory(linkStoryCategoryToStoryInput: LinkStoryCategoryToStoryInput!): Story!
+  storyCategoryToStory(storyCategoryToStoryInput: StoryCategoryToStoryInput!): Story!
 
   createStoryElement(storyElementInput: StoryElementInput!): StoryElement!
   editStoryElement(editStoryElementInput: EditStoryElementInput!): StoryElement!
