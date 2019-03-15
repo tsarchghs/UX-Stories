@@ -24,6 +24,7 @@ type AppVersion {
   id: ID!
   version: String!
   apps: [App!]!
+  stories: [Story!]!
 }
 
 type StoryCategory {
