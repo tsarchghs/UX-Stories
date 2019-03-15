@@ -154,6 +154,11 @@ input LinkAppVersionToStoryInput {
   story: ID! 
 }
 
+input LinkStoryElementToStoryInput {
+  storyElement: ID!
+  story: ID!  
+}
+
 type Query {
 	login(email: String!, password: String!): AuthData
 	users: [User!]!
@@ -181,6 +186,7 @@ type Mutation {
   createStoryElement(storyElementInput: StoryElementInput!): StoryElement!
   editStoryElement(editStoryElementInput: EditStoryElementInput!): StoryElement!
   deleteStoryElement(deleteStoryElementInput: DeleteStoryElementInput!): StoryElement!
+  linkStoryElementToStory(linkStoryElementToStoryInput: LinkStoryElementToStoryInput!): Story!
 
   createStory(createStoryInput: CreateStoryInput!): Story!
 
