@@ -153,6 +153,17 @@ const categories = async (parent,args,context) => {
 	return storyCategories
 }
 
+const versions = async (parent,args,context) => {
+	const appVersions = await context.prisma.appVersions({
+		where:{
+			stories_some: {
+				id: parent.id
+			}
+		}
+	})
+	return appVersions
+}
+
 module.exports = {
 	stories,
 	createStory,
@@ -160,5 +171,6 @@ module.exports = {
 	storyToApp,
 	video,
 	elements,
-	categories
+	categories,
+	versions
 }
