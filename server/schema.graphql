@@ -144,6 +144,11 @@ input AppInput {
   category: String!
 }
 
+input LinkAppVersionToAppInput {
+  appVersion: ID!
+  app: ID!  
+}
+
 type Query {
 	login(email: String!, password: String!): AuthData
 	users: [User!]!
@@ -161,6 +166,7 @@ type Mutation {
   createAppVersion(appVersionInput: AppVersionInput!): AppVersion!
   editAppVersion(editAppVersionInput: EditAppVersionInput!): AppVersion!
   deleteAppVersion(deleteAppVersionInput: DeleteAppVersionInput!): AppVersion!
+  linkAppVersionToApp(linkAppVersionToAppInput: LinkAppVersionToAppInput!): App!
 
   createStoryCategory(storyCategoryInput: StoryCategoryInput!): StoryCategory!
   editStoryCategory(editStoryCategoryInput: EditStoryCategoryInput!): StoryCategory!
