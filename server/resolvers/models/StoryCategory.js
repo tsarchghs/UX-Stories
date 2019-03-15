@@ -11,15 +11,15 @@ const createStoryCategory = async (root,args,context) => {
 }
 
 
-const linkStoryCategoryToStory = async (root,args,context) => {
-	if (!args.linkStoryCategoryToStoryInput.storyCategory || !args.linkStoryCategoryToStoryInput.story) {
+const storyCategoryToStory = async (root,args,context) => {
+	if (!args.storyCategoryToStoryInput.storyCategory || !args.storyCategoryToStoryInput.story) {
 		throw new Error("name argument is empty!");
 	}
 	const story = await context.prisma.updateStory({
-		where: { id: args.linkStoryCategoryToStoryInput.story },
+		where: { id: args.storyCategoryToStoryInput.story },
 		data: {
 			categories: {
-				connect: {id: args.linkStoryCategoryToStoryInput.storyCategory }
+				[args.storyCategoryToStoryInput.type]: {id: args.storyCategoryToStoryInput.storyCategory }
 			}
 		}
 	})
@@ -56,5 +56,5 @@ module.exports = {
 	createStoryCategory,
 	editStoryCategory,
 	deleteStoryCategory,
-	linkStoryCategoryToStory
+	storyCategoryToStory
 }

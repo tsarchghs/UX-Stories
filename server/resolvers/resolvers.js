@@ -30,7 +30,7 @@ module.exports = {
 		createStoryCategory: storyCategoryResolvers.createStoryCategory,
 		editStoryCategory: storyCategoryResolvers.editStoryCategory,
 		deleteStoryCategory: storyCategoryResolvers.deleteStoryCategory,
-		linkStoryCategoryToStory: storyCategoryResolvers.linkStoryCategoryToStory,
+		storyCategoryToStory: storyCategoryResolvers.storyCategoryToStory,
 
 		createStoryElement: storyElementResolvers.createStoryElement,
 		editStoryElement: storyElementResolvers.editStoryElement,
