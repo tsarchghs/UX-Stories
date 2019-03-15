@@ -70,8 +70,12 @@ module.exports = {
 		async versions(parent,args,context){
 			const versions = await context.prisma.appVersions({
 				where: {
-
+					apps_some: {
+						id: parent.id
+					}
 				}
 			})
+			return versions
+		}
 	}
 }
