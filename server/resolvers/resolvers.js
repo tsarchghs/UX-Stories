@@ -10,7 +10,8 @@ const libraryResolvers = require("./models/Library");
 
 module.exports = {
 	Query: {
-		login: authResolvers.login
+		login: authResolvers.login,
+		apps: appResolvers.apps
 	},
 	Mutation: {
 		signUp: authResolvers.signUp,

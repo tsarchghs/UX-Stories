@@ -1,4 +1,15 @@
 
+const apps = async (root,args,context) => {
+	const userId = "cjsxdc4kg35h90b3039qediof";
+	const createBy = await context.prisma.user({id:userId});
+	const apps = await context.prisma.apps({
+		where: {
+			createBy: createBy
+		}
+	})
+	return apps;
+}
+
 const createApp = async (root,args,context) => {
 	if (!args.appInput.name || !args.appInput.description || !args.appInput.platform || !args.appInput.logo_url
 		 || !args.appInput.version || !args.appInput.category) {
@@ -51,5 +62,6 @@ const createApp = async (root,args,context) => {
 }
 
 module.exports = {
-	createApp
+	createApp,
+	apps
 }
