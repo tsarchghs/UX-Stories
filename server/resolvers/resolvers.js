@@ -11,7 +11,8 @@ const libraryResolvers = require("./models/Library");
 module.exports = {
 	Query: {
 		login: authResolvers.login,
-		apps: appResolvers.apps
+		apps: appResolvers.apps,
+		stories: storyResolvers.stories
 	},
 	Mutation: {
 		signUp: authResolvers.signUp,
@@ -44,6 +45,16 @@ module.exports = {
 		deleteLibrary: libraryResolvers.deleteLibrary,
 
 		createStory: storyResolvers.createStory,
-		storyToLibrary: storyResolvers.storyToLibrary
+		storyToLibrary: storyResolvers.storyToLibrary,
+		storyToApp: storyResolvers.storyToApp
+	},
+	App: {
+		async stories(parent,args,context) {
+			return await context.prisma.stories({
+				where: {
+					app: { id: parent.id }
+				}
+			})
+		}
 	}
 }
