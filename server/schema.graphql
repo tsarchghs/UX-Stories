@@ -155,9 +155,10 @@ input AppVersionToAppInput {
   type: LinkType!
 }
 
-input LinkAppVersionToStoryInput {
+input appVersionToStoryInput {
   appVersion: ID!
   story: ID! 
+  type: LinkType!
 }
 
 input LinkStoryElementToStoryInput {
@@ -188,8 +189,7 @@ type Mutation {
   editAppVersion(editAppVersionInput: EditAppVersionInput!): AppVersion!
   deleteAppVersion(deleteAppVersionInput: DeleteAppVersionInput!): AppVersion!
   appVersionToApp(appVersionToAppInput: AppVersionToAppInput!): App!
-
-  linkAppVersionToStory(linkAppVersionToStoryInput: LinkAppVersionToStoryInput!): App!
+  appVersionToStory(appVersionToStoryInput: appVersionToStoryInput!): App!
 
   createStoryCategory(storyCategoryInput: StoryCategoryInput!): StoryCategory!
   editStoryCategory(editStoryCategoryInput: EditStoryCategoryInput!): StoryCategory!
