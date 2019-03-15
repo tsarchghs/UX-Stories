@@ -32,7 +32,22 @@ const editLibrary = async (root,args,context) => {
 	return library
 }
 
+const deleteLibrary = async (root,args,context,info) => {
+	if (!args.deleteLibraryInput.id) {
+		throw new Error("Please check that all of your arguments are not empty!")
+	}
+	const userId = "cjsxdc4kg35h90b3039qediof";
+	const createBy = await context.prisma.user({id:userId});
+	// var library = await context.prisma.library({id: args.deleteLibraryInput.id});
+	// if (library.createBy.id !== createBy.id){
+	// 	throw new Error("Unauthorized");
+	// }
+	var library = await context.prisma.deleteLibrary({id:args.deleteLibraryInput.id});
+	return library
+}
+
 module.exports = {
 	createLibrary,
-	editLibrary
+	editLibrary,
+	deleteLibrary
 }

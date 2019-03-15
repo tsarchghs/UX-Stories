@@ -40,6 +40,7 @@ module.exports = {
 
 		createLibrary: libraryResolvers.createLibrary,
 		editLibrary: libraryResolvers.editLibrary,
+		deleteLibrary: libraryResolvers.deleteLibrary,
 		
 		createStory: storyResolvers.createStory
 	}
