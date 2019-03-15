@@ -210,6 +210,10 @@ type Mutation {
   deleteStoryElement(deleteStoryElementInput: DeleteStoryElementInput!): StoryElement!
   storyElementToStory(storyElementToStoryInput: StoryElementToStoryInput!): Story!
 
+  createLibrary(createLibraryInput: CreateLibraryInput!): Library!
+  editLibrary(editLibraryInput: CreateLibraryInput!): Library!
+  deleteLibrary(deleteLibraryInput: CreateLibraryInput!): Library!
+
   createStory(createStoryInput: CreateStoryInput!): Story!
 
   uploadFile(file: FileInput!): File!
