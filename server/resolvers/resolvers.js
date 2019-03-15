@@ -56,6 +56,7 @@ module.exports = {
 		logo: appResolvers.logo
 	},
 	Story: {
-		video: storyResolvers.video
+		video: storyResolvers.video,
+		elements: storyResolvers.elements
 	}
 }
