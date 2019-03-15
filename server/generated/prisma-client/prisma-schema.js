@@ -1573,7 +1573,7 @@ input StoryCreateInput {
   thumbnail: FileCreateOneInput!
   versions: AppVersionCreateManyInput
   categories: StoryCategoryCreateManyInput
-  elements: StoryElementCreateManyInput
+  elements: StoryElementCreateManyWithoutStoriesInput
 }
 
 input StoryCreateManyInput {
@@ -1586,13 +1586,27 @@ input StoryCreateManyWithoutAppInput {
   connect: [StoryWhereUniqueInput!]
 }
 
+input StoryCreateManyWithoutElementsInput {
+  create: [StoryCreateWithoutElementsInput!]
+  connect: [StoryWhereUniqueInput!]
+}
+
 input StoryCreateWithoutAppInput {
   createBy: UserCreateOneInput!
   video: FileCreateOneInput!
   thumbnail: FileCreateOneInput!
   versions: AppVersionCreateManyInput
   categories: StoryCategoryCreateManyInput
-  elements: StoryElementCreateManyInput
+  elements: StoryElementCreateManyWithoutStoriesInput
+}
+
+input StoryCreateWithoutElementsInput {
+  app: AppCreateOneWithoutStoriesInput!
+  createBy: UserCreateOneInput!
+  video: FileCreateOneInput!
+  thumbnail: FileCreateOneInput!
+  versions: AppVersionCreateManyInput
+  categories: StoryCategoryCreateManyInput
 }
 
 type StoryEdge {
@@ -1603,6 +1617,7 @@ type StoryEdge {
 type StoryElement {
   id: ID!
   name: String!
+  stories(where: StoryWhereInput, orderBy: StoryOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Story!]
 }
 
 type StoryElementConnection {
@@ -1613,11 +1628,16 @@ type StoryElementConnection {
 
 input StoryElementCreateInput {
   name: String!
+  stories: StoryCreateManyWithoutElementsInput
 }
 
-input StoryElementCreateManyInput {
-  create: [StoryElementCreateInput!]
+input StoryElementCreateManyWithoutStoriesInput {
+  create: [StoryElementCreateWithoutStoriesInput!]
   connect: [StoryElementWhereUniqueInput!]
+}
+
+input StoryElementCreateWithoutStoriesInput {
+  name: String!
 }
 
 type StoryElementEdge {
@@ -1693,32 +1713,29 @@ input StoryElementSubscriptionWhereInput {
   NOT: [StoryElementSubscriptionWhereInput!]
 }
 
-input StoryElementUpdateDataInput {
-  name: String
-}
-
 input StoryElementUpdateInput {
   name: String
+  stories: StoryUpdateManyWithoutElementsInput
 }
 
 input StoryElementUpdateManyDataInput {
   name: String
 }
 
-input StoryElementUpdateManyInput {
-  create: [StoryElementCreateInput!]
-  update: [StoryElementUpdateWithWhereUniqueNestedInput!]
-  upsert: [StoryElementUpsertWithWhereUniqueNestedInput!]
+input StoryElementUpdateManyMutationInput {
+  name: String
+}
+
+input StoryElementUpdateManyWithoutStoriesInput {
+  create: [StoryElementCreateWithoutStoriesInput!]
   delete: [StoryElementWhereUniqueInput!]
   connect: [StoryElementWhereUniqueInput!]
   set: [StoryElementWhereUniqueInput!]
   disconnect: [StoryElementWhereUniqueInput!]
+  update: [StoryElementUpdateWithWhereUniqueWithoutStoriesInput!]
+  upsert: [StoryElementUpsertWithWhereUniqueWithoutStoriesInput!]
   deleteMany: [StoryElementScalarWhereInput!]
   updateMany: [StoryElementUpdateManyWithWhereNestedInput!]
-}
-
-input StoryElementUpdateManyMutationInput {
-  name: String
 }
 
 input StoryElementUpdateManyWithWhereNestedInput {
@@ -1726,15 +1743,19 @@ input StoryElementUpdateManyWithWhereNestedInput {
   data: StoryElementUpdateManyDataInput!
 }
 
-input StoryElementUpdateWithWhereUniqueNestedInput {
-  where: StoryElementWhereUniqueInput!
-  data: StoryElementUpdateDataInput!
+input StoryElementUpdateWithoutStoriesDataInput {
+  name: String
 }
 
-input StoryElementUpsertWithWhereUniqueNestedInput {
+input StoryElementUpdateWithWhereUniqueWithoutStoriesInput {
   where: StoryElementWhereUniqueInput!
-  update: StoryElementUpdateDataInput!
-  create: StoryElementCreateInput!
+  data: StoryElementUpdateWithoutStoriesDataInput!
+}
+
+input StoryElementUpsertWithWhereUniqueWithoutStoriesInput {
+  where: StoryElementWhereUniqueInput!
+  update: StoryElementUpdateWithoutStoriesDataInput!
+  create: StoryElementCreateWithoutStoriesInput!
 }
 
 input StoryElementWhereInput {
@@ -1766,6 +1787,9 @@ input StoryElementWhereInput {
   name_not_starts_with: String
   name_ends_with: String
   name_not_ends_with: String
+  stories_every: StoryWhereInput
+  stories_some: StoryWhereInput
+  stories_none: StoryWhereInput
   AND: [StoryElementWhereInput!]
   OR: [StoryElementWhereInput!]
   NOT: [StoryElementWhereInput!]
@@ -1834,7 +1858,7 @@ input StoryUpdateDataInput {
   thumbnail: FileUpdateOneRequiredInput
   versions: AppVersionUpdateManyInput
   categories: StoryCategoryUpdateManyInput
-  elements: StoryElementUpdateManyInput
+  elements: StoryElementUpdateManyWithoutStoriesInput
 }
 
 input StoryUpdateInput {
@@ -1844,7 +1868,7 @@ input StoryUpdateInput {
   thumbnail: FileUpdateOneRequiredInput
   versions: AppVersionUpdateManyInput
   categories: StoryCategoryUpdateManyInput
-  elements: StoryElementUpdateManyInput
+  elements: StoryElementUpdateManyWithoutStoriesInput
 }
 
 input StoryUpdateManyInput {
@@ -1869,13 +1893,33 @@ input StoryUpdateManyWithoutAppInput {
   deleteMany: [StoryScalarWhereInput!]
 }
 
+input StoryUpdateManyWithoutElementsInput {
+  create: [StoryCreateWithoutElementsInput!]
+  delete: [StoryWhereUniqueInput!]
+  connect: [StoryWhereUniqueInput!]
+  set: [StoryWhereUniqueInput!]
+  disconnect: [StoryWhereUniqueInput!]
+  update: [StoryUpdateWithWhereUniqueWithoutElementsInput!]
+  upsert: [StoryUpsertWithWhereUniqueWithoutElementsInput!]
+  deleteMany: [StoryScalarWhereInput!]
+}
+
 input StoryUpdateWithoutAppDataInput {
   createBy: UserUpdateOneRequiredInput
   video: FileUpdateOneRequiredInput
   thumbnail: FileUpdateOneRequiredInput
   versions: AppVersionUpdateManyInput
   categories: StoryCategoryUpdateManyInput
-  elements: StoryElementUpdateManyInput
+  elements: StoryElementUpdateManyWithoutStoriesInput
+}
+
+input StoryUpdateWithoutElementsDataInput {
+  app: AppUpdateOneRequiredWithoutStoriesInput
+  createBy: UserUpdateOneRequiredInput
+  video: FileUpdateOneRequiredInput
+  thumbnail: FileUpdateOneRequiredInput
+  versions: AppVersionUpdateManyInput
+  categories: StoryCategoryUpdateManyInput
 }
 
 input StoryUpdateWithWhereUniqueNestedInput {
@@ -1888,6 +1932,11 @@ input StoryUpdateWithWhereUniqueWithoutAppInput {
   data: StoryUpdateWithoutAppDataInput!
 }
 
+input StoryUpdateWithWhereUniqueWithoutElementsInput {
+  where: StoryWhereUniqueInput!
+  data: StoryUpdateWithoutElementsDataInput!
+}
+
 input StoryUpsertWithWhereUniqueNestedInput {
   where: StoryWhereUniqueInput!
   update: StoryUpdateDataInput!
@@ -1898,6 +1947,12 @@ input StoryUpsertWithWhereUniqueWithoutAppInput {
   where: StoryWhereUniqueInput!
   update: StoryUpdateWithoutAppDataInput!
   create: StoryCreateWithoutAppInput!
+}
+
+input StoryUpsertWithWhereUniqueWithoutElementsInput {
+  where: StoryWhereUniqueInput!
+  update: StoryUpdateWithoutElementsDataInput!
+  create: StoryCreateWithoutElementsInput!
 }
 
 input StoryWhereInput {
