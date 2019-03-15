@@ -81,6 +81,7 @@ type Story {
 }
 
 input CreateStoryInput {
+  app: ID!
   video: FileInput!
   thumbnail: FileInput!
   versions: [ID!]!
