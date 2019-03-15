@@ -25,20 +25,22 @@ type App {
   description: String
   company: String!
   platform: Platform!
-  logo: File
+  logo: File @relation(name: "AppLogoRel")
   versions: [AppVersion!]!
   category: AppCategory!
-  stories: [Story!]!
+  stories: [Story!]! @relation(name: "AppStoryRel")
 }
 
 type AppCategory {
   id: ID! @unique
   name: String! @unique
+  apps: [App!]!
 }
 
 type AppVersion {
   id: ID! @unique
   version: String! @unique
+  apps: [App!]!
 }
 
 type File {
@@ -49,11 +51,13 @@ type File {
   mimetype: String!
   encoding: String!
   url: String! @unique
+  apps: [App!]! @relation(name: "AppFileRel")
+  stories: [Story!]! @relation(name: "StoryFileRel")
 }
 
 type Story {
   id: ID! @unique
-  app: App!
+  app: App! @relation(name: "AppStoryRel")
   createBy: User!
   video: File! @relation(name: "StoryVideoRel")
   thumbnail: File! @relation(name: "StoryThumbnailRel")
