@@ -1,6 +1,6 @@
 
 const apps = async (root,args,context) => {
-	const userId = "cjsxdc4kg35h90b3039qediof";
+	const userId = "cjta8e79lpwxm0b79o5zw71rd";
 	const createBy = await context.prisma.user({id:userId});
 	const apps = await context.prisma.apps({
 		where: {
@@ -27,7 +27,7 @@ const createApp = async (root,args,context) => {
 	if (!logo) {
 		throw new Error(`Logo <${args.appInput.logo_url}> doesn't exist`);
 	}
-	const userId = "cjsxdc4kg35h90b3039qediof";
+	const userId = "cjta8e79lpwxm0b79o5zw71rd";
 	const createBy = await context.prisma.user({id:userId});
 	const app = await context.prisma.createApp({
 		createBy: {
@@ -55,13 +55,73 @@ const createApp = async (root,args,context) => {
 		},
 		platform: args.appInput.platform
 	})
-	app.logo = logo	
-	app.versions = [appVersion]	
-	app.category = appCategory
+	await context.prisma.updateFile({
+		where:{url:args.appInput.logo_url},
+		data: {
+			apps: {
+				connect: { id: app.id }
+			}
+		}
+	})
 	return app
+}
+
+const stories = async (parent,args,context) => {
+	return await context.prisma.stories({
+		where: {
+			app: { id: parent.id }
+		}
+	})
+}
+const createBy = async (parent,args,context) => {
+	const user = await context.prisma.users({
+		where: {	
+			apps_some: {
+				id: parent.id
+			}
+		}
+	});
+	return user[0];
+}
+
+const versions = async (parent,args,context) =>{
+	return  await context.prisma.appVersions({
+		where: {
+			apps_some: {
+				id: parent.id
+			}
+		}
+	})
+}
+
+const category = async (parent,args,context) => {
+	const category = await context.prisma.appCategories({
+		where: {
+			apps_some: {
+				id: parent.id
+			}
+		}
+	})
+	return category[0];
+}
+
+const logo = async (parent,args,context) => {
+	const logo = await context.prisma.files({
+		where: {
+			apps_some: {
+				id: parent.id
+			}
+		}
+	})
+	return logo[0];
 }
 
 module.exports = {
 	createApp,
-	apps
+	apps,
+	stories,
+	createBy,
+	versions,
+	category,
+	logo
 }

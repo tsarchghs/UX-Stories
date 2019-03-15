@@ -49,51 +49,10 @@ module.exports = {
 		storyToApp: storyResolvers.storyToApp
 	},
 	App: {
-		async stories(parent,args,context) {
-			return await context.prisma.stories({
-				where: {
-					app: { id: parent.id }
-				}
-			})
-		},
-		async createBy(parent,args,context) {
-			const user = await context.prisma.users({
-				where: {	
-					apps_some: {
-						id: parent.id
-					}
-				}
-			});
-			return user[0];
-		},
-		async versions(parent,args,context){
-			return  await context.prisma.appVersions({
-				where: {
-					apps_some: {
-						id: parent.id
-					}
-				}
-			})
-		},
-		async category(parent,args,context){
-			const category = await context.prisma.appCategories({
-				where: {
-					apps_some: {
-						id: parent.id
-					}
-				}
-			})
-			return category[0];
-		},
-		async logo(parent,args,context) {
-			const logo = await context.prisma.files({
-				where: {
-					apps_some: {
-						id: parent.id
-					}
-				}
-			})
-			return logo[0];
-		}
+		stories: appResolvers.stories,
+		createBy: appResolvers.createBy,
+		versions: appResolvers.versions,
+		category: appResolvers.category,
+		logo: appResolvers.logo
 	}
 }
