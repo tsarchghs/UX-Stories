@@ -173,6 +173,19 @@ input StoryCategoryToStoryInput {
   type: LinkType! 
 }
 
+input CreateLibraryInput {
+  name: String!  
+}
+
+input EditLibraryInput {
+  name: String!  
+}
+
+input DeleteLibraryInput {
+  id: ID!
+}
+
+
 type Library {
   id: ID!
   createBy: User!
@@ -211,8 +224,8 @@ type Mutation {
   storyElementToStory(storyElementToStoryInput: StoryElementToStoryInput!): Story!
 
   createLibrary(createLibraryInput: CreateLibraryInput!): Library!
-  editLibrary(editLibraryInput: CreateLibraryInput!): Library!
-  deleteLibrary(deleteLibraryInput: CreateLibraryInput!): Library!
+  editLibrary(editLibraryInput: EditLibraryInput!): Library!
+  deleteLibrary(deleteLibraryInput: DeleteLibraryInput!): Library!
 
   createStory(createStoryInput: CreateStoryInput!): Story!
 
