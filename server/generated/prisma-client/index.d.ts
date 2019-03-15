@@ -1561,7 +1561,6 @@ export interface AppUpdateManyMutationInput {
 
 export type AppCategoryWhereUniqueInput = AtLeastOne<{
   id: ID_Input;
-  name?: String;
 }>;
 
 export interface StoryCategoryCreateInput {

@@ -175,7 +175,6 @@ input AppCategoryWhereInput {
 
 input AppCategoryWhereUniqueInput {
   id: ID
-  name: String
 }
 
 type AppConnection {
