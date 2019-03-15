@@ -17,11 +17,13 @@ enum AccountType {
 type AppCategory {
   id: ID!
   name: String!
+  apps: [App!]!
 }
 
 type AppVersion {
   id: ID!
   version: String!
+  apps: [App!]!
 }
 
 type StoryCategory {
@@ -40,7 +42,7 @@ input FileInput {
 }
 
 type AuthData {
-	userId: Int!
+	userId: ID!
 	token: String!
 	expiresIn: Int!
 }
@@ -199,6 +201,12 @@ input StoriesInput {
   app: ID!  
 }
 
+input StoryToAppInput {
+  story: ID!
+  app: ID!
+  type: LinkType!
+}
+
 type Library {
   id: ID!
   createBy: User!
@@ -243,6 +251,7 @@ type Mutation {
 
   createStory(createStoryInput: CreateStoryInput!): Story!
   storyToLibrary(storyToLibraryInput: StoryToLibraryInput!): Library!
+  storyToApp(storyToAppInput: StoryToAppInput!): Library!
 
   uploadFile(file: FileInput!): File!
 }
