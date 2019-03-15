@@ -164,6 +164,18 @@ const versions = async (parent,args,context) => {
 	return appVersions
 }
 
+const thumbnail = async (parent,args,context) => {
+	const thumbnail = await context.prisma.files({
+		where: {
+			stories_some: {
+				id: parent.id
+			},
+			mimetype_contains:"image"
+		}
+	})
+	return thumbnail[0];
+}
+
 module.exports = {
 	stories,
 	createStory,
@@ -172,5 +184,6 @@ module.exports = {
 	video,
 	elements,
 	categories,
-	versions
+	versions,
+	thumbnail
 }

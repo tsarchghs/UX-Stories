@@ -59,6 +59,7 @@ module.exports = {
 		video: storyResolvers.video,
 		elements: storyResolvers.elements,
 		categories: storyResolvers.categories,
-		versions: storyResolvers.versions
+		versions: storyResolvers.versions,
+		thumbnail: storyResolvers.thumbnail 
 	}
 }
