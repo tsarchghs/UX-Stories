@@ -9,15 +9,15 @@ const createStoryElement = async (root,args,context) => {
 	return storyElement;
 }
 
-const linkStoryElementToStory = async (root,args,context) => {
-	if (!args.linkStoryElementToStoryInput.storyElement || !args.linkStoryElementToStoryInput.story){
+const storyElementToStory = async (root,args,context) => {
+	if (!args.storyElementToStoryInput.storyElement || !args.storyElementToStoryInput.story){
 		throw new Error("Please check that all of your arguments are not empty!")
 	}
 	const story = await context.prisma.updateStory({
-		where:{ id: args.linkStoryElementToStoryInput.story },
+		where:{ id: args.storyElementToStoryInput.story },
 		data: {
 			elements: {
-				connect: { id: args.linkStoryElementToStoryInput.storyElement }
+				[args.storyElementToStoryInput.type]: { id: args.storyElementToStoryInput.storyElement }
 			}
 		}
 	})
@@ -54,5 +54,5 @@ module.exports = {
 	createStoryElement,
 	editStoryElement,
 	deleteStoryElement,
-	linkStoryElementToStory
+	storyElementToStory
 }
