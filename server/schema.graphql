@@ -4,6 +4,11 @@ enum Platform {
   ANDROID
 }
 
+enum LinkType {
+  connect
+  disconnect  
+}
+
 enum AccountType {
 	MEMBER
 	ADMIN
@@ -144,9 +149,10 @@ input AppInput {
   category: String!
 }
 
-input LinkAppVersionToAppInput {
+input AppVersionToAppInput {
   appVersion: ID!
-  app: ID!  
+  app: ID!
+  type: LinkType!
 }
 
 input LinkAppVersionToStoryInput {
@@ -181,7 +187,8 @@ type Mutation {
   createAppVersion(appVersionInput: AppVersionInput!): AppVersion!
   editAppVersion(editAppVersionInput: EditAppVersionInput!): AppVersion!
   deleteAppVersion(deleteAppVersionInput: DeleteAppVersionInput!): AppVersion!
-  linkAppVersionToApp(linkAppVersionToAppInput: LinkAppVersionToAppInput!): App!
+  appVersionToApp(appVersionToAppInput: AppVersionToAppInput!): App!
+
   linkAppVersionToStory(linkAppVersionToStoryInput: LinkAppVersionToStoryInput!): App!
 
   createStoryCategory(storyCategoryInput: StoryCategoryInput!): StoryCategory!
