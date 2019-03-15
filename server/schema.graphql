@@ -186,6 +186,11 @@ input DeleteLibraryInput {
   id: ID!
 }
 
+input StoryToLibraryInput {
+  story: ID!
+  library: ID!
+  type: LinkType!
+}
 
 type Library {
   id: ID!
@@ -229,6 +234,7 @@ type Mutation {
   deleteLibrary(deleteLibraryInput: DeleteLibraryInput!): Library!
 
   createStory(createStoryInput: CreateStoryInput!): Story!
+  storyToLibrary(storyToLibraryInput: StoryToLibraryInput!): Library!
 
   uploadFile(file: FileInput!): File!
 }
