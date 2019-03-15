@@ -55,6 +55,17 @@ module.exports = {
 					app: { id: parent.id }
 				}
 			})
+		},
+		async createBy(parent,args,context) {
+			const user = await context.prisma.users({
+				where: {	
+					apps_some: {
+						id: parent.id
+					}
+				}
+			});
+			console.log(user,1);
+			return user[0];
 		}
 	}
 }
