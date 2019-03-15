@@ -30,12 +30,13 @@ module.exports = {
 		createStoryCategory: storyCategoryResolvers.createStoryCategory,
 		editStoryCategory: storyCategoryResolvers.editStoryCategory,
 		deleteStoryCategory: storyCategoryResolvers.deleteStoryCategory,
+		linkStoryCategoryToStory: storyCategoryResolvers.linkStoryCategoryToStory,
 
 		createStoryElement: storyElementResolvers.createStoryElement,
 		editStoryElement: storyElementResolvers.editStoryElement,
 		deleteStoryElement: storyElementResolvers.deleteStoryElement,
 		linkStoryElementToStory: storyElementResolvers.linkStoryElementToStory,
-		
+
 		createStory: storyResolvers.createStory
 	}
 }
