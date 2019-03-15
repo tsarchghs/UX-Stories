@@ -66,6 +66,12 @@ module.exports = {
 			});
 			console.log(user,1);
 			return user[0];
-		}
+		},
+		async versions(parent,args,context){
+			const versions = await context.prisma.appVersions({
+				where: {
+
+				}
+			})
 	}
 }
