@@ -11,7 +11,7 @@ const server = new graphqlServer({
 	context: { prisma }
 });
 
-server.express.use(bodyParser.urlencoded({limit:"1000mb"}))
+server.express.use(bodyParser.urlencoded({limit:"1000mb",extended:true}))
 server.express.use(bodyParser.json({limit:"1000mb"}))
 
 server.use('/static', static(path.join(__dirname, 'public')))
