@@ -173,6 +173,13 @@ input StoryCategoryToStoryInput {
   type: LinkType! 
 }
 
+type Library {
+  id: ID!
+  createBy: User!
+  name: String!
+  stories: [Story!]!
+}
+
 type Query {
 	login(email: String!, password: String!): AuthData
 	users: [User!]!
