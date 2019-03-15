@@ -17,6 +17,22 @@ const createLibrary = async (root,args,context) => {
 	return library
 }
 
+const editLibrary = async (root,args,context) => {
+	if (!args.editLibraryInput.id || !args.editLibraryInput.name) {
+		throw new Error("Please check that all of your arguments are not empty!")
+	}
+	const userId = "cjsxdc4kg35h90b3039qediof";
+	const createBy = await context.prisma.user({id:userId});
+	const library = await context.prisma.updateLibrary({
+		where: { id: args.editLibraryInput.id},
+		data:{
+			name: args.editLibraryInput.name
+		}
+	})
+	return library
+}
+
 module.exports = {
-	createLibrary
+	createLibrary,
+	editLibrary
 }

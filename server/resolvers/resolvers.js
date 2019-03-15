@@ -39,7 +39,8 @@ module.exports = {
 		storyElementToStory: storyElementResolvers.storyElementToStory,
 
 		createLibrary: libraryResolvers.createLibrary,
-
+		editLibrary: libraryResolvers.editLibrary,
+		
 		createStory: storyResolvers.createStory
 	}
 }
