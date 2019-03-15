@@ -57,7 +57,7 @@ module.exports = {
 			})
 		},
 		async createBy(parent,args,context) {
-			const user = context.prisma.users({
+			const user = await context.prisma.users({
 				where: {	
 					apps_some: {
 						id: parent.id
@@ -84,6 +84,16 @@ module.exports = {
 				}
 			})
 			return category[0];
+		},
+		async logo(parent,args,context) {
+			const logo = await context.prisma.files({
+				where: {
+					apps_some: {
+						id: parent.id
+					}
+				}
+			})
+			return logo[0];
 		}
 	}
 }
