@@ -16,6 +16,7 @@ type User {
   password: String!
   role: AccountType!
   apps: [App!]!
+  libraries: [Library!]!
 }
 
 type App {
