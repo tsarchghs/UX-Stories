@@ -12,7 +12,8 @@ module.exports = {
 	Query: {
 		login: authResolvers.login,
 		apps: appResolvers.apps,
-		stories: storyResolvers.stories
+		stories: storyResolvers.stories,
+		libraries: libraryResolvers.libraries
 	},
 	Mutation: {
 		signUp: authResolvers.signUp,

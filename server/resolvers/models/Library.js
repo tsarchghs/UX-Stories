@@ -1,10 +1,24 @@
 
 
+const libraries = async (root,args,context) => {
+	const userId = "cjtabbnzyqlww0b79zgo8k7ku";
+	const createBy = await context.prisma.user({id:userId});
+	
+	const libraries = await context.prisma.libraries({
+		where: {
+			createBy: {
+				id: createBy.id
+			}
+		}
+	})
+	return libraries;
+}
+
 const createLibrary = async (root,args,context) => {
 	if (!args.createLibraryInput.name) {
 		throw new Error("Please check that all of your arguments are not empty!")
 	}
-	const userId = "cjsxdc4kg35h90b3039qediof";
+	const userId = "cjtabbnzyqlww0b79zgo8k7ku";
 	const createBy = await context.prisma.user({id:userId});
 	const library = await context.prisma.createLibrary({
 		createBy: {
@@ -21,7 +35,7 @@ const editLibrary = async (root,args,context) => {
 	if (!args.editLibraryInput.id || !args.editLibraryInput.name) {
 		throw new Error("Please check that all of your arguments are not empty!")
 	}
-	const userId = "cjsxdc4kg35h90b3039qediof";
+	const userId = "cjtabbnzyqlww0b79zgo8k7ku";
 	const createBy = await context.prisma.user({id:userId});
 	const library = await context.prisma.updateLibrary({
 		where: { id: args.editLibraryInput.id},
@@ -36,7 +50,7 @@ const deleteLibrary = async (root,args,context,info) => {
 	if (!args.deleteLibraryInput.id) {
 		throw new Error("Please check that all of your arguments are not empty!")
 	}
-	const userId = "cjsxdc4kg35h90b3039qediof";
+	const userId = "cjtabbnzyqlww0b79zgo8k7ku";
 	const createBy = await context.prisma.user({id:userId});
 	// var library = await context.prisma.library({id: args.deleteLibraryInput.id});
 	// if (library.createBy.id !== createBy.id){
@@ -47,6 +61,7 @@ const deleteLibrary = async (root,args,context,info) => {
 }
 
 module.exports = {
+	libraries,
 	createLibrary,
 	editLibrary,
 	deleteLibrary
