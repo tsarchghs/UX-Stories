@@ -6,6 +6,7 @@ const storyCategoryResolvers = require("./models/StoryCategory");
 const fileResolvers = require("./models/File");
 const storyElementResolvers = require("./models/StoryElement");
 const storyResolvers = require("./models/Story");
+const libraryResolvers = require("./models/Library");
 
 module.exports = {
 	Query: {
@@ -36,6 +37,8 @@ module.exports = {
 		editStoryElement: storyElementResolvers.editStoryElement,
 		deleteStoryElement: storyElementResolvers.deleteStoryElement,
 		storyElementToStory: storyElementResolvers.storyElementToStory,
+
+		createLibrary: libraryResolvers.createLibrary,
 
 		createStory: storyResolvers.createStory
 	}
