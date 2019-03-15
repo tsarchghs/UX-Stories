@@ -29,6 +29,7 @@ type AppVersion {
 type StoryCategory {
   id: ID!
   name: String!
+  stories: [Story!]!
 }
 
 type File {
