@@ -54,6 +54,7 @@ type App {
   logo: File
   versions(where: AppVersionWhereInput, orderBy: AppVersionOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [AppVersion!]
   category: AppCategory!
+  stories(where: StoryWhereInput, orderBy: StoryOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Story!]
 }
 
 type AppCategory {
@@ -185,7 +186,40 @@ type AppConnection {
 }
 
 input AppCreateInput {
-  createBy: UserCreateOneInput!
+  createBy: UserCreateOneWithoutAppsInput!
+  name: String!
+  description: String
+  company: String!
+  platform: Platform!
+  logo: FileCreateOneInput
+  versions: AppVersionCreateManyInput
+  category: AppCategoryCreateOneInput!
+  stories: StoryCreateManyWithoutAppInput
+}
+
+input AppCreateManyWithoutCreateByInput {
+  create: [AppCreateWithoutCreateByInput!]
+  connect: [AppWhereUniqueInput!]
+}
+
+input AppCreateOneWithoutStoriesInput {
+  create: AppCreateWithoutStoriesInput
+  connect: AppWhereUniqueInput
+}
+
+input AppCreateWithoutCreateByInput {
+  name: String!
+  description: String
+  company: String!
+  platform: Platform!
+  logo: FileCreateOneInput
+  versions: AppVersionCreateManyInput
+  category: AppCategoryCreateOneInput!
+  stories: StoryCreateManyWithoutAppInput
+}
+
+input AppCreateWithoutStoriesInput {
+  createBy: UserCreateOneWithoutAppsInput!
   name: String!
   description: String
   company: String!
@@ -225,6 +259,72 @@ type AppPreviousValues {
   platform: Platform!
 }
 
+input AppScalarWhereInput {
+  id: ID
+  id_not: ID
+  id_in: [ID!]
+  id_not_in: [ID!]
+  id_lt: ID
+  id_lte: ID
+  id_gt: ID
+  id_gte: ID
+  id_contains: ID
+  id_not_contains: ID
+  id_starts_with: ID
+  id_not_starts_with: ID
+  id_ends_with: ID
+  id_not_ends_with: ID
+  name: String
+  name_not: String
+  name_in: [String!]
+  name_not_in: [String!]
+  name_lt: String
+  name_lte: String
+  name_gt: String
+  name_gte: String
+  name_contains: String
+  name_not_contains: String
+  name_starts_with: String
+  name_not_starts_with: String
+  name_ends_with: String
+  name_not_ends_with: String
+  description: String
+  description_not: String
+  description_in: [String!]
+  description_not_in: [String!]
+  description_lt: String
+  description_lte: String
+  description_gt: String
+  description_gte: String
+  description_contains: String
+  description_not_contains: String
+  description_starts_with: String
+  description_not_starts_with: String
+  description_ends_with: String
+  description_not_ends_with: String
+  company: String
+  company_not: String
+  company_in: [String!]
+  company_not_in: [String!]
+  company_lt: String
+  company_lte: String
+  company_gt: String
+  company_gte: String
+  company_contains: String
+  company_not_contains: String
+  company_starts_with: String
+  company_not_starts_with: String
+  company_ends_with: String
+  company_not_ends_with: String
+  platform: Platform
+  platform_not: Platform
+  platform_in: [Platform!]
+  platform_not_in: [Platform!]
+  AND: [AppScalarWhereInput!]
+  OR: [AppScalarWhereInput!]
+  NOT: [AppScalarWhereInput!]
+}
+
 type AppSubscriptionPayload {
   mutation: MutationType!
   node: App
@@ -244,7 +344,68 @@ input AppSubscriptionWhereInput {
 }
 
 input AppUpdateInput {
-  createBy: UserUpdateOneRequiredInput
+  createBy: UserUpdateOneRequiredWithoutAppsInput
+  name: String
+  description: String
+  company: String
+  platform: Platform
+  logo: FileUpdateOneInput
+  versions: AppVersionUpdateManyInput
+  category: AppCategoryUpdateOneRequiredInput
+  stories: StoryUpdateManyWithoutAppInput
+}
+
+input AppUpdateManyDataInput {
+  name: String
+  description: String
+  company: String
+  platform: Platform
+}
+
+input AppUpdateManyMutationInput {
+  name: String
+  description: String
+  company: String
+  platform: Platform
+}
+
+input AppUpdateManyWithoutCreateByInput {
+  create: [AppCreateWithoutCreateByInput!]
+  delete: [AppWhereUniqueInput!]
+  connect: [AppWhereUniqueInput!]
+  set: [AppWhereUniqueInput!]
+  disconnect: [AppWhereUniqueInput!]
+  update: [AppUpdateWithWhereUniqueWithoutCreateByInput!]
+  upsert: [AppUpsertWithWhereUniqueWithoutCreateByInput!]
+  deleteMany: [AppScalarWhereInput!]
+  updateMany: [AppUpdateManyWithWhereNestedInput!]
+}
+
+input AppUpdateManyWithWhereNestedInput {
+  where: AppScalarWhereInput!
+  data: AppUpdateManyDataInput!
+}
+
+input AppUpdateOneRequiredWithoutStoriesInput {
+  create: AppCreateWithoutStoriesInput
+  update: AppUpdateWithoutStoriesDataInput
+  upsert: AppUpsertWithoutStoriesInput
+  connect: AppWhereUniqueInput
+}
+
+input AppUpdateWithoutCreateByDataInput {
+  name: String
+  description: String
+  company: String
+  platform: Platform
+  logo: FileUpdateOneInput
+  versions: AppVersionUpdateManyInput
+  category: AppCategoryUpdateOneRequiredInput
+  stories: StoryUpdateManyWithoutAppInput
+}
+
+input AppUpdateWithoutStoriesDataInput {
+  createBy: UserUpdateOneRequiredWithoutAppsInput
   name: String
   description: String
   company: String
@@ -254,11 +415,20 @@ input AppUpdateInput {
   category: AppCategoryUpdateOneRequiredInput
 }
 
-input AppUpdateManyMutationInput {
-  name: String
-  description: String
-  company: String
-  platform: Platform
+input AppUpdateWithWhereUniqueWithoutCreateByInput {
+  where: AppWhereUniqueInput!
+  data: AppUpdateWithoutCreateByDataInput!
+}
+
+input AppUpsertWithoutStoriesInput {
+  update: AppUpdateWithoutStoriesDataInput!
+  create: AppCreateWithoutStoriesInput!
+}
+
+input AppUpsertWithWhereUniqueWithoutCreateByInput {
+  where: AppWhereUniqueInput!
+  update: AppUpdateWithoutCreateByDataInput!
+  create: AppCreateWithoutCreateByInput!
 }
 
 type AppVersion {
@@ -504,6 +674,9 @@ input AppWhereInput {
   versions_some: AppVersionWhereInput
   versions_none: AppVersionWhereInput
   category: AppCategoryWhereInput
+  stories_every: StoryWhereInput
+  stories_some: StoryWhereInput
+  stories_none: StoryWhereInput
   AND: [AppWhereInput!]
   OR: [AppWhereInput!]
   NOT: [AppWhereInput!]
@@ -959,6 +1132,7 @@ type Query {
 
 type Story {
   id: ID!
+  app: App!
   createBy: User!
   video: File!
   thumbnail: File!
@@ -1150,6 +1324,7 @@ type StoryConnection {
 }
 
 input StoryCreateInput {
+  app: AppCreateOneWithoutStoriesInput!
   createBy: UserCreateOneInput!
   video: FileCreateOneInput!
   thumbnail: FileCreateOneInput!
@@ -1161,6 +1336,20 @@ input StoryCreateInput {
 input StoryCreateManyInput {
   create: [StoryCreateInput!]
   connect: [StoryWhereUniqueInput!]
+}
+
+input StoryCreateManyWithoutAppInput {
+  create: [StoryCreateWithoutAppInput!]
+  connect: [StoryWhereUniqueInput!]
+}
+
+input StoryCreateWithoutAppInput {
+  createBy: UserCreateOneInput!
+  video: FileCreateOneInput!
+  thumbnail: FileCreateOneInput!
+  versions: AppVersionCreateManyInput
+  categories: StoryCategoryCreateManyInput
+  elements: StoryElementCreateManyInput
 }
 
 type StoryEdge {
@@ -1396,6 +1585,7 @@ input StorySubscriptionWhereInput {
 }
 
 input StoryUpdateDataInput {
+  app: AppUpdateOneRequiredWithoutStoriesInput
   createBy: UserUpdateOneRequiredInput
   video: FileUpdateOneRequiredInput
   thumbnail: FileUpdateOneRequiredInput
@@ -1405,6 +1595,7 @@ input StoryUpdateDataInput {
 }
 
 input StoryUpdateInput {
+  app: AppUpdateOneRequiredWithoutStoriesInput
   createBy: UserUpdateOneRequiredInput
   video: FileUpdateOneRequiredInput
   thumbnail: FileUpdateOneRequiredInput
@@ -1424,15 +1615,46 @@ input StoryUpdateManyInput {
   deleteMany: [StoryScalarWhereInput!]
 }
 
+input StoryUpdateManyWithoutAppInput {
+  create: [StoryCreateWithoutAppInput!]
+  delete: [StoryWhereUniqueInput!]
+  connect: [StoryWhereUniqueInput!]
+  set: [StoryWhereUniqueInput!]
+  disconnect: [StoryWhereUniqueInput!]
+  update: [StoryUpdateWithWhereUniqueWithoutAppInput!]
+  upsert: [StoryUpsertWithWhereUniqueWithoutAppInput!]
+  deleteMany: [StoryScalarWhereInput!]
+}
+
+input StoryUpdateWithoutAppDataInput {
+  createBy: UserUpdateOneRequiredInput
+  video: FileUpdateOneRequiredInput
+  thumbnail: FileUpdateOneRequiredInput
+  versions: AppVersionUpdateManyInput
+  categories: StoryCategoryUpdateManyInput
+  elements: StoryElementUpdateManyInput
+}
+
 input StoryUpdateWithWhereUniqueNestedInput {
   where: StoryWhereUniqueInput!
   data: StoryUpdateDataInput!
+}
+
+input StoryUpdateWithWhereUniqueWithoutAppInput {
+  where: StoryWhereUniqueInput!
+  data: StoryUpdateWithoutAppDataInput!
 }
 
 input StoryUpsertWithWhereUniqueNestedInput {
   where: StoryWhereUniqueInput!
   update: StoryUpdateDataInput!
   create: StoryCreateInput!
+}
+
+input StoryUpsertWithWhereUniqueWithoutAppInput {
+  where: StoryWhereUniqueInput!
+  update: StoryUpdateWithoutAppDataInput!
+  create: StoryCreateWithoutAppInput!
 }
 
 input StoryWhereInput {
@@ -1450,6 +1672,7 @@ input StoryWhereInput {
   id_not_starts_with: ID
   id_ends_with: ID
   id_not_ends_with: ID
+  app: AppWhereInput
   createBy: UserWhereInput
   video: FileWhereInput
   thumbnail: FileWhereInput
@@ -1489,6 +1712,7 @@ type User {
   name: String!
   password: String!
   role: AccountType!
+  apps(where: AppWhereInput, orderBy: AppOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [App!]
 }
 
 type UserConnection {
@@ -1502,11 +1726,24 @@ input UserCreateInput {
   name: String!
   password: String!
   role: AccountType!
+  apps: AppCreateManyWithoutCreateByInput
 }
 
 input UserCreateOneInput {
   create: UserCreateInput
   connect: UserWhereUniqueInput
+}
+
+input UserCreateOneWithoutAppsInput {
+  create: UserCreateWithoutAppsInput
+  connect: UserWhereUniqueInput
+}
+
+input UserCreateWithoutAppsInput {
+  email: String!
+  name: String!
+  password: String!
+  role: AccountType!
 }
 
 type UserEdge {
@@ -1562,6 +1799,7 @@ input UserUpdateDataInput {
   name: String
   password: String
   role: AccountType
+  apps: AppUpdateManyWithoutCreateByInput
 }
 
 input UserUpdateInput {
@@ -1569,6 +1807,7 @@ input UserUpdateInput {
   name: String
   password: String
   role: AccountType
+  apps: AppUpdateManyWithoutCreateByInput
 }
 
 input UserUpdateManyMutationInput {
@@ -1585,9 +1824,28 @@ input UserUpdateOneRequiredInput {
   connect: UserWhereUniqueInput
 }
 
+input UserUpdateOneRequiredWithoutAppsInput {
+  create: UserCreateWithoutAppsInput
+  update: UserUpdateWithoutAppsDataInput
+  upsert: UserUpsertWithoutAppsInput
+  connect: UserWhereUniqueInput
+}
+
+input UserUpdateWithoutAppsDataInput {
+  email: String
+  name: String
+  password: String
+  role: AccountType
+}
+
 input UserUpsertNestedInput {
   update: UserUpdateDataInput!
   create: UserCreateInput!
+}
+
+input UserUpsertWithoutAppsInput {
+  update: UserUpdateWithoutAppsDataInput!
+  create: UserCreateWithoutAppsInput!
 }
 
 input UserWhereInput {
@@ -1651,6 +1909,9 @@ input UserWhereInput {
   role_not: AccountType
   role_in: [AccountType!]
   role_not_in: [AccountType!]
+  apps_every: AppWhereInput
+  apps_some: AppWhereInput
+  apps_none: AppWhereInput
   AND: [UserWhereInput!]
   OR: [UserWhereInput!]
   NOT: [UserWhereInput!]

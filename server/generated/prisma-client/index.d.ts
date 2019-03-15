@@ -469,7 +469,7 @@ export interface ClientConstructor<T> {
  * Types
  */
 
-export type StoryElementOrderByInput =
+export type AppCategoryOrderByInput =
   | "id_ASC"
   | "id_DESC"
   | "name_ASC"
@@ -495,15 +495,7 @@ export type AppOrderByInput =
   | "updatedAt_ASC"
   | "updatedAt_DESC";
 
-export type StoryCategoryOrderByInput =
-  | "id_ASC"
-  | "id_DESC"
-  | "name_ASC"
-  | "name_DESC"
-  | "createdAt_ASC"
-  | "createdAt_DESC"
-  | "updatedAt_ASC"
-  | "updatedAt_DESC";
+export type Platform = "IOS" | "ANDROID";
 
 export type UserOrderByInput =
   | "id_ASC"
@@ -520,32 +512,6 @@ export type UserOrderByInput =
   | "createdAt_DESC"
   | "updatedAt_ASC"
   | "updatedAt_DESC";
-
-export type AppCategoryOrderByInput =
-  | "id_ASC"
-  | "id_DESC"
-  | "name_ASC"
-  | "name_DESC"
-  | "createdAt_ASC"
-  | "createdAt_DESC"
-  | "updatedAt_ASC"
-  | "updatedAt_DESC";
-
-export type FileOrderByInput =
-  | "id_ASC"
-  | "id_DESC"
-  | "createdAt_ASC"
-  | "createdAt_DESC"
-  | "updatedAt_ASC"
-  | "updatedAt_DESC"
-  | "filename_ASC"
-  | "filename_DESC"
-  | "mimetype_ASC"
-  | "mimetype_DESC"
-  | "encoding_ASC"
-  | "encoding_DESC"
-  | "url_ASC"
-  | "url_DESC";
 
 export type AppVersionOrderByInput =
   | "id_ASC"
@@ -565,6 +531,26 @@ export type StoryOrderByInput =
   | "updatedAt_ASC"
   | "updatedAt_DESC";
 
+export type StoryCategoryOrderByInput =
+  | "id_ASC"
+  | "id_DESC"
+  | "name_ASC"
+  | "name_DESC"
+  | "createdAt_ASC"
+  | "createdAt_DESC"
+  | "updatedAt_ASC"
+  | "updatedAt_DESC";
+
+export type StoryElementOrderByInput =
+  | "id_ASC"
+  | "id_DESC"
+  | "name_ASC"
+  | "name_DESC"
+  | "createdAt_ASC"
+  | "createdAt_DESC"
+  | "updatedAt_ASC"
+  | "updatedAt_DESC";
+
 export type LibraryOrderByInput =
   | "id_ASC"
   | "id_DESC"
@@ -577,24 +563,54 @@ export type LibraryOrderByInput =
 
 export type MutationType = "CREATED" | "UPDATED" | "DELETED";
 
-export type Platform = "IOS" | "ANDROID";
+export type FileOrderByInput =
+  | "id_ASC"
+  | "id_DESC"
+  | "createdAt_ASC"
+  | "createdAt_DESC"
+  | "updatedAt_ASC"
+  | "updatedAt_DESC"
+  | "filename_ASC"
+  | "filename_DESC"
+  | "mimetype_ASC"
+  | "mimetype_DESC"
+  | "encoding_ASC"
+  | "encoding_DESC"
+  | "url_ASC"
+  | "url_DESC";
 
 export type AccountType = "MEMBER" | "ADMIN";
 
-export interface FileUpdateOneInput {
-  create?: FileCreateInput;
-  update?: FileUpdateDataInput;
-  upsert?: FileUpsertNestedInput;
-  delete?: Boolean;
-  disconnect?: Boolean;
-  connect?: FileWhereUniqueInput;
+export interface AppVersionUpdateManyInput {
+  create?: AppVersionCreateInput[] | AppVersionCreateInput;
+  update?:
+    | AppVersionUpdateWithWhereUniqueNestedInput[]
+    | AppVersionUpdateWithWhereUniqueNestedInput;
+  upsert?:
+    | AppVersionUpsertWithWhereUniqueNestedInput[]
+    | AppVersionUpsertWithWhereUniqueNestedInput;
+  delete?: AppVersionWhereUniqueInput[] | AppVersionWhereUniqueInput;
+  connect?: AppVersionWhereUniqueInput[] | AppVersionWhereUniqueInput;
+  set?: AppVersionWhereUniqueInput[] | AppVersionWhereUniqueInput;
+  disconnect?: AppVersionWhereUniqueInput[] | AppVersionWhereUniqueInput;
+  deleteMany?: AppVersionScalarWhereInput[] | AppVersionScalarWhereInput;
+  updateMany?:
+    | AppVersionUpdateManyWithWhereNestedInput[]
+    | AppVersionUpdateManyWithWhereNestedInput;
 }
 
 export type AppWhereUniqueInput = AtLeastOne<{
   id: ID_Input;
 }>;
 
-export interface AppVersionScalarWhereInput {
+export interface AppCategoryUpdateOneRequiredInput {
+  create?: AppCategoryCreateInput;
+  update?: AppCategoryUpdateDataInput;
+  upsert?: AppCategoryUpsertNestedInput;
+  connect?: AppCategoryWhereUniqueInput;
+}
+
+export interface StoryCategoryWhereInput {
   id?: ID_Input;
   id_not?: ID_Input;
   id_in?: ID_Input[] | ID_Input;
@@ -609,23 +625,244 @@ export interface AppVersionScalarWhereInput {
   id_not_starts_with?: ID_Input;
   id_ends_with?: ID_Input;
   id_not_ends_with?: ID_Input;
-  version?: String;
-  version_not?: String;
-  version_in?: String[] | String;
-  version_not_in?: String[] | String;
-  version_lt?: String;
-  version_lte?: String;
-  version_gt?: String;
-  version_gte?: String;
-  version_contains?: String;
-  version_not_contains?: String;
-  version_starts_with?: String;
-  version_not_starts_with?: String;
-  version_ends_with?: String;
-  version_not_ends_with?: String;
-  AND?: AppVersionScalarWhereInput[] | AppVersionScalarWhereInput;
-  OR?: AppVersionScalarWhereInput[] | AppVersionScalarWhereInput;
-  NOT?: AppVersionScalarWhereInput[] | AppVersionScalarWhereInput;
+  name?: String;
+  name_not?: String;
+  name_in?: String[] | String;
+  name_not_in?: String[] | String;
+  name_lt?: String;
+  name_lte?: String;
+  name_gt?: String;
+  name_gte?: String;
+  name_contains?: String;
+  name_not_contains?: String;
+  name_starts_with?: String;
+  name_not_starts_with?: String;
+  name_ends_with?: String;
+  name_not_ends_with?: String;
+  AND?: StoryCategoryWhereInput[] | StoryCategoryWhereInput;
+  OR?: StoryCategoryWhereInput[] | StoryCategoryWhereInput;
+  NOT?: StoryCategoryWhereInput[] | StoryCategoryWhereInput;
+}
+
+export interface AppCategoryUpdateDataInput {
+  name?: String;
+}
+
+export interface StoryWhereInput {
+  id?: ID_Input;
+  id_not?: ID_Input;
+  id_in?: ID_Input[] | ID_Input;
+  id_not_in?: ID_Input[] | ID_Input;
+  id_lt?: ID_Input;
+  id_lte?: ID_Input;
+  id_gt?: ID_Input;
+  id_gte?: ID_Input;
+  id_contains?: ID_Input;
+  id_not_contains?: ID_Input;
+  id_starts_with?: ID_Input;
+  id_not_starts_with?: ID_Input;
+  id_ends_with?: ID_Input;
+  id_not_ends_with?: ID_Input;
+  app?: AppWhereInput;
+  createBy?: UserWhereInput;
+  video?: FileWhereInput;
+  thumbnail?: FileWhereInput;
+  versions_every?: AppVersionWhereInput;
+  versions_some?: AppVersionWhereInput;
+  versions_none?: AppVersionWhereInput;
+  categories_every?: StoryCategoryWhereInput;
+  categories_some?: StoryCategoryWhereInput;
+  categories_none?: StoryCategoryWhereInput;
+  elements_every?: StoryElementWhereInput;
+  elements_some?: StoryElementWhereInput;
+  elements_none?: StoryElementWhereInput;
+  AND?: StoryWhereInput[] | StoryWhereInput;
+  OR?: StoryWhereInput[] | StoryWhereInput;
+  NOT?: StoryWhereInput[] | StoryWhereInput;
+}
+
+export interface AppVersionCreateManyInput {
+  create?: AppVersionCreateInput[] | AppVersionCreateInput;
+  connect?: AppVersionWhereUniqueInput[] | AppVersionWhereUniqueInput;
+}
+
+export interface StoryElementUpdateManyWithWhereNestedInput {
+  where: StoryElementScalarWhereInput;
+  data: StoryElementUpdateManyDataInput;
+}
+
+export interface AppVersionCreateInput {
+  version: String;
+}
+
+export interface AppCategoryUpsertNestedInput {
+  update: AppCategoryUpdateDataInput;
+  create: AppCategoryCreateInput;
+}
+
+export interface AppCategoryCreateOneInput {
+  create?: AppCategoryCreateInput;
+  connect?: AppCategoryWhereUniqueInput;
+}
+
+export interface StoryElementSubscriptionWhereInput {
+  mutation_in?: MutationType[] | MutationType;
+  updatedFields_contains?: String;
+  updatedFields_contains_every?: String[] | String;
+  updatedFields_contains_some?: String[] | String;
+  node?: StoryElementWhereInput;
+  AND?:
+    | StoryElementSubscriptionWhereInput[]
+    | StoryElementSubscriptionWhereInput;
+  OR?:
+    | StoryElementSubscriptionWhereInput[]
+    | StoryElementSubscriptionWhereInput;
+  NOT?:
+    | StoryElementSubscriptionWhereInput[]
+    | StoryElementSubscriptionWhereInput;
+}
+
+export interface AppCategoryCreateInput {
+  name: String;
+}
+
+export interface StoryCategorySubscriptionWhereInput {
+  mutation_in?: MutationType[] | MutationType;
+  updatedFields_contains?: String;
+  updatedFields_contains_every?: String[] | String;
+  updatedFields_contains_some?: String[] | String;
+  node?: StoryCategoryWhereInput;
+  AND?:
+    | StoryCategorySubscriptionWhereInput[]
+    | StoryCategorySubscriptionWhereInput;
+  OR?:
+    | StoryCategorySubscriptionWhereInput[]
+    | StoryCategorySubscriptionWhereInput;
+  NOT?:
+    | StoryCategorySubscriptionWhereInput[]
+    | StoryCategorySubscriptionWhereInput;
+}
+
+export interface StoryCreateManyWithoutAppInput {
+  create?: StoryCreateWithoutAppInput[] | StoryCreateWithoutAppInput;
+  connect?: StoryWhereUniqueInput[] | StoryWhereUniqueInput;
+}
+
+export interface LibrarySubscriptionWhereInput {
+  mutation_in?: MutationType[] | MutationType;
+  updatedFields_contains?: String;
+  updatedFields_contains_every?: String[] | String;
+  updatedFields_contains_some?: String[] | String;
+  node?: LibraryWhereInput;
+  AND?: LibrarySubscriptionWhereInput[] | LibrarySubscriptionWhereInput;
+  OR?: LibrarySubscriptionWhereInput[] | LibrarySubscriptionWhereInput;
+  NOT?: LibrarySubscriptionWhereInput[] | LibrarySubscriptionWhereInput;
+}
+
+export interface StoryCreateWithoutAppInput {
+  createBy: UserCreateOneInput;
+  video: FileCreateOneInput;
+  thumbnail: FileCreateOneInput;
+  versions?: AppVersionCreateManyInput;
+  categories?: StoryCategoryCreateManyInput;
+  elements?: StoryElementCreateManyInput;
+}
+
+export interface FileSubscriptionWhereInput {
+  mutation_in?: MutationType[] | MutationType;
+  updatedFields_contains?: String;
+  updatedFields_contains_every?: String[] | String;
+  updatedFields_contains_some?: String[] | String;
+  node?: FileWhereInput;
+  AND?: FileSubscriptionWhereInput[] | FileSubscriptionWhereInput;
+  OR?: FileSubscriptionWhereInput[] | FileSubscriptionWhereInput;
+  NOT?: FileSubscriptionWhereInput[] | FileSubscriptionWhereInput;
+}
+
+export interface UserCreateOneInput {
+  create?: UserCreateInput;
+  connect?: UserWhereUniqueInput;
+}
+
+export interface AppCategorySubscriptionWhereInput {
+  mutation_in?: MutationType[] | MutationType;
+  updatedFields_contains?: String;
+  updatedFields_contains_every?: String[] | String;
+  updatedFields_contains_some?: String[] | String;
+  node?: AppCategoryWhereInput;
+  AND?: AppCategorySubscriptionWhereInput[] | AppCategorySubscriptionWhereInput;
+  OR?: AppCategorySubscriptionWhereInput[] | AppCategorySubscriptionWhereInput;
+  NOT?: AppCategorySubscriptionWhereInput[] | AppCategorySubscriptionWhereInput;
+}
+
+export interface UserCreateInput {
+  email: String;
+  name: String;
+  password: String;
+  role: AccountType;
+  apps?: AppCreateManyWithoutCreateByInput;
+}
+
+export interface UserUpdateManyMutationInput {
+  email?: String;
+  name?: String;
+  password?: String;
+  role?: AccountType;
+}
+
+export interface AppCreateManyWithoutCreateByInput {
+  create?: AppCreateWithoutCreateByInput[] | AppCreateWithoutCreateByInput;
+  connect?: AppWhereUniqueInput[] | AppWhereUniqueInput;
+}
+
+export type AppCategoryWhereUniqueInput = AtLeastOne<{
+  id: ID_Input;
+  name?: String;
+}>;
+
+export interface AppCreateWithoutCreateByInput {
+  name: String;
+  description?: String;
+  company: String;
+  platform: Platform;
+  logo?: FileCreateOneInput;
+  versions?: AppVersionCreateManyInput;
+  category: AppCategoryCreateOneInput;
+  stories?: StoryCreateManyWithoutAppInput;
+}
+
+export interface StoryElementUpdateManyMutationInput {
+  name?: String;
+}
+
+export interface StoryCategoryCreateManyInput {
+  create?: StoryCategoryCreateInput[] | StoryCategoryCreateInput;
+  connect?: StoryCategoryWhereUniqueInput[] | StoryCategoryWhereUniqueInput;
+}
+
+export interface StoryCategoryUpdateManyMutationInput {
+  name?: String;
+}
+
+export interface StoryCategoryCreateInput {
+  name: String;
+}
+
+export interface StoryCategoryUpdateInput {
+  name?: String;
+}
+
+export interface StoryElementCreateManyInput {
+  create?: StoryElementCreateInput[] | StoryElementCreateInput;
+  connect?: StoryElementWhereUniqueInput[] | StoryElementWhereUniqueInput;
+}
+
+export interface LibraryUpdateManyMutationInput {
+  name?: String;
+}
+
+export interface StoryElementCreateInput {
+  name: String;
 }
 
 export interface AppWhereInput {
@@ -695,14 +932,618 @@ export interface AppWhereInput {
   versions_some?: AppVersionWhereInput;
   versions_none?: AppVersionWhereInput;
   category?: AppCategoryWhereInput;
+  stories_every?: StoryWhereInput;
+  stories_some?: StoryWhereInput;
+  stories_none?: StoryWhereInput;
   AND?: AppWhereInput[] | AppWhereInput;
   OR?: AppWhereInput[] | AppWhereInput;
   NOT?: AppWhereInput[] | AppWhereInput;
 }
 
+export interface AppUpdateInput {
+  createBy?: UserUpdateOneRequiredWithoutAppsInput;
+  name?: String;
+  description?: String;
+  company?: String;
+  platform?: Platform;
+  logo?: FileUpdateOneInput;
+  versions?: AppVersionUpdateManyInput;
+  category?: AppCategoryUpdateOneRequiredInput;
+  stories?: StoryUpdateManyWithoutAppInput;
+}
+
+export interface AppUpsertWithoutStoriesInput {
+  update: AppUpdateWithoutStoriesDataInput;
+  create: AppCreateWithoutStoriesInput;
+}
+
+export interface UserUpdateOneRequiredWithoutAppsInput {
+  create?: UserCreateWithoutAppsInput;
+  update?: UserUpdateWithoutAppsDataInput;
+  upsert?: UserUpsertWithoutAppsInput;
+  connect?: UserWhereUniqueInput;
+}
+
+export type LibraryWhereUniqueInput = AtLeastOne<{
+  id: ID_Input;
+}>;
+
+export interface UserUpdateWithoutAppsDataInput {
+  email?: String;
+  name?: String;
+  password?: String;
+  role?: AccountType;
+}
+
+export interface LibraryWhereInput {
+  id?: ID_Input;
+  id_not?: ID_Input;
+  id_in?: ID_Input[] | ID_Input;
+  id_not_in?: ID_Input[] | ID_Input;
+  id_lt?: ID_Input;
+  id_lte?: ID_Input;
+  id_gt?: ID_Input;
+  id_gte?: ID_Input;
+  id_contains?: ID_Input;
+  id_not_contains?: ID_Input;
+  id_starts_with?: ID_Input;
+  id_not_starts_with?: ID_Input;
+  id_ends_with?: ID_Input;
+  id_not_ends_with?: ID_Input;
+  createBy?: UserWhereInput;
+  name?: String;
+  name_not?: String;
+  name_in?: String[] | String;
+  name_not_in?: String[] | String;
+  name_lt?: String;
+  name_lte?: String;
+  name_gt?: String;
+  name_gte?: String;
+  name_contains?: String;
+  name_not_contains?: String;
+  name_starts_with?: String;
+  name_not_starts_with?: String;
+  name_ends_with?: String;
+  name_not_ends_with?: String;
+  stories_every?: StoryWhereInput;
+  stories_some?: StoryWhereInput;
+  stories_none?: StoryWhereInput;
+  AND?: LibraryWhereInput[] | LibraryWhereInput;
+  OR?: LibraryWhereInput[] | LibraryWhereInput;
+  NOT?: LibraryWhereInput[] | LibraryWhereInput;
+}
+
+export interface UserUpsertWithoutAppsInput {
+  update: UserUpdateWithoutAppsDataInput;
+  create: UserCreateWithoutAppsInput;
+}
+
+export interface StoryUpdateWithWhereUniqueNestedInput {
+  where: StoryWhereUniqueInput;
+  data: StoryUpdateDataInput;
+}
+
+export interface FileUpdateOneInput {
+  create?: FileCreateInput;
+  update?: FileUpdateDataInput;
+  upsert?: FileUpsertNestedInput;
+  delete?: Boolean;
+  disconnect?: Boolean;
+  connect?: FileWhereUniqueInput;
+}
+
+export interface LibraryUpdateInput {
+  createBy?: UserUpdateOneRequiredInput;
+  name?: String;
+  stories?: StoryUpdateManyInput;
+}
+
+export interface FileUpdateDataInput {
+  filename?: String;
+  mimetype?: String;
+  encoding?: String;
+  url?: String;
+}
+
+export interface AppCreateWithoutStoriesInput {
+  createBy: UserCreateOneWithoutAppsInput;
+  name: String;
+  description?: String;
+  company: String;
+  platform: Platform;
+  logo?: FileCreateOneInput;
+  versions?: AppVersionCreateManyInput;
+  category: AppCategoryCreateOneInput;
+}
+
+export interface FileUpsertNestedInput {
+  update: FileUpdateDataInput;
+  create: FileCreateInput;
+}
+
+export interface StoryCreateInput {
+  app: AppCreateOneWithoutStoriesInput;
+  createBy: UserCreateOneInput;
+  video: FileCreateOneInput;
+  thumbnail: FileCreateOneInput;
+  versions?: AppVersionCreateManyInput;
+  categories?: StoryCategoryCreateManyInput;
+  elements?: StoryElementCreateManyInput;
+}
+
+export interface StoryUpsertWithWhereUniqueWithoutAppInput {
+  where: StoryWhereUniqueInput;
+  update: StoryUpdateWithoutAppDataInput;
+  create: StoryCreateWithoutAppInput;
+}
+
+export interface StoryCreateManyInput {
+  create?: StoryCreateInput[] | StoryCreateInput;
+  connect?: StoryWhereUniqueInput[] | StoryWhereUniqueInput;
+}
+
+export interface AppVersionUpdateWithWhereUniqueNestedInput {
+  where: AppVersionWhereUniqueInput;
+  data: AppVersionUpdateDataInput;
+}
+
+export interface FileUpdateManyMutationInput {
+  filename?: String;
+  mimetype?: String;
+  encoding?: String;
+  url?: String;
+}
+
+export interface AppVersionUpdateDataInput {
+  version?: String;
+}
+
+export interface FileUpdateInput {
+  filename?: String;
+  mimetype?: String;
+  encoding?: String;
+  url?: String;
+}
+
+export interface AppVersionUpsertWithWhereUniqueNestedInput {
+  where: AppVersionWhereUniqueInput;
+  update: AppVersionUpdateDataInput;
+  create: AppVersionCreateInput;
+}
+
+export interface AppVersionUpdateInput {
+  version?: String;
+}
+
+export interface AppVersionScalarWhereInput {
+  id?: ID_Input;
+  id_not?: ID_Input;
+  id_in?: ID_Input[] | ID_Input;
+  id_not_in?: ID_Input[] | ID_Input;
+  id_lt?: ID_Input;
+  id_lte?: ID_Input;
+  id_gt?: ID_Input;
+  id_gte?: ID_Input;
+  id_contains?: ID_Input;
+  id_not_contains?: ID_Input;
+  id_starts_with?: ID_Input;
+  id_not_starts_with?: ID_Input;
+  id_ends_with?: ID_Input;
+  id_not_ends_with?: ID_Input;
+  version?: String;
+  version_not?: String;
+  version_in?: String[] | String;
+  version_not_in?: String[] | String;
+  version_lt?: String;
+  version_lte?: String;
+  version_gt?: String;
+  version_gte?: String;
+  version_contains?: String;
+  version_not_contains?: String;
+  version_starts_with?: String;
+  version_not_starts_with?: String;
+  version_ends_with?: String;
+  version_not_ends_with?: String;
+  AND?: AppVersionScalarWhereInput[] | AppVersionScalarWhereInput;
+  OR?: AppVersionScalarWhereInput[] | AppVersionScalarWhereInput;
+  NOT?: AppVersionScalarWhereInput[] | AppVersionScalarWhereInput;
+}
+
+export interface AppCategoryUpdateManyMutationInput {
+  name?: String;
+}
+
 export interface AppVersionUpdateManyWithWhereNestedInput {
   where: AppVersionScalarWhereInput;
   data: AppVersionUpdateManyDataInput;
+}
+
+export interface AppUpdateManyMutationInput {
+  name?: String;
+  description?: String;
+  company?: String;
+  platform?: Platform;
+}
+
+export interface AppVersionUpdateManyDataInput {
+  version?: String;
+}
+
+export interface UserCreateOneWithoutAppsInput {
+  create?: UserCreateWithoutAppsInput;
+  connect?: UserWhereUniqueInput;
+}
+
+export interface StoryElementWhereInput {
+  id?: ID_Input;
+  id_not?: ID_Input;
+  id_in?: ID_Input[] | ID_Input;
+  id_not_in?: ID_Input[] | ID_Input;
+  id_lt?: ID_Input;
+  id_lte?: ID_Input;
+  id_gt?: ID_Input;
+  id_gte?: ID_Input;
+  id_contains?: ID_Input;
+  id_not_contains?: ID_Input;
+  id_starts_with?: ID_Input;
+  id_not_starts_with?: ID_Input;
+  id_ends_with?: ID_Input;
+  id_not_ends_with?: ID_Input;
+  name?: String;
+  name_not?: String;
+  name_in?: String[] | String;
+  name_not_in?: String[] | String;
+  name_lt?: String;
+  name_lte?: String;
+  name_gt?: String;
+  name_gte?: String;
+  name_contains?: String;
+  name_not_contains?: String;
+  name_starts_with?: String;
+  name_not_starts_with?: String;
+  name_ends_with?: String;
+  name_not_ends_with?: String;
+  AND?: StoryElementWhereInput[] | StoryElementWhereInput;
+  OR?: StoryElementWhereInput[] | StoryElementWhereInput;
+  NOT?: StoryElementWhereInput[] | StoryElementWhereInput;
+}
+
+export interface FileCreateOneInput {
+  create?: FileCreateInput;
+  connect?: FileWhereUniqueInput;
+}
+
+export interface StoryElementUpdateManyDataInput {
+  name?: String;
+}
+
+export interface UserSubscriptionWhereInput {
+  mutation_in?: MutationType[] | MutationType;
+  updatedFields_contains?: String;
+  updatedFields_contains_every?: String[] | String;
+  updatedFields_contains_some?: String[] | String;
+  node?: UserWhereInput;
+  AND?: UserSubscriptionWhereInput[] | UserSubscriptionWhereInput;
+  OR?: UserSubscriptionWhereInput[] | UserSubscriptionWhereInput;
+  NOT?: UserSubscriptionWhereInput[] | UserSubscriptionWhereInput;
+}
+
+export interface AppCategoryWhereInput {
+  id?: ID_Input;
+  id_not?: ID_Input;
+  id_in?: ID_Input[] | ID_Input;
+  id_not_in?: ID_Input[] | ID_Input;
+  id_lt?: ID_Input;
+  id_lte?: ID_Input;
+  id_gt?: ID_Input;
+  id_gte?: ID_Input;
+  id_contains?: ID_Input;
+  id_not_contains?: ID_Input;
+  id_starts_with?: ID_Input;
+  id_not_starts_with?: ID_Input;
+  id_ends_with?: ID_Input;
+  id_not_ends_with?: ID_Input;
+  name?: String;
+  name_not?: String;
+  name_in?: String[] | String;
+  name_not_in?: String[] | String;
+  name_lt?: String;
+  name_lte?: String;
+  name_gt?: String;
+  name_gte?: String;
+  name_contains?: String;
+  name_not_contains?: String;
+  name_starts_with?: String;
+  name_not_starts_with?: String;
+  name_ends_with?: String;
+  name_not_ends_with?: String;
+  AND?: AppCategoryWhereInput[] | AppCategoryWhereInput;
+  OR?: AppCategoryWhereInput[] | AppCategoryWhereInput;
+  NOT?: AppCategoryWhereInput[] | AppCategoryWhereInput;
+}
+
+export interface StorySubscriptionWhereInput {
+  mutation_in?: MutationType[] | MutationType;
+  updatedFields_contains?: String;
+  updatedFields_contains_every?: String[] | String;
+  updatedFields_contains_some?: String[] | String;
+  node?: StoryWhereInput;
+  AND?: StorySubscriptionWhereInput[] | StorySubscriptionWhereInput;
+  OR?: StorySubscriptionWhereInput[] | StorySubscriptionWhereInput;
+  NOT?: StorySubscriptionWhereInput[] | StorySubscriptionWhereInput;
+}
+
+export interface StoryUpdateManyWithoutAppInput {
+  create?: StoryCreateWithoutAppInput[] | StoryCreateWithoutAppInput;
+  delete?: StoryWhereUniqueInput[] | StoryWhereUniqueInput;
+  connect?: StoryWhereUniqueInput[] | StoryWhereUniqueInput;
+  set?: StoryWhereUniqueInput[] | StoryWhereUniqueInput;
+  disconnect?: StoryWhereUniqueInput[] | StoryWhereUniqueInput;
+  update?:
+    | StoryUpdateWithWhereUniqueWithoutAppInput[]
+    | StoryUpdateWithWhereUniqueWithoutAppInput;
+  upsert?:
+    | StoryUpsertWithWhereUniqueWithoutAppInput[]
+    | StoryUpsertWithWhereUniqueWithoutAppInput;
+  deleteMany?: StoryScalarWhereInput[] | StoryScalarWhereInput;
+}
+
+export interface AppVersionSubscriptionWhereInput {
+  mutation_in?: MutationType[] | MutationType;
+  updatedFields_contains?: String;
+  updatedFields_contains_every?: String[] | String;
+  updatedFields_contains_some?: String[] | String;
+  node?: AppVersionWhereInput;
+  AND?: AppVersionSubscriptionWhereInput[] | AppVersionSubscriptionWhereInput;
+  OR?: AppVersionSubscriptionWhereInput[] | AppVersionSubscriptionWhereInput;
+  NOT?: AppVersionSubscriptionWhereInput[] | AppVersionSubscriptionWhereInput;
+}
+
+export interface StoryUpdateWithWhereUniqueWithoutAppInput {
+  where: StoryWhereUniqueInput;
+  data: StoryUpdateWithoutAppDataInput;
+}
+
+export interface UserUpdateInput {
+  email?: String;
+  name?: String;
+  password?: String;
+  role?: AccountType;
+  apps?: AppUpdateManyWithoutCreateByInput;
+}
+
+export interface StoryUpdateWithoutAppDataInput {
+  createBy?: UserUpdateOneRequiredInput;
+  video?: FileUpdateOneRequiredInput;
+  thumbnail?: FileUpdateOneRequiredInput;
+  versions?: AppVersionUpdateManyInput;
+  categories?: StoryCategoryUpdateManyInput;
+  elements?: StoryElementUpdateManyInput;
+}
+
+export interface StoryElementUpdateInput {
+  name?: String;
+}
+
+export interface UserUpdateOneRequiredInput {
+  create?: UserCreateInput;
+  update?: UserUpdateDataInput;
+  upsert?: UserUpsertNestedInput;
+  connect?: UserWhereUniqueInput;
+}
+
+export interface StoryUpdateInput {
+  app?: AppUpdateOneRequiredWithoutStoriesInput;
+  createBy?: UserUpdateOneRequiredInput;
+  video?: FileUpdateOneRequiredInput;
+  thumbnail?: FileUpdateOneRequiredInput;
+  versions?: AppVersionUpdateManyInput;
+  categories?: StoryCategoryUpdateManyInput;
+  elements?: StoryElementUpdateManyInput;
+}
+
+export interface UserUpdateDataInput {
+  email?: String;
+  name?: String;
+  password?: String;
+  role?: AccountType;
+  apps?: AppUpdateManyWithoutCreateByInput;
+}
+
+export interface StoryUpsertWithWhereUniqueNestedInput {
+  where: StoryWhereUniqueInput;
+  update: StoryUpdateDataInput;
+  create: StoryCreateInput;
+}
+
+export interface AppUpdateManyWithoutCreateByInput {
+  create?: AppCreateWithoutCreateByInput[] | AppCreateWithoutCreateByInput;
+  delete?: AppWhereUniqueInput[] | AppWhereUniqueInput;
+  connect?: AppWhereUniqueInput[] | AppWhereUniqueInput;
+  set?: AppWhereUniqueInput[] | AppWhereUniqueInput;
+  disconnect?: AppWhereUniqueInput[] | AppWhereUniqueInput;
+  update?:
+    | AppUpdateWithWhereUniqueWithoutCreateByInput[]
+    | AppUpdateWithWhereUniqueWithoutCreateByInput;
+  upsert?:
+    | AppUpsertWithWhereUniqueWithoutCreateByInput[]
+    | AppUpsertWithWhereUniqueWithoutCreateByInput;
+  deleteMany?: AppScalarWhereInput[] | AppScalarWhereInput;
+  updateMany?:
+    | AppUpdateManyWithWhereNestedInput[]
+    | AppUpdateManyWithWhereNestedInput;
+}
+
+export interface AppUpdateOneRequiredWithoutStoriesInput {
+  create?: AppCreateWithoutStoriesInput;
+  update?: AppUpdateWithoutStoriesDataInput;
+  upsert?: AppUpsertWithoutStoriesInput;
+  connect?: AppWhereUniqueInput;
+}
+
+export interface AppUpdateWithWhereUniqueWithoutCreateByInput {
+  where: AppWhereUniqueInput;
+  data: AppUpdateWithoutCreateByDataInput;
+}
+
+export interface StoryUpdateManyInput {
+  create?: StoryCreateInput[] | StoryCreateInput;
+  update?:
+    | StoryUpdateWithWhereUniqueNestedInput[]
+    | StoryUpdateWithWhereUniqueNestedInput;
+  upsert?:
+    | StoryUpsertWithWhereUniqueNestedInput[]
+    | StoryUpsertWithWhereUniqueNestedInput;
+  delete?: StoryWhereUniqueInput[] | StoryWhereUniqueInput;
+  connect?: StoryWhereUniqueInput[] | StoryWhereUniqueInput;
+  set?: StoryWhereUniqueInput[] | StoryWhereUniqueInput;
+  disconnect?: StoryWhereUniqueInput[] | StoryWhereUniqueInput;
+  deleteMany?: StoryScalarWhereInput[] | StoryScalarWhereInput;
+}
+
+export interface AppUpdateWithoutCreateByDataInput {
+  name?: String;
+  description?: String;
+  company?: String;
+  platform?: Platform;
+  logo?: FileUpdateOneInput;
+  versions?: AppVersionUpdateManyInput;
+  category?: AppCategoryUpdateOneRequiredInput;
+  stories?: StoryUpdateManyWithoutAppInput;
+}
+
+export interface AppCreateOneWithoutStoriesInput {
+  create?: AppCreateWithoutStoriesInput;
+  connect?: AppWhereUniqueInput;
+}
+
+export interface AppUpsertWithWhereUniqueWithoutCreateByInput {
+  where: AppWhereUniqueInput;
+  update: AppUpdateWithoutCreateByDataInput;
+  create: AppCreateWithoutCreateByInput;
+}
+
+export interface LibraryCreateInput {
+  createBy: UserCreateOneInput;
+  name: String;
+  stories?: StoryCreateManyInput;
+}
+
+export interface AppScalarWhereInput {
+  id?: ID_Input;
+  id_not?: ID_Input;
+  id_in?: ID_Input[] | ID_Input;
+  id_not_in?: ID_Input[] | ID_Input;
+  id_lt?: ID_Input;
+  id_lte?: ID_Input;
+  id_gt?: ID_Input;
+  id_gte?: ID_Input;
+  id_contains?: ID_Input;
+  id_not_contains?: ID_Input;
+  id_starts_with?: ID_Input;
+  id_not_starts_with?: ID_Input;
+  id_ends_with?: ID_Input;
+  id_not_ends_with?: ID_Input;
+  name?: String;
+  name_not?: String;
+  name_in?: String[] | String;
+  name_not_in?: String[] | String;
+  name_lt?: String;
+  name_lte?: String;
+  name_gt?: String;
+  name_gte?: String;
+  name_contains?: String;
+  name_not_contains?: String;
+  name_starts_with?: String;
+  name_not_starts_with?: String;
+  name_ends_with?: String;
+  name_not_ends_with?: String;
+  description?: String;
+  description_not?: String;
+  description_in?: String[] | String;
+  description_not_in?: String[] | String;
+  description_lt?: String;
+  description_lte?: String;
+  description_gt?: String;
+  description_gte?: String;
+  description_contains?: String;
+  description_not_contains?: String;
+  description_starts_with?: String;
+  description_not_starts_with?: String;
+  description_ends_with?: String;
+  description_not_ends_with?: String;
+  company?: String;
+  company_not?: String;
+  company_in?: String[] | String;
+  company_not_in?: String[] | String;
+  company_lt?: String;
+  company_lte?: String;
+  company_gt?: String;
+  company_gte?: String;
+  company_contains?: String;
+  company_not_contains?: String;
+  company_starts_with?: String;
+  company_not_starts_with?: String;
+  company_ends_with?: String;
+  company_not_ends_with?: String;
+  platform?: Platform;
+  platform_not?: Platform;
+  platform_in?: Platform[] | Platform;
+  platform_not_in?: Platform[] | Platform;
+  AND?: AppScalarWhereInput[] | AppScalarWhereInput;
+  OR?: AppScalarWhereInput[] | AppScalarWhereInput;
+  NOT?: AppScalarWhereInput[] | AppScalarWhereInput;
+}
+
+export interface AppVersionUpdateManyMutationInput {
+  version?: String;
+}
+
+export interface AppUpdateManyWithWhereNestedInput {
+  where: AppScalarWhereInput;
+  data: AppUpdateManyDataInput;
+}
+
+export interface AppCategoryUpdateInput {
+  name?: String;
+}
+
+export interface AppUpdateManyDataInput {
+  name?: String;
+  description?: String;
+  company?: String;
+  platform?: Platform;
+}
+
+export interface AppCreateInput {
+  createBy: UserCreateOneWithoutAppsInput;
+  name: String;
+  description?: String;
+  company: String;
+  platform: Platform;
+  logo?: FileCreateOneInput;
+  versions?: AppVersionCreateManyInput;
+  category: AppCategoryCreateOneInput;
+  stories?: StoryCreateManyWithoutAppInput;
+}
+
+export interface UserUpsertNestedInput {
+  update: UserUpdateDataInput;
+  create: UserCreateInput;
+}
+
+export interface FileCreateInput {
+  filename: String;
+  mimetype: String;
+  encoding: String;
+  url: String;
+}
+
+export interface FileUpdateOneRequiredInput {
+  create?: FileCreateInput;
+  update?: FileUpdateDataInput;
+  upsert?: FileUpsertNestedInput;
+  connect?: FileWhereUniqueInput;
 }
 
 export interface FileWhereInput {
@@ -815,536 +1656,6 @@ export interface StoryCategoryUpdateManyInput {
     | StoryCategoryUpdateManyWithWhereNestedInput;
 }
 
-export interface StoryCreateInput {
-  createBy: UserCreateOneInput;
-  video: FileCreateOneInput;
-  thumbnail: FileCreateOneInput;
-  versions?: AppVersionCreateManyInput;
-  categories?: StoryCategoryCreateManyInput;
-  elements?: StoryElementCreateManyInput;
-}
-
-export interface FileUpdateOneRequiredInput {
-  create?: FileCreateInput;
-  update?: FileUpdateDataInput;
-  upsert?: FileUpsertNestedInput;
-  connect?: FileWhereUniqueInput;
-}
-
-export interface AppVersionUpdateManyDataInput {
-  version?: String;
-}
-
-export type UserWhereUniqueInput = AtLeastOne<{
-  id: ID_Input;
-  email?: String;
-}>;
-
-export interface StoryElementSubscriptionWhereInput {
-  mutation_in?: MutationType[] | MutationType;
-  updatedFields_contains?: String;
-  updatedFields_contains_every?: String[] | String;
-  updatedFields_contains_some?: String[] | String;
-  node?: StoryElementWhereInput;
-  AND?:
-    | StoryElementSubscriptionWhereInput[]
-    | StoryElementSubscriptionWhereInput;
-  OR?:
-    | StoryElementSubscriptionWhereInput[]
-    | StoryElementSubscriptionWhereInput;
-  NOT?:
-    | StoryElementSubscriptionWhereInput[]
-    | StoryElementSubscriptionWhereInput;
-}
-
-export interface StoryUpdateDataInput {
-  createBy?: UserUpdateOneRequiredInput;
-  video?: FileUpdateOneRequiredInput;
-  thumbnail?: FileUpdateOneRequiredInput;
-  versions?: AppVersionUpdateManyInput;
-  categories?: StoryCategoryUpdateManyInput;
-  elements?: StoryElementUpdateManyInput;
-}
-
-export interface StorySubscriptionWhereInput {
-  mutation_in?: MutationType[] | MutationType;
-  updatedFields_contains?: String;
-  updatedFields_contains_every?: String[] | String;
-  updatedFields_contains_some?: String[] | String;
-  node?: StoryWhereInput;
-  AND?: StorySubscriptionWhereInput[] | StorySubscriptionWhereInput;
-  OR?: StorySubscriptionWhereInput[] | StorySubscriptionWhereInput;
-  NOT?: StorySubscriptionWhereInput[] | StorySubscriptionWhereInput;
-}
-
-export interface StoryUpdateWithWhereUniqueNestedInput {
-  where: StoryWhereUniqueInput;
-  data: StoryUpdateDataInput;
-}
-
-export interface LibrarySubscriptionWhereInput {
-  mutation_in?: MutationType[] | MutationType;
-  updatedFields_contains?: String;
-  updatedFields_contains_every?: String[] | String;
-  updatedFields_contains_some?: String[] | String;
-  node?: LibraryWhereInput;
-  AND?: LibrarySubscriptionWhereInput[] | LibrarySubscriptionWhereInput;
-  OR?: LibrarySubscriptionWhereInput[] | LibrarySubscriptionWhereInput;
-  NOT?: LibrarySubscriptionWhereInput[] | LibrarySubscriptionWhereInput;
-}
-
-export interface StoryUpdateManyInput {
-  create?: StoryCreateInput[] | StoryCreateInput;
-  update?:
-    | StoryUpdateWithWhereUniqueNestedInput[]
-    | StoryUpdateWithWhereUniqueNestedInput;
-  upsert?:
-    | StoryUpsertWithWhereUniqueNestedInput[]
-    | StoryUpsertWithWhereUniqueNestedInput;
-  delete?: StoryWhereUniqueInput[] | StoryWhereUniqueInput;
-  connect?: StoryWhereUniqueInput[] | StoryWhereUniqueInput;
-  set?: StoryWhereUniqueInput[] | StoryWhereUniqueInput;
-  disconnect?: StoryWhereUniqueInput[] | StoryWhereUniqueInput;
-  deleteMany?: StoryScalarWhereInput[] | StoryScalarWhereInput;
-}
-
-export interface AppVersionSubscriptionWhereInput {
-  mutation_in?: MutationType[] | MutationType;
-  updatedFields_contains?: String;
-  updatedFields_contains_every?: String[] | String;
-  updatedFields_contains_some?: String[] | String;
-  node?: AppVersionWhereInput;
-  AND?: AppVersionSubscriptionWhereInput[] | AppVersionSubscriptionWhereInput;
-  OR?: AppVersionSubscriptionWhereInput[] | AppVersionSubscriptionWhereInput;
-  NOT?: AppVersionSubscriptionWhereInput[] | AppVersionSubscriptionWhereInput;
-}
-
-export interface LibraryUpdateInput {
-  createBy?: UserUpdateOneRequiredInput;
-  name?: String;
-  stories?: StoryUpdateManyInput;
-}
-
-export type AppVersionWhereUniqueInput = AtLeastOne<{
-  id: ID_Input;
-  version?: String;
-}>;
-
-export interface UserUpdateManyMutationInput {
-  email?: String;
-  name?: String;
-  password?: String;
-  role?: AccountType;
-}
-
-export type FileWhereUniqueInput = AtLeastOne<{
-  id: ID_Input;
-  url?: String;
-}>;
-
-export interface AppCreateInput {
-  createBy: UserCreateOneInput;
-  name: String;
-  description?: String;
-  company: String;
-  platform: Platform;
-  logo?: FileCreateOneInput;
-  versions?: AppVersionCreateManyInput;
-  category: AppCategoryCreateOneInput;
-}
-
-export interface StoryElementUpdateInput {
-  name?: String;
-}
-
-export interface UserCreateOneInput {
-  create?: UserCreateInput;
-  connect?: UserWhereUniqueInput;
-}
-
-export interface StoryCategoryUpdateInput {
-  name?: String;
-}
-
-export interface UserCreateInput {
-  email: String;
-  name: String;
-  password: String;
-  role: AccountType;
-}
-
-export interface StoryUpdateInput {
-  createBy?: UserUpdateOneRequiredInput;
-  video?: FileUpdateOneRequiredInput;
-  thumbnail?: FileUpdateOneRequiredInput;
-  versions?: AppVersionUpdateManyInput;
-  categories?: StoryCategoryUpdateManyInput;
-  elements?: StoryElementUpdateManyInput;
-}
-
-export interface FileCreateOneInput {
-  create?: FileCreateInput;
-  connect?: FileWhereUniqueInput;
-}
-
-export interface StoryCategoryWhereInput {
-  id?: ID_Input;
-  id_not?: ID_Input;
-  id_in?: ID_Input[] | ID_Input;
-  id_not_in?: ID_Input[] | ID_Input;
-  id_lt?: ID_Input;
-  id_lte?: ID_Input;
-  id_gt?: ID_Input;
-  id_gte?: ID_Input;
-  id_contains?: ID_Input;
-  id_not_contains?: ID_Input;
-  id_starts_with?: ID_Input;
-  id_not_starts_with?: ID_Input;
-  id_ends_with?: ID_Input;
-  id_not_ends_with?: ID_Input;
-  name?: String;
-  name_not?: String;
-  name_in?: String[] | String;
-  name_not_in?: String[] | String;
-  name_lt?: String;
-  name_lte?: String;
-  name_gt?: String;
-  name_gte?: String;
-  name_contains?: String;
-  name_not_contains?: String;
-  name_starts_with?: String;
-  name_not_starts_with?: String;
-  name_ends_with?: String;
-  name_not_ends_with?: String;
-  AND?: StoryCategoryWhereInput[] | StoryCategoryWhereInput;
-  OR?: StoryCategoryWhereInput[] | StoryCategoryWhereInput;
-  NOT?: StoryCategoryWhereInput[] | StoryCategoryWhereInput;
-}
-
-export interface FileCreateInput {
-  filename: String;
-  mimetype: String;
-  encoding: String;
-  url: String;
-}
-
-export interface AppVersionWhereInput {
-  id?: ID_Input;
-  id_not?: ID_Input;
-  id_in?: ID_Input[] | ID_Input;
-  id_not_in?: ID_Input[] | ID_Input;
-  id_lt?: ID_Input;
-  id_lte?: ID_Input;
-  id_gt?: ID_Input;
-  id_gte?: ID_Input;
-  id_contains?: ID_Input;
-  id_not_contains?: ID_Input;
-  id_starts_with?: ID_Input;
-  id_not_starts_with?: ID_Input;
-  id_ends_with?: ID_Input;
-  id_not_ends_with?: ID_Input;
-  version?: String;
-  version_not?: String;
-  version_in?: String[] | String;
-  version_not_in?: String[] | String;
-  version_lt?: String;
-  version_lte?: String;
-  version_gt?: String;
-  version_gte?: String;
-  version_contains?: String;
-  version_not_contains?: String;
-  version_starts_with?: String;
-  version_not_starts_with?: String;
-  version_ends_with?: String;
-  version_not_ends_with?: String;
-  AND?: AppVersionWhereInput[] | AppVersionWhereInput;
-  OR?: AppVersionWhereInput[] | AppVersionWhereInput;
-  NOT?: AppVersionWhereInput[] | AppVersionWhereInput;
-}
-
-export interface AppVersionCreateManyInput {
-  create?: AppVersionCreateInput[] | AppVersionCreateInput;
-  connect?: AppVersionWhereUniqueInput[] | AppVersionWhereUniqueInput;
-}
-
-export interface StoryScalarWhereInput {
-  id?: ID_Input;
-  id_not?: ID_Input;
-  id_in?: ID_Input[] | ID_Input;
-  id_not_in?: ID_Input[] | ID_Input;
-  id_lt?: ID_Input;
-  id_lte?: ID_Input;
-  id_gt?: ID_Input;
-  id_gte?: ID_Input;
-  id_contains?: ID_Input;
-  id_not_contains?: ID_Input;
-  id_starts_with?: ID_Input;
-  id_not_starts_with?: ID_Input;
-  id_ends_with?: ID_Input;
-  id_not_ends_with?: ID_Input;
-  AND?: StoryScalarWhereInput[] | StoryScalarWhereInput;
-  OR?: StoryScalarWhereInput[] | StoryScalarWhereInput;
-  NOT?: StoryScalarWhereInput[] | StoryScalarWhereInput;
-}
-
-export interface AppVersionCreateInput {
-  version: String;
-}
-
-export interface StoryElementUpdateManyDataInput {
-  name?: String;
-}
-
-export interface AppCategoryCreateOneInput {
-  create?: AppCategoryCreateInput;
-  connect?: AppCategoryWhereUniqueInput;
-}
-
-export interface LibraryWhereInput {
-  id?: ID_Input;
-  id_not?: ID_Input;
-  id_in?: ID_Input[] | ID_Input;
-  id_not_in?: ID_Input[] | ID_Input;
-  id_lt?: ID_Input;
-  id_lte?: ID_Input;
-  id_gt?: ID_Input;
-  id_gte?: ID_Input;
-  id_contains?: ID_Input;
-  id_not_contains?: ID_Input;
-  id_starts_with?: ID_Input;
-  id_not_starts_with?: ID_Input;
-  id_ends_with?: ID_Input;
-  id_not_ends_with?: ID_Input;
-  createBy?: UserWhereInput;
-  name?: String;
-  name_not?: String;
-  name_in?: String[] | String;
-  name_not_in?: String[] | String;
-  name_lt?: String;
-  name_lte?: String;
-  name_gt?: String;
-  name_gte?: String;
-  name_contains?: String;
-  name_not_contains?: String;
-  name_starts_with?: String;
-  name_not_starts_with?: String;
-  name_ends_with?: String;
-  name_not_ends_with?: String;
-  stories_every?: StoryWhereInput;
-  stories_some?: StoryWhereInput;
-  stories_none?: StoryWhereInput;
-  AND?: LibraryWhereInput[] | LibraryWhereInput;
-  OR?: LibraryWhereInput[] | LibraryWhereInput;
-  NOT?: LibraryWhereInput[] | LibraryWhereInput;
-}
-
-export interface AppCategoryCreateInput {
-  name: String;
-}
-
-export interface StoryElementUpsertWithWhereUniqueNestedInput {
-  where: StoryElementWhereUniqueInput;
-  update: StoryElementUpdateDataInput;
-  create: StoryElementCreateInput;
-}
-
-export interface AppUpdateInput {
-  createBy?: UserUpdateOneRequiredInput;
-  name?: String;
-  description?: String;
-  company?: String;
-  platform?: Platform;
-  logo?: FileUpdateOneInput;
-  versions?: AppVersionUpdateManyInput;
-  category?: AppCategoryUpdateOneRequiredInput;
-}
-
-export interface StoryElementUpdateWithWhereUniqueNestedInput {
-  where: StoryElementWhereUniqueInput;
-  data: StoryElementUpdateDataInput;
-}
-
-export interface UserUpdateOneRequiredInput {
-  create?: UserCreateInput;
-  update?: UserUpdateDataInput;
-  upsert?: UserUpsertNestedInput;
-  connect?: UserWhereUniqueInput;
-}
-
-export interface StoryElementUpdateManyInput {
-  create?: StoryElementCreateInput[] | StoryElementCreateInput;
-  update?:
-    | StoryElementUpdateWithWhereUniqueNestedInput[]
-    | StoryElementUpdateWithWhereUniqueNestedInput;
-  upsert?:
-    | StoryElementUpsertWithWhereUniqueNestedInput[]
-    | StoryElementUpsertWithWhereUniqueNestedInput;
-  delete?: StoryElementWhereUniqueInput[] | StoryElementWhereUniqueInput;
-  connect?: StoryElementWhereUniqueInput[] | StoryElementWhereUniqueInput;
-  set?: StoryElementWhereUniqueInput[] | StoryElementWhereUniqueInput;
-  disconnect?: StoryElementWhereUniqueInput[] | StoryElementWhereUniqueInput;
-  deleteMany?: StoryElementScalarWhereInput[] | StoryElementScalarWhereInput;
-  updateMany?:
-    | StoryElementUpdateManyWithWhereNestedInput[]
-    | StoryElementUpdateManyWithWhereNestedInput;
-}
-
-export interface UserUpdateDataInput {
-  email?: String;
-  name?: String;
-  password?: String;
-  role?: AccountType;
-}
-
-export interface StoryCategoryUpdateManyWithWhereNestedInput {
-  where: StoryCategoryScalarWhereInput;
-  data: StoryCategoryUpdateManyDataInput;
-}
-
-export interface UserUpsertNestedInput {
-  update: UserUpdateDataInput;
-  create: UserCreateInput;
-}
-
-export interface StoryCategoryScalarWhereInput {
-  id?: ID_Input;
-  id_not?: ID_Input;
-  id_in?: ID_Input[] | ID_Input;
-  id_not_in?: ID_Input[] | ID_Input;
-  id_lt?: ID_Input;
-  id_lte?: ID_Input;
-  id_gt?: ID_Input;
-  id_gte?: ID_Input;
-  id_contains?: ID_Input;
-  id_not_contains?: ID_Input;
-  id_starts_with?: ID_Input;
-  id_not_starts_with?: ID_Input;
-  id_ends_with?: ID_Input;
-  id_not_ends_with?: ID_Input;
-  name?: String;
-  name_not?: String;
-  name_in?: String[] | String;
-  name_not_in?: String[] | String;
-  name_lt?: String;
-  name_lte?: String;
-  name_gt?: String;
-  name_gte?: String;
-  name_contains?: String;
-  name_not_contains?: String;
-  name_starts_with?: String;
-  name_not_starts_with?: String;
-  name_ends_with?: String;
-  name_not_ends_with?: String;
-  AND?: StoryCategoryScalarWhereInput[] | StoryCategoryScalarWhereInput;
-  OR?: StoryCategoryScalarWhereInput[] | StoryCategoryScalarWhereInput;
-  NOT?: StoryCategoryScalarWhereInput[] | StoryCategoryScalarWhereInput;
-}
-
-export interface StoryElementCreateInput {
-  name: String;
-}
-
-export interface StoryCategoryUpdateDataInput {
-  name?: String;
-}
-
-export interface FileUpdateDataInput {
-  filename?: String;
-  mimetype?: String;
-  encoding?: String;
-  url?: String;
-}
-
-export interface StoryCategoryUpdateWithWhereUniqueNestedInput {
-  where: StoryCategoryWhereUniqueInput;
-  data: StoryCategoryUpdateDataInput;
-}
-
-export interface FileUpsertNestedInput {
-  update: FileUpdateDataInput;
-  create: FileCreateInput;
-}
-
-export interface StoryCategorySubscriptionWhereInput {
-  mutation_in?: MutationType[] | MutationType;
-  updatedFields_contains?: String;
-  updatedFields_contains_every?: String[] | String;
-  updatedFields_contains_some?: String[] | String;
-  node?: StoryCategoryWhereInput;
-  AND?:
-    | StoryCategorySubscriptionWhereInput[]
-    | StoryCategorySubscriptionWhereInput;
-  OR?:
-    | StoryCategorySubscriptionWhereInput[]
-    | StoryCategorySubscriptionWhereInput;
-  NOT?:
-    | StoryCategorySubscriptionWhereInput[]
-    | StoryCategorySubscriptionWhereInput;
-}
-
-export interface AppVersionUpdateManyInput {
-  create?: AppVersionCreateInput[] | AppVersionCreateInput;
-  update?:
-    | AppVersionUpdateWithWhereUniqueNestedInput[]
-    | AppVersionUpdateWithWhereUniqueNestedInput;
-  upsert?:
-    | AppVersionUpsertWithWhereUniqueNestedInput[]
-    | AppVersionUpsertWithWhereUniqueNestedInput;
-  delete?: AppVersionWhereUniqueInput[] | AppVersionWhereUniqueInput;
-  connect?: AppVersionWhereUniqueInput[] | AppVersionWhereUniqueInput;
-  set?: AppVersionWhereUniqueInput[] | AppVersionWhereUniqueInput;
-  disconnect?: AppVersionWhereUniqueInput[] | AppVersionWhereUniqueInput;
-  deleteMany?: AppVersionScalarWhereInput[] | AppVersionScalarWhereInput;
-  updateMany?:
-    | AppVersionUpdateManyWithWhereNestedInput[]
-    | AppVersionUpdateManyWithWhereNestedInput;
-}
-
-export interface FileSubscriptionWhereInput {
-  mutation_in?: MutationType[] | MutationType;
-  updatedFields_contains?: String;
-  updatedFields_contains_every?: String[] | String;
-  updatedFields_contains_some?: String[] | String;
-  node?: FileWhereInput;
-  AND?: FileSubscriptionWhereInput[] | FileSubscriptionWhereInput;
-  OR?: FileSubscriptionWhereInput[] | FileSubscriptionWhereInput;
-  NOT?: FileSubscriptionWhereInput[] | FileSubscriptionWhereInput;
-}
-
-export interface AppVersionUpdateWithWhereUniqueNestedInput {
-  where: AppVersionWhereUniqueInput;
-  data: AppVersionUpdateDataInput;
-}
-
-export interface AppSubscriptionWhereInput {
-  mutation_in?: MutationType[] | MutationType;
-  updatedFields_contains?: String;
-  updatedFields_contains_every?: String[] | String;
-  updatedFields_contains_some?: String[] | String;
-  node?: AppWhereInput;
-  AND?: AppSubscriptionWhereInput[] | AppSubscriptionWhereInput;
-  OR?: AppSubscriptionWhereInput[] | AppSubscriptionWhereInput;
-  NOT?: AppSubscriptionWhereInput[] | AppSubscriptionWhereInput;
-}
-
-export interface AppVersionUpdateDataInput {
-  version?: String;
-}
-
-export interface StoryElementUpdateManyMutationInput {
-  name?: String;
-}
-
-export interface AppVersionUpsertWithWhereUniqueNestedInput {
-  where: AppVersionWhereUniqueInput;
-  update: AppVersionUpdateDataInput;
-  create: AppVersionCreateInput;
-}
-
-export type LibraryWhereUniqueInput = AtLeastOne<{
-  id: ID_Input;
-}>;
-
 export interface UserWhereInput {
   id?: ID_Input;
   id_not?: ID_Input;
@@ -1406,12 +1717,50 @@ export interface UserWhereInput {
   role_not?: AccountType;
   role_in?: AccountType[] | AccountType;
   role_not_in?: AccountType[] | AccountType;
+  apps_every?: AppWhereInput;
+  apps_some?: AppWhereInput;
+  apps_none?: AppWhereInput;
   AND?: UserWhereInput[] | UserWhereInput;
   OR?: UserWhereInput[] | UserWhereInput;
   NOT?: UserWhereInput[] | UserWhereInput;
 }
 
-export interface StoryElementWhereInput {
+export interface StoryCategoryUpdateWithWhereUniqueNestedInput {
+  where: StoryCategoryWhereUniqueInput;
+  data: StoryCategoryUpdateDataInput;
+}
+
+export type FileWhereUniqueInput = AtLeastOne<{
+  id: ID_Input;
+  url?: String;
+}>;
+
+export interface StoryCategoryUpdateDataInput {
+  name?: String;
+}
+
+export interface StoryUpdateDataInput {
+  app?: AppUpdateOneRequiredWithoutStoriesInput;
+  createBy?: UserUpdateOneRequiredInput;
+  video?: FileUpdateOneRequiredInput;
+  thumbnail?: FileUpdateOneRequiredInput;
+  versions?: AppVersionUpdateManyInput;
+  categories?: StoryCategoryUpdateManyInput;
+  elements?: StoryElementUpdateManyInput;
+}
+
+export interface StoryCategoryUpsertWithWhereUniqueNestedInput {
+  where: StoryCategoryWhereUniqueInput;
+  update: StoryCategoryUpdateDataInput;
+  create: StoryCategoryCreateInput;
+}
+
+export type StoryCategoryWhereUniqueInput = AtLeastOne<{
+  id: ID_Input;
+  name?: String;
+}>;
+
+export interface StoryCategoryScalarWhereInput {
   id?: ID_Input;
   id_not?: ID_Input;
   id_in?: ID_Input[] | ID_Input;
@@ -1440,54 +1789,70 @@ export interface StoryElementWhereInput {
   name_not_starts_with?: String;
   name_ends_with?: String;
   name_not_ends_with?: String;
-  AND?: StoryElementWhereInput[] | StoryElementWhereInput;
-  OR?: StoryElementWhereInput[] | StoryElementWhereInput;
-  NOT?: StoryElementWhereInput[] | StoryElementWhereInput;
+  AND?: StoryCategoryScalarWhereInput[] | StoryCategoryScalarWhereInput;
+  OR?: StoryCategoryScalarWhereInput[] | StoryCategoryScalarWhereInput;
+  NOT?: StoryCategoryScalarWhereInput[] | StoryCategoryScalarWhereInput;
 }
 
-export interface AppCategoryWhereInput {
-  id?: ID_Input;
-  id_not?: ID_Input;
-  id_in?: ID_Input[] | ID_Input;
-  id_not_in?: ID_Input[] | ID_Input;
-  id_lt?: ID_Input;
-  id_lte?: ID_Input;
-  id_gt?: ID_Input;
-  id_gte?: ID_Input;
-  id_contains?: ID_Input;
-  id_not_contains?: ID_Input;
-  id_starts_with?: ID_Input;
-  id_not_starts_with?: ID_Input;
-  id_ends_with?: ID_Input;
-  id_not_ends_with?: ID_Input;
+export type UserWhereUniqueInput = AtLeastOne<{
+  id: ID_Input;
+  email?: String;
+}>;
+
+export interface StoryCategoryUpdateManyWithWhereNestedInput {
+  where: StoryCategoryScalarWhereInput;
+  data: StoryCategoryUpdateManyDataInput;
+}
+
+export interface UserCreateWithoutAppsInput {
+  email: String;
+  name: String;
+  password: String;
+  role: AccountType;
+}
+
+export interface StoryCategoryUpdateManyDataInput {
   name?: String;
-  name_not?: String;
-  name_in?: String[] | String;
-  name_not_in?: String[] | String;
-  name_lt?: String;
-  name_lte?: String;
-  name_gt?: String;
-  name_gte?: String;
-  name_contains?: String;
-  name_not_contains?: String;
-  name_starts_with?: String;
-  name_not_starts_with?: String;
-  name_ends_with?: String;
-  name_not_ends_with?: String;
-  AND?: AppCategoryWhereInput[] | AppCategoryWhereInput;
-  OR?: AppCategoryWhereInput[] | AppCategoryWhereInput;
-  NOT?: AppCategoryWhereInput[] | AppCategoryWhereInput;
 }
 
-export interface StoryUpsertWithWhereUniqueNestedInput {
-  where: StoryWhereUniqueInput;
-  update: StoryUpdateDataInput;
-  create: StoryCreateInput;
+export interface AppSubscriptionWhereInput {
+  mutation_in?: MutationType[] | MutationType;
+  updatedFields_contains?: String;
+  updatedFields_contains_every?: String[] | String;
+  updatedFields_contains_some?: String[] | String;
+  node?: AppWhereInput;
+  AND?: AppSubscriptionWhereInput[] | AppSubscriptionWhereInput;
+  OR?: AppSubscriptionWhereInput[] | AppSubscriptionWhereInput;
+  NOT?: AppSubscriptionWhereInput[] | AppSubscriptionWhereInput;
 }
 
-export interface StoryElementCreateManyInput {
+export interface StoryElementUpdateManyInput {
   create?: StoryElementCreateInput[] | StoryElementCreateInput;
+  update?:
+    | StoryElementUpdateWithWhereUniqueNestedInput[]
+    | StoryElementUpdateWithWhereUniqueNestedInput;
+  upsert?:
+    | StoryElementUpsertWithWhereUniqueNestedInput[]
+    | StoryElementUpsertWithWhereUniqueNestedInput;
+  delete?: StoryElementWhereUniqueInput[] | StoryElementWhereUniqueInput;
   connect?: StoryElementWhereUniqueInput[] | StoryElementWhereUniqueInput;
+  set?: StoryElementWhereUniqueInput[] | StoryElementWhereUniqueInput;
+  disconnect?: StoryElementWhereUniqueInput[] | StoryElementWhereUniqueInput;
+  deleteMany?: StoryElementScalarWhereInput[] | StoryElementScalarWhereInput;
+  updateMany?:
+    | StoryElementUpdateManyWithWhereNestedInput[]
+    | StoryElementUpdateManyWithWhereNestedInput;
+}
+
+export interface AppUpdateWithoutStoriesDataInput {
+  createBy?: UserUpdateOneRequiredWithoutAppsInput;
+  name?: String;
+  description?: String;
+  company?: String;
+  platform?: Platform;
+  logo?: FileUpdateOneInput;
+  versions?: AppVersionUpdateManyInput;
+  category?: AppCategoryUpdateOneRequiredInput;
 }
 
 export interface StoryElementScalarWhereInput {
@@ -1524,65 +1889,31 @@ export interface StoryElementScalarWhereInput {
   NOT?: StoryElementScalarWhereInput[] | StoryElementScalarWhereInput;
 }
 
-export interface AppCategoryUpdateOneRequiredInput {
-  create?: AppCategoryCreateInput;
-  update?: AppCategoryUpdateDataInput;
-  upsert?: AppCategoryUpsertNestedInput;
-  connect?: AppCategoryWhereUniqueInput;
+export interface StoryElementUpsertWithWhereUniqueNestedInput {
+  where: StoryElementWhereUniqueInput;
+  update: StoryElementUpdateDataInput;
+  create: StoryElementCreateInput;
+}
+
+export interface StoryElementUpdateDataInput {
+  name?: String;
+}
+
+export interface StoryElementUpdateWithWhereUniqueNestedInput {
+  where: StoryElementWhereUniqueInput;
+  data: StoryElementUpdateDataInput;
 }
 
 export type StoryWhereUniqueInput = AtLeastOne<{
   id: ID_Input;
 }>;
 
-export interface AppCategoryUpdateDataInput {
-  name?: String;
-}
-
-export type StoryCategoryWhereUniqueInput = AtLeastOne<{
+export type AppVersionWhereUniqueInput = AtLeastOne<{
   id: ID_Input;
-  name?: String;
+  version?: String;
 }>;
 
-export interface AppCategoryUpsertNestedInput {
-  update: AppCategoryUpdateDataInput;
-  create: AppCategoryCreateInput;
-}
-
-export type StoryElementWhereUniqueInput = AtLeastOne<{
-  id: ID_Input;
-  name?: String;
-}>;
-
-export interface AppUpdateManyMutationInput {
-  name?: String;
-  description?: String;
-  company?: String;
-  platform?: Platform;
-}
-
-export type AppCategoryWhereUniqueInput = AtLeastOne<{
-  id: ID_Input;
-  name?: String;
-}>;
-
-export interface StoryCategoryCreateInput {
-  name: String;
-}
-
-export interface UserUpdateInput {
-  email?: String;
-  name?: String;
-  password?: String;
-  role?: AccountType;
-}
-
-export interface StoryCategoryCreateManyInput {
-  create?: StoryCategoryCreateInput[] | StoryCategoryCreateInput;
-  connect?: StoryCategoryWhereUniqueInput[] | StoryCategoryWhereUniqueInput;
-}
-
-export interface StoryWhereInput {
+export interface AppVersionWhereInput {
   id?: ID_Input;
   id_not?: ID_Input;
   id_in?: ID_Input[] | ID_Input;
@@ -1597,112 +1928,49 @@ export interface StoryWhereInput {
   id_not_starts_with?: ID_Input;
   id_ends_with?: ID_Input;
   id_not_ends_with?: ID_Input;
-  createBy?: UserWhereInput;
-  video?: FileWhereInput;
-  thumbnail?: FileWhereInput;
-  versions_every?: AppVersionWhereInput;
-  versions_some?: AppVersionWhereInput;
-  versions_none?: AppVersionWhereInput;
-  categories_every?: StoryCategoryWhereInput;
-  categories_some?: StoryCategoryWhereInput;
-  categories_none?: StoryCategoryWhereInput;
-  elements_every?: StoryElementWhereInput;
-  elements_some?: StoryElementWhereInput;
-  elements_none?: StoryElementWhereInput;
-  AND?: StoryWhereInput[] | StoryWhereInput;
-  OR?: StoryWhereInput[] | StoryWhereInput;
-  NOT?: StoryWhereInput[] | StoryWhereInput;
-}
-
-export interface AppCategoryUpdateInput {
-  name?: String;
-}
-
-export interface StoryElementUpdateManyWithWhereNestedInput {
-  where: StoryElementScalarWhereInput;
-  data: StoryElementUpdateManyDataInput;
-}
-
-export interface AppCategoryUpdateManyMutationInput {
-  name?: String;
-}
-
-export interface StoryCategoryUpdateManyDataInput {
-  name?: String;
-}
-
-export interface AppVersionUpdateInput {
   version?: String;
+  version_not?: String;
+  version_in?: String[] | String;
+  version_not_in?: String[] | String;
+  version_lt?: String;
+  version_lte?: String;
+  version_gt?: String;
+  version_gte?: String;
+  version_contains?: String;
+  version_not_contains?: String;
+  version_starts_with?: String;
+  version_not_starts_with?: String;
+  version_ends_with?: String;
+  version_not_ends_with?: String;
+  AND?: AppVersionWhereInput[] | AppVersionWhereInput;
+  OR?: AppVersionWhereInput[] | AppVersionWhereInput;
+  NOT?: AppVersionWhereInput[] | AppVersionWhereInput;
 }
 
-export interface UserSubscriptionWhereInput {
-  mutation_in?: MutationType[] | MutationType;
-  updatedFields_contains?: String;
-  updatedFields_contains_every?: String[] | String;
-  updatedFields_contains_some?: String[] | String;
-  node?: UserWhereInput;
-  AND?: UserSubscriptionWhereInput[] | UserSubscriptionWhereInput;
-  OR?: UserSubscriptionWhereInput[] | UserSubscriptionWhereInput;
-  NOT?: UserSubscriptionWhereInput[] | UserSubscriptionWhereInput;
+export interface StoryScalarWhereInput {
+  id?: ID_Input;
+  id_not?: ID_Input;
+  id_in?: ID_Input[] | ID_Input;
+  id_not_in?: ID_Input[] | ID_Input;
+  id_lt?: ID_Input;
+  id_lte?: ID_Input;
+  id_gt?: ID_Input;
+  id_gte?: ID_Input;
+  id_contains?: ID_Input;
+  id_not_contains?: ID_Input;
+  id_starts_with?: ID_Input;
+  id_not_starts_with?: ID_Input;
+  id_ends_with?: ID_Input;
+  id_not_ends_with?: ID_Input;
+  AND?: StoryScalarWhereInput[] | StoryScalarWhereInput;
+  OR?: StoryScalarWhereInput[] | StoryScalarWhereInput;
+  NOT?: StoryScalarWhereInput[] | StoryScalarWhereInput;
 }
 
-export interface AppVersionUpdateManyMutationInput {
-  version?: String;
-}
-
-export interface StoryCategoryUpdateManyMutationInput {
+export type StoryElementWhereUniqueInput = AtLeastOne<{
+  id: ID_Input;
   name?: String;
-}
-
-export interface StoryCreateManyInput {
-  create?: StoryCreateInput[] | StoryCreateInput;
-  connect?: StoryWhereUniqueInput[] | StoryWhereUniqueInput;
-}
-
-export interface LibraryCreateInput {
-  createBy: UserCreateOneInput;
-  name: String;
-  stories?: StoryCreateManyInput;
-}
-
-export interface FileUpdateManyMutationInput {
-  filename?: String;
-  mimetype?: String;
-  encoding?: String;
-  url?: String;
-}
-
-export interface FileUpdateInput {
-  filename?: String;
-  mimetype?: String;
-  encoding?: String;
-  url?: String;
-}
-
-export interface LibraryUpdateManyMutationInput {
-  name?: String;
-}
-
-export interface AppCategorySubscriptionWhereInput {
-  mutation_in?: MutationType[] | MutationType;
-  updatedFields_contains?: String;
-  updatedFields_contains_every?: String[] | String;
-  updatedFields_contains_some?: String[] | String;
-  node?: AppCategoryWhereInput;
-  AND?: AppCategorySubscriptionWhereInput[] | AppCategorySubscriptionWhereInput;
-  OR?: AppCategorySubscriptionWhereInput[] | AppCategorySubscriptionWhereInput;
-  NOT?: AppCategorySubscriptionWhereInput[] | AppCategorySubscriptionWhereInput;
-}
-
-export interface StoryCategoryUpsertWithWhereUniqueNestedInput {
-  where: StoryCategoryWhereUniqueInput;
-  update: StoryCategoryUpdateDataInput;
-  create: StoryCategoryCreateInput;
-}
-
-export interface StoryElementUpdateDataInput {
-  name?: String;
-}
+}>;
 
 export interface NodeNode {
   id: ID_Output;
@@ -1736,84 +2004,106 @@ export interface UserPreviousValuesSubscription
   role: () => Promise<AsyncIterator<AccountType>>;
 }
 
-export interface FileEdge {
-  node: File;
+export interface AppCategoryConnection {
+  pageInfo: PageInfo;
+  edges: AppCategoryEdge[];
+}
+
+export interface AppCategoryConnectionPromise
+  extends Promise<AppCategoryConnection>,
+    Fragmentable {
+  pageInfo: <T = PageInfoPromise>() => T;
+  edges: <T = FragmentableArray<AppCategoryEdge>>() => T;
+  aggregate: <T = AggregateAppCategoryPromise>() => T;
+}
+
+export interface AppCategoryConnectionSubscription
+  extends Promise<AsyncIterator<AppCategoryConnection>>,
+    Fragmentable {
+  pageInfo: <T = PageInfoSubscription>() => T;
+  edges: <T = Promise<AsyncIterator<AppCategoryEdgeSubscription>>>() => T;
+  aggregate: <T = AggregateAppCategorySubscription>() => T;
+}
+
+export interface File {
+  id: ID_Output;
+  createdAt: DateTimeOutput;
+  updatedAt: DateTimeOutput;
+  filename: String;
+  mimetype: String;
+  encoding: String;
+  url: String;
+}
+
+export interface FilePromise extends Promise<File>, Fragmentable {
+  id: () => Promise<ID_Output>;
+  createdAt: () => Promise<DateTimeOutput>;
+  updatedAt: () => Promise<DateTimeOutput>;
+  filename: () => Promise<String>;
+  mimetype: () => Promise<String>;
+  encoding: () => Promise<String>;
+  url: () => Promise<String>;
+}
+
+export interface FileSubscription
+  extends Promise<AsyncIterator<File>>,
+    Fragmentable {
+  id: () => Promise<AsyncIterator<ID_Output>>;
+  createdAt: () => Promise<AsyncIterator<DateTimeOutput>>;
+  updatedAt: () => Promise<AsyncIterator<DateTimeOutput>>;
+  filename: () => Promise<AsyncIterator<String>>;
+  mimetype: () => Promise<AsyncIterator<String>>;
+  encoding: () => Promise<AsyncIterator<String>>;
+  url: () => Promise<AsyncIterator<String>>;
+}
+
+export interface AggregateApp {
+  count: Int;
+}
+
+export interface AggregateAppPromise
+  extends Promise<AggregateApp>,
+    Fragmentable {
+  count: () => Promise<Int>;
+}
+
+export interface AggregateAppSubscription
+  extends Promise<AsyncIterator<AggregateApp>>,
+    Fragmentable {
+  count: () => Promise<AsyncIterator<Int>>;
+}
+
+export interface AggregateUser {
+  count: Int;
+}
+
+export interface AggregateUserPromise
+  extends Promise<AggregateUser>,
+    Fragmentable {
+  count: () => Promise<Int>;
+}
+
+export interface AggregateUserSubscription
+  extends Promise<AsyncIterator<AggregateUser>>,
+    Fragmentable {
+  count: () => Promise<AsyncIterator<Int>>;
+}
+
+export interface AppEdge {
+  node: App;
   cursor: String;
 }
 
-export interface FileEdgePromise extends Promise<FileEdge>, Fragmentable {
-  node: <T = FilePromise>() => T;
+export interface AppEdgePromise extends Promise<AppEdge>, Fragmentable {
+  node: <T = AppPromise>() => T;
   cursor: () => Promise<String>;
 }
 
-export interface FileEdgeSubscription
-  extends Promise<AsyncIterator<FileEdge>>,
+export interface AppEdgeSubscription
+  extends Promise<AsyncIterator<AppEdge>>,
     Fragmentable {
-  node: <T = FileSubscription>() => T;
+  node: <T = AppSubscription>() => T;
   cursor: () => Promise<AsyncIterator<String>>;
-}
-
-export interface StoryElementSubscriptionPayload {
-  mutation: MutationType;
-  node: StoryElement;
-  updatedFields: String[];
-  previousValues: StoryElementPreviousValues;
-}
-
-export interface StoryElementSubscriptionPayloadPromise
-  extends Promise<StoryElementSubscriptionPayload>,
-    Fragmentable {
-  mutation: () => Promise<MutationType>;
-  node: <T = StoryElementPromise>() => T;
-  updatedFields: () => Promise<String[]>;
-  previousValues: <T = StoryElementPreviousValuesPromise>() => T;
-}
-
-export interface StoryElementSubscriptionPayloadSubscription
-  extends Promise<AsyncIterator<StoryElementSubscriptionPayload>>,
-    Fragmentable {
-  mutation: () => Promise<AsyncIterator<MutationType>>;
-  node: <T = StoryElementSubscription>() => T;
-  updatedFields: () => Promise<AsyncIterator<String[]>>;
-  previousValues: <T = StoryElementPreviousValuesSubscription>() => T;
-}
-
-export interface FileConnection {
-  pageInfo: PageInfo;
-  edges: FileEdge[];
-}
-
-export interface FileConnectionPromise
-  extends Promise<FileConnection>,
-    Fragmentable {
-  pageInfo: <T = PageInfoPromise>() => T;
-  edges: <T = FragmentableArray<FileEdge>>() => T;
-  aggregate: <T = AggregateFilePromise>() => T;
-}
-
-export interface FileConnectionSubscription
-  extends Promise<AsyncIterator<FileConnection>>,
-    Fragmentable {
-  pageInfo: <T = PageInfoSubscription>() => T;
-  edges: <T = Promise<AsyncIterator<FileEdgeSubscription>>>() => T;
-  aggregate: <T = AggregateFileSubscription>() => T;
-}
-
-export interface AppCategory {
-  id: ID_Output;
-  name: String;
-}
-
-export interface AppCategoryPromise extends Promise<AppCategory>, Fragmentable {
-  id: () => Promise<ID_Output>;
-  name: () => Promise<String>;
-}
-
-export interface AppCategorySubscription
-  extends Promise<AsyncIterator<AppCategory>>,
-    Fragmentable {
-  id: () => Promise<AsyncIterator<ID_Output>>;
-  name: () => Promise<AsyncIterator<String>>;
 }
 
 export interface BatchPayload {
@@ -1830,47 +2120,6 @@ export interface BatchPayloadSubscription
   extends Promise<AsyncIterator<BatchPayload>>,
     Fragmentable {
   count: () => Promise<AsyncIterator<Long>>;
-}
-
-export interface UserSubscriptionPayload {
-  mutation: MutationType;
-  node: User;
-  updatedFields: String[];
-  previousValues: UserPreviousValues;
-}
-
-export interface UserSubscriptionPayloadPromise
-  extends Promise<UserSubscriptionPayload>,
-    Fragmentable {
-  mutation: () => Promise<MutationType>;
-  node: <T = UserPromise>() => T;
-  updatedFields: () => Promise<String[]>;
-  previousValues: <T = UserPreviousValuesPromise>() => T;
-}
-
-export interface UserSubscriptionPayloadSubscription
-  extends Promise<AsyncIterator<UserSubscriptionPayload>>,
-    Fragmentable {
-  mutation: () => Promise<AsyncIterator<MutationType>>;
-  node: <T = UserSubscription>() => T;
-  updatedFields: () => Promise<AsyncIterator<String[]>>;
-  previousValues: <T = UserPreviousValuesSubscription>() => T;
-}
-
-export interface AggregateAppVersion {
-  count: Int;
-}
-
-export interface AggregateAppVersionPromise
-  extends Promise<AggregateAppVersion>,
-    Fragmentable {
-  count: () => Promise<Int>;
-}
-
-export interface AggregateAppVersionSubscription
-  extends Promise<AsyncIterator<AggregateAppVersion>>,
-    Fragmentable {
-  count: () => Promise<AsyncIterator<Int>>;
 }
 
 export interface UserEdge {
@@ -1890,23 +2139,61 @@ export interface UserEdgeSubscription
   cursor: () => Promise<AsyncIterator<String>>;
 }
 
-export interface AppVersionEdge {
-  node: AppVersion;
-  cursor: String;
+export interface AppCategory {
+  id: ID_Output;
+  name: String;
 }
 
-export interface AppVersionEdgePromise
-  extends Promise<AppVersionEdge>,
-    Fragmentable {
-  node: <T = AppVersionPromise>() => T;
-  cursor: () => Promise<String>;
+export interface AppCategoryPromise extends Promise<AppCategory>, Fragmentable {
+  id: () => Promise<ID_Output>;
+  name: () => Promise<String>;
 }
 
-export interface AppVersionEdgeSubscription
-  extends Promise<AsyncIterator<AppVersionEdge>>,
+export interface AppCategorySubscription
+  extends Promise<AsyncIterator<AppCategory>>,
     Fragmentable {
-  node: <T = AppVersionSubscription>() => T;
-  cursor: () => Promise<AsyncIterator<String>>;
+  id: () => Promise<AsyncIterator<ID_Output>>;
+  name: () => Promise<AsyncIterator<String>>;
+}
+
+export interface StoryElementPreviousValues {
+  id: ID_Output;
+  name: String;
+}
+
+export interface StoryElementPreviousValuesPromise
+  extends Promise<StoryElementPreviousValues>,
+    Fragmentable {
+  id: () => Promise<ID_Output>;
+  name: () => Promise<String>;
+}
+
+export interface StoryElementPreviousValuesSubscription
+  extends Promise<AsyncIterator<StoryElementPreviousValues>>,
+    Fragmentable {
+  id: () => Promise<AsyncIterator<ID_Output>>;
+  name: () => Promise<AsyncIterator<String>>;
+}
+
+export interface UserConnection {
+  pageInfo: PageInfo;
+  edges: UserEdge[];
+}
+
+export interface UserConnectionPromise
+  extends Promise<UserConnection>,
+    Fragmentable {
+  pageInfo: <T = PageInfoPromise>() => T;
+  edges: <T = FragmentableArray<UserEdge>>() => T;
+  aggregate: <T = AggregateUserPromise>() => T;
+}
+
+export interface UserConnectionSubscription
+  extends Promise<AsyncIterator<UserConnection>>,
+    Fragmentable {
+  pageInfo: <T = PageInfoSubscription>() => T;
+  edges: <T = Promise<AsyncIterator<UserEdgeSubscription>>>() => T;
+  aggregate: <T = AggregateUserSubscription>() => T;
 }
 
 export interface User {
@@ -1923,6 +2210,17 @@ export interface UserPromise extends Promise<User>, Fragmentable {
   name: () => Promise<String>;
   password: () => Promise<String>;
   role: () => Promise<AccountType>;
+  apps: <T = FragmentableArray<App>>(
+    args?: {
+      where?: AppWhereInput;
+      orderBy?: AppOrderByInput;
+      skip?: Int;
+      after?: String;
+      before?: String;
+      first?: Int;
+      last?: Int;
+    }
+  ) => T;
 }
 
 export interface UserSubscription
@@ -1933,27 +2231,17 @@ export interface UserSubscription
   name: () => Promise<AsyncIterator<String>>;
   password: () => Promise<AsyncIterator<String>>;
   role: () => Promise<AsyncIterator<AccountType>>;
-}
-
-export interface AppVersionConnection {
-  pageInfo: PageInfo;
-  edges: AppVersionEdge[];
-}
-
-export interface AppVersionConnectionPromise
-  extends Promise<AppVersionConnection>,
-    Fragmentable {
-  pageInfo: <T = PageInfoPromise>() => T;
-  edges: <T = FragmentableArray<AppVersionEdge>>() => T;
-  aggregate: <T = AggregateAppVersionPromise>() => T;
-}
-
-export interface AppVersionConnectionSubscription
-  extends Promise<AsyncIterator<AppVersionConnection>>,
-    Fragmentable {
-  pageInfo: <T = PageInfoSubscription>() => T;
-  edges: <T = Promise<AsyncIterator<AppVersionEdgeSubscription>>>() => T;
-  aggregate: <T = AggregateAppVersionSubscription>() => T;
+  apps: <T = Promise<AsyncIterator<AppSubscription>>>(
+    args?: {
+      where?: AppWhereInput;
+      orderBy?: AppOrderByInput;
+      skip?: Int;
+      after?: String;
+      before?: String;
+      first?: Int;
+      last?: Int;
+    }
+  ) => T;
 }
 
 export interface StoryElementEdge {
@@ -2003,6 +2291,17 @@ export interface AppPromise extends Promise<App>, Fragmentable {
     }
   ) => T;
   category: <T = AppCategoryPromise>() => T;
+  stories: <T = FragmentableArray<Story>>(
+    args?: {
+      where?: StoryWhereInput;
+      orderBy?: StoryOrderByInput;
+      skip?: Int;
+      after?: String;
+      before?: String;
+      first?: Int;
+      last?: Int;
+    }
+  ) => T;
 }
 
 export interface AppSubscription
@@ -2027,6 +2326,17 @@ export interface AppSubscription
     }
   ) => T;
   category: <T = AppCategorySubscription>() => T;
+  stories: <T = Promise<AsyncIterator<StorySubscription>>>(
+    args?: {
+      where?: StoryWhereInput;
+      orderBy?: StoryOrderByInput;
+      skip?: Int;
+      after?: String;
+      before?: String;
+      first?: Int;
+      last?: Int;
+    }
+  ) => T;
 }
 
 export interface AggregateStoryCategory {
@@ -2136,20 +2446,27 @@ export interface StoryEdgeSubscription
   cursor: () => Promise<AsyncIterator<String>>;
 }
 
-export interface AggregateAppCategory {
-  count: Int;
+export interface PageInfo {
+  hasNextPage: Boolean;
+  hasPreviousPage: Boolean;
+  startCursor?: String;
+  endCursor?: String;
 }
 
-export interface AggregateAppCategoryPromise
-  extends Promise<AggregateAppCategory>,
-    Fragmentable {
-  count: () => Promise<Int>;
+export interface PageInfoPromise extends Promise<PageInfo>, Fragmentable {
+  hasNextPage: () => Promise<Boolean>;
+  hasPreviousPage: () => Promise<Boolean>;
+  startCursor: () => Promise<String>;
+  endCursor: () => Promise<String>;
 }
 
-export interface AggregateAppCategorySubscription
-  extends Promise<AsyncIterator<AggregateAppCategory>>,
+export interface PageInfoSubscription
+  extends Promise<AsyncIterator<PageInfo>>,
     Fragmentable {
-  count: () => Promise<AsyncIterator<Int>>;
+  hasNextPage: () => Promise<AsyncIterator<Boolean>>;
+  hasPreviousPage: () => Promise<AsyncIterator<Boolean>>;
+  startCursor: () => Promise<AsyncIterator<String>>;
+  endCursor: () => Promise<AsyncIterator<String>>;
 }
 
 export interface AggregateLibrary {
@@ -2233,6 +2550,166 @@ export interface AppCategoryPreviousValuesSubscription
   name: () => Promise<AsyncIterator<String>>;
 }
 
+export interface Library {
+  id: ID_Output;
+  name: String;
+}
+
+export interface LibraryPromise extends Promise<Library>, Fragmentable {
+  id: () => Promise<ID_Output>;
+  createBy: <T = UserPromise>() => T;
+  name: () => Promise<String>;
+  stories: <T = FragmentableArray<Story>>(
+    args?: {
+      where?: StoryWhereInput;
+      orderBy?: StoryOrderByInput;
+      skip?: Int;
+      after?: String;
+      before?: String;
+      first?: Int;
+      last?: Int;
+    }
+  ) => T;
+}
+
+export interface LibrarySubscription
+  extends Promise<AsyncIterator<Library>>,
+    Fragmentable {
+  id: () => Promise<AsyncIterator<ID_Output>>;
+  createBy: <T = UserSubscription>() => T;
+  name: () => Promise<AsyncIterator<String>>;
+  stories: <T = Promise<AsyncIterator<StorySubscription>>>(
+    args?: {
+      where?: StoryWhereInput;
+      orderBy?: StoryOrderByInput;
+      skip?: Int;
+      after?: String;
+      before?: String;
+      first?: Int;
+      last?: Int;
+    }
+  ) => T;
+}
+
+export interface AppConnection {
+  pageInfo: PageInfo;
+  edges: AppEdge[];
+}
+
+export interface AppConnectionPromise
+  extends Promise<AppConnection>,
+    Fragmentable {
+  pageInfo: <T = PageInfoPromise>() => T;
+  edges: <T = FragmentableArray<AppEdge>>() => T;
+  aggregate: <T = AggregateAppPromise>() => T;
+}
+
+export interface AppConnectionSubscription
+  extends Promise<AsyncIterator<AppConnection>>,
+    Fragmentable {
+  pageInfo: <T = PageInfoSubscription>() => T;
+  edges: <T = Promise<AsyncIterator<AppEdgeSubscription>>>() => T;
+  aggregate: <T = AggregateAppSubscription>() => T;
+}
+
+export interface FileEdge {
+  node: File;
+  cursor: String;
+}
+
+export interface FileEdgePromise extends Promise<FileEdge>, Fragmentable {
+  node: <T = FilePromise>() => T;
+  cursor: () => Promise<String>;
+}
+
+export interface FileEdgeSubscription
+  extends Promise<AsyncIterator<FileEdge>>,
+    Fragmentable {
+  node: <T = FileSubscription>() => T;
+  cursor: () => Promise<AsyncIterator<String>>;
+}
+
+export interface AppVersionSubscriptionPayload {
+  mutation: MutationType;
+  node: AppVersion;
+  updatedFields: String[];
+  previousValues: AppVersionPreviousValues;
+}
+
+export interface AppVersionSubscriptionPayloadPromise
+  extends Promise<AppVersionSubscriptionPayload>,
+    Fragmentable {
+  mutation: () => Promise<MutationType>;
+  node: <T = AppVersionPromise>() => T;
+  updatedFields: () => Promise<String[]>;
+  previousValues: <T = AppVersionPreviousValuesPromise>() => T;
+}
+
+export interface AppVersionSubscriptionPayloadSubscription
+  extends Promise<AsyncIterator<AppVersionSubscriptionPayload>>,
+    Fragmentable {
+  mutation: () => Promise<AsyncIterator<MutationType>>;
+  node: <T = AppVersionSubscription>() => T;
+  updatedFields: () => Promise<AsyncIterator<String[]>>;
+  previousValues: <T = AppVersionPreviousValuesSubscription>() => T;
+}
+
+export interface AggregateAppVersion {
+  count: Int;
+}
+
+export interface AggregateAppVersionPromise
+  extends Promise<AggregateAppVersion>,
+    Fragmentable {
+  count: () => Promise<Int>;
+}
+
+export interface AggregateAppVersionSubscription
+  extends Promise<AsyncIterator<AggregateAppVersion>>,
+    Fragmentable {
+  count: () => Promise<AsyncIterator<Int>>;
+}
+
+export interface AppVersionPreviousValues {
+  id: ID_Output;
+  version: String;
+}
+
+export interface AppVersionPreviousValuesPromise
+  extends Promise<AppVersionPreviousValues>,
+    Fragmentable {
+  id: () => Promise<ID_Output>;
+  version: () => Promise<String>;
+}
+
+export interface AppVersionPreviousValuesSubscription
+  extends Promise<AsyncIterator<AppVersionPreviousValues>>,
+    Fragmentable {
+  id: () => Promise<AsyncIterator<ID_Output>>;
+  version: () => Promise<AsyncIterator<String>>;
+}
+
+export interface AppVersionConnection {
+  pageInfo: PageInfo;
+  edges: AppVersionEdge[];
+}
+
+export interface AppVersionConnectionPromise
+  extends Promise<AppVersionConnection>,
+    Fragmentable {
+  pageInfo: <T = PageInfoPromise>() => T;
+  edges: <T = FragmentableArray<AppVersionEdge>>() => T;
+  aggregate: <T = AggregateAppVersionPromise>() => T;
+}
+
+export interface AppVersionConnectionSubscription
+  extends Promise<AsyncIterator<AppVersionConnection>>,
+    Fragmentable {
+  pageInfo: <T = PageInfoSubscription>() => T;
+  edges: <T = Promise<AsyncIterator<AppVersionEdgeSubscription>>>() => T;
+  aggregate: <T = AggregateAppVersionSubscription>() => T;
+}
+
 export interface StoryElement {
   id: ID_Output;
   name: String;
@@ -2269,208 +2746,6 @@ export interface AppCategoryEdgeSubscription
     Fragmentable {
   node: <T = AppCategorySubscription>() => T;
   cursor: () => Promise<AsyncIterator<String>>;
-}
-
-export interface StoryCategory {
-  id: ID_Output;
-  name: String;
-}
-
-export interface StoryCategoryPromise
-  extends Promise<StoryCategory>,
-    Fragmentable {
-  id: () => Promise<ID_Output>;
-  name: () => Promise<String>;
-}
-
-export interface StoryCategorySubscription
-  extends Promise<AsyncIterator<StoryCategory>>,
-    Fragmentable {
-  id: () => Promise<AsyncIterator<ID_Output>>;
-  name: () => Promise<AsyncIterator<String>>;
-}
-
-export interface AppVersionSubscriptionPayload {
-  mutation: MutationType;
-  node: AppVersion;
-  updatedFields: String[];
-  previousValues: AppVersionPreviousValues;
-}
-
-export interface AppVersionSubscriptionPayloadPromise
-  extends Promise<AppVersionSubscriptionPayload>,
-    Fragmentable {
-  mutation: () => Promise<MutationType>;
-  node: <T = AppVersionPromise>() => T;
-  updatedFields: () => Promise<String[]>;
-  previousValues: <T = AppVersionPreviousValuesPromise>() => T;
-}
-
-export interface AppVersionSubscriptionPayloadSubscription
-  extends Promise<AsyncIterator<AppVersionSubscriptionPayload>>,
-    Fragmentable {
-  mutation: () => Promise<AsyncIterator<MutationType>>;
-  node: <T = AppVersionSubscription>() => T;
-  updatedFields: () => Promise<AsyncIterator<String[]>>;
-  previousValues: <T = AppVersionPreviousValuesSubscription>() => T;
-}
-
-export interface Story {
-  id: ID_Output;
-}
-
-export interface StoryPromise extends Promise<Story>, Fragmentable {
-  id: () => Promise<ID_Output>;
-  createBy: <T = UserPromise>() => T;
-  video: <T = FilePromise>() => T;
-  thumbnail: <T = FilePromise>() => T;
-  versions: <T = FragmentableArray<AppVersion>>(
-    args?: {
-      where?: AppVersionWhereInput;
-      orderBy?: AppVersionOrderByInput;
-      skip?: Int;
-      after?: String;
-      before?: String;
-      first?: Int;
-      last?: Int;
-    }
-  ) => T;
-  categories: <T = FragmentableArray<StoryCategory>>(
-    args?: {
-      where?: StoryCategoryWhereInput;
-      orderBy?: StoryCategoryOrderByInput;
-      skip?: Int;
-      after?: String;
-      before?: String;
-      first?: Int;
-      last?: Int;
-    }
-  ) => T;
-  elements: <T = FragmentableArray<StoryElement>>(
-    args?: {
-      where?: StoryElementWhereInput;
-      orderBy?: StoryElementOrderByInput;
-      skip?: Int;
-      after?: String;
-      before?: String;
-      first?: Int;
-      last?: Int;
-    }
-  ) => T;
-}
-
-export interface StorySubscription
-  extends Promise<AsyncIterator<Story>>,
-    Fragmentable {
-  id: () => Promise<AsyncIterator<ID_Output>>;
-  createBy: <T = UserSubscription>() => T;
-  video: <T = FileSubscription>() => T;
-  thumbnail: <T = FileSubscription>() => T;
-  versions: <T = Promise<AsyncIterator<AppVersionSubscription>>>(
-    args?: {
-      where?: AppVersionWhereInput;
-      orderBy?: AppVersionOrderByInput;
-      skip?: Int;
-      after?: String;
-      before?: String;
-      first?: Int;
-      last?: Int;
-    }
-  ) => T;
-  categories: <T = Promise<AsyncIterator<StoryCategorySubscription>>>(
-    args?: {
-      where?: StoryCategoryWhereInput;
-      orderBy?: StoryCategoryOrderByInput;
-      skip?: Int;
-      after?: String;
-      before?: String;
-      first?: Int;
-      last?: Int;
-    }
-  ) => T;
-  elements: <T = Promise<AsyncIterator<StoryElementSubscription>>>(
-    args?: {
-      where?: StoryElementWhereInput;
-      orderBy?: StoryElementOrderByInput;
-      skip?: Int;
-      after?: String;
-      before?: String;
-      first?: Int;
-      last?: Int;
-    }
-  ) => T;
-}
-
-export interface AppVersionPreviousValues {
-  id: ID_Output;
-  version: String;
-}
-
-export interface AppVersionPreviousValuesPromise
-  extends Promise<AppVersionPreviousValues>,
-    Fragmentable {
-  id: () => Promise<ID_Output>;
-  version: () => Promise<String>;
-}
-
-export interface AppVersionPreviousValuesSubscription
-  extends Promise<AsyncIterator<AppVersionPreviousValues>>,
-    Fragmentable {
-  id: () => Promise<AsyncIterator<ID_Output>>;
-  version: () => Promise<AsyncIterator<String>>;
-}
-
-export interface AggregateFile {
-  count: Int;
-}
-
-export interface AggregateFilePromise
-  extends Promise<AggregateFile>,
-    Fragmentable {
-  count: () => Promise<Int>;
-}
-
-export interface AggregateFileSubscription
-  extends Promise<AsyncIterator<AggregateFile>>,
-    Fragmentable {
-  count: () => Promise<AsyncIterator<Int>>;
-}
-
-export interface AppCategoryConnection {
-  pageInfo: PageInfo;
-  edges: AppCategoryEdge[];
-}
-
-export interface AppCategoryConnectionPromise
-  extends Promise<AppCategoryConnection>,
-    Fragmentable {
-  pageInfo: <T = PageInfoPromise>() => T;
-  edges: <T = FragmentableArray<AppCategoryEdge>>() => T;
-  aggregate: <T = AggregateAppCategoryPromise>() => T;
-}
-
-export interface AppCategoryConnectionSubscription
-  extends Promise<AsyncIterator<AppCategoryConnection>>,
-    Fragmentable {
-  pageInfo: <T = PageInfoSubscription>() => T;
-  edges: <T = Promise<AsyncIterator<AppCategoryEdgeSubscription>>>() => T;
-  aggregate: <T = AggregateAppCategorySubscription>() => T;
-}
-
-export interface AggregateUser {
-  count: Int;
-}
-
-export interface AggregateUserPromise
-  extends Promise<AggregateUser>,
-    Fragmentable {
-  count: () => Promise<Int>;
-}
-
-export interface AggregateUserSubscription
-  extends Promise<AsyncIterator<AggregateUser>>,
-    Fragmentable {
-  count: () => Promise<AsyncIterator<Int>>;
 }
 
 export interface FileSubscriptionPayload {
@@ -2567,21 +2842,23 @@ export interface StoryCategoryEdgeSubscription
   cursor: () => Promise<AsyncIterator<String>>;
 }
 
-export interface AppVersion {
+export interface StoryCategory {
   id: ID_Output;
-  version: String;
+  name: String;
 }
 
-export interface AppVersionPromise extends Promise<AppVersion>, Fragmentable {
+export interface StoryCategoryPromise
+  extends Promise<StoryCategory>,
+    Fragmentable {
   id: () => Promise<ID_Output>;
-  version: () => Promise<String>;
+  name: () => Promise<String>;
 }
 
-export interface AppVersionSubscription
-  extends Promise<AsyncIterator<AppVersion>>,
+export interface StoryCategorySubscription
+  extends Promise<AsyncIterator<StoryCategory>>,
     Fragmentable {
   id: () => Promise<AsyncIterator<ID_Output>>;
-  version: () => Promise<AsyncIterator<String>>;
+  name: () => Promise<AsyncIterator<String>>;
 }
 
 export interface StoryConnection {
@@ -2630,27 +2907,29 @@ export interface LibrarySubscriptionPayloadSubscription
   previousValues: <T = LibraryPreviousValuesSubscription>() => T;
 }
 
-export interface PageInfo {
-  hasNextPage: Boolean;
-  hasPreviousPage: Boolean;
-  startCursor?: String;
-  endCursor?: String;
+export interface UserSubscriptionPayload {
+  mutation: MutationType;
+  node: User;
+  updatedFields: String[];
+  previousValues: UserPreviousValues;
 }
 
-export interface PageInfoPromise extends Promise<PageInfo>, Fragmentable {
-  hasNextPage: () => Promise<Boolean>;
-  hasPreviousPage: () => Promise<Boolean>;
-  startCursor: () => Promise<String>;
-  endCursor: () => Promise<String>;
-}
-
-export interface PageInfoSubscription
-  extends Promise<AsyncIterator<PageInfo>>,
+export interface UserSubscriptionPayloadPromise
+  extends Promise<UserSubscriptionPayload>,
     Fragmentable {
-  hasNextPage: () => Promise<AsyncIterator<Boolean>>;
-  hasPreviousPage: () => Promise<AsyncIterator<Boolean>>;
-  startCursor: () => Promise<AsyncIterator<String>>;
-  endCursor: () => Promise<AsyncIterator<String>>;
+  mutation: () => Promise<MutationType>;
+  node: <T = UserPromise>() => T;
+  updatedFields: () => Promise<String[]>;
+  previousValues: <T = UserPreviousValuesPromise>() => T;
+}
+
+export interface UserSubscriptionPayloadSubscription
+  extends Promise<AsyncIterator<UserSubscriptionPayload>>,
+    Fragmentable {
+  mutation: () => Promise<AsyncIterator<MutationType>>;
+  node: <T = UserSubscription>() => T;
+  updatedFields: () => Promise<AsyncIterator<String[]>>;
+  previousValues: <T = UserPreviousValuesSubscription>() => T;
 }
 
 export interface LibraryPreviousValues {
@@ -2672,60 +2951,66 @@ export interface LibraryPreviousValuesSubscription
   name: () => Promise<AsyncIterator<String>>;
 }
 
-export interface StoryElementPreviousValues {
-  id: ID_Output;
-  name: String;
+export interface FileConnection {
+  pageInfo: PageInfo;
+  edges: FileEdge[];
 }
 
-export interface StoryElementPreviousValuesPromise
-  extends Promise<StoryElementPreviousValues>,
+export interface FileConnectionPromise
+  extends Promise<FileConnection>,
     Fragmentable {
-  id: () => Promise<ID_Output>;
-  name: () => Promise<String>;
+  pageInfo: <T = PageInfoPromise>() => T;
+  edges: <T = FragmentableArray<FileEdge>>() => T;
+  aggregate: <T = AggregateFilePromise>() => T;
 }
 
-export interface StoryElementPreviousValuesSubscription
-  extends Promise<AsyncIterator<StoryElementPreviousValues>>,
+export interface FileConnectionSubscription
+  extends Promise<AsyncIterator<FileConnection>>,
     Fragmentable {
-  id: () => Promise<AsyncIterator<ID_Output>>;
-  name: () => Promise<AsyncIterator<String>>;
+  pageInfo: <T = PageInfoSubscription>() => T;
+  edges: <T = Promise<AsyncIterator<FileEdgeSubscription>>>() => T;
+  aggregate: <T = AggregateFileSubscription>() => T;
 }
 
-export interface AggregateApp {
+export interface StoryElementSubscriptionPayload {
+  mutation: MutationType;
+  node: StoryElement;
+  updatedFields: String[];
+  previousValues: StoryElementPreviousValues;
+}
+
+export interface StoryElementSubscriptionPayloadPromise
+  extends Promise<StoryElementSubscriptionPayload>,
+    Fragmentable {
+  mutation: () => Promise<MutationType>;
+  node: <T = StoryElementPromise>() => T;
+  updatedFields: () => Promise<String[]>;
+  previousValues: <T = StoryElementPreviousValuesPromise>() => T;
+}
+
+export interface StoryElementSubscriptionPayloadSubscription
+  extends Promise<AsyncIterator<StoryElementSubscriptionPayload>>,
+    Fragmentable {
+  mutation: () => Promise<AsyncIterator<MutationType>>;
+  node: <T = StoryElementSubscription>() => T;
+  updatedFields: () => Promise<AsyncIterator<String[]>>;
+  previousValues: <T = StoryElementPreviousValuesSubscription>() => T;
+}
+
+export interface AggregateAppCategory {
   count: Int;
 }
 
-export interface AggregateAppPromise
-  extends Promise<AggregateApp>,
+export interface AggregateAppCategoryPromise
+  extends Promise<AggregateAppCategory>,
     Fragmentable {
   count: () => Promise<Int>;
 }
 
-export interface AggregateAppSubscription
-  extends Promise<AsyncIterator<AggregateApp>>,
+export interface AggregateAppCategorySubscription
+  extends Promise<AsyncIterator<AggregateAppCategory>>,
     Fragmentable {
   count: () => Promise<AsyncIterator<Int>>;
-}
-
-export interface AppConnection {
-  pageInfo: PageInfo;
-  edges: AppEdge[];
-}
-
-export interface AppConnectionPromise
-  extends Promise<AppConnection>,
-    Fragmentable {
-  pageInfo: <T = PageInfoPromise>() => T;
-  edges: <T = FragmentableArray<AppEdge>>() => T;
-  aggregate: <T = AggregateAppPromise>() => T;
-}
-
-export interface AppConnectionSubscription
-  extends Promise<AsyncIterator<AppConnection>>,
-    Fragmentable {
-  pageInfo: <T = PageInfoSubscription>() => T;
-  edges: <T = Promise<AsyncIterator<AppEdgeSubscription>>>() => T;
-  aggregate: <T = AggregateAppSubscription>() => T;
 }
 
 export interface StorySubscriptionPayload {
@@ -2835,21 +3120,92 @@ export interface StoryCategorySubscriptionPayloadSubscription
   previousValues: <T = StoryCategoryPreviousValuesSubscription>() => T;
 }
 
-export interface AppEdge {
-  node: App;
-  cursor: String;
+export interface Story {
+  id: ID_Output;
 }
 
-export interface AppEdgePromise extends Promise<AppEdge>, Fragmentable {
-  node: <T = AppPromise>() => T;
-  cursor: () => Promise<String>;
+export interface StoryPromise extends Promise<Story>, Fragmentable {
+  id: () => Promise<ID_Output>;
+  app: <T = AppPromise>() => T;
+  createBy: <T = UserPromise>() => T;
+  video: <T = FilePromise>() => T;
+  thumbnail: <T = FilePromise>() => T;
+  versions: <T = FragmentableArray<AppVersion>>(
+    args?: {
+      where?: AppVersionWhereInput;
+      orderBy?: AppVersionOrderByInput;
+      skip?: Int;
+      after?: String;
+      before?: String;
+      first?: Int;
+      last?: Int;
+    }
+  ) => T;
+  categories: <T = FragmentableArray<StoryCategory>>(
+    args?: {
+      where?: StoryCategoryWhereInput;
+      orderBy?: StoryCategoryOrderByInput;
+      skip?: Int;
+      after?: String;
+      before?: String;
+      first?: Int;
+      last?: Int;
+    }
+  ) => T;
+  elements: <T = FragmentableArray<StoryElement>>(
+    args?: {
+      where?: StoryElementWhereInput;
+      orderBy?: StoryElementOrderByInput;
+      skip?: Int;
+      after?: String;
+      before?: String;
+      first?: Int;
+      last?: Int;
+    }
+  ) => T;
 }
 
-export interface AppEdgeSubscription
-  extends Promise<AsyncIterator<AppEdge>>,
+export interface StorySubscription
+  extends Promise<AsyncIterator<Story>>,
     Fragmentable {
-  node: <T = AppSubscription>() => T;
-  cursor: () => Promise<AsyncIterator<String>>;
+  id: () => Promise<AsyncIterator<ID_Output>>;
+  app: <T = AppSubscription>() => T;
+  createBy: <T = UserSubscription>() => T;
+  video: <T = FileSubscription>() => T;
+  thumbnail: <T = FileSubscription>() => T;
+  versions: <T = Promise<AsyncIterator<AppVersionSubscription>>>(
+    args?: {
+      where?: AppVersionWhereInput;
+      orderBy?: AppVersionOrderByInput;
+      skip?: Int;
+      after?: String;
+      before?: String;
+      first?: Int;
+      last?: Int;
+    }
+  ) => T;
+  categories: <T = Promise<AsyncIterator<StoryCategorySubscription>>>(
+    args?: {
+      where?: StoryCategoryWhereInput;
+      orderBy?: StoryCategoryOrderByInput;
+      skip?: Int;
+      after?: String;
+      before?: String;
+      first?: Int;
+      last?: Int;
+    }
+  ) => T;
+  elements: <T = Promise<AsyncIterator<StoryElementSubscription>>>(
+    args?: {
+      where?: StoryElementWhereInput;
+      orderBy?: StoryElementOrderByInput;
+      skip?: Int;
+      after?: String;
+      before?: String;
+      first?: Int;
+      last?: Int;
+    }
+  ) => T;
 }
 
 export interface StoryPreviousValues {
@@ -2868,36 +3224,20 @@ export interface StoryPreviousValuesSubscription
   id: () => Promise<AsyncIterator<ID_Output>>;
 }
 
-export interface File {
-  id: ID_Output;
-  createdAt: DateTimeOutput;
-  updatedAt: DateTimeOutput;
-  filename: String;
-  mimetype: String;
-  encoding: String;
-  url: String;
+export interface AggregateFile {
+  count: Int;
 }
 
-export interface FilePromise extends Promise<File>, Fragmentable {
-  id: () => Promise<ID_Output>;
-  createdAt: () => Promise<DateTimeOutput>;
-  updatedAt: () => Promise<DateTimeOutput>;
-  filename: () => Promise<String>;
-  mimetype: () => Promise<String>;
-  encoding: () => Promise<String>;
-  url: () => Promise<String>;
-}
-
-export interface FileSubscription
-  extends Promise<AsyncIterator<File>>,
+export interface AggregateFilePromise
+  extends Promise<AggregateFile>,
     Fragmentable {
-  id: () => Promise<AsyncIterator<ID_Output>>;
-  createdAt: () => Promise<AsyncIterator<DateTimeOutput>>;
-  updatedAt: () => Promise<AsyncIterator<DateTimeOutput>>;
-  filename: () => Promise<AsyncIterator<String>>;
-  mimetype: () => Promise<AsyncIterator<String>>;
-  encoding: () => Promise<AsyncIterator<String>>;
-  url: () => Promise<AsyncIterator<String>>;
+  count: () => Promise<Int>;
+}
+
+export interface AggregateFileSubscription
+  extends Promise<AsyncIterator<AggregateFile>>,
+    Fragmentable {
+  count: () => Promise<AsyncIterator<Int>>;
 }
 
 export interface AggregateStory {
@@ -2916,74 +3256,56 @@ export interface AggregateStorySubscription
   count: () => Promise<AsyncIterator<Int>>;
 }
 
-export interface UserConnection {
-  pageInfo: PageInfo;
-  edges: UserEdge[];
-}
-
-export interface UserConnectionPromise
-  extends Promise<UserConnection>,
-    Fragmentable {
-  pageInfo: <T = PageInfoPromise>() => T;
-  edges: <T = FragmentableArray<UserEdge>>() => T;
-  aggregate: <T = AggregateUserPromise>() => T;
-}
-
-export interface UserConnectionSubscription
-  extends Promise<AsyncIterator<UserConnection>>,
-    Fragmentable {
-  pageInfo: <T = PageInfoSubscription>() => T;
-  edges: <T = Promise<AsyncIterator<UserEdgeSubscription>>>() => T;
-  aggregate: <T = AggregateUserSubscription>() => T;
-}
-
-export interface Library {
+export interface AppVersion {
   id: ID_Output;
-  name: String;
+  version: String;
 }
 
-export interface LibraryPromise extends Promise<Library>, Fragmentable {
+export interface AppVersionPromise extends Promise<AppVersion>, Fragmentable {
   id: () => Promise<ID_Output>;
-  createBy: <T = UserPromise>() => T;
-  name: () => Promise<String>;
-  stories: <T = FragmentableArray<Story>>(
-    args?: {
-      where?: StoryWhereInput;
-      orderBy?: StoryOrderByInput;
-      skip?: Int;
-      after?: String;
-      before?: String;
-      first?: Int;
-      last?: Int;
-    }
-  ) => T;
+  version: () => Promise<String>;
 }
 
-export interface LibrarySubscription
-  extends Promise<AsyncIterator<Library>>,
+export interface AppVersionSubscription
+  extends Promise<AsyncIterator<AppVersion>>,
     Fragmentable {
   id: () => Promise<AsyncIterator<ID_Output>>;
-  createBy: <T = UserSubscription>() => T;
-  name: () => Promise<AsyncIterator<String>>;
-  stories: <T = Promise<AsyncIterator<StorySubscription>>>(
-    args?: {
-      where?: StoryWhereInput;
-      orderBy?: StoryOrderByInput;
-      skip?: Int;
-      after?: String;
-      before?: String;
-      first?: Int;
-      last?: Int;
-    }
-  ) => T;
+  version: () => Promise<AsyncIterator<String>>;
 }
+
+export interface AppVersionEdge {
+  node: AppVersion;
+  cursor: String;
+}
+
+export interface AppVersionEdgePromise
+  extends Promise<AppVersionEdge>,
+    Fragmentable {
+  node: <T = AppVersionPromise>() => T;
+  cursor: () => Promise<String>;
+}
+
+export interface AppVersionEdgeSubscription
+  extends Promise<AsyncIterator<AppVersionEdge>>,
+    Fragmentable {
+  node: <T = AppVersionSubscription>() => T;
+  cursor: () => Promise<AsyncIterator<String>>;
+}
+
+/*
+The `Boolean` scalar type represents `true` or `false`.
+*/
+export type Boolean = boolean;
 
 /*
 The `Int` scalar type represents non-fractional signed whole numeric values. Int can represent values between -(2^31) and 2^31 - 1. 
 */
 export type Int = number;
 
-export type Long = string;
+/*
+The `String` scalar type represents textual data, represented as UTF-8 character sequences. The String type is most often used by GraphQL to represent free-form human-readable text.
+*/
+export type String = string;
 
 /*
 The `ID` scalar type represents a unique identifier, often used to refetch an object or as key for a cache. The ID type appears in a JSON response as a String; however, it is not intended to be human-readable. When expected as an input type, any string (such as `"4"`) or integer (such as `4`) input value will be accepted as an ID.
@@ -2991,10 +3313,7 @@ The `ID` scalar type represents a unique identifier, often used to refetch an ob
 export type ID_Input = string | number;
 export type ID_Output = string;
 
-/*
-The `String` scalar type represents textual data, represented as UTF-8 character sequences. The String type is most often used by GraphQL to represent free-form human-readable text.
-*/
-export type String = string;
+export type Long = string;
 
 /*
 DateTime scalar input type, allowing Date
@@ -3005,11 +3324,6 @@ export type DateTimeInput = Date | string;
 DateTime scalar output type, which is always a string
 */
 export type DateTimeOutput = string;
-
-/*
-The `Boolean` scalar type represents `true` or `false`.
-*/
-export type Boolean = boolean;
 
 /**
  * Model Metadata
