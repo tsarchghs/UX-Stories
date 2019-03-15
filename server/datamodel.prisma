@@ -15,6 +15,7 @@ type User {
   name: String!
   password: String!
   role: AccountType!
+  apps: [App!]!
 }
 
 type App {
@@ -27,6 +28,7 @@ type App {
   logo: File
   versions: [AppVersion!]!
   category: AppCategory!
+  stories: [Story!]!
 }
 
 type AppCategory {
@@ -51,6 +53,7 @@ type File {
 
 type Story {
   id: ID! @unique
+  app: App!
   createBy: User!
   video: File! @relation(name: "StoryVideoRel")
   thumbnail: File! @relation(name: "StoryThumbnailRel")
