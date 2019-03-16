@@ -215,6 +215,7 @@ input StoryToAppInput {
 input AppFilterInput {
   category: String
   storyCategories: [String!]
+  elements: [String!]
 }
 
 type Library {
