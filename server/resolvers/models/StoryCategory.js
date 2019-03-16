@@ -1,4 +1,7 @@
 
+const storyCategories = async (root,args,context) => {
+	return await context.prisma.storyCategories();
+}
 
 const createStoryCategory = async (root,args,context) => {
 	if (!args.storyCategoryInput.name) {
@@ -51,10 +54,21 @@ const deleteStoryCategory = async (root,args,context) => {
 	return storyCategory
 }
 
+const stories = async (parent,args,context) => {
+	return await context.prisma.stories({
+		where:{
+			categories_some:{
+				id: parent.id
+			}
+		}
+	})
+}
 
 module.exports = {
 	createStoryCategory,
 	editStoryCategory,
 	deleteStoryCategory,
-	storyCategoryToStory
+	storyCategoryToStory,
+	storyCategories,
+	stories
 }

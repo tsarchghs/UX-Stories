@@ -14,7 +14,8 @@ module.exports = {
 		login: authResolvers.login,
 		apps: appResolvers.apps,
 		stories: storyResolvers.stories,
-		libraries: libraryResolvers.libraries
+		libraries: libraryResolvers.libraries,
+		storyCategories: storyCategoryResolvers.storyCategories
 	},
 	Mutation: {
 		signUp: authResolvers.signUp,
@@ -68,6 +69,9 @@ module.exports = {
 		thumbnail: storyResolvers.thumbnail,
 		app: storyResolvers.app,
 		createBy: storyResolvers.createBy
+	},
+	StoryCategory: {
+		stories: storyCategoryResolvers.stories
 	},
 	Library: {
 		createBy: libraryResolvers.createBy,
