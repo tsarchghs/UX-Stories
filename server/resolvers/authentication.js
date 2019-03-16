@@ -31,13 +31,14 @@ const login = async (root,args,context) => {
 
 const signUp = async (root,args,context) => {
 	console.log(args);
-	if (!args.email || !args.name || !args.password){
+	if (!args.email || !args.first_name || !args.last_name || !args.password){
 		throw new Error("Please check that all of your arguments are not empty!")
 	}
 	const hashed_password = await bcrypt.hash(args.password,saltRounds);
 	const user = await context.prisma.createUser({
 		email: args.email,
-		name: args.name,
+		first_name: args.first_name,
+		last_name: args.last_name,
 		password: hashed_password,
 		role: "MEMBER"
 	});

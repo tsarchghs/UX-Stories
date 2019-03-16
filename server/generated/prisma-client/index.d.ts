@@ -496,8 +496,10 @@ export type UserOrderByInput =
   | "id_DESC"
   | "email_ASC"
   | "email_DESC"
-  | "name_ASC"
-  | "name_DESC"
+  | "first_name_ASC"
+  | "first_name_DESC"
+  | "last_name_ASC"
+  | "last_name_DESC"
   | "password_ASC"
   | "password_DESC"
   | "role_ASC"
@@ -682,7 +684,8 @@ export interface AppCategoryWhereInput {
 
 export interface UserUpdateWithoutAppsDataInput {
   email?: String;
-  name?: String;
+  first_name?: String;
+  last_name?: String;
   password?: String;
   role?: AccountType;
   libraries?: LibraryUpdateManyWithoutCreateByInput;
@@ -954,7 +957,8 @@ export interface AppUpdateWithoutStoriesDataInput {
 
 export interface UserUpdateManyMutationInput {
   email?: String;
-  name?: String;
+  first_name?: String;
+  last_name?: String;
   password?: String;
   role?: AccountType;
 }
@@ -1120,7 +1124,8 @@ export type FileWhereUniqueInput = AtLeastOne<{
 
 export interface UserUpdateDataInput {
   email?: String;
-  name?: String;
+  first_name?: String;
+  last_name?: String;
   password?: String;
   role?: AccountType;
   apps?: AppUpdateManyWithoutCreateByInput;
@@ -1882,20 +1887,34 @@ export interface UserWhereInput {
   email_not_starts_with?: String;
   email_ends_with?: String;
   email_not_ends_with?: String;
-  name?: String;
-  name_not?: String;
-  name_in?: String[] | String;
-  name_not_in?: String[] | String;
-  name_lt?: String;
-  name_lte?: String;
-  name_gt?: String;
-  name_gte?: String;
-  name_contains?: String;
-  name_not_contains?: String;
-  name_starts_with?: String;
-  name_not_starts_with?: String;
-  name_ends_with?: String;
-  name_not_ends_with?: String;
+  first_name?: String;
+  first_name_not?: String;
+  first_name_in?: String[] | String;
+  first_name_not_in?: String[] | String;
+  first_name_lt?: String;
+  first_name_lte?: String;
+  first_name_gt?: String;
+  first_name_gte?: String;
+  first_name_contains?: String;
+  first_name_not_contains?: String;
+  first_name_starts_with?: String;
+  first_name_not_starts_with?: String;
+  first_name_ends_with?: String;
+  first_name_not_ends_with?: String;
+  last_name?: String;
+  last_name_not?: String;
+  last_name_in?: String[] | String;
+  last_name_not_in?: String[] | String;
+  last_name_lt?: String;
+  last_name_lte?: String;
+  last_name_gt?: String;
+  last_name_gte?: String;
+  last_name_contains?: String;
+  last_name_not_contains?: String;
+  last_name_starts_with?: String;
+  last_name_not_starts_with?: String;
+  last_name_ends_with?: String;
+  last_name_not_ends_with?: String;
   password?: String;
   password_not?: String;
   password_in?: String[] | String;
@@ -2242,7 +2261,8 @@ export interface AppCreateWithoutLogoInput {
 
 export interface UserUpdateWithoutLibrariesDataInput {
   email?: String;
-  name?: String;
+  first_name?: String;
+  last_name?: String;
   password?: String;
   role?: AccountType;
   apps?: AppUpdateManyWithoutCreateByInput;
@@ -2320,7 +2340,8 @@ export interface LibraryScalarWhereInput {
 
 export interface UserCreateWithoutLibrariesInput {
   email: String;
-  name: String;
+  first_name: String;
+  last_name: String;
   password: String;
   role: AccountType;
   apps?: AppCreateManyWithoutCreateByInput;
@@ -2456,7 +2477,8 @@ export interface AppUpsertWithWhereUniqueWithoutCreateByInput {
 
 export interface UserCreateInput {
   email: String;
-  name: String;
+  first_name: String;
+  last_name: String;
   password: String;
   role: AccountType;
   apps?: AppCreateManyWithoutCreateByInput;
@@ -2580,7 +2602,8 @@ export interface UserUpsertWithoutAppsInput {
 
 export interface UserCreateWithoutAppsInput {
   email: String;
-  name: String;
+  first_name: String;
+  last_name: String;
   password: String;
   role: AccountType;
   libraries?: LibraryCreateManyWithoutCreateByInput;
@@ -2620,7 +2643,8 @@ export interface AppUpdateWithWhereUniqueWithoutCategoryInput {
 
 export interface UserUpdateInput {
   email?: String;
-  name?: String;
+  first_name?: String;
+  last_name?: String;
   password?: String;
   role?: AccountType;
   apps?: AppUpdateManyWithoutCreateByInput;
@@ -2688,7 +2712,8 @@ export interface NodeNode {
 export interface UserPreviousValues {
   id: ID_Output;
   email: String;
-  name: String;
+  first_name: String;
+  last_name: String;
   password: String;
   role: AccountType;
 }
@@ -2698,7 +2723,8 @@ export interface UserPreviousValuesPromise
     Fragmentable {
   id: () => Promise<ID_Output>;
   email: () => Promise<String>;
-  name: () => Promise<String>;
+  first_name: () => Promise<String>;
+  last_name: () => Promise<String>;
   password: () => Promise<String>;
   role: () => Promise<AccountType>;
 }
@@ -2708,7 +2734,8 @@ export interface UserPreviousValuesSubscription
     Fragmentable {
   id: () => Promise<AsyncIterator<ID_Output>>;
   email: () => Promise<AsyncIterator<String>>;
-  name: () => Promise<AsyncIterator<String>>;
+  first_name: () => Promise<AsyncIterator<String>>;
+  last_name: () => Promise<AsyncIterator<String>>;
   password: () => Promise<AsyncIterator<String>>;
   role: () => Promise<AsyncIterator<AccountType>>;
 }
@@ -2998,7 +3025,8 @@ export interface StoryElementSubscriptionPayloadSubscription
 export interface User {
   id: ID_Output;
   email: String;
-  name: String;
+  first_name: String;
+  last_name: String;
   password: String;
   role: AccountType;
 }
@@ -3006,7 +3034,8 @@ export interface User {
 export interface UserPromise extends Promise<User>, Fragmentable {
   id: () => Promise<ID_Output>;
   email: () => Promise<String>;
-  name: () => Promise<String>;
+  first_name: () => Promise<String>;
+  last_name: () => Promise<String>;
   password: () => Promise<String>;
   role: () => Promise<AccountType>;
   apps: <T = FragmentableArray<App>>(
@@ -3038,7 +3067,8 @@ export interface UserSubscription
     Fragmentable {
   id: () => Promise<AsyncIterator<ID_Output>>;
   email: () => Promise<AsyncIterator<String>>;
-  name: () => Promise<AsyncIterator<String>>;
+  first_name: () => Promise<AsyncIterator<String>>;
+  last_name: () => Promise<AsyncIterator<String>>;
   password: () => Promise<AsyncIterator<String>>;
   role: () => Promise<AsyncIterator<AccountType>>;
   apps: <T = Promise<AsyncIterator<AppSubscription>>>(
