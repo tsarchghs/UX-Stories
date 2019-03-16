@@ -218,6 +218,11 @@ input AppFilterInput {
   elements: [String!]
 }
 
+input LibraryFilterInput {
+   categories: [String!]
+   elements: [String!]
+}
+
 type Library {
   id: ID!
   createBy: User!
@@ -229,7 +234,7 @@ type Query {
 	login(email: String!, password: String!): AuthData
   apps(appFilterInput: AppFilterInput): [App!]!
   stories(storiesInput: StoriesInput!): [Story!]!
-  libraries: [Library!]!
+  libraries(libraryFilterInput: LibraryFilterInput): [Library!]!
   storyCategories: [StoryCategory!]!
 }
 
