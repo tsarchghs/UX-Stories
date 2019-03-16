@@ -1,18 +1,21 @@
+const fileHandling = require("../../modules/fileApi");
 
 const apps = async (root,args,context) => {
-	const userId = "cjtabbnzyqlww0b79zgo8k7ku";
-	const createBy = await context.prisma.user({id:userId});
-	const apps = await context.prisma.apps({
-		where: {
-			createBy: createBy
-		}
-	})
+	if (args.appFilterInput && !args.appFilterInput.category) {
+		throw new Error("appFilterInput.category arg must not be empty");
+	}
+	filterBy = {}
+	if (args.appFilterInput.category){
+		filterBy["where"] = {}
+		filterBy["where"]["category"] = {name:args.appFilterInput.category}
+	}
+	const apps = await context.prisma.apps(filterBy);
 	return apps;
 }
 
 const createApp = async (root,args,context) => {
-	if (!args.appInput.name || !args.appInput.description || !args.appInput.platform || !args.appInput.logo_url
-		 || !args.appInput.version || !args.appInput.category) {
+	if (!args.appInput.name || !args.appInput.description || !args.appInput.platform || !args.appInput.logo.base64 ||
+		 !args.appInput.logo.mimetype || !args.appInput.version || !args.appInput.category) {
 		throw new Error("Please check that all of your arguments are not empty!")
 	}
 	const appCategory = await context.prisma.appCategory({name:args.appInput.category});
@@ -23,10 +26,9 @@ const createApp = async (root,args,context) => {
 	if (!appVersion){
 		throw new Error(`Version <${args.appInput.version}> doesn't exist.`);
 	}
-	const logo = await context.prisma.file({url:args.appInput.logo_url});
-	if (!logo) {
-		throw new Error(`Logo <${args.appInput.logo_url}> doesn't exist`);
-	}
+	const logo = await fileHandling.processUpload(args.appInput.logo.base64,
+													args.appInput.logo.mimetype,
+													context);
 	const userId = "cjtabbnzyqlww0b79zgo8k7ku";
 	const createBy = await context.prisma.user({id:userId});
 	const app = await context.prisma.createApp({
@@ -56,7 +58,7 @@ const createApp = async (root,args,context) => {
 		platform: args.appInput.platform
 	})
 	await context.prisma.updateFile({
-		where:{url:args.appInput.logo_url},
+		where:{id:logo.id},
 		data: {
 			apps: {
 				connect: { id: app.id }
