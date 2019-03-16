@@ -5,7 +5,7 @@ const apps = async (root,args,context) => {
 		throw new Error("appFilterInput.category arg must not be empty");
 	}
 	filterBy = {}
-	if (args.appFilterInput.category){
+	if (args.appFilterInput && args.appFilterInput.category) {
 		filterBy["where"] = {}
 		filterBy["where"]["category"] = {name:args.appFilterInput.category}
 	}
