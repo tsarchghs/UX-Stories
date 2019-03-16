@@ -1,13 +1,19 @@
 const fileHandling = require("../../modules/fileApi");
 
 const apps = async (root,args,context) => {
-	if (args.appFilterInput && !args.appFilterInput.category) {
+	if (args.appFilterInput && !(args.appFilterInput.category || (args.appFilterInput.storyCategories && args.appFilterInput.storyCategories.length))) {
 		throw new Error("appFilterInput.category arg must not be empty");
 	}
-	filterBy = {}
+	filterBy = {where:{}}
 	if (args.appFilterInput && args.appFilterInput.category) {
-		filterBy["where"] = {}
 		filterBy["where"]["category"] = {name:args.appFilterInput.category}
+	}
+	if (args.appFilterInput && args.appFilterInput.storyCategories.length) {
+		filterBy["where"]["stories_some"] = {
+			categories_every:{
+				name_in: args.appFilterInput.storyCategories
+			}
+		}
 	}
 	const apps = await context.prisma.apps(filterBy);
 	return apps;
