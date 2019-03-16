@@ -21,5 +21,18 @@ module.exports = {
 		if (!libraries.length) {
 			throw new Error(`Node with id ${libraryId} doesn't exist or unauthorized`);
 		}
+	},
+	storyToLibraryPermission: async (context,libraryId) => {
+		const libraries = await context.prisma.libraries({
+			where: {
+				id: libraryId,
+				createBy :{
+					id: context.user.id
+				}
+			}
+		})
+		if (!libraries.length) {
+			throw new Error(`Node with id ${libraryId} doesn't exist or unauthorized`);
+		}
 	}
 }
