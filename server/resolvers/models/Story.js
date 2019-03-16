@@ -26,7 +26,6 @@ const createStory = async (root,args,context) => {
 	}
 	const userId = "cjtabbnzyqlww0b79zgo8k7ku";
 	const createBy = await context.prisma.user({id:userId});
-	createBy.password = null
 	const video = await fileHandling.processUpload(args.createStoryInput.video.base64,
 													args.createStoryInput.video.mimetype,
 													context);
@@ -80,11 +79,6 @@ const createStory = async (root,args,context) => {
 			}
 		}
 	})
-	// story.video = video
-	// story.thumbnail = thumbnail
-	// story.createBy = createBy
-	// story.categories = args.createStoryInput.categories.map(async categoryId => { return await context.prisma.storyCategory({id:categoryId}) });
-	// story.versions = args.createStoryInput.versions.map(async versionId => { return await context.prisma.storyCategory({id:versionId}) });
 	return story
 }
 
@@ -197,6 +191,7 @@ const createBy = async (parent,args,context) => {
 			}
 		}
 	})
+	user[0].password = null;
 	return user[0];
 }
 

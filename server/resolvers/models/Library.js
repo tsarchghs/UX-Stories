@@ -68,6 +68,7 @@ const createBy = async (parent,args,context) => {
 			}
 		}
 	})
+	user[0].password = null;
 	return user[0]
 }
 

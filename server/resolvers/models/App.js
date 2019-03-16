@@ -1,6 +1,6 @@
 
 const apps = async (root,args,context) => {
-	const userId = "cjta8e79lpwxm0b79o5zw71rd";
+	const userId = "cjtabbnzyqlww0b79zgo8k7ku";
 	const createBy = await context.prisma.user({id:userId});
 	const apps = await context.prisma.apps({
 		where: {
@@ -27,7 +27,7 @@ const createApp = async (root,args,context) => {
 	if (!logo) {
 		throw new Error(`Logo <${args.appInput.logo_url}> doesn't exist`);
 	}
-	const userId = "cjta8e79lpwxm0b79o5zw71rd";
+	const userId = "cjtabbnzyqlww0b79zgo8k7ku";
 	const createBy = await context.prisma.user({id:userId});
 	const app = await context.prisma.createApp({
 		createBy: {
@@ -81,6 +81,7 @@ const createBy = async (parent,args,context) => {
 			}
 		}
 	});
+	user[0].password = null;
 	return user[0];
 }
 
