@@ -14,9 +14,9 @@ const apps = async (root,args,context) => {
 			)
 		)
 	){
-		throw new Error("You must specifiy either one of category/storyCategory or elements arguments.");
+		throw new Error("You must specifiy either one of category/storyCategory or elements arguments when passing appFilterInput.");
 	}
-	filterBy = {where:{}}
+	const filterBy = {where:{}}
 	if (args.appFilterInput && args.appFilterInput.category) {
 		filterBy["where"]["category"] = {name:args.appFilterInput.category}
 	}
