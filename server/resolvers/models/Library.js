@@ -1,8 +1,18 @@
 
+const libraryPermissions = (context) => {
+	if (!context.loggedIn) {
+		throw new Error("You must be logged in");
+	}
+	if (!(context.user.role === "ADMIN")) {
+		throw new Error("Unauthorized");
+	}
+}
 
 const libraries = async (root,args,context) => {
-	const userId = "cjtabbnzyqlww0b79zgo8k7ku";
-	const createBy = await context.prisma.user({id:userId});
+	if (!context.loggedIn) {
+		throw new Error("You must be logged in");
+	}
+	const createBy = context.user
 
 	if (args.libraryFilterInput && 
 		!(
@@ -56,11 +66,11 @@ const libraries = async (root,args,context) => {
 }
 
 const createLibrary = async (root,args,context) => {
+	libraryPermissions(context);
 	if (!args.createLibraryInput.name) {
 		throw new Error("Please check that all of your arguments are not empty!")
 	}
-	const userId = "cjtabbnzyqlww0b79zgo8k7ku";
-	const createBy = await context.prisma.user({id:userId});
+	const createBy = context.user
 	const library = await context.prisma.createLibrary({
 		createBy: {
 			connect: { id: createBy.id }
@@ -73,6 +83,7 @@ const createLibrary = async (root,args,context) => {
 }
 
 const editLibrary = async (root,args,context) => {
+	libraryPermissions(context);
 	if (!args.editLibraryInput.id || !args.editLibraryInput.name) {
 		throw new Error("Please check that all of your arguments are not empty!")
 	}
@@ -88,15 +99,12 @@ const editLibrary = async (root,args,context) => {
 }
 
 const deleteLibrary = async (root,args,context) => {
+	libraryPermissions(context);
 	if (!args.deleteLibraryInput.id) {
 		throw new Error("Please check that all of your arguments are not empty!")
 	}
 	const userId = "cjtabbnzyqlww0b79zgo8k7ku";
 	const createBy = await context.prisma.user({id:userId});
-	// var library = await context.prisma.library({id: args.deleteLibraryInput.id});
-	// if (library.createBy.id !== createBy.id){
-	// 	throw new Error("Unauthorized");
-	// }
 	var library = await context.prisma.deleteLibrary({id:args.deleteLibraryInput.id});
 	return library
 }
