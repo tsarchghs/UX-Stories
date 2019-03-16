@@ -228,6 +228,7 @@ type Query {
   apps(appFilterInput: AppFilterInput): [App!]!
   stories(storiesInput: StoriesInput!): [Story!]!
   libraries: [Library!]!
+  storyCategories: [StoryCategory!]!
 }
 
 type Mutation {
