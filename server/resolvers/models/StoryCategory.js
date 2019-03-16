@@ -4,6 +4,7 @@ const storyCategories = async (root,args,context) => {
 }
 
 const createStoryCategory = async (root,args,context) => {
+	permissions.loginPermission(context,"ADMIN")
 	if (!args.storyCategoryInput.name) {
 		throw new Error("name argument is empty!");
 	}
@@ -15,6 +16,7 @@ const createStoryCategory = async (root,args,context) => {
 
 
 const storyCategoryToStory = async (root,args,context) => {
+	permissions.loginPermission(context,"ADMIN")
 	if (!args.storyCategoryToStoryInput.storyCategory || !args.storyCategoryToStoryInput.story) {
 		throw new Error("name argument is empty!");
 	}
@@ -30,6 +32,7 @@ const storyCategoryToStory = async (root,args,context) => {
 }
 
 const editStoryCategory = async (root,args,context) => {
+	permissions.loginPermission(context,"ADMIN")
 	if (!args.editStoryCategoryInput.name || !args.editStoryCategoryInput.id) {
 		throw new Error("name or id argument is empty!");
 	}
@@ -45,6 +48,7 @@ const editStoryCategory = async (root,args,context) => {
 }
 
 const deleteStoryCategory = async (root,args,context) => {
+	permissions.loginPermission(context,"ADMIN")
 	if (!args.deleteStoryCategoryInput.id) {
 		throw new Error("id argument is empty!");
 	}

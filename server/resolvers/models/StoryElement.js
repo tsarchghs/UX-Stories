@@ -1,5 +1,6 @@
 
 const createStoryElement = async (root,args,context) => {
+	permissions.loginPermission(context,"ADMIN")
 	if (!args.storyElementInput.name) {
 		throw new Error("Please check that all of your arguments are not empty!")
 	}
@@ -10,6 +11,7 @@ const createStoryElement = async (root,args,context) => {
 }
 
 const storyElementToStory = async (root,args,context) => {
+	permissions.loginPermission(context,"ADMIN")
 	if (!args.storyElementToStoryInput.storyElement || !args.storyElementToStoryInput.story){
 		throw new Error("Please check that all of your arguments are not empty!")
 	}
@@ -25,6 +27,7 @@ const storyElementToStory = async (root,args,context) => {
 }
 
 const editStoryElement = async (root,args,context) => {
+	permissions.loginPermission(context,"ADMIN")
 	if (!args.editStoryElementInput.name || !args.editStoryElementInput.id) {
 		throw new Error("Please check that all of your arguments are not empty!")
 	}
@@ -40,6 +43,7 @@ const editStoryElement = async (root,args,context) => {
 }
 
 const deleteStoryElement = async (root,args,context) => {
+	permissions.loginPermission(context,"ADMIN")
 	if (!args.deleteStoryElementInput.id) {
 		throw new Error("Please check that all of your arguments are not empty!")
 	}

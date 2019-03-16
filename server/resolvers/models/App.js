@@ -47,6 +47,7 @@ const apps = async (root,args,context) => {
 }
 
 const createApp = async (root,args,context) => {
+	permissions.loginPermission(context,"ADMIN")
 	if (!args.appInput.name || !args.appInput.description || !args.appInput.platform || !args.appInput.logo.base64 ||
 		 !args.appInput.logo.mimetype || !args.appInput.version || !args.appInput.category) {
 		throw new Error("Please check that all of your arguments are not empty!")

@@ -1,17 +1,7 @@
-
-const libraryPermissions = (context) => {
-	if (!context.loggedIn) {
-		throw new Error("You must be logged in");
-	}
-	if (!(context.user.role === "ADMIN")) {
-		throw new Error("Unauthorized");
-	}
-}
+const permissions = require("../permissions");
 
 const libraries = async (root,args,context) => {
-	if (!context.loggedIn) {
-		throw new Error("You must be logged in");
-	}
+	permissions.loginPermission(context,"MEMBER")
 	const createBy = context.user
 
 	if (args.libraryFilterInput && 
@@ -48,7 +38,7 @@ const libraries = async (root,args,context) => {
 		}
 	}
 	if (args.libraryFilterInput && args.libraryFilterInput.elements && args.libraryFilterInput.elements.length) {
-		if (!filterBy["where"]["stories_every"]["AND"]){
+		if (filterBy["where"]["stories_every"]["AND"] === undefined){
 			filterBy["where"]["stories_every"]["AND"] = []
 		}
 		filterBy["where"]["stories_every"]["AND"] = filterBy["where"]["stories_every"]["AND"].concat(
@@ -66,7 +56,7 @@ const libraries = async (root,args,context) => {
 }
 
 const createLibrary = async (root,args,context) => {
-	libraryPermissions(context);
+	permissions.loginPermission(context,"MEMBER")
 	if (!args.createLibraryInput.name) {
 		throw new Error("Please check that all of your arguments are not empty!")
 	}
@@ -77,18 +67,15 @@ const createLibrary = async (root,args,context) => {
 		},
 		name: args.createLibraryInput.name
 	})
-	library.createBy = createBy;
-	library.stories = [];
 	return library
 }
 
 const editLibrary = async (root,args,context) => {
-	libraryPermissions(context);
+	permissions.loginPermission(context,"MEMBER")
 	if (!args.editLibraryInput.id || !args.editLibraryInput.name) {
 		throw new Error("Please check that all of your arguments are not empty!")
 	}
-	const userId = "cjtabbnzyqlww0b79zgo8k7ku";
-	const createBy = await context.prisma.user({id:userId});
+	await permissions.libraryPermission(context,args.editLibraryInput.id)
 	const library = await context.prisma.updateLibrary({
 		where: { id: args.editLibraryInput.id},
 		data:{
@@ -99,12 +86,11 @@ const editLibrary = async (root,args,context) => {
 }
 
 const deleteLibrary = async (root,args,context) => {
-	libraryPermissions(context);
+	permissions.loginPermission(context,"MEMBER")
 	if (!args.deleteLibraryInput.id) {
 		throw new Error("Please check that all of your arguments are not empty!")
 	}
-	const userId = "cjtabbnzyqlww0b79zgo8k7ku";
-	const createBy = await context.prisma.user({id:userId});
+	await permissions.libraryPermission(context,args.deleteLibraryInput.id)
 	var library = await context.prisma.deleteLibrary({id:args.deleteLibraryInput.id});
 	return library
 }

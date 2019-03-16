@@ -1,5 +1,6 @@
 
 const createAppCategory = async (root,args,context) => {
+	permissions.loginPermission(context,"ADMIN")
 	if (!args.appCategoryInput.name) {
 		throw new Error("Please check that all of your arguments are not empty!")
 	}
@@ -10,6 +11,7 @@ const createAppCategory = async (root,args,context) => {
 }
 
 const editAppCategory = async (root,args,context) => {
+	permissions.loginPermission(context,"ADMIN")
 	if (!args.editAppCategoryInput.name || !args.editAppCategoryInput.id) {
 		throw new Error("Please check that all of your arguments are not empty!")
 	}
@@ -25,6 +27,7 @@ const editAppCategory = async (root,args,context) => {
 }
 
 const deleteAppCategory = async (root,args,context) => {
+	permissions.loginPermission(context,"ADMIN")
 	if (!args.deleteAppCategoryInput.id) {
 		throw new Error("id argument is empty")
 	}

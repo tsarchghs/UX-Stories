@@ -1,4 +1,5 @@
 const fileHandling = require("../../modules/fileApi");
+const permissions = require("../permissions");
 
 const stories = async (root,args,context) => {
 	if (!args.storiesInput.app) {
@@ -15,6 +16,7 @@ const stories = async (root,args,context) => {
 }
 
 const createStory = async (root,args,context) => {
+	permissions.loginPermission(context,"ADMIN")
 	if (
 		!args.createStoryInput.app || 
 		!args.createStoryInput.video ||
@@ -84,9 +86,11 @@ const createStory = async (root,args,context) => {
 
 
 const storyToLibrary = async (root,args,context) => {
+	permissions.loginPermission(context,"MEMBER")
 	if (!args.storyToLibraryInput.story || !args.storyToLibraryInput.library) {
 		throw new Error("Please check that all of your arguments are not empty!")
 	}
+	await permissions.storyToLibraryPermission(context,args.storyToLibraryInput.library);
 	const library = await context.prisma.updateLibrary({
 		where: { id: args.storyToLibraryInput.library },
 		data: {
@@ -99,6 +103,7 @@ const storyToLibrary = async (root,args,context) => {
 }
 
 const storyToApp = async (root,args,context) => {
+	permissions.loginPermission(context,"ADMIN")
 	if (!args.storyToAppInput.story || !args.storyToAppInput.app) {
 		throw new Error("Please check that all of your arguments are not empty!")
 	}

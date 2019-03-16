@@ -1,6 +1,7 @@
 
 
 const createAppVersion = async (root,args,context) => {
+	permissions.loginPermission(context,"ADMIN")
 	if (!args.appVersionInput.version) {
 		throw new Error("version argument is empty")
 	}
@@ -11,6 +12,7 @@ const createAppVersion = async (root,args,context) => {
 }
 
 const appVersionToApp = async (root,args,context) => {
+	permissions.loginPermission(context,"ADMIN")
 	if (!args.appVersionToAppInput.appVersion || !args.appVersionToAppInput.app) {
 		throw new Error("appVersion and/or app argument is empty")
 	}
@@ -26,6 +28,7 @@ const appVersionToApp = async (root,args,context) => {
 
 }
 const appVersionToStory = async (root,args,context) => {
+	permissions.loginPermission(context,"ADMIN")
 	if (!args.appVersionToStoryInput.appVersion || !args.appVersionToStoryInput.story) {
 		throw new Error("appVersion and/or story argument is empty")
 	}
@@ -41,6 +44,7 @@ const appVersionToStory = async (root,args,context) => {
 }
 
 const editAppVersion = async (root,args,context) => {
+	permissions.loginPermission(context,"ADMIN")
 	if (!args.editAppVersionInput.version || !args.editAppVersionInput.id) {
 		throw new Error("version/id argument is empty")
 	}
@@ -56,6 +60,7 @@ const editAppVersion = async (root,args,context) => {
 }
 
 const deleteAppVersion = async (root,args,context) => {
+	permissions.loginPermission(context,"ADMIN")
 	if (!args.deleteAppVersionInput.id) {
 		throw new Error("id argument is empty")
 	}
