@@ -155,7 +155,7 @@ input AppInput {
   description: String!
   company: String!
   platform: Platform!
-  logo_url: String!
+  logo: FileInput!
   version: String!
   category: String!
 }
@@ -213,6 +213,10 @@ input StoryToAppInput {
   type: LinkType!
 }
 
+input AppFilterInput {
+  category: String!
+}
+
 type Library {
   id: ID!
   createBy: User!
@@ -222,7 +226,7 @@ type Library {
 
 type Query {
 	login(email: String!, password: String!): AuthData
-  apps: [App!]!
+  apps(appFilterInput: AppFilterInput): [App!]!
   stories(storiesInput: StoriesInput!): [Story!]!
   libraries: [Library!]!
 }
