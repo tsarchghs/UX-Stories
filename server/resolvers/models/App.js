@@ -1,18 +1,45 @@
 const fileHandling = require("../../modules/fileApi");
 
 const apps = async (root,args,context) => {
-	if (args.appFilterInput && !(args.appFilterInput.category || (args.appFilterInput.storyCategories && args.appFilterInput.storyCategories.length))) {
-		throw new Error("appFilterInput.category arg must not be empty");
+	if (args.appFilterInput && 
+		!(args.appFilterInput.category || 
+			(
+				args.appFilterInput.storyCategories &&
+				args.appFilterInput.storyCategories.length
+			)
+			 ||
+			(
+				args.appFilterInput.elements &&
+				args.appFilterInput.elements.length
+			)
+		)
+	){
+		throw new Error("You must specifiy either one of category/storyCategory or elements arguments.");
 	}
 	filterBy = {where:{}}
 	if (args.appFilterInput && args.appFilterInput.category) {
 		filterBy["where"]["category"] = {name:args.appFilterInput.category}
 	}
-	if (args.appFilterInput && args.appFilterInput.storyCategories.length) {
+	if (args.appFilterInput && args.appFilterInput.storyCategories && args.appFilterInput.storyCategories.length) {
+		filterBy["where"]["stories_every"] = {
+			AND: args.appFilterInput.storyCategories.map(storyCategory => (
+					{
+						categories_some:{
+							name: storyCategory
+						}
+					}
+				))
+		}
+	}
+	if (args.appFilterInput && args.appFilterInput.elements && args.appFilterInput.elements.length){
 		filterBy["where"]["stories_some"] = {
-			categories_every:{
-				name_in: args.appFilterInput.storyCategories
-			}
+			AND: args.appFilterInput.elements.map(storyElement => (
+					{			
+						elements_some: {
+							name: storyElement
+						}
+					}
+				))
 		}
 	}
 	const apps = await context.prisma.apps(filterBy);
