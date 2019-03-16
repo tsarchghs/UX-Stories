@@ -3,14 +3,55 @@
 const libraries = async (root,args,context) => {
 	const userId = "cjtabbnzyqlww0b79zgo8k7ku";
 	const createBy = await context.prisma.user({id:userId});
-	
-	const libraries = await context.prisma.libraries({
-		where: {
+
+	if (args.libraryFilterInput && 
+		!(
+			(
+				args.libraryFilterInput.categories &&
+				args.libraryFilterInput.categories.length
+			)
+			 ||
+			(
+				args.libraryFilterInput.elements &&
+				args.libraryFilterInput.elements.length
+			)
+		)
+	){
+		throw new Error("You must specifiy either one of category/storyCategory or elements arguments passing libraryFilterInput argument");
+	}
+	const filterBy = {
+		where:{
 			createBy: {
 				id: createBy.id
 			}
 		}
-	})
+	} 
+	if (args.libraryFilterInput && args.libraryFilterInput.categories && args.libraryFilterInput.categories.length){
+		filterBy["where"]["stories_every"] = {
+			AND: args.libraryFilterInput.categories.map(storyCategory=> (
+					{
+						categories_some:{
+							name:storyCategory
+						}
+					}
+				))
+		}
+	}
+	if (args.libraryFilterInput && args.libraryFilterInput.elements && args.libraryFilterInput.elements.length) {
+		if (!filterBy["where"]["stories_every"]["AND"]){
+			filterBy["where"]["stories_every"]["AND"] = []
+		}
+		filterBy["where"]["stories_every"]["AND"] = filterBy["where"]["stories_every"]["AND"].concat(
+				args.libraryFilterInput.elements.map(storyElement => (
+						{
+							elements_some: {
+								name: storyElement
+							}
+						}
+					))
+			)
+	}
+	const libraries = await context.prisma.libraries(filterBy)
 	return libraries;
 }
 
