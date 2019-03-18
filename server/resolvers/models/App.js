@@ -1,4 +1,5 @@
 const fileHandling = require("../../modules/fileApi");
+const permissions = require("../permissions");
 
 const apps = async (root,args,context) => {
 	if (args.appFilterInput && 

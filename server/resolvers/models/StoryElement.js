@@ -1,3 +1,4 @@
+const permissions = require("../permissions");
 
 const createStoryElement = async (root,args,context) => {
 	permissions.loginPermission(context,"ADMIN")

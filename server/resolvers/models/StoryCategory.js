@@ -1,3 +1,4 @@
+const permissions = require("../permissions");
 
 const storyCategories = async (root,args,context) => {
 	return await context.prisma.storyCategories();
