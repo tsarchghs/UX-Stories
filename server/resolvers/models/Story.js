@@ -5,8 +5,7 @@ const stories = async (root,args,context) => {
 	if (!args.storiesInput.app) {
 		throw new Error("Please check that all of your arguments are not empty!")
 	}
-	const userId = "cjtabbnzyqlww0b79zgo8k7ku";
-	const createBy = await context.prisma.user({id:userId});
+	const createBy = context.user
 	const stories = await context.prisma.stories({
 		where: {
 			app: { id: args.storiesInput.app }
@@ -26,8 +25,7 @@ const createStory = async (root,args,context) => {
 	){
 		throw new Error("Please make sure that all of your arguments are non empty!");
 	}
-	const userId = "cjtabbnzyqlww0b79zgo8k7ku";
-	const createBy = await context.prisma.user({id:userId});
+	const createBy = context.user
 	const video = await fileHandling.processUpload(args.createStoryInput.video.base64,
 													args.createStoryInput.video.mimetype,
 													context);

@@ -64,8 +64,7 @@ const createApp = async (root,args,context) => {
 	const logo = await fileHandling.processUpload(args.appInput.logo.base64,
 													args.appInput.logo.mimetype,
 													context);
-	const userId = "cjtabbnzyqlww0b79zgo8k7ku";
-	const createBy = await context.prisma.user({id:userId});
+	const createBy = context.user
 	const app = await context.prisma.createApp({
 		createBy: {
 			connect: {
