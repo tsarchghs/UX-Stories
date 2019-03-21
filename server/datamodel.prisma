@@ -15,7 +15,7 @@ type User {
   first_name: String!
   last_name: String!
   password: String!
-  profile_photo: File
+  profile_photo: File @relation(name: "UserFileRel")
   role: AccountType!
   apps: [App!]!
   libraries: [Library!]!
@@ -57,6 +57,7 @@ type File {
   url: String! @unique
   apps: [App!]! @relation(name: "AppFileRel")
   stories: [Story!]! @relation(name: "StoryFileRel")
+  user: User @relation(name: "UserFileRel")
 }
 
 type Story {
