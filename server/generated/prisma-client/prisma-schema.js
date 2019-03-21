@@ -1028,6 +1028,15 @@ input FileUpdateManyMutationInput {
   url: String
 }
 
+input FileUpdateOneInput {
+  create: FileCreateInput
+  update: FileUpdateDataInput
+  upsert: FileUpsertNestedInput
+  delete: Boolean
+  disconnect: Boolean
+  connect: FileWhereUniqueInput
+}
+
 input FileUpdateOneRequiredInput {
   create: FileCreateInput
   update: FileUpdateDataInput
@@ -2304,6 +2313,7 @@ type User {
   first_name: String!
   last_name: String!
   password: String!
+  profile_photo: File
   role: AccountType!
   apps(where: AppWhereInput, orderBy: AppOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [App!]
   libraries(where: LibraryWhereInput, orderBy: LibraryOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Library!]
@@ -2320,6 +2330,7 @@ input UserCreateInput {
   first_name: String!
   last_name: String!
   password: String!
+  profile_photo: FileCreateOneInput
   role: AccountType!
   apps: AppCreateManyWithoutCreateByInput
   libraries: LibraryCreateManyWithoutCreateByInput
@@ -2345,6 +2356,7 @@ input UserCreateWithoutAppsInput {
   first_name: String!
   last_name: String!
   password: String!
+  profile_photo: FileCreateOneInput
   role: AccountType!
   libraries: LibraryCreateManyWithoutCreateByInput
 }
@@ -2354,6 +2366,7 @@ input UserCreateWithoutLibrariesInput {
   first_name: String!
   last_name: String!
   password: String!
+  profile_photo: FileCreateOneInput
   role: AccountType!
   apps: AppCreateManyWithoutCreateByInput
 }
@@ -2414,6 +2427,7 @@ input UserUpdateDataInput {
   first_name: String
   last_name: String
   password: String
+  profile_photo: FileUpdateOneInput
   role: AccountType
   apps: AppUpdateManyWithoutCreateByInput
   libraries: LibraryUpdateManyWithoutCreateByInput
@@ -2424,6 +2438,7 @@ input UserUpdateInput {
   first_name: String
   last_name: String
   password: String
+  profile_photo: FileUpdateOneInput
   role: AccountType
   apps: AppUpdateManyWithoutCreateByInput
   libraries: LibraryUpdateManyWithoutCreateByInput
@@ -2463,6 +2478,7 @@ input UserUpdateWithoutAppsDataInput {
   first_name: String
   last_name: String
   password: String
+  profile_photo: FileUpdateOneInput
   role: AccountType
   libraries: LibraryUpdateManyWithoutCreateByInput
 }
@@ -2472,6 +2488,7 @@ input UserUpdateWithoutLibrariesDataInput {
   first_name: String
   last_name: String
   password: String
+  profile_photo: FileUpdateOneInput
   role: AccountType
   apps: AppUpdateManyWithoutCreateByInput
 }
@@ -2562,6 +2579,7 @@ input UserWhereInput {
   password_not_starts_with: String
   password_ends_with: String
   password_not_ends_with: String
+  profile_photo: FileWhereInput
   role: AccountType
   role_not: AccountType
   role_in: [AccountType!]
