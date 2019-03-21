@@ -15,10 +15,20 @@ class LibraryCard extends React.Component {
             </div>
           </div>
           <div className="libraries-card__hero">
-            <img src="../../assets/toolkit/images/bitmap2.jpg" alt />
-            <img src="../../assets/toolkit/images/bitmap2.jpg" alt />
-            <img src="../../assets/toolkit/images/bitmap2.jpg" alt />
-            <span>+2</span>
+          {
+            // checks if there are more or equal stories to 4 if yes it slices it if not it doesn't
+            (this.props.library.stories.length - 4 < 0 ? this.props.library.stories : this.props.library.stories.slice(this.props.library.stories.length - 4)).map(story => {
+              return (
+                <img src={story.thumbnail.url} alt style={{width:60,height:150}} />
+              ); 
+            })
+          }
+            {
+              this.props.library.stories.length > 4 ? <span>+{this.props.library.stories.length - 4}</span> : ""
+            }
+            {
+              this.props.library.stories.length === 0 ? "This library is empty" : ""
+            }
           </div>
         </div>
       );
