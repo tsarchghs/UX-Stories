@@ -2,15 +2,7 @@ const fileHandling = require("../../modules/fileApi");
 const permissions = require("../permissions");
 
 const stories = async (root,args,context) => {
-	if (!args.storiesInput.app) {
-		throw new Error("Please check that all of your arguments are not empty!")
-	}
-	const createBy = context.user
-	const stories = await context.prisma.stories({
-		where: {
-			app: { id: args.storiesInput.app }
-		}
-	});
+	const stories = await context.prisma.stories();
 	return stories;
 }
 
