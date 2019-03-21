@@ -53,7 +53,8 @@ module.exports = {
 		storyToApp: storyResolvers.storyToApp
 	},
 	User: {
-		libraries: userResolvers.libraries
+		libraries: userResolvers.libraries,
+		profile_photo: userResolvers.profile_photo
 	},
 	App: {
 		stories: appResolvers.stories,
