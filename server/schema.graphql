@@ -55,6 +55,7 @@ type User {
   first_name: String!
   last_name: String!
   password: String
+  profile_photo: File
   role: AccountType!
   apps: [App!]!
   libraries: [Library!]!
@@ -237,10 +238,11 @@ type Query {
   stories: [Story!]!
   libraries(libraryFilterInput: LibraryFilterInput): [Library!]!
   storyCategories: [StoryCategory!]!
+  getLoggedInUser: User!
 }
 
 type Mutation {
-	signUp(email: String!,first_name: String!,last_name: String!,password: String!): AuthData
+	signUp(email: String!,first_name: String!,last_name: String!,password: String!,profile_photo:FileInput): AuthData
 	
   createApp(appInput: AppInput!): App!
   
