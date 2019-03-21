@@ -8,7 +8,7 @@ class Profile extends React.Component {
     super(props);
     this.props = props;
     this.state = {
-      libraries: []
+      libraries: []    
     }
   }
   async componentDidMount() {
@@ -18,10 +18,16 @@ class Profile extends React.Component {
             libraries {
               id
               name
+              stories {
+                thumbnail {
+                  url
+                }
+              }
             }
           }
         `
     })
+    console.log(result);
     this.setState({
       libraries: result.data.libraries
     })
