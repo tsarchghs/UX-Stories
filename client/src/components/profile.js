@@ -16,6 +16,7 @@ class Profile extends React.Component {
         query: gql`
           query {
             libraries {
+              id
               name
             }
           }
@@ -48,7 +49,7 @@ class Profile extends React.Component {
                 </div>
                 {
                   this.state.libraries.map(library => {
-                      return <LibraryCard library={library} />
+                      return <LibraryCard key={library.id} library={library} />
                   })
                 }
               </div>
