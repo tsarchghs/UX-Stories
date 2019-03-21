@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { BrowserRouter as Router, Route, Link } from "react-router-dom";
 import ApolloClient from "apollo-boost";
+import gql from "graphql-tag";
 import Profile from "./components/profile";
 import Home from "./components/home";
 import Header from "./components/header";
@@ -8,7 +9,7 @@ import Header from "./components/header";
 const client = new ApolloClient({
     uri: "http://localhost:4000/",
     headers: {
-      "Authorization": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiJjanRjMTN4cGI4MmF5MGI1MnRnMWZoNHYxIiwiaWF0IjoxNTUzMTg0Mzc1fQ.qSaNHTdiQlU15rw5GY2frzrlqm_npH8yeGlDpZq--JM"
+      "Authorization": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiJjanRqN21ocHk2MzBqMGI5MXJucG1zNzlzIiwiaWF0IjoxNTUzMjA3NDY5fQ.YyMqWk8zRE_V02Ic9leg5kuffj8samTQoRdSe4a655w"
     }
 })
 
@@ -37,14 +38,42 @@ const client = new ApolloClient({
 // } 
 
 class App extends Component {
+    constructor(props){
+        super(props);
+        this.state = {
+            user: {}
+        }
+    }
+    async componentDidMount() {
+        const data = await client.query({
+            query: gql`
+                query {
+                    getLoggedInUser{
+                    first_name
+                    last_name
+                    email
+                    profile_photo {
+                      url
+                    }
+                  }
+                }
+            `
+        })
+        console.log(data.data.getLoggedInUser);
+        this.setState({
+            user: data.data.getLoggedInUser
+        })
+    }
     render(){
         return (
             <Router>
-                <Header />
-                <Route path="/" exact component={Home} />
+                <Header user={this.state.user} />
+                <Route path="/" exact component={() => {
+                    return <Home user={this.state.user} />
+                }} />
                 <Route path="/profile" component={() => {
                     return (
-                        <Profile client={client} />
+                        <Profile user={this.state.user} client={client} />
                     );
                 }} />
 
