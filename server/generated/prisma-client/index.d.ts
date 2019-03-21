@@ -583,31 +583,23 @@ export type AppCategoryOrderByInput =
   | "updatedAt_ASC"
   | "updatedAt_DESC";
 
-export interface AppUpdateManyWithoutCreateByInput {
-  create?: AppCreateWithoutCreateByInput[] | AppCreateWithoutCreateByInput;
-  delete?: AppWhereUniqueInput[] | AppWhereUniqueInput;
-  connect?: AppWhereUniqueInput[] | AppWhereUniqueInput;
-  set?: AppWhereUniqueInput[] | AppWhereUniqueInput;
-  disconnect?: AppWhereUniqueInput[] | AppWhereUniqueInput;
-  update?:
-    | AppUpdateWithWhereUniqueWithoutCreateByInput[]
-    | AppUpdateWithWhereUniqueWithoutCreateByInput;
-  upsert?:
-    | AppUpsertWithWhereUniqueWithoutCreateByInput[]
-    | AppUpsertWithWhereUniqueWithoutCreateByInput;
-  deleteMany?: AppScalarWhereInput[] | AppScalarWhereInput;
-  updateMany?:
-    | AppUpdateManyWithWhereNestedInput[]
-    | AppUpdateManyWithWhereNestedInput;
+export interface AppUpdateWithWhereUniqueWithoutCreateByInput {
+  where: AppWhereUniqueInput;
+  data: AppUpdateWithoutCreateByDataInput;
 }
 
 export type AppWhereUniqueInput = AtLeastOne<{
   id: ID_Input;
 }>;
 
-export interface StoryUpdateWithWhereUniqueWithoutAppInput {
-  where: StoryWhereUniqueInput;
-  data: StoryUpdateWithoutAppDataInput;
+export interface StoryUpdateWithoutAppDataInput {
+  createBy?: UserUpdateOneRequiredInput;
+  video?: FileUpdateOneRequiredInput;
+  thumbnail?: FileUpdateOneRequiredInput;
+  versions?: AppVersionUpdateManyWithoutStoriesInput;
+  categories?: StoryCategoryUpdateManyWithoutStoriesInput;
+  elements?: StoryElementUpdateManyWithoutStoriesInput;
+  libraries?: LibraryUpdateManyWithoutStoriesInput;
 }
 
 export interface LibraryWhereInput {
@@ -648,14 +640,11 @@ export interface LibraryWhereInput {
   NOT?: LibraryWhereInput[] | LibraryWhereInput;
 }
 
-export interface StoryUpdateWithoutAppDataInput {
-  createBy?: UserUpdateOneRequiredInput;
-  video?: FileUpdateOneRequiredInput;
-  thumbnail?: FileUpdateOneRequiredInput;
-  versions?: AppVersionUpdateManyWithoutStoriesInput;
-  categories?: StoryCategoryUpdateManyWithoutStoriesInput;
-  elements?: StoryElementUpdateManyWithoutStoriesInput;
-  libraries?: LibraryUpdateManyWithoutStoriesInput;
+export interface FileUpdateOneRequiredInput {
+  create?: FileCreateInput;
+  update?: FileUpdateDataInput;
+  upsert?: FileUpsertNestedInput;
+  connect?: FileWhereUniqueInput;
 }
 
 export interface StoryCategoryWhereInput {
@@ -695,11 +684,14 @@ export interface StoryCategoryWhereInput {
   NOT?: StoryCategoryWhereInput[] | StoryCategoryWhereInput;
 }
 
-export interface FileUpdateOneRequiredInput {
-  create?: FileCreateInput;
-  update?: FileUpdateDataInput;
-  upsert?: FileUpsertNestedInput;
-  connect?: FileWhereUniqueInput;
+export interface FileUpdateDataInput {
+  filename?: String;
+  mimetype?: String;
+  encoding?: String;
+  url?: String;
+  apps?: AppUpdateManyWithoutLogoInput;
+  stories?: StoryUpdateManyInput;
+  user?: UserUpdateOneWithoutProfile_photoInput;
 }
 
 export interface AppVersionWhereInput {
@@ -742,9 +734,13 @@ export interface AppVersionWhereInput {
   NOT?: AppVersionWhereInput[] | AppVersionWhereInput;
 }
 
-export interface FileUpsertNestedInput {
-  update: FileUpdateDataInput;
-  create: FileCreateInput;
+export interface UserUpdateOneWithoutProfile_photoInput {
+  create?: UserCreateWithoutProfile_photoInput;
+  update?: UserUpdateWithoutProfile_photoDataInput;
+  upsert?: UserUpsertWithoutProfile_photoInput;
+  delete?: Boolean;
+  disconnect?: Boolean;
+  connect?: UserWhereUniqueInput;
 }
 
 export interface StoryWhereInput {
@@ -783,24 +779,14 @@ export interface StoryWhereInput {
   NOT?: StoryWhereInput[] | StoryWhereInput;
 }
 
-export interface AppVersionUpdateManyWithoutStoriesInput {
-  create?:
-    | AppVersionCreateWithoutStoriesInput[]
-    | AppVersionCreateWithoutStoriesInput;
-  delete?: AppVersionWhereUniqueInput[] | AppVersionWhereUniqueInput;
-  connect?: AppVersionWhereUniqueInput[] | AppVersionWhereUniqueInput;
-  set?: AppVersionWhereUniqueInput[] | AppVersionWhereUniqueInput;
-  disconnect?: AppVersionWhereUniqueInput[] | AppVersionWhereUniqueInput;
-  update?:
-    | AppVersionUpdateWithWhereUniqueWithoutStoriesInput[]
-    | AppVersionUpdateWithWhereUniqueWithoutStoriesInput;
-  upsert?:
-    | AppVersionUpsertWithWhereUniqueWithoutStoriesInput[]
-    | AppVersionUpsertWithWhereUniqueWithoutStoriesInput;
-  deleteMany?: AppVersionScalarWhereInput[] | AppVersionScalarWhereInput;
-  updateMany?:
-    | AppVersionUpdateManyWithWhereNestedInput[]
-    | AppVersionUpdateManyWithWhereNestedInput;
+export interface UserUpdateWithoutProfile_photoDataInput {
+  email?: String;
+  first_name?: String;
+  last_name?: String;
+  password?: String;
+  role?: AccountType;
+  apps?: AppUpdateManyWithoutCreateByInput;
+  libraries?: LibraryUpdateManyWithoutCreateByInput;
 }
 
 export interface FileWhereInput {
@@ -896,14 +882,30 @@ export interface FileWhereInput {
   stories_every?: StoryWhereInput;
   stories_some?: StoryWhereInput;
   stories_none?: StoryWhereInput;
+  user?: UserWhereInput;
   AND?: FileWhereInput[] | FileWhereInput;
   OR?: FileWhereInput[] | FileWhereInput;
   NOT?: FileWhereInput[] | FileWhereInput;
 }
 
-export interface AppVersionUpdateWithWhereUniqueWithoutStoriesInput {
-  where: AppVersionWhereUniqueInput;
-  data: AppVersionUpdateWithoutStoriesDataInput;
+export interface LibraryUpdateManyWithoutCreateByInput {
+  create?:
+    | LibraryCreateWithoutCreateByInput[]
+    | LibraryCreateWithoutCreateByInput;
+  delete?: LibraryWhereUniqueInput[] | LibraryWhereUniqueInput;
+  connect?: LibraryWhereUniqueInput[] | LibraryWhereUniqueInput;
+  set?: LibraryWhereUniqueInput[] | LibraryWhereUniqueInput;
+  disconnect?: LibraryWhereUniqueInput[] | LibraryWhereUniqueInput;
+  update?:
+    | LibraryUpdateWithWhereUniqueWithoutCreateByInput[]
+    | LibraryUpdateWithWhereUniqueWithoutCreateByInput;
+  upsert?:
+    | LibraryUpsertWithWhereUniqueWithoutCreateByInput[]
+    | LibraryUpsertWithWhereUniqueWithoutCreateByInput;
+  deleteMany?: LibraryScalarWhereInput[] | LibraryScalarWhereInput;
+  updateMany?:
+    | LibraryUpdateManyWithWhereNestedInput[]
+    | LibraryUpdateManyWithWhereNestedInput;
 }
 
 export interface UserWhereInput {
@@ -993,9 +995,9 @@ export interface UserWhereInput {
   NOT?: UserWhereInput[] | UserWhereInput;
 }
 
-export interface AppVersionUpdateWithoutStoriesDataInput {
-  version?: String;
-  apps?: AppUpdateManyWithoutVersionsInput;
+export interface LibraryUpdateWithWhereUniqueWithoutCreateByInput {
+  where: LibraryWhereUniqueInput;
+  data: LibraryUpdateWithoutCreateByDataInput;
 }
 
 export interface AppWhereInput {
@@ -1073,35 +1075,6 @@ export interface AppWhereInput {
   NOT?: AppWhereInput[] | AppWhereInput;
 }
 
-export interface AppUpdateWithoutLogoDataInput {
-  createBy?: UserUpdateOneRequiredWithoutAppsInput;
-  name?: String;
-  description?: String;
-  company?: String;
-  platform?: Platform;
-  versions?: AppVersionUpdateManyWithoutAppsInput;
-  category?: AppCategoryUpdateOneRequiredWithoutAppsInput;
-  stories?: StoryUpdateManyWithoutAppInput;
-}
-
-export interface AppUpdateManyWithoutCategoryInput {
-  create?: AppCreateWithoutCategoryInput[] | AppCreateWithoutCategoryInput;
-  delete?: AppWhereUniqueInput[] | AppWhereUniqueInput;
-  connect?: AppWhereUniqueInput[] | AppWhereUniqueInput;
-  set?: AppWhereUniqueInput[] | AppWhereUniqueInput;
-  disconnect?: AppWhereUniqueInput[] | AppWhereUniqueInput;
-  update?:
-    | AppUpdateWithWhereUniqueWithoutCategoryInput[]
-    | AppUpdateWithWhereUniqueWithoutCategoryInput;
-  upsert?:
-    | AppUpsertWithWhereUniqueWithoutCategoryInput[]
-    | AppUpsertWithWhereUniqueWithoutCategoryInput;
-  deleteMany?: AppScalarWhereInput[] | AppScalarWhereInput;
-  updateMany?:
-    | AppUpdateManyWithWhereNestedInput[]
-    | AppUpdateManyWithWhereNestedInput;
-}
-
 export interface AppVersionUpdateManyWithoutAppsInput {
   create?:
     | AppVersionCreateWithoutAppsInput[]
@@ -1122,18 +1095,18 @@ export interface AppVersionUpdateManyWithoutAppsInput {
     | AppVersionUpdateManyWithWhereNestedInput;
 }
 
-export interface AppUpdateManyWithoutVersionsInput {
-  create?: AppCreateWithoutVersionsInput[] | AppCreateWithoutVersionsInput;
+export interface AppUpdateManyWithoutCategoryInput {
+  create?: AppCreateWithoutCategoryInput[] | AppCreateWithoutCategoryInput;
   delete?: AppWhereUniqueInput[] | AppWhereUniqueInput;
   connect?: AppWhereUniqueInput[] | AppWhereUniqueInput;
   set?: AppWhereUniqueInput[] | AppWhereUniqueInput;
   disconnect?: AppWhereUniqueInput[] | AppWhereUniqueInput;
   update?:
-    | AppUpdateWithWhereUniqueWithoutVersionsInput[]
-    | AppUpdateWithWhereUniqueWithoutVersionsInput;
+    | AppUpdateWithWhereUniqueWithoutCategoryInput[]
+    | AppUpdateWithWhereUniqueWithoutCategoryInput;
   upsert?:
-    | AppUpsertWithWhereUniqueWithoutVersionsInput[]
-    | AppUpsertWithWhereUniqueWithoutVersionsInput;
+    | AppUpsertWithWhereUniqueWithoutCategoryInput[]
+    | AppUpsertWithWhereUniqueWithoutCategoryInput;
   deleteMany?: AppScalarWhereInput[] | AppScalarWhereInput;
   updateMany?:
     | AppUpdateManyWithWhereNestedInput[]
@@ -1143,6 +1116,16 @@ export interface AppUpdateManyWithoutVersionsInput {
 export interface AppVersionUpdateWithWhereUniqueWithoutAppsInput {
   where: AppVersionWhereUniqueInput;
   data: AppVersionUpdateWithoutAppsDataInput;
+}
+
+export interface LibraryUpdateWithoutCreateByDataInput {
+  name?: String;
+  stories?: StoryUpdateManyWithoutLibrariesInput;
+}
+
+export interface AppVersionUpdateWithoutAppsDataInput {
+  version?: String;
+  stories?: StoryUpdateManyWithoutVersionsInput;
 }
 
 export interface StoryElementSubscriptionWhereInput {
@@ -1162,22 +1145,6 @@ export interface StoryElementSubscriptionWhereInput {
     | StoryElementSubscriptionWhereInput;
 }
 
-export interface AppVersionUpdateWithoutAppsDataInput {
-  version?: String;
-  stories?: StoryUpdateManyWithoutVersionsInput;
-}
-
-export interface StorySubscriptionWhereInput {
-  mutation_in?: MutationType[] | MutationType;
-  updatedFields_contains?: String;
-  updatedFields_contains_every?: String[] | String;
-  updatedFields_contains_some?: String[] | String;
-  node?: StoryWhereInput;
-  AND?: StorySubscriptionWhereInput[] | StorySubscriptionWhereInput;
-  OR?: StorySubscriptionWhereInput[] | StorySubscriptionWhereInput;
-  NOT?: StorySubscriptionWhereInput[] | StorySubscriptionWhereInput;
-}
-
 export interface StoryUpdateManyWithoutVersionsInput {
   create?: StoryCreateWithoutVersionsInput[] | StoryCreateWithoutVersionsInput;
   delete?: StoryWhereUniqueInput[] | StoryWhereUniqueInput;
@@ -1193,6 +1160,22 @@ export interface StoryUpdateManyWithoutVersionsInput {
   deleteMany?: StoryScalarWhereInput[] | StoryScalarWhereInput;
 }
 
+export interface StorySubscriptionWhereInput {
+  mutation_in?: MutationType[] | MutationType;
+  updatedFields_contains?: String;
+  updatedFields_contains_every?: String[] | String;
+  updatedFields_contains_some?: String[] | String;
+  node?: StoryWhereInput;
+  AND?: StorySubscriptionWhereInput[] | StorySubscriptionWhereInput;
+  OR?: StorySubscriptionWhereInput[] | StorySubscriptionWhereInput;
+  NOT?: StorySubscriptionWhereInput[] | StorySubscriptionWhereInput;
+}
+
+export interface StoryUpdateWithWhereUniqueWithoutVersionsInput {
+  where: StoryWhereUniqueInput;
+  data: StoryUpdateWithoutVersionsDataInput;
+}
+
 export interface FileSubscriptionWhereInput {
   mutation_in?: MutationType[] | MutationType;
   updatedFields_contains?: String;
@@ -1204,9 +1187,14 @@ export interface FileSubscriptionWhereInput {
   NOT?: FileSubscriptionWhereInput[] | FileSubscriptionWhereInput;
 }
 
-export interface StoryUpdateWithWhereUniqueWithoutVersionsInput {
-  where: StoryWhereUniqueInput;
-  data: StoryUpdateWithoutVersionsDataInput;
+export interface StoryUpdateWithoutVersionsDataInput {
+  app?: AppUpdateOneRequiredWithoutStoriesInput;
+  createBy?: UserUpdateOneRequiredInput;
+  video?: FileUpdateOneRequiredInput;
+  thumbnail?: FileUpdateOneRequiredInput;
+  categories?: StoryCategoryUpdateManyWithoutStoriesInput;
+  elements?: StoryElementUpdateManyWithoutStoriesInput;
+  libraries?: LibraryUpdateManyWithoutStoriesInput;
 }
 
 export interface AppVersionSubscriptionWhereInput {
@@ -1220,14 +1208,11 @@ export interface AppVersionSubscriptionWhereInput {
   NOT?: AppVersionSubscriptionWhereInput[] | AppVersionSubscriptionWhereInput;
 }
 
-export interface StoryUpdateWithoutVersionsDataInput {
-  app?: AppUpdateOneRequiredWithoutStoriesInput;
-  createBy?: UserUpdateOneRequiredInput;
-  video?: FileUpdateOneRequiredInput;
-  thumbnail?: FileUpdateOneRequiredInput;
-  categories?: StoryCategoryUpdateManyWithoutStoriesInput;
-  elements?: StoryElementUpdateManyWithoutStoriesInput;
-  libraries?: LibraryUpdateManyWithoutStoriesInput;
+export interface AppUpdateOneRequiredWithoutStoriesInput {
+  create?: AppCreateWithoutStoriesInput;
+  update?: AppUpdateWithoutStoriesDataInput;
+  upsert?: AppUpsertWithoutStoriesInput;
+  connect?: AppWhereUniqueInput;
 }
 
 export interface AppSubscriptionWhereInput {
@@ -1241,18 +1226,6 @@ export interface AppSubscriptionWhereInput {
   NOT?: AppSubscriptionWhereInput[] | AppSubscriptionWhereInput;
 }
 
-export interface AppUpdateOneRequiredWithoutStoriesInput {
-  create?: AppCreateWithoutStoriesInput;
-  update?: AppUpdateWithoutStoriesDataInput;
-  upsert?: AppUpsertWithoutStoriesInput;
-  connect?: AppWhereUniqueInput;
-}
-
-export type AppVersionWhereUniqueInput = AtLeastOne<{
-  id: ID_Input;
-  version?: String;
-}>;
-
 export interface AppUpdateWithoutStoriesDataInput {
   createBy?: UserUpdateOneRequiredWithoutAppsInput;
   name?: String;
@@ -1264,9 +1237,10 @@ export interface AppUpdateWithoutStoriesDataInput {
   category?: AppCategoryUpdateOneRequiredWithoutAppsInput;
 }
 
-export interface StoryElementUpdateManyMutationInput {
-  name?: String;
-}
+export type AppVersionWhereUniqueInput = AtLeastOne<{
+  id: ID_Input;
+  version?: String;
+}>;
 
 export interface FileUpdateOneWithoutAppsInput {
   create?: FileCreateWithoutAppsInput;
@@ -1277,10 +1251,9 @@ export interface FileUpdateOneWithoutAppsInput {
   connect?: FileWhereUniqueInput;
 }
 
-export type FileWhereUniqueInput = AtLeastOne<{
-  id: ID_Input;
-  url?: String;
-}>;
+export interface StoryElementUpdateManyMutationInput {
+  name?: String;
+}
 
 export interface FileUpdateWithoutAppsDataInput {
   filename?: String;
@@ -1288,12 +1261,13 @@ export interface FileUpdateWithoutAppsDataInput {
   encoding?: String;
   url?: String;
   stories?: StoryUpdateManyInput;
+  user?: UserUpdateOneWithoutProfile_photoInput;
 }
 
-export interface StoryUpdateWithWhereUniqueWithoutElementsInput {
-  where: StoryWhereUniqueInput;
-  data: StoryUpdateWithoutElementsDataInput;
-}
+export type FileWhereUniqueInput = AtLeastOne<{
+  id: ID_Input;
+  url?: String;
+}>;
 
 export interface StoryUpdateManyInput {
   create?: StoryCreateInput[] | StoryCreateInput;
@@ -1310,9 +1284,9 @@ export interface StoryUpdateManyInput {
   deleteMany?: StoryScalarWhereInput[] | StoryScalarWhereInput;
 }
 
-export interface StoryElementUpdateInput {
-  name?: String;
-  stories?: StoryUpdateManyWithoutElementsInput;
+export interface StoryUpdateWithWhereUniqueWithoutElementsInput {
+  where: StoryWhereUniqueInput;
+  data: StoryUpdateWithoutElementsDataInput;
 }
 
 export interface StoryUpdateWithWhereUniqueNestedInput {
@@ -1320,14 +1294,9 @@ export interface StoryUpdateWithWhereUniqueNestedInput {
   data: StoryUpdateDataInput;
 }
 
-export interface StoryCreateWithoutElementsInput {
-  app: AppCreateOneWithoutStoriesInput;
-  createBy: UserCreateOneInput;
-  video: FileCreateOneInput;
-  thumbnail: FileCreateOneInput;
-  versions?: AppVersionCreateManyWithoutStoriesInput;
-  categories?: StoryCategoryCreateManyWithoutStoriesInput;
-  libraries?: LibraryCreateManyWithoutStoriesInput;
+export interface StoryElementUpdateInput {
+  name?: String;
+  stories?: StoryUpdateManyWithoutElementsInput;
 }
 
 export interface StoryUpdateDataInput {
@@ -1341,9 +1310,14 @@ export interface StoryUpdateDataInput {
   libraries?: LibraryUpdateManyWithoutStoriesInput;
 }
 
-export interface StoryElementCreateInput {
-  name: String;
-  stories?: StoryCreateManyWithoutElementsInput;
+export interface StoryCreateWithoutElementsInput {
+  app: AppCreateOneWithoutStoriesInput;
+  createBy: UserCreateOneInput;
+  video: FileCreateOneInput;
+  thumbnail: FileCreateOneInput;
+  versions?: AppVersionCreateManyWithoutStoriesInput;
+  categories?: StoryCategoryCreateManyWithoutStoriesInput;
+  libraries?: LibraryCreateManyWithoutStoriesInput;
 }
 
 export interface UserUpdateOneRequiredInput {
@@ -1353,8 +1327,9 @@ export interface UserUpdateOneRequiredInput {
   connect?: UserWhereUniqueInput;
 }
 
-export interface StoryCategoryUpdateManyMutationInput {
-  name?: String;
+export interface StoryElementCreateInput {
+  name: String;
+  stories?: StoryCreateManyWithoutElementsInput;
 }
 
 export interface UserUpdateDataInput {
@@ -1362,10 +1337,32 @@ export interface UserUpdateDataInput {
   first_name?: String;
   last_name?: String;
   password?: String;
-  profile_photo?: FileUpdateOneInput;
+  profile_photo?: FileUpdateOneWithoutUserInput;
   role?: AccountType;
   apps?: AppUpdateManyWithoutCreateByInput;
   libraries?: LibraryUpdateManyWithoutCreateByInput;
+}
+
+export interface StoryCategoryUpdateManyMutationInput {
+  name?: String;
+}
+
+export interface AppUpdateManyWithoutCreateByInput {
+  create?: AppCreateWithoutCreateByInput[] | AppCreateWithoutCreateByInput;
+  delete?: AppWhereUniqueInput[] | AppWhereUniqueInput;
+  connect?: AppWhereUniqueInput[] | AppWhereUniqueInput;
+  set?: AppWhereUniqueInput[] | AppWhereUniqueInput;
+  disconnect?: AppWhereUniqueInput[] | AppWhereUniqueInput;
+  update?:
+    | AppUpdateWithWhereUniqueWithoutCreateByInput[]
+    | AppUpdateWithWhereUniqueWithoutCreateByInput;
+  upsert?:
+    | AppUpsertWithWhereUniqueWithoutCreateByInput[]
+    | AppUpsertWithWhereUniqueWithoutCreateByInput;
+  deleteMany?: AppScalarWhereInput[] | AppScalarWhereInput;
+  updateMany?:
+    | AppUpdateManyWithWhereNestedInput[]
+    | AppUpdateManyWithWhereNestedInput;
 }
 
 export interface StoryUpdateWithoutCategoriesDataInput {
@@ -1390,16 +1387,6 @@ export interface StoryUpdateWithWhereUniqueWithoutCategoriesInput {
   data: StoryUpdateWithoutCategoriesDataInput;
 }
 
-export interface AppUpdateWithWhereUniqueWithoutCreateByInput {
-  where: AppWhereUniqueInput;
-  data: AppUpdateWithoutCreateByDataInput;
-}
-
-export interface StoryCategoryUpdateInput {
-  name?: String;
-  stories?: StoryUpdateManyWithoutCategoriesInput;
-}
-
 export interface AppUpdateWithoutCreateByDataInput {
   name?: String;
   description?: String;
@@ -1409,6 +1396,18 @@ export interface AppUpdateWithoutCreateByDataInput {
   versions?: AppVersionUpdateManyWithoutAppsInput;
   category?: AppCategoryUpdateOneRequiredWithoutAppsInput;
   stories?: StoryUpdateManyWithoutAppInput;
+}
+
+export interface StoryCategoryUpdateInput {
+  name?: String;
+  stories?: StoryUpdateManyWithoutCategoriesInput;
+}
+
+export interface AppCategoryUpdateOneRequiredWithoutAppsInput {
+  create?: AppCategoryCreateWithoutAppsInput;
+  update?: AppCategoryUpdateWithoutAppsDataInput;
+  upsert?: AppCategoryUpsertWithoutAppsInput;
+  connect?: AppCategoryWhereUniqueInput;
 }
 
 export interface StoryCreateWithoutCategoriesInput {
@@ -1421,11 +1420,8 @@ export interface StoryCreateWithoutCategoriesInput {
   libraries?: LibraryCreateManyWithoutStoriesInput;
 }
 
-export interface AppCategoryUpdateOneRequiredWithoutAppsInput {
-  create?: AppCategoryCreateWithoutAppsInput;
-  update?: AppCategoryUpdateWithoutAppsDataInput;
-  upsert?: AppCategoryUpsertWithoutAppsInput;
-  connect?: AppCategoryWhereUniqueInput;
+export interface AppCategoryUpdateWithoutAppsDataInput {
+  name?: String;
 }
 
 export interface StoryCategoryCreateInput {
@@ -1433,8 +1429,9 @@ export interface StoryCategoryCreateInput {
   stories?: StoryCreateManyWithoutCategoriesInput;
 }
 
-export interface AppCategoryUpdateWithoutAppsDataInput {
-  name?: String;
+export interface AppCategoryUpsertWithoutAppsInput {
+  update: AppCategoryUpdateWithoutAppsDataInput;
+  create: AppCategoryCreateWithoutAppsInput;
 }
 
 export interface StoryUpdateInput {
@@ -1446,17 +1443,6 @@ export interface StoryUpdateInput {
   categories?: StoryCategoryUpdateManyWithoutStoriesInput;
   elements?: StoryElementUpdateManyWithoutStoriesInput;
   libraries?: LibraryUpdateManyWithoutStoriesInput;
-}
-
-export interface AppCategoryUpsertWithoutAppsInput {
-  update: AppCategoryUpdateWithoutAppsDataInput;
-  create: AppCategoryCreateWithoutAppsInput;
-}
-
-export interface LibraryUpdateInput {
-  createBy?: UserUpdateOneRequiredWithoutLibrariesInput;
-  name?: String;
-  stories?: StoryUpdateManyWithoutLibrariesInput;
 }
 
 export interface StoryUpdateManyWithoutAppInput {
@@ -1472,6 +1458,17 @@ export interface StoryUpdateManyWithoutAppInput {
     | StoryUpsertWithWhereUniqueWithoutAppInput[]
     | StoryUpsertWithWhereUniqueWithoutAppInput;
   deleteMany?: StoryScalarWhereInput[] | StoryScalarWhereInput;
+}
+
+export interface LibraryUpdateInput {
+  createBy?: UserUpdateOneRequiredWithoutLibrariesInput;
+  name?: String;
+  stories?: StoryUpdateManyWithoutLibrariesInput;
+}
+
+export interface StoryUpdateWithWhereUniqueWithoutAppInput {
+  where: StoryWhereUniqueInput;
+  data: StoryUpdateWithoutAppDataInput;
 }
 
 export interface UserCreateOneWithoutAppsInput {
@@ -1516,8 +1513,8 @@ export interface StoryElementWhereInput {
   NOT?: StoryElementWhereInput[] | StoryElementWhereInput;
 }
 
-export interface FileCreateOneInput {
-  create?: FileCreateInput;
+export interface FileCreateOneWithoutUserInput {
+  create?: FileCreateWithoutUserInput;
   connect?: FileWhereUniqueInput;
 }
 
@@ -1570,6 +1567,7 @@ export interface FileUpdateInput {
   url?: String;
   apps?: AppUpdateManyWithoutLogoInput;
   stories?: StoryUpdateManyInput;
+  user?: UserUpdateOneWithoutProfile_photoInput;
 }
 
 export interface AppVersionCreateManyWithoutAppsInput {
@@ -1630,14 +1628,135 @@ export interface UserCreateOneInput {
   connect?: UserWhereUniqueInput;
 }
 
-export interface AppUpdateWithWhereUniqueWithoutVersionsInput {
-  where: AppWhereUniqueInput;
-  data: AppUpdateWithoutVersionsDataInput;
+export interface StoryUpdateManyWithoutLibrariesInput {
+  create?:
+    | StoryCreateWithoutLibrariesInput[]
+    | StoryCreateWithoutLibrariesInput;
+  delete?: StoryWhereUniqueInput[] | StoryWhereUniqueInput;
+  connect?: StoryWhereUniqueInput[] | StoryWhereUniqueInput;
+  set?: StoryWhereUniqueInput[] | StoryWhereUniqueInput;
+  disconnect?: StoryWhereUniqueInput[] | StoryWhereUniqueInput;
+  update?:
+    | StoryUpdateWithWhereUniqueWithoutLibrariesInput[]
+    | StoryUpdateWithWhereUniqueWithoutLibrariesInput;
+  upsert?:
+    | StoryUpsertWithWhereUniqueWithoutLibrariesInput[]
+    | StoryUpsertWithWhereUniqueWithoutLibrariesInput;
+  deleteMany?: StoryScalarWhereInput[] | StoryScalarWhereInput;
 }
 
 export interface AppCreateManyWithoutCreateByInput {
   create?: AppCreateWithoutCreateByInput[] | AppCreateWithoutCreateByInput;
   connect?: AppWhereUniqueInput[] | AppWhereUniqueInput;
+}
+
+export interface StoryUpdateWithWhereUniqueWithoutLibrariesInput {
+  where: StoryWhereUniqueInput;
+  data: StoryUpdateWithoutLibrariesDataInput;
+}
+
+export interface AppCategoryCreateOneWithoutAppsInput {
+  create?: AppCategoryCreateWithoutAppsInput;
+  connect?: AppCategoryWhereUniqueInput;
+}
+
+export interface StoryUpdateWithoutLibrariesDataInput {
+  app?: AppUpdateOneRequiredWithoutStoriesInput;
+  createBy?: UserUpdateOneRequiredInput;
+  video?: FileUpdateOneRequiredInput;
+  thumbnail?: FileUpdateOneRequiredInput;
+  versions?: AppVersionUpdateManyWithoutStoriesInput;
+  categories?: StoryCategoryUpdateManyWithoutStoriesInput;
+  elements?: StoryElementUpdateManyWithoutStoriesInput;
+}
+
+export interface StoryCreateManyWithoutAppInput {
+  create?: StoryCreateWithoutAppInput[] | StoryCreateWithoutAppInput;
+  connect?: StoryWhereUniqueInput[] | StoryWhereUniqueInput;
+}
+
+export interface AppVersionUpdateManyWithoutStoriesInput {
+  create?:
+    | AppVersionCreateWithoutStoriesInput[]
+    | AppVersionCreateWithoutStoriesInput;
+  delete?: AppVersionWhereUniqueInput[] | AppVersionWhereUniqueInput;
+  connect?: AppVersionWhereUniqueInput[] | AppVersionWhereUniqueInput;
+  set?: AppVersionWhereUniqueInput[] | AppVersionWhereUniqueInput;
+  disconnect?: AppVersionWhereUniqueInput[] | AppVersionWhereUniqueInput;
+  update?:
+    | AppVersionUpdateWithWhereUniqueWithoutStoriesInput[]
+    | AppVersionUpdateWithWhereUniqueWithoutStoriesInput;
+  upsert?:
+    | AppVersionUpsertWithWhereUniqueWithoutStoriesInput[]
+    | AppVersionUpsertWithWhereUniqueWithoutStoriesInput;
+  deleteMany?: AppVersionScalarWhereInput[] | AppVersionScalarWhereInput;
+  updateMany?:
+    | AppVersionUpdateManyWithWhereNestedInput[]
+    | AppVersionUpdateManyWithWhereNestedInput;
+}
+
+export interface FileCreateOneInput {
+  create?: FileCreateInput;
+  connect?: FileWhereUniqueInput;
+}
+
+export interface AppVersionUpdateWithWhereUniqueWithoutStoriesInput {
+  where: AppVersionWhereUniqueInput;
+  data: AppVersionUpdateWithoutStoriesDataInput;
+}
+
+export interface UserCreateOneWithoutProfile_photoInput {
+  create?: UserCreateWithoutProfile_photoInput;
+  connect?: UserWhereUniqueInput;
+}
+
+export interface AppVersionUpdateWithoutStoriesDataInput {
+  version?: String;
+  apps?: AppUpdateManyWithoutVersionsInput;
+}
+
+export interface LibraryCreateManyWithoutCreateByInput {
+  create?:
+    | LibraryCreateWithoutCreateByInput[]
+    | LibraryCreateWithoutCreateByInput;
+  connect?: LibraryWhereUniqueInput[] | LibraryWhereUniqueInput;
+}
+
+export interface AppUpdateManyWithoutVersionsInput {
+  create?: AppCreateWithoutVersionsInput[] | AppCreateWithoutVersionsInput;
+  delete?: AppWhereUniqueInput[] | AppWhereUniqueInput;
+  connect?: AppWhereUniqueInput[] | AppWhereUniqueInput;
+  set?: AppWhereUniqueInput[] | AppWhereUniqueInput;
+  disconnect?: AppWhereUniqueInput[] | AppWhereUniqueInput;
+  update?:
+    | AppUpdateWithWhereUniqueWithoutVersionsInput[]
+    | AppUpdateWithWhereUniqueWithoutVersionsInput;
+  upsert?:
+    | AppUpsertWithWhereUniqueWithoutVersionsInput[]
+    | AppUpsertWithWhereUniqueWithoutVersionsInput;
+  deleteMany?: AppScalarWhereInput[] | AppScalarWhereInput;
+  updateMany?:
+    | AppUpdateManyWithWhereNestedInput[]
+    | AppUpdateManyWithWhereNestedInput;
+}
+
+export interface StoryCreateManyWithoutLibrariesInput {
+  create?:
+    | StoryCreateWithoutLibrariesInput[]
+    | StoryCreateWithoutLibrariesInput;
+  connect?: StoryWhereUniqueInput[] | StoryWhereUniqueInput;
+}
+
+export interface AppUpdateWithWhereUniqueWithoutVersionsInput {
+  where: AppWhereUniqueInput;
+  data: AppUpdateWithoutVersionsDataInput;
+}
+
+export interface AppVersionCreateManyWithoutStoriesInput {
+  create?:
+    | AppVersionCreateWithoutStoriesInput[]
+    | AppVersionCreateWithoutStoriesInput;
+  connect?: AppVersionWhereUniqueInput[] | AppVersionWhereUniqueInput;
 }
 
 export interface AppUpdateWithoutVersionsDataInput {
@@ -1651,9 +1770,9 @@ export interface AppUpdateWithoutVersionsDataInput {
   stories?: StoryUpdateManyWithoutAppInput;
 }
 
-export interface AppCategoryCreateOneWithoutAppsInput {
-  create?: AppCategoryCreateWithoutAppsInput;
-  connect?: AppCategoryWhereUniqueInput;
+export interface AppCreateManyWithoutVersionsInput {
+  create?: AppCreateWithoutVersionsInput[] | AppCreateWithoutVersionsInput;
+  connect?: AppWhereUniqueInput[] | AppWhereUniqueInput;
 }
 
 export interface AppUpsertWithWhereUniqueWithoutVersionsInput {
@@ -1662,9 +1781,11 @@ export interface AppUpsertWithWhereUniqueWithoutVersionsInput {
   create: AppCreateWithoutVersionsInput;
 }
 
-export interface StoryCreateManyWithoutAppInput {
-  create?: StoryCreateWithoutAppInput[] | StoryCreateWithoutAppInput;
-  connect?: StoryWhereUniqueInput[] | StoryWhereUniqueInput;
+export interface StoryCategoryCreateManyWithoutStoriesInput {
+  create?:
+    | StoryCategoryCreateWithoutStoriesInput[]
+    | StoryCategoryCreateWithoutStoriesInput;
+  connect?: StoryCategoryWhereUniqueInput[] | StoryCategoryWhereUniqueInput;
 }
 
 export interface AppScalarWhereInput {
@@ -1733,11 +1854,11 @@ export interface AppScalarWhereInput {
   NOT?: AppScalarWhereInput[] | AppScalarWhereInput;
 }
 
-export interface AppVersionCreateManyWithoutStoriesInput {
+export interface StoryElementCreateManyWithoutStoriesInput {
   create?:
-    | AppVersionCreateWithoutStoriesInput[]
-    | AppVersionCreateWithoutStoriesInput;
-  connect?: AppVersionWhereUniqueInput[] | AppVersionWhereUniqueInput;
+    | StoryElementCreateWithoutStoriesInput[]
+    | StoryElementCreateWithoutStoriesInput;
+  connect?: StoryElementWhereUniqueInput[] | StoryElementWhereUniqueInput;
 }
 
 export interface AppUpdateManyWithWhereNestedInput {
@@ -1745,9 +1866,11 @@ export interface AppUpdateManyWithWhereNestedInput {
   data: AppUpdateManyDataInput;
 }
 
-export interface AppCreateManyWithoutVersionsInput {
-  create?: AppCreateWithoutVersionsInput[] | AppCreateWithoutVersionsInput;
-  connect?: AppWhereUniqueInput[] | AppWhereUniqueInput;
+export interface LibraryCreateManyWithoutStoriesInput {
+  create?:
+    | LibraryCreateWithoutStoriesInput[]
+    | LibraryCreateWithoutStoriesInput;
+  connect?: LibraryWhereUniqueInput[] | LibraryWhereUniqueInput;
 }
 
 export interface AppUpdateManyDataInput {
@@ -1757,11 +1880,9 @@ export interface AppUpdateManyDataInput {
   platform?: Platform;
 }
 
-export interface StoryCategoryCreateManyWithoutStoriesInput {
-  create?:
-    | StoryCategoryCreateWithoutStoriesInput[]
-    | StoryCategoryCreateWithoutStoriesInput;
-  connect?: StoryCategoryWhereUniqueInput[] | StoryCategoryWhereUniqueInput;
+export interface UserCreateOneWithoutLibrariesInput {
+  create?: UserCreateWithoutLibrariesInput;
+  connect?: UserWhereUniqueInput;
 }
 
 export interface AppVersionUpsertWithWhereUniqueWithoutStoriesInput {
@@ -1770,11 +1891,16 @@ export interface AppVersionUpsertWithWhereUniqueWithoutStoriesInput {
   create: AppVersionCreateWithoutStoriesInput;
 }
 
-export interface StoryElementCreateManyWithoutStoriesInput {
-  create?:
-    | StoryElementCreateWithoutStoriesInput[]
-    | StoryElementCreateWithoutStoriesInput;
-  connect?: StoryElementWhereUniqueInput[] | StoryElementWhereUniqueInput;
+export interface AppUpdateInput {
+  createBy?: UserUpdateOneRequiredWithoutAppsInput;
+  name?: String;
+  description?: String;
+  company?: String;
+  platform?: Platform;
+  logo?: FileUpdateOneWithoutAppsInput;
+  versions?: AppVersionUpdateManyWithoutAppsInput;
+  category?: AppCategoryUpdateOneRequiredWithoutAppsInput;
+  stories?: StoryUpdateManyWithoutAppInput;
 }
 
 export interface AppVersionScalarWhereInput {
@@ -1811,11 +1937,14 @@ export interface AppVersionScalarWhereInput {
   NOT?: AppVersionScalarWhereInput[] | AppVersionScalarWhereInput;
 }
 
-export interface LibraryCreateManyWithoutStoriesInput {
-  create?:
-    | LibraryCreateWithoutStoriesInput[]
-    | LibraryCreateWithoutStoriesInput;
-  connect?: LibraryWhereUniqueInput[] | LibraryWhereUniqueInput;
+export interface UserUpdateWithoutAppsDataInput {
+  email?: String;
+  first_name?: String;
+  last_name?: String;
+  password?: String;
+  profile_photo?: FileUpdateOneWithoutUserInput;
+  role?: AccountType;
+  libraries?: LibraryUpdateManyWithoutCreateByInput;
 }
 
 export interface AppVersionUpdateManyWithWhereNestedInput {
@@ -1823,20 +1952,22 @@ export interface AppVersionUpdateManyWithWhereNestedInput {
   data: AppVersionUpdateManyDataInput;
 }
 
-export interface UserCreateOneWithoutLibrariesInput {
-  create?: UserCreateWithoutLibrariesInput;
-  connect?: UserWhereUniqueInput;
+export interface FileUpdateWithoutUserDataInput {
+  filename?: String;
+  mimetype?: String;
+  encoding?: String;
+  url?: String;
+  apps?: AppUpdateManyWithoutLogoInput;
+  stories?: StoryUpdateManyInput;
 }
 
 export interface AppVersionUpdateManyDataInput {
   version?: String;
 }
 
-export interface LibraryCreateManyWithoutCreateByInput {
-  create?:
-    | LibraryCreateWithoutCreateByInput[]
-    | LibraryCreateWithoutCreateByInput;
-  connect?: LibraryWhereUniqueInput[] | LibraryWhereUniqueInput;
+export interface AppUpdateWithWhereUniqueWithoutLogoInput {
+  where: AppWhereUniqueInput;
+  data: AppUpdateWithoutLogoDataInput;
 }
 
 export interface StoryCategoryUpdateManyWithoutStoriesInput {
@@ -1859,11 +1990,15 @@ export interface StoryCategoryUpdateManyWithoutStoriesInput {
     | StoryCategoryUpdateManyWithWhereNestedInput;
 }
 
-export interface StoryCreateManyWithoutLibrariesInput {
-  create?:
-    | StoryCreateWithoutLibrariesInput[]
-    | StoryCreateWithoutLibrariesInput;
-  connect?: StoryWhereUniqueInput[] | StoryWhereUniqueInput;
+export interface UserSubscriptionWhereInput {
+  mutation_in?: MutationType[] | MutationType;
+  updatedFields_contains?: String;
+  updatedFields_contains_every?: String[] | String;
+  updatedFields_contains_some?: String[] | String;
+  node?: UserWhereInput;
+  AND?: UserSubscriptionWhereInput[] | UserSubscriptionWhereInput;
+  OR?: UserSubscriptionWhereInput[] | UserSubscriptionWhereInput;
+  NOT?: UserSubscriptionWhereInput[] | UserSubscriptionWhereInput;
 }
 
 export interface StoryCategoryUpdateWithWhereUniqueWithoutStoriesInput {
@@ -1871,30 +2006,30 @@ export interface StoryCategoryUpdateWithWhereUniqueWithoutStoriesInput {
   data: StoryCategoryUpdateWithoutStoriesDataInput;
 }
 
-export interface AppUpdateInput {
-  createBy?: UserUpdateOneRequiredWithoutAppsInput;
-  name?: String;
-  description?: String;
-  company?: String;
-  platform?: Platform;
-  logo?: FileUpdateOneWithoutAppsInput;
-  versions?: AppVersionUpdateManyWithoutAppsInput;
-  category?: AppCategoryUpdateOneRequiredWithoutAppsInput;
-  stories?: StoryUpdateManyWithoutAppInput;
+export interface LibrarySubscriptionWhereInput {
+  mutation_in?: MutationType[] | MutationType;
+  updatedFields_contains?: String;
+  updatedFields_contains_every?: String[] | String;
+  updatedFields_contains_some?: String[] | String;
+  node?: LibraryWhereInput;
+  AND?: LibrarySubscriptionWhereInput[] | LibrarySubscriptionWhereInput;
+  OR?: LibrarySubscriptionWhereInput[] | LibrarySubscriptionWhereInput;
+  NOT?: LibrarySubscriptionWhereInput[] | LibrarySubscriptionWhereInput;
 }
 
 export interface StoryCategoryUpdateWithoutStoriesDataInput {
   name?: String;
 }
 
-export interface UserUpdateWithoutAppsDataInput {
-  email?: String;
-  first_name?: String;
-  last_name?: String;
-  password?: String;
-  profile_photo?: FileUpdateOneInput;
-  role?: AccountType;
-  libraries?: LibraryUpdateManyWithoutCreateByInput;
+export interface AppCategorySubscriptionWhereInput {
+  mutation_in?: MutationType[] | MutationType;
+  updatedFields_contains?: String;
+  updatedFields_contains_every?: String[] | String;
+  updatedFields_contains_some?: String[] | String;
+  node?: AppCategoryWhereInput;
+  AND?: AppCategorySubscriptionWhereInput[] | AppCategorySubscriptionWhereInput;
+  OR?: AppCategorySubscriptionWhereInput[] | AppCategorySubscriptionWhereInput;
+  NOT?: AppCategorySubscriptionWhereInput[] | AppCategorySubscriptionWhereInput;
 }
 
 export interface StoryCategoryUpsertWithWhereUniqueWithoutStoriesInput {
@@ -1903,13 +2038,15 @@ export interface StoryCategoryUpsertWithWhereUniqueWithoutStoriesInput {
   create: StoryCategoryCreateWithoutStoriesInput;
 }
 
-export interface FileUpdateDataInput {
-  filename?: String;
-  mimetype?: String;
-  encoding?: String;
-  url?: String;
-  apps?: AppUpdateManyWithoutLogoInput;
-  stories?: StoryUpdateManyInput;
+export interface UserUpdateInput {
+  email?: String;
+  first_name?: String;
+  last_name?: String;
+  password?: String;
+  profile_photo?: FileUpdateOneWithoutUserInput;
+  role?: AccountType;
+  apps?: AppUpdateManyWithoutCreateByInput;
+  libraries?: LibraryUpdateManyWithoutCreateByInput;
 }
 
 export interface StoryCategoryScalarWhereInput {
@@ -1946,9 +2083,14 @@ export interface StoryCategoryScalarWhereInput {
   NOT?: StoryCategoryScalarWhereInput[] | StoryCategoryScalarWhereInput;
 }
 
-export interface AppUpdateWithWhereUniqueWithoutLogoInput {
-  where: AppWhereUniqueInput;
-  data: AppUpdateWithoutLogoDataInput;
+export interface StoryUpdateWithoutElementsDataInput {
+  app?: AppUpdateOneRequiredWithoutStoriesInput;
+  createBy?: UserUpdateOneRequiredInput;
+  video?: FileUpdateOneRequiredInput;
+  thumbnail?: FileUpdateOneRequiredInput;
+  versions?: AppVersionUpdateManyWithoutStoriesInput;
+  categories?: StoryCategoryUpdateManyWithoutStoriesInput;
+  libraries?: LibraryUpdateManyWithoutStoriesInput;
 }
 
 export interface StoryCategoryUpdateManyWithWhereNestedInput {
@@ -1956,30 +2098,16 @@ export interface StoryCategoryUpdateManyWithWhereNestedInput {
   data: StoryCategoryUpdateManyDataInput;
 }
 
-export interface StoryCategorySubscriptionWhereInput {
-  mutation_in?: MutationType[] | MutationType;
-  updatedFields_contains?: String;
-  updatedFields_contains_every?: String[] | String;
-  updatedFields_contains_some?: String[] | String;
-  node?: StoryCategoryWhereInput;
-  AND?:
-    | StoryCategorySubscriptionWhereInput[]
-    | StoryCategorySubscriptionWhereInput;
-  OR?:
-    | StoryCategorySubscriptionWhereInput[]
-    | StoryCategorySubscriptionWhereInput;
-  NOT?:
-    | StoryCategorySubscriptionWhereInput[]
-    | StoryCategorySubscriptionWhereInput;
-}
+export type LibraryWhereUniqueInput = AtLeastOne<{
+  id: ID_Input;
+}>;
 
 export interface StoryCategoryUpdateManyDataInput {
   name?: String;
 }
 
-export type AppCategoryWhereUniqueInput = AtLeastOne<{
+export type StoryWhereUniqueInput = AtLeastOne<{
   id: ID_Input;
-  name?: String;
 }>;
 
 export interface StoryElementUpdateManyWithoutStoriesInput {
@@ -2002,43 +2130,29 @@ export interface StoryElementUpdateManyWithoutStoriesInput {
     | StoryElementUpdateManyWithWhereNestedInput;
 }
 
-export interface UserUpdateManyMutationInput {
-  email?: String;
-  first_name?: String;
-  last_name?: String;
-  password?: String;
-  role?: AccountType;
-}
+export type StoryCategoryWhereUniqueInput = AtLeastOne<{
+  id: ID_Input;
+  name?: String;
+}>;
 
 export interface StoryElementUpdateWithWhereUniqueWithoutStoriesInput {
   where: StoryElementWhereUniqueInput;
   data: StoryElementUpdateWithoutStoriesDataInput;
 }
 
-export interface StoryUpsertWithWhereUniqueWithoutElementsInput {
-  where: StoryWhereUniqueInput;
-  update: StoryUpdateWithoutElementsDataInput;
-  create: StoryCreateWithoutElementsInput;
-}
+export type StoryElementWhereUniqueInput = AtLeastOne<{
+  id: ID_Input;
+  name?: String;
+}>;
 
 export interface StoryElementUpdateWithoutStoriesDataInput {
   name?: String;
 }
 
-export interface StoryUpdateManyWithoutElementsInput {
-  create?: StoryCreateWithoutElementsInput[] | StoryCreateWithoutElementsInput;
-  delete?: StoryWhereUniqueInput[] | StoryWhereUniqueInput;
-  connect?: StoryWhereUniqueInput[] | StoryWhereUniqueInput;
-  set?: StoryWhereUniqueInput[] | StoryWhereUniqueInput;
-  disconnect?: StoryWhereUniqueInput[] | StoryWhereUniqueInput;
-  update?:
-    | StoryUpdateWithWhereUniqueWithoutElementsInput[]
-    | StoryUpdateWithWhereUniqueWithoutElementsInput;
-  upsert?:
-    | StoryUpsertWithWhereUniqueWithoutElementsInput[]
-    | StoryUpsertWithWhereUniqueWithoutElementsInput;
-  deleteMany?: StoryScalarWhereInput[] | StoryScalarWhereInput;
-}
+export type UserWhereUniqueInput = AtLeastOne<{
+  id: ID_Input;
+  email?: String;
+}>;
 
 export interface StoryElementUpsertWithWhereUniqueWithoutStoriesInput {
   where: StoryElementWhereUniqueInput;
@@ -2046,9 +2160,10 @@ export interface StoryElementUpsertWithWhereUniqueWithoutStoriesInput {
   create: StoryElementCreateWithoutStoriesInput;
 }
 
-export interface StoryCreateManyWithoutElementsInput {
-  create?: StoryCreateWithoutElementsInput[] | StoryCreateWithoutElementsInput;
-  connect?: StoryWhereUniqueInput[] | StoryWhereUniqueInput;
+export interface LibraryCreateInput {
+  createBy: UserCreateOneWithoutLibrariesInput;
+  name: String;
+  stories?: StoryCreateManyWithoutLibrariesInput;
 }
 
 export interface StoryElementScalarWhereInput {
@@ -2085,10 +2200,14 @@ export interface StoryElementScalarWhereInput {
   NOT?: StoryElementScalarWhereInput[] | StoryElementScalarWhereInput;
 }
 
-export interface StoryUpsertWithWhereUniqueWithoutCategoriesInput {
-  where: StoryWhereUniqueInput;
-  update: StoryUpdateWithoutCategoriesDataInput;
-  create: StoryCreateWithoutCategoriesInput;
+export interface UserCreateWithoutAppsInput {
+  email: String;
+  first_name: String;
+  last_name: String;
+  password: String;
+  profile_photo?: FileCreateOneWithoutUserInput;
+  role: AccountType;
+  libraries?: LibraryCreateManyWithoutCreateByInput;
 }
 
 export interface StoryElementUpdateManyWithWhereNestedInput {
@@ -2096,153 +2215,85 @@ export interface StoryElementUpdateManyWithWhereNestedInput {
   data: StoryElementUpdateManyDataInput;
 }
 
-export interface StoryUpdateManyWithoutCategoriesInput {
-  create?:
-    | StoryCreateWithoutCategoriesInput[]
-    | StoryCreateWithoutCategoriesInput;
-  delete?: StoryWhereUniqueInput[] | StoryWhereUniqueInput;
-  connect?: StoryWhereUniqueInput[] | StoryWhereUniqueInput;
-  set?: StoryWhereUniqueInput[] | StoryWhereUniqueInput;
-  disconnect?: StoryWhereUniqueInput[] | StoryWhereUniqueInput;
-  update?:
-    | StoryUpdateWithWhereUniqueWithoutCategoriesInput[]
-    | StoryUpdateWithWhereUniqueWithoutCategoriesInput;
-  upsert?:
-    | StoryUpsertWithWhereUniqueWithoutCategoriesInput[]
-    | StoryUpsertWithWhereUniqueWithoutCategoriesInput;
-  deleteMany?: StoryScalarWhereInput[] | StoryScalarWhereInput;
+export interface AppCreateWithoutLogoInput {
+  createBy: UserCreateOneWithoutAppsInput;
+  name: String;
+  description?: String;
+  company: String;
+  platform: Platform;
+  versions?: AppVersionCreateManyWithoutAppsInput;
+  category: AppCategoryCreateOneWithoutAppsInput;
+  stories?: StoryCreateManyWithoutAppInput;
 }
 
 export interface StoryElementUpdateManyDataInput {
   name?: String;
 }
 
-export interface StoryCreateManyWithoutCategoriesInput {
-  create?:
-    | StoryCreateWithoutCategoriesInput[]
-    | StoryCreateWithoutCategoriesInput;
-  connect?: StoryWhereUniqueInput[] | StoryWhereUniqueInput;
-}
-
-export interface LibraryUpdateManyWithoutStoriesInput {
-  create?:
-    | LibraryCreateWithoutStoriesInput[]
-    | LibraryCreateWithoutStoriesInput;
-  delete?: LibraryWhereUniqueInput[] | LibraryWhereUniqueInput;
-  connect?: LibraryWhereUniqueInput[] | LibraryWhereUniqueInput;
-  set?: LibraryWhereUniqueInput[] | LibraryWhereUniqueInput;
-  disconnect?: LibraryWhereUniqueInput[] | LibraryWhereUniqueInput;
-  update?:
-    | LibraryUpdateWithWhereUniqueWithoutStoriesInput[]
-    | LibraryUpdateWithWhereUniqueWithoutStoriesInput;
-  upsert?:
-    | LibraryUpsertWithWhereUniqueWithoutStoriesInput[]
-    | LibraryUpsertWithWhereUniqueWithoutStoriesInput;
-  deleteMany?: LibraryScalarWhereInput[] | LibraryScalarWhereInput;
-  updateMany?:
-    | LibraryUpdateManyWithWhereNestedInput[]
-    | LibraryUpdateManyWithWhereNestedInput;
-}
-
-export interface LibraryUpdateManyMutationInput {
-  name?: String;
-}
-
-export interface LibraryUpdateWithWhereUniqueWithoutStoriesInput {
-  where: LibraryWhereUniqueInput;
-  data: LibraryUpdateWithoutStoriesDataInput;
-}
-
-export interface AppCreateInput {
-  createBy: UserCreateOneWithoutAppsInput;
-  name: String;
-  description?: String;
-  company: String;
-  platform: Platform;
-  logo?: FileCreateOneWithoutAppsInput;
-  versions?: AppVersionCreateManyWithoutAppsInput;
-  category: AppCategoryCreateOneWithoutAppsInput;
-  stories?: StoryCreateManyWithoutAppInput;
-}
-
-export interface LibraryUpdateWithoutStoriesDataInput {
-  createBy?: UserUpdateOneRequiredWithoutLibrariesInput;
-  name?: String;
-}
-
-export interface FileCreateInput {
-  filename: String;
-  mimetype: String;
-  encoding: String;
-  url: String;
-  apps?: AppCreateManyWithoutLogoInput;
-  stories?: StoryCreateManyInput;
-}
-
-export interface UserUpdateOneRequiredWithoutLibrariesInput {
-  create?: UserCreateWithoutLibrariesInput;
-  update?: UserUpdateWithoutLibrariesDataInput;
-  upsert?: UserUpsertWithoutLibrariesInput;
-  connect?: UserWhereUniqueInput;
-}
-
-export interface AppVersionCreateWithoutAppsInput {
-  version: String;
-  stories?: StoryCreateManyWithoutVersionsInput;
-}
-
-export interface UserUpdateWithoutLibrariesDataInput {
-  email?: String;
-  first_name?: String;
-  last_name?: String;
-  password?: String;
-  profile_photo?: FileUpdateOneInput;
-  role?: AccountType;
-  apps?: AppUpdateManyWithoutCreateByInput;
-}
-
-export interface AppCreateWithoutStoriesInput {
-  createBy: UserCreateOneWithoutAppsInput;
-  name: String;
-  description?: String;
-  company: String;
-  platform: Platform;
-  logo?: FileCreateOneWithoutAppsInput;
-  versions?: AppVersionCreateManyWithoutAppsInput;
-  category: AppCategoryCreateOneWithoutAppsInput;
-}
-
-export interface UserUpsertWithoutLibrariesInput {
-  update: UserUpdateWithoutLibrariesDataInput;
-  create: UserCreateWithoutLibrariesInput;
-}
-
-export interface StoryCreateInput {
+export interface StoryCreateWithoutVersionsInput {
   app: AppCreateOneWithoutStoriesInput;
   createBy: UserCreateOneInput;
   video: FileCreateOneInput;
   thumbnail: FileCreateOneInput;
-  versions?: AppVersionCreateManyWithoutStoriesInput;
   categories?: StoryCategoryCreateManyWithoutStoriesInput;
   elements?: StoryElementCreateManyWithoutStoriesInput;
   libraries?: LibraryCreateManyWithoutStoriesInput;
 }
 
-export interface LibraryUpsertWithWhereUniqueWithoutStoriesInput {
-  where: LibraryWhereUniqueInput;
-  update: LibraryUpdateWithoutStoriesDataInput;
-  create: LibraryCreateWithoutStoriesInput;
+export interface StoryUpsertWithWhereUniqueWithoutLibrariesInput {
+  where: StoryWhereUniqueInput;
+  update: StoryUpdateWithoutLibrariesDataInput;
+  create: StoryCreateWithoutLibrariesInput;
 }
 
-export interface AppCreateWithoutCreateByInput {
+export interface FileCreateWithoutAppsInput {
+  filename: String;
+  mimetype: String;
+  encoding: String;
+  url: String;
+  stories?: StoryCreateManyInput;
+  user?: UserCreateOneWithoutProfile_photoInput;
+}
+
+export interface StoryScalarWhereInput {
+  id?: ID_Input;
+  id_not?: ID_Input;
+  id_in?: ID_Input[] | ID_Input;
+  id_not_in?: ID_Input[] | ID_Input;
+  id_lt?: ID_Input;
+  id_lte?: ID_Input;
+  id_gt?: ID_Input;
+  id_gte?: ID_Input;
+  id_contains?: ID_Input;
+  id_not_contains?: ID_Input;
+  id_starts_with?: ID_Input;
+  id_not_starts_with?: ID_Input;
+  id_ends_with?: ID_Input;
+  id_not_ends_with?: ID_Input;
+  AND?: StoryScalarWhereInput[] | StoryScalarWhereInput;
+  OR?: StoryScalarWhereInput[] | StoryScalarWhereInput;
+  NOT?: StoryScalarWhereInput[] | StoryScalarWhereInput;
+}
+
+export interface UserCreateInput {
+  email: String;
+  first_name: String;
+  last_name: String;
+  password: String;
+  profile_photo?: FileCreateOneWithoutUserInput;
+  role: AccountType;
+  apps?: AppCreateManyWithoutCreateByInput;
+  libraries?: LibraryCreateManyWithoutCreateByInput;
+}
+
+export interface LibraryUpsertWithWhereUniqueWithoutCreateByInput {
+  where: LibraryWhereUniqueInput;
+  update: LibraryUpdateWithoutCreateByDataInput;
+  create: LibraryCreateWithoutCreateByInput;
+}
+
+export interface AppCategoryCreateWithoutAppsInput {
   name: String;
-  description?: String;
-  company: String;
-  platform: Platform;
-  logo?: FileCreateOneWithoutAppsInput;
-  versions?: AppVersionCreateManyWithoutAppsInput;
-  category: AppCategoryCreateOneWithoutAppsInput;
-  stories?: StoryCreateManyWithoutAppInput;
 }
 
 export interface LibraryScalarWhereInput {
@@ -2279,14 +2330,14 @@ export interface LibraryScalarWhereInput {
   NOT?: LibraryScalarWhereInput[] | LibraryScalarWhereInput;
 }
 
-export interface StoryCreateWithoutAppInput {
-  createBy: UserCreateOneInput;
-  video: FileCreateOneInput;
-  thumbnail: FileCreateOneInput;
-  versions?: AppVersionCreateManyWithoutStoriesInput;
-  categories?: StoryCategoryCreateManyWithoutStoriesInput;
-  elements?: StoryElementCreateManyWithoutStoriesInput;
-  libraries?: LibraryCreateManyWithoutStoriesInput;
+export interface FileCreateInput {
+  filename: String;
+  mimetype: String;
+  encoding: String;
+  url: String;
+  apps?: AppCreateManyWithoutLogoInput;
+  stories?: StoryCreateManyInput;
+  user?: UserCreateOneWithoutProfile_photoInput;
 }
 
 export interface LibraryUpdateManyWithWhereNestedInput {
@@ -2294,258 +2345,69 @@ export interface LibraryUpdateManyWithWhereNestedInput {
   data: LibraryUpdateManyDataInput;
 }
 
-export interface AppCreateWithoutVersionsInput {
-  createBy: UserCreateOneWithoutAppsInput;
+export interface LibraryCreateWithoutCreateByInput {
   name: String;
-  description?: String;
-  company: String;
-  platform: Platform;
-  logo?: FileCreateOneWithoutAppsInput;
-  category: AppCategoryCreateOneWithoutAppsInput;
-  stories?: StoryCreateManyWithoutAppInput;
+  stories?: StoryCreateManyWithoutLibrariesInput;
 }
 
 export interface LibraryUpdateManyDataInput {
   name?: String;
 }
 
-export interface StoryElementCreateWithoutStoriesInput {
-  name: String;
+export interface AppVersionCreateWithoutStoriesInput {
+  version: String;
+  apps?: AppCreateManyWithoutVersionsInput;
 }
 
-export interface StoryUpsertWithWhereUniqueWithoutAppInput {
-  where: StoryWhereUniqueInput;
-  update: StoryUpdateWithoutAppDataInput;
-  create: StoryCreateWithoutAppInput;
-}
-
-export interface UserCreateWithoutLibrariesInput {
-  email: String;
-  first_name: String;
-  last_name: String;
-  password: String;
-  profile_photo?: FileCreateOneInput;
-  role: AccountType;
-  apps?: AppCreateManyWithoutCreateByInput;
-}
-
-export interface StoryScalarWhereInput {
-  id?: ID_Input;
-  id_not?: ID_Input;
-  id_in?: ID_Input[] | ID_Input;
-  id_not_in?: ID_Input[] | ID_Input;
-  id_lt?: ID_Input;
-  id_lte?: ID_Input;
-  id_gt?: ID_Input;
-  id_gte?: ID_Input;
-  id_contains?: ID_Input;
-  id_not_contains?: ID_Input;
-  id_starts_with?: ID_Input;
-  id_not_starts_with?: ID_Input;
-  id_ends_with?: ID_Input;
-  id_not_ends_with?: ID_Input;
-  AND?: StoryScalarWhereInput[] | StoryScalarWhereInput;
-  OR?: StoryScalarWhereInput[] | StoryScalarWhereInput;
-  NOT?: StoryScalarWhereInput[] | StoryScalarWhereInput;
-}
-
-export interface StoryCreateWithoutLibrariesInput {
-  app: AppCreateOneWithoutStoriesInput;
-  createBy: UserCreateOneInput;
-  video: FileCreateOneInput;
-  thumbnail: FileCreateOneInput;
-  versions?: AppVersionCreateManyWithoutStoriesInput;
-  categories?: StoryCategoryCreateManyWithoutStoriesInput;
-  elements?: StoryElementCreateManyWithoutStoriesInput;
-}
-
-export interface AppUpsertWithWhereUniqueWithoutCreateByInput {
-  where: AppWhereUniqueInput;
-  update: AppUpdateWithoutCreateByDataInput;
-  create: AppCreateWithoutCreateByInput;
-}
-
-export interface FileUpdateOneInput {
-  create?: FileCreateInput;
-  update?: FileUpdateDataInput;
-  upsert?: FileUpsertNestedInput;
-  delete?: Boolean;
-  disconnect?: Boolean;
-  connect?: FileWhereUniqueInput;
-}
-
-export interface LibraryUpdateManyWithoutCreateByInput {
-  create?:
-    | LibraryCreateWithoutCreateByInput[]
-    | LibraryCreateWithoutCreateByInput;
-  delete?: LibraryWhereUniqueInput[] | LibraryWhereUniqueInput;
-  connect?: LibraryWhereUniqueInput[] | LibraryWhereUniqueInput;
-  set?: LibraryWhereUniqueInput[] | LibraryWhereUniqueInput;
-  disconnect?: LibraryWhereUniqueInput[] | LibraryWhereUniqueInput;
-  update?:
-    | LibraryUpdateWithWhereUniqueWithoutCreateByInput[]
-    | LibraryUpdateWithWhereUniqueWithoutCreateByInput;
-  upsert?:
-    | LibraryUpsertWithWhereUniqueWithoutCreateByInput[]
-    | LibraryUpsertWithWhereUniqueWithoutCreateByInput;
-  deleteMany?: LibraryScalarWhereInput[] | LibraryScalarWhereInput;
-  updateMany?:
-    | LibraryUpdateManyWithWhereNestedInput[]
-    | LibraryUpdateManyWithWhereNestedInput;
-}
-
-export interface UserSubscriptionWhereInput {
-  mutation_in?: MutationType[] | MutationType;
-  updatedFields_contains?: String;
-  updatedFields_contains_every?: String[] | String;
-  updatedFields_contains_some?: String[] | String;
-  node?: UserWhereInput;
-  AND?: UserSubscriptionWhereInput[] | UserSubscriptionWhereInput;
-  OR?: UserSubscriptionWhereInput[] | UserSubscriptionWhereInput;
-  NOT?: UserSubscriptionWhereInput[] | UserSubscriptionWhereInput;
-}
-
-export interface LibraryUpdateWithWhereUniqueWithoutCreateByInput {
-  where: LibraryWhereUniqueInput;
-  data: LibraryUpdateWithoutCreateByDataInput;
-}
-
-export interface AppCategorySubscriptionWhereInput {
-  mutation_in?: MutationType[] | MutationType;
-  updatedFields_contains?: String;
-  updatedFields_contains_every?: String[] | String;
-  updatedFields_contains_some?: String[] | String;
-  node?: AppCategoryWhereInput;
-  AND?: AppCategorySubscriptionWhereInput[] | AppCategorySubscriptionWhereInput;
-  OR?: AppCategorySubscriptionWhereInput[] | AppCategorySubscriptionWhereInput;
-  NOT?: AppCategorySubscriptionWhereInput[] | AppCategorySubscriptionWhereInput;
-}
-
-export interface LibraryUpdateWithoutCreateByDataInput {
-  name?: String;
-  stories?: StoryUpdateManyWithoutLibrariesInput;
-}
-
-export interface StoryUpdateWithoutElementsDataInput {
-  app?: AppUpdateOneRequiredWithoutStoriesInput;
-  createBy?: UserUpdateOneRequiredInput;
-  video?: FileUpdateOneRequiredInput;
-  thumbnail?: FileUpdateOneRequiredInput;
-  versions?: AppVersionUpdateManyWithoutStoriesInput;
-  categories?: StoryCategoryUpdateManyWithoutStoriesInput;
-  libraries?: LibraryUpdateManyWithoutStoriesInput;
-}
-
-export interface StoryUpdateManyWithoutLibrariesInput {
-  create?:
-    | StoryCreateWithoutLibrariesInput[]
-    | StoryCreateWithoutLibrariesInput;
-  delete?: StoryWhereUniqueInput[] | StoryWhereUniqueInput;
-  connect?: StoryWhereUniqueInput[] | StoryWhereUniqueInput;
-  set?: StoryWhereUniqueInput[] | StoryWhereUniqueInput;
-  disconnect?: StoryWhereUniqueInput[] | StoryWhereUniqueInput;
-  update?:
-    | StoryUpdateWithWhereUniqueWithoutLibrariesInput[]
-    | StoryUpdateWithWhereUniqueWithoutLibrariesInput;
-  upsert?:
-    | StoryUpsertWithWhereUniqueWithoutLibrariesInput[]
-    | StoryUpsertWithWhereUniqueWithoutLibrariesInput;
-  deleteMany?: StoryScalarWhereInput[] | StoryScalarWhereInput;
-}
-
-export type StoryWhereUniqueInput = AtLeastOne<{
-  id: ID_Input;
-}>;
-
-export interface StoryUpdateWithWhereUniqueWithoutLibrariesInput {
-  where: StoryWhereUniqueInput;
-  data: StoryUpdateWithoutLibrariesDataInput;
-}
-
-export type StoryElementWhereUniqueInput = AtLeastOne<{
-  id: ID_Input;
-  name?: String;
-}>;
-
-export interface StoryUpdateWithoutLibrariesDataInput {
-  app?: AppUpdateOneRequiredWithoutStoriesInput;
-  createBy?: UserUpdateOneRequiredInput;
-  video?: FileUpdateOneRequiredInput;
-  thumbnail?: FileUpdateOneRequiredInput;
-  versions?: AppVersionUpdateManyWithoutStoriesInput;
-  categories?: StoryCategoryUpdateManyWithoutStoriesInput;
-  elements?: StoryElementUpdateManyWithoutStoriesInput;
-}
-
-export interface LibraryCreateInput {
-  createBy: UserCreateOneWithoutLibrariesInput;
-  name: String;
-  stories?: StoryCreateManyWithoutLibrariesInput;
-}
-
-export interface StoryUpsertWithWhereUniqueWithoutLibrariesInput {
-  where: StoryWhereUniqueInput;
-  update: StoryUpdateWithoutLibrariesDataInput;
-  create: StoryCreateWithoutLibrariesInput;
-}
-
-export interface AppCreateWithoutLogoInput {
-  createBy: UserCreateOneWithoutAppsInput;
-  name: String;
-  description?: String;
-  company: String;
-  platform: Platform;
-  versions?: AppVersionCreateManyWithoutAppsInput;
-  category: AppCategoryCreateOneWithoutAppsInput;
-  stories?: StoryCreateManyWithoutAppInput;
-}
-
-export interface LibraryUpsertWithWhereUniqueWithoutCreateByInput {
-  where: LibraryWhereUniqueInput;
-  update: LibraryUpdateWithoutCreateByDataInput;
-  create: LibraryCreateWithoutCreateByInput;
-}
-
-export interface FileCreateWithoutAppsInput {
-  filename: String;
-  mimetype: String;
-  encoding: String;
-  url: String;
-  stories?: StoryCreateManyInput;
-}
-
-export interface UserUpsertNestedInput {
-  update: UserUpdateDataInput;
-  create: UserCreateInput;
-}
-
-export interface AppCategoryCreateWithoutAppsInput {
-  name: String;
-}
-
-export interface StoryUpsertWithWhereUniqueNestedInput {
-  where: StoryWhereUniqueInput;
-  update: StoryUpdateDataInput;
-  create: StoryCreateInput;
+export interface UserUpsertWithoutProfile_photoInput {
+  update: UserUpdateWithoutProfile_photoDataInput;
+  create: UserCreateWithoutProfile_photoInput;
 }
 
 export interface StoryCategoryCreateWithoutStoriesInput {
   name: String;
 }
 
-export interface FileUpsertWithoutAppsInput {
-  update: FileUpdateWithoutAppsDataInput;
-  create: FileCreateWithoutAppsInput;
+export interface FileUpsertNestedInput {
+  update: FileUpdateDataInput;
+  create: FileCreateInput;
 }
 
-export interface LibraryCreateWithoutCreateByInput {
+export interface LibraryCreateWithoutStoriesInput {
+  createBy: UserCreateOneWithoutLibrariesInput;
   name: String;
-  stories?: StoryCreateManyWithoutLibrariesInput;
 }
 
-export interface AppUpsertWithoutStoriesInput {
-  update: AppUpdateWithoutStoriesDataInput;
-  create: AppCreateWithoutStoriesInput;
+export interface LibraryUpdateManyWithoutStoriesInput {
+  create?:
+    | LibraryCreateWithoutStoriesInput[]
+    | LibraryCreateWithoutStoriesInput;
+  delete?: LibraryWhereUniqueInput[] | LibraryWhereUniqueInput;
+  connect?: LibraryWhereUniqueInput[] | LibraryWhereUniqueInput;
+  set?: LibraryWhereUniqueInput[] | LibraryWhereUniqueInput;
+  disconnect?: LibraryWhereUniqueInput[] | LibraryWhereUniqueInput;
+  update?:
+    | LibraryUpdateWithWhereUniqueWithoutStoriesInput[]
+    | LibraryUpdateWithWhereUniqueWithoutStoriesInput;
+  upsert?:
+    | LibraryUpsertWithWhereUniqueWithoutStoriesInput[]
+    | LibraryUpsertWithWhereUniqueWithoutStoriesInput;
+  deleteMany?: LibraryScalarWhereInput[] | LibraryScalarWhereInput;
+  updateMany?:
+    | LibraryUpdateManyWithWhereNestedInput[]
+    | LibraryUpdateManyWithWhereNestedInput;
+}
+
+export interface UserUpdateOneRequiredWithoutAppsInput {
+  create?: UserCreateWithoutAppsInput;
+  update?: UserUpdateWithoutAppsDataInput;
+  upsert?: UserUpsertWithoutAppsInput;
+  connect?: UserWhereUniqueInput;
+}
+
+export interface LibraryUpdateWithWhereUniqueWithoutStoriesInput {
+  where: LibraryWhereUniqueInput;
+  data: LibraryUpdateWithoutStoriesDataInput;
 }
 
 export interface AppUpdateManyWithoutLogoInput {
@@ -2566,21 +2428,190 @@ export interface AppUpdateManyWithoutLogoInput {
     | AppUpdateManyWithWhereNestedInput;
 }
 
+export interface LibraryUpdateWithoutStoriesDataInput {
+  createBy?: UserUpdateOneRequiredWithoutLibrariesInput;
+  name?: String;
+}
+
+export interface StoryCategorySubscriptionWhereInput {
+  mutation_in?: MutationType[] | MutationType;
+  updatedFields_contains?: String;
+  updatedFields_contains_every?: String[] | String;
+  updatedFields_contains_some?: String[] | String;
+  node?: StoryCategoryWhereInput;
+  AND?:
+    | StoryCategorySubscriptionWhereInput[]
+    | StoryCategorySubscriptionWhereInput;
+  OR?:
+    | StoryCategorySubscriptionWhereInput[]
+    | StoryCategorySubscriptionWhereInput;
+  NOT?:
+    | StoryCategorySubscriptionWhereInput[]
+    | StoryCategorySubscriptionWhereInput;
+}
+
+export interface UserUpdateOneRequiredWithoutLibrariesInput {
+  create?: UserCreateWithoutLibrariesInput;
+  update?: UserUpdateWithoutLibrariesDataInput;
+  upsert?: UserUpsertWithoutLibrariesInput;
+  connect?: UserWhereUniqueInput;
+}
+
+export interface UserUpdateManyMutationInput {
+  email?: String;
+  first_name?: String;
+  last_name?: String;
+  password?: String;
+  role?: AccountType;
+}
+
+export interface UserUpdateWithoutLibrariesDataInput {
+  email?: String;
+  first_name?: String;
+  last_name?: String;
+  password?: String;
+  profile_photo?: FileUpdateOneWithoutUserInput;
+  role?: AccountType;
+  apps?: AppUpdateManyWithoutCreateByInput;
+}
+
+export interface StoryUpdateManyWithoutElementsInput {
+  create?: StoryCreateWithoutElementsInput[] | StoryCreateWithoutElementsInput;
+  delete?: StoryWhereUniqueInput[] | StoryWhereUniqueInput;
+  connect?: StoryWhereUniqueInput[] | StoryWhereUniqueInput;
+  set?: StoryWhereUniqueInput[] | StoryWhereUniqueInput;
+  disconnect?: StoryWhereUniqueInput[] | StoryWhereUniqueInput;
+  update?:
+    | StoryUpdateWithWhereUniqueWithoutElementsInput[]
+    | StoryUpdateWithWhereUniqueWithoutElementsInput;
+  upsert?:
+    | StoryUpsertWithWhereUniqueWithoutElementsInput[]
+    | StoryUpsertWithWhereUniqueWithoutElementsInput;
+  deleteMany?: StoryScalarWhereInput[] | StoryScalarWhereInput;
+}
+
+export interface UserUpsertWithoutLibrariesInput {
+  update: UserUpdateWithoutLibrariesDataInput;
+  create: UserCreateWithoutLibrariesInput;
+}
+
+export interface StoryUpsertWithWhereUniqueWithoutCategoriesInput {
+  where: StoryWhereUniqueInput;
+  update: StoryUpdateWithoutCategoriesDataInput;
+  create: StoryCreateWithoutCategoriesInput;
+}
+
+export interface LibraryUpsertWithWhereUniqueWithoutStoriesInput {
+  where: LibraryWhereUniqueInput;
+  update: LibraryUpdateWithoutStoriesDataInput;
+  create: LibraryCreateWithoutStoriesInput;
+}
+
+export interface StoryCreateManyWithoutCategoriesInput {
+  create?:
+    | StoryCreateWithoutCategoriesInput[]
+    | StoryCreateWithoutCategoriesInput;
+  connect?: StoryWhereUniqueInput[] | StoryWhereUniqueInput;
+}
+
+export interface StoryUpsertWithWhereUniqueWithoutAppInput {
+  where: StoryWhereUniqueInput;
+  update: StoryUpdateWithoutAppDataInput;
+  create: StoryCreateWithoutAppInput;
+}
+
+export interface AppCreateInput {
+  createBy: UserCreateOneWithoutAppsInput;
+  name: String;
+  description?: String;
+  company: String;
+  platform: Platform;
+  logo?: FileCreateOneWithoutAppsInput;
+  versions?: AppVersionCreateManyWithoutAppsInput;
+  category: AppCategoryCreateOneWithoutAppsInput;
+  stories?: StoryCreateManyWithoutAppInput;
+}
+
+export interface AppUpsertWithWhereUniqueWithoutCreateByInput {
+  where: AppWhereUniqueInput;
+  update: AppUpdateWithoutCreateByDataInput;
+  create: AppCreateWithoutCreateByInput;
+}
+
+export interface AppVersionCreateWithoutAppsInput {
+  version: String;
+  stories?: StoryCreateManyWithoutVersionsInput;
+}
+
+export interface UserUpsertNestedInput {
+  update: UserUpdateDataInput;
+  create: UserCreateInput;
+}
+
+export interface StoryCreateInput {
+  app: AppCreateOneWithoutStoriesInput;
+  createBy: UserCreateOneInput;
+  video: FileCreateOneInput;
+  thumbnail: FileCreateOneInput;
+  versions?: AppVersionCreateManyWithoutStoriesInput;
+  categories?: StoryCategoryCreateManyWithoutStoriesInput;
+  elements?: StoryElementCreateManyWithoutStoriesInput;
+  libraries?: LibraryCreateManyWithoutStoriesInput;
+}
+
+export interface StoryUpsertWithWhereUniqueNestedInput {
+  where: StoryWhereUniqueInput;
+  update: StoryUpdateDataInput;
+  create: StoryCreateInput;
+}
+
+export interface StoryCreateWithoutAppInput {
+  createBy: UserCreateOneInput;
+  video: FileCreateOneInput;
+  thumbnail: FileCreateOneInput;
+  versions?: AppVersionCreateManyWithoutStoriesInput;
+  categories?: StoryCategoryCreateManyWithoutStoriesInput;
+  elements?: StoryElementCreateManyWithoutStoriesInput;
+  libraries?: LibraryCreateManyWithoutStoriesInput;
+}
+
+export interface FileUpsertWithoutAppsInput {
+  update: FileUpdateWithoutAppsDataInput;
+  create: FileCreateWithoutAppsInput;
+}
+
+export interface StoryCreateWithoutLibrariesInput {
+  app: AppCreateOneWithoutStoriesInput;
+  createBy: UserCreateOneInput;
+  video: FileCreateOneInput;
+  thumbnail: FileCreateOneInput;
+  versions?: AppVersionCreateManyWithoutStoriesInput;
+  categories?: StoryCategoryCreateManyWithoutStoriesInput;
+  elements?: StoryElementCreateManyWithoutStoriesInput;
+}
+
+export interface AppUpsertWithoutStoriesInput {
+  update: AppUpdateWithoutStoriesDataInput;
+  create: AppCreateWithoutStoriesInput;
+}
+
+export interface StoryElementCreateWithoutStoriesInput {
+  name: String;
+}
+
 export interface StoryUpsertWithWhereUniqueWithoutVersionsInput {
   where: StoryWhereUniqueInput;
   update: StoryUpdateWithoutVersionsDataInput;
   create: StoryCreateWithoutVersionsInput;
 }
 
-export interface UserUpdateInput {
-  email?: String;
-  first_name?: String;
-  last_name?: String;
-  password?: String;
-  profile_photo?: FileUpdateOneInput;
-  role?: AccountType;
-  apps?: AppUpdateManyWithoutCreateByInput;
-  libraries?: LibraryUpdateManyWithoutCreateByInput;
+export interface FileUpdateOneWithoutUserInput {
+  create?: FileCreateWithoutUserInput;
+  update?: FileUpdateWithoutUserDataInput;
+  upsert?: FileUpsertWithoutUserInput;
+  delete?: Boolean;
+  disconnect?: Boolean;
+  connect?: FileWhereUniqueInput;
 }
 
 export interface AppVersionUpsertWithWhereUniqueWithoutAppsInput {
@@ -2589,7 +2620,7 @@ export interface AppVersionUpsertWithWhereUniqueWithoutAppsInput {
   create: AppVersionCreateWithoutAppsInput;
 }
 
-export type StoryCategoryWhereUniqueInput = AtLeastOne<{
+export type AppCategoryWhereUniqueInput = AtLeastOne<{
   id: ID_Input;
   name?: String;
 }>;
@@ -2600,14 +2631,18 @@ export interface AppUpsertWithWhereUniqueWithoutLogoInput {
   create: AppCreateWithoutLogoInput;
 }
 
-export interface UserCreateWithoutAppsInput {
-  email: String;
-  first_name: String;
-  last_name: String;
-  password: String;
-  profile_photo?: FileCreateOneInput;
-  role: AccountType;
-  libraries?: LibraryCreateManyWithoutCreateByInput;
+export interface StoryCreateManyWithoutElementsInput {
+  create?: StoryCreateWithoutElementsInput[] | StoryCreateWithoutElementsInput;
+  connect?: StoryWhereUniqueInput[] | StoryWhereUniqueInput;
+}
+
+export interface FileUpsertWithoutUserInput {
+  update: FileUpdateWithoutUserDataInput;
+  create: FileCreateWithoutUserInput;
+}
+
+export interface LibraryUpdateManyMutationInput {
+  name?: String;
 }
 
 export interface UserUpsertWithoutAppsInput {
@@ -2615,15 +2650,15 @@ export interface UserUpsertWithoutAppsInput {
   create: UserCreateWithoutAppsInput;
 }
 
-export interface UserCreateInput {
-  email: String;
-  first_name: String;
-  last_name: String;
-  password: String;
-  profile_photo?: FileCreateOneInput;
-  role: AccountType;
-  apps?: AppCreateManyWithoutCreateByInput;
-  libraries?: LibraryCreateManyWithoutCreateByInput;
+export interface AppCreateWithoutStoriesInput {
+  createBy: UserCreateOneWithoutAppsInput;
+  name: String;
+  description?: String;
+  company: String;
+  platform: Platform;
+  logo?: FileCreateOneWithoutAppsInput;
+  versions?: AppVersionCreateManyWithoutAppsInput;
+  category: AppCategoryCreateOneWithoutAppsInput;
 }
 
 export interface AppUpdateManyMutationInput {
@@ -2633,9 +2668,14 @@ export interface AppUpdateManyMutationInput {
   platform?: Platform;
 }
 
-export interface LibraryCreateWithoutStoriesInput {
-  createBy: UserCreateOneWithoutLibrariesInput;
-  name: String;
+export interface UserCreateWithoutProfile_photoInput {
+  email: String;
+  first_name: String;
+  last_name: String;
+  password: String;
+  role: AccountType;
+  apps?: AppCreateManyWithoutCreateByInput;
+  libraries?: LibraryCreateManyWithoutCreateByInput;
 }
 
 export interface AppUpdateWithoutCategoryDataInput {
@@ -2649,15 +2689,14 @@ export interface AppUpdateWithoutCategoryDataInput {
   stories?: StoryUpdateManyWithoutAppInput;
 }
 
-export interface LibrarySubscriptionWhereInput {
-  mutation_in?: MutationType[] | MutationType;
-  updatedFields_contains?: String;
-  updatedFields_contains_every?: String[] | String;
-  updatedFields_contains_some?: String[] | String;
-  node?: LibraryWhereInput;
-  AND?: LibrarySubscriptionWhereInput[] | LibrarySubscriptionWhereInput;
-  OR?: LibrarySubscriptionWhereInput[] | LibrarySubscriptionWhereInput;
-  NOT?: LibrarySubscriptionWhereInput[] | LibrarySubscriptionWhereInput;
+export interface UserCreateWithoutLibrariesInput {
+  email: String;
+  first_name: String;
+  last_name: String;
+  password: String;
+  profile_photo?: FileCreateOneWithoutUserInput;
+  role: AccountType;
+  apps?: AppCreateManyWithoutCreateByInput;
 }
 
 export interface AppUpdateWithWhereUniqueWithoutCategoryInput {
@@ -2665,10 +2704,11 @@ export interface AppUpdateWithWhereUniqueWithoutCategoryInput {
   data: AppUpdateWithoutCategoryDataInput;
 }
 
-export type UserWhereUniqueInput = AtLeastOne<{
-  id: ID_Input;
-  email?: String;
-}>;
+export interface StoryUpsertWithWhereUniqueWithoutElementsInput {
+  where: StoryWhereUniqueInput;
+  update: StoryUpdateWithoutElementsDataInput;
+  create: StoryCreateWithoutElementsInput;
+}
 
 export interface AppCategoryUpdateInput {
   name?: String;
@@ -2696,30 +2736,63 @@ export interface AppCategoryCreateInput {
   apps?: AppCreateManyWithoutCategoryInput;
 }
 
-export interface StoryCreateWithoutVersionsInput {
-  app: AppCreateOneWithoutStoriesInput;
-  createBy: UserCreateOneInput;
-  video: FileCreateOneInput;
-  thumbnail: FileCreateOneInput;
-  categories?: StoryCategoryCreateManyWithoutStoriesInput;
-  elements?: StoryElementCreateManyWithoutStoriesInput;
-  libraries?: LibraryCreateManyWithoutStoriesInput;
+export interface StoryUpdateManyWithoutCategoriesInput {
+  create?:
+    | StoryCreateWithoutCategoriesInput[]
+    | StoryCreateWithoutCategoriesInput;
+  delete?: StoryWhereUniqueInput[] | StoryWhereUniqueInput;
+  connect?: StoryWhereUniqueInput[] | StoryWhereUniqueInput;
+  set?: StoryWhereUniqueInput[] | StoryWhereUniqueInput;
+  disconnect?: StoryWhereUniqueInput[] | StoryWhereUniqueInput;
+  update?:
+    | StoryUpdateWithWhereUniqueWithoutCategoriesInput[]
+    | StoryUpdateWithWhereUniqueWithoutCategoriesInput;
+  upsert?:
+    | StoryUpsertWithWhereUniqueWithoutCategoriesInput[]
+    | StoryUpsertWithWhereUniqueWithoutCategoriesInput;
+  deleteMany?: StoryScalarWhereInput[] | StoryScalarWhereInput;
 }
 
-export type LibraryWhereUniqueInput = AtLeastOne<{
-  id: ID_Input;
-}>;
-
-export interface UserUpdateOneRequiredWithoutAppsInput {
-  create?: UserCreateWithoutAppsInput;
-  update?: UserUpdateWithoutAppsDataInput;
-  upsert?: UserUpsertWithoutAppsInput;
-  connect?: UserWhereUniqueInput;
+export interface AppUpdateWithoutLogoDataInput {
+  createBy?: UserUpdateOneRequiredWithoutAppsInput;
+  name?: String;
+  description?: String;
+  company?: String;
+  platform?: Platform;
+  versions?: AppVersionUpdateManyWithoutAppsInput;
+  category?: AppCategoryUpdateOneRequiredWithoutAppsInput;
+  stories?: StoryUpdateManyWithoutAppInput;
 }
 
-export interface AppVersionCreateWithoutStoriesInput {
-  version: String;
-  apps?: AppCreateManyWithoutVersionsInput;
+export interface AppCreateWithoutVersionsInput {
+  createBy: UserCreateOneWithoutAppsInput;
+  name: String;
+  description?: String;
+  company: String;
+  platform: Platform;
+  logo?: FileCreateOneWithoutAppsInput;
+  category: AppCategoryCreateOneWithoutAppsInput;
+  stories?: StoryCreateManyWithoutAppInput;
+}
+
+export interface AppCreateWithoutCreateByInput {
+  name: String;
+  description?: String;
+  company: String;
+  platform: Platform;
+  logo?: FileCreateOneWithoutAppsInput;
+  versions?: AppVersionCreateManyWithoutAppsInput;
+  category: AppCategoryCreateOneWithoutAppsInput;
+  stories?: StoryCreateManyWithoutAppInput;
+}
+
+export interface FileCreateWithoutUserInput {
+  filename: String;
+  mimetype: String;
+  encoding: String;
+  url: String;
+  apps?: AppCreateManyWithoutLogoInput;
+  stories?: StoryCreateManyInput;
 }
 
 export interface NodeNode {
@@ -3395,6 +3468,7 @@ export interface FilePromise extends Promise<File>, Fragmentable {
       last?: Int;
     }
   ) => T;
+  user: <T = UserPromise>() => T;
 }
 
 export interface FileSubscription
@@ -3429,6 +3503,7 @@ export interface FileSubscription
       last?: Int;
     }
   ) => T;
+  user: <T = UserSubscription>() => T;
 }
 
 export interface LibraryEdge {

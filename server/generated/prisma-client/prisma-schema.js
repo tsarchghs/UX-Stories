@@ -918,6 +918,7 @@ type File {
   url: String!
   apps(where: AppWhereInput, orderBy: AppOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [App!]
   stories(where: StoryWhereInput, orderBy: StoryOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Story!]
+  user: User
 }
 
 type FileConnection {
@@ -933,6 +934,7 @@ input FileCreateInput {
   url: String!
   apps: AppCreateManyWithoutLogoInput
   stories: StoryCreateManyInput
+  user: UserCreateOneWithoutProfile_photoInput
 }
 
 input FileCreateOneInput {
@@ -945,11 +947,26 @@ input FileCreateOneWithoutAppsInput {
   connect: FileWhereUniqueInput
 }
 
+input FileCreateOneWithoutUserInput {
+  create: FileCreateWithoutUserInput
+  connect: FileWhereUniqueInput
+}
+
 input FileCreateWithoutAppsInput {
   filename: String!
   mimetype: String!
   encoding: String!
   url: String!
+  stories: StoryCreateManyInput
+  user: UserCreateOneWithoutProfile_photoInput
+}
+
+input FileCreateWithoutUserInput {
+  filename: String!
+  mimetype: String!
+  encoding: String!
+  url: String!
+  apps: AppCreateManyWithoutLogoInput
   stories: StoryCreateManyInput
 }
 
@@ -1010,6 +1027,7 @@ input FileUpdateDataInput {
   url: String
   apps: AppUpdateManyWithoutLogoInput
   stories: StoryUpdateManyInput
+  user: UserUpdateOneWithoutProfile_photoInput
 }
 
 input FileUpdateInput {
@@ -1019,6 +1037,7 @@ input FileUpdateInput {
   url: String
   apps: AppUpdateManyWithoutLogoInput
   stories: StoryUpdateManyInput
+  user: UserUpdateOneWithoutProfile_photoInput
 }
 
 input FileUpdateManyMutationInput {
@@ -1026,15 +1045,6 @@ input FileUpdateManyMutationInput {
   mimetype: String
   encoding: String
   url: String
-}
-
-input FileUpdateOneInput {
-  create: FileCreateInput
-  update: FileUpdateDataInput
-  upsert: FileUpsertNestedInput
-  delete: Boolean
-  disconnect: Boolean
-  connect: FileWhereUniqueInput
 }
 
 input FileUpdateOneRequiredInput {
@@ -1053,11 +1063,30 @@ input FileUpdateOneWithoutAppsInput {
   connect: FileWhereUniqueInput
 }
 
+input FileUpdateOneWithoutUserInput {
+  create: FileCreateWithoutUserInput
+  update: FileUpdateWithoutUserDataInput
+  upsert: FileUpsertWithoutUserInput
+  delete: Boolean
+  disconnect: Boolean
+  connect: FileWhereUniqueInput
+}
+
 input FileUpdateWithoutAppsDataInput {
   filename: String
   mimetype: String
   encoding: String
   url: String
+  stories: StoryUpdateManyInput
+  user: UserUpdateOneWithoutProfile_photoInput
+}
+
+input FileUpdateWithoutUserDataInput {
+  filename: String
+  mimetype: String
+  encoding: String
+  url: String
+  apps: AppUpdateManyWithoutLogoInput
   stories: StoryUpdateManyInput
 }
 
@@ -1069,6 +1098,11 @@ input FileUpsertNestedInput {
 input FileUpsertWithoutAppsInput {
   update: FileUpdateWithoutAppsDataInput!
   create: FileCreateWithoutAppsInput!
+}
+
+input FileUpsertWithoutUserInput {
+  update: FileUpdateWithoutUserDataInput!
+  create: FileCreateWithoutUserInput!
 }
 
 input FileWhereInput {
@@ -1164,6 +1198,7 @@ input FileWhereInput {
   stories_every: StoryWhereInput
   stories_some: StoryWhereInput
   stories_none: StoryWhereInput
+  user: UserWhereInput
   AND: [FileWhereInput!]
   OR: [FileWhereInput!]
   NOT: [FileWhereInput!]
@@ -2330,7 +2365,7 @@ input UserCreateInput {
   first_name: String!
   last_name: String!
   password: String!
-  profile_photo: FileCreateOneInput
+  profile_photo: FileCreateOneWithoutUserInput
   role: AccountType!
   apps: AppCreateManyWithoutCreateByInput
   libraries: LibraryCreateManyWithoutCreateByInput
@@ -2351,12 +2386,17 @@ input UserCreateOneWithoutLibrariesInput {
   connect: UserWhereUniqueInput
 }
 
+input UserCreateOneWithoutProfile_photoInput {
+  create: UserCreateWithoutProfile_photoInput
+  connect: UserWhereUniqueInput
+}
+
 input UserCreateWithoutAppsInput {
   email: String!
   first_name: String!
   last_name: String!
   password: String!
-  profile_photo: FileCreateOneInput
+  profile_photo: FileCreateOneWithoutUserInput
   role: AccountType!
   libraries: LibraryCreateManyWithoutCreateByInput
 }
@@ -2366,9 +2406,19 @@ input UserCreateWithoutLibrariesInput {
   first_name: String!
   last_name: String!
   password: String!
-  profile_photo: FileCreateOneInput
+  profile_photo: FileCreateOneWithoutUserInput
   role: AccountType!
   apps: AppCreateManyWithoutCreateByInput
+}
+
+input UserCreateWithoutProfile_photoInput {
+  email: String!
+  first_name: String!
+  last_name: String!
+  password: String!
+  role: AccountType!
+  apps: AppCreateManyWithoutCreateByInput
+  libraries: LibraryCreateManyWithoutCreateByInput
 }
 
 type UserEdge {
@@ -2427,7 +2477,7 @@ input UserUpdateDataInput {
   first_name: String
   last_name: String
   password: String
-  profile_photo: FileUpdateOneInput
+  profile_photo: FileUpdateOneWithoutUserInput
   role: AccountType
   apps: AppUpdateManyWithoutCreateByInput
   libraries: LibraryUpdateManyWithoutCreateByInput
@@ -2438,7 +2488,7 @@ input UserUpdateInput {
   first_name: String
   last_name: String
   password: String
-  profile_photo: FileUpdateOneInput
+  profile_photo: FileUpdateOneWithoutUserInput
   role: AccountType
   apps: AppUpdateManyWithoutCreateByInput
   libraries: LibraryUpdateManyWithoutCreateByInput
@@ -2473,12 +2523,21 @@ input UserUpdateOneRequiredWithoutLibrariesInput {
   connect: UserWhereUniqueInput
 }
 
+input UserUpdateOneWithoutProfile_photoInput {
+  create: UserCreateWithoutProfile_photoInput
+  update: UserUpdateWithoutProfile_photoDataInput
+  upsert: UserUpsertWithoutProfile_photoInput
+  delete: Boolean
+  disconnect: Boolean
+  connect: UserWhereUniqueInput
+}
+
 input UserUpdateWithoutAppsDataInput {
   email: String
   first_name: String
   last_name: String
   password: String
-  profile_photo: FileUpdateOneInput
+  profile_photo: FileUpdateOneWithoutUserInput
   role: AccountType
   libraries: LibraryUpdateManyWithoutCreateByInput
 }
@@ -2488,9 +2547,19 @@ input UserUpdateWithoutLibrariesDataInput {
   first_name: String
   last_name: String
   password: String
-  profile_photo: FileUpdateOneInput
+  profile_photo: FileUpdateOneWithoutUserInput
   role: AccountType
   apps: AppUpdateManyWithoutCreateByInput
+}
+
+input UserUpdateWithoutProfile_photoDataInput {
+  email: String
+  first_name: String
+  last_name: String
+  password: String
+  role: AccountType
+  apps: AppUpdateManyWithoutCreateByInput
+  libraries: LibraryUpdateManyWithoutCreateByInput
 }
 
 input UserUpsertNestedInput {
@@ -2506,6 +2575,11 @@ input UserUpsertWithoutAppsInput {
 input UserUpsertWithoutLibrariesInput {
   update: UserUpdateWithoutLibrariesDataInput!
   create: UserCreateWithoutLibrariesInput!
+}
+
+input UserUpsertWithoutProfile_photoInput {
+  update: UserUpdateWithoutProfile_photoDataInput!
+  create: UserCreateWithoutProfile_photoInput!
 }
 
 input UserWhereInput {
