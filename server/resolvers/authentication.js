@@ -1,12 +1,12 @@
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
-
+const configs = require("../configs");
 const saltRounds = 10;
 
 const createToken = (userId) => {
 	const token = jwt.sign({
 		userId: userId
-	},"secret_key");
+	},configs.jwt_secret);
 	return token
 }
 
