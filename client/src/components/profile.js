@@ -37,15 +37,32 @@ class Profile extends React.Component {
       <div>
         <div className="container">
           <div className="profile__content">
-            <div className="profile-card">
-              <div className="user-profile">
-                <div className="user-profile__img" style={{backgroundImage: 'url(https://scontent.fprn1-1.fna.fbcdn.net/v/t1.0-1/p160x160/35988964_1041356179350456_5301902918050381824_n.jpg?_nc_cat=105&_nc_ht=scontent.fprn1-1.fna&oh=2142e132de1a494501a3fc90d51e365c&oe=5D4FB1D7)'}} />
-                <div className="flex fd-column jc-se">
-                  <h2>Seth Mirsadaj</h2>
-                  <p className="light-gray">Senior UX Designer</p>
-                </div>
-              </div>  <button className="button">Edit Profile</button>
-            </div>
+
+              {
+                Object.keys(this.props.user).length ? 
+                ( 
+                  <div className="profile-card">             
+                              <div className="user-profile">
+                                <div className="user-profile__img" style={{
+                                  backgroundImage: (
+                                    `url(${this.props.user && this.props.user.profile_photo ? this.props.user.profile_photo.url : "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQOo9ftjYQCU8HW1YByx0oAQdegRxO51mQN0tKKenGRnDZb-_D6"})`
+                                    )
+                                }} />
+                                <div className="flex fd-column jc-se">
+                                  <h2>{this.props.user.first_name} {this.props.user.last_name}</h2>
+                                  <p className="light-gray">Senior UX Designer</p>
+                                </div>
+                              </div>  <button className="button">Edit Profile</button>
+                    </div>
+                    ) :
+                    ( 
+                      <div className="profile-card">             
+                         <div className="user-profile">
+                          <img src="https://user-images.githubusercontent.com/4838076/34308760-ec55df82-e735-11e7-843b-2e311fa7b7d0.gif" />
+                        </div>
+                      </div>
+                    )
+              }
             <div className="libraries">
               <h3 className="text-center">Libraries</h3>
               <div className="libraries__content">
