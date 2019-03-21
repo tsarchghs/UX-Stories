@@ -34,6 +34,7 @@ const server = new graphqlServer({
 				loggedIn = true;
 			}
 		}
+		user.password = null;
 		return {
 			prisma,
 			user,
