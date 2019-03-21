@@ -234,7 +234,7 @@ type Library {
 type Query {
 	login(email: String!, password: String!): AuthData
   apps(appFilterInput: AppFilterInput): [App!]!
-  stories(storiesInput: StoriesInput!): [Story!]!
+  stories: [Story!]!
   libraries(libraryFilterInput: LibraryFilterInput): [Library!]!
   storyCategories: [StoryCategory!]!
 }
