@@ -136,10 +136,6 @@ class App extends Component {
                     )
 
                 }
-
-                <link rel="stylesheet" href="../assets/toolkit/styles/toolkit.css" />
-                <script src="../assets/toolkit/scripts/jquery.min.js"></script>
-                <script src="../assets/toolkit/scripts/toolkit.js"></script>
             </Router>
         );
     }
