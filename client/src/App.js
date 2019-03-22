@@ -6,6 +6,7 @@ import Profile from "./components/profile";
 import Home from "./components/home";
 import Header from "./components/header";
 import Login from "./components/login";
+import Loading from "./components/loading";
 import Cookies from "js-cookie";
 
 
@@ -107,9 +108,7 @@ class App extends Component {
 
                     this.state.user === undefined ?                       
                     (
-                        <center style={{margin:300}}>
-                            <img src="https://loading.io/spinners/rolling/lg.curve-bars-loading-indicator.gif" />
-                        </center>
+                            <Loading style={{margin:280}}/>
                     )
 
                     :
