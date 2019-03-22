@@ -2,13 +2,14 @@ import React from "react";
 import Library from "./library";
 import LibraryCard from "./libraryCard";
 import gql from "graphql-tag";
+import Loading from "./loading";
 
 class Profile extends React.Component {
   constructor(props) {
     super(props);
     this.props = props;
     this.state = {
-      libraries: []    
+      libraries: undefined   
     }
   }
   async componentDidMount() {
@@ -66,14 +67,31 @@ class Profile extends React.Component {
             <div className="libraries">
               <h3 className="text-center">Libraries</h3>
               <div className="libraries__content">
-                <div data-open="exampleModal2" className="libraries-card create">
-                  <img src="../../assets/toolkit/images/007-plus.svg" alt />
-                  <p className="pink bold">Create new library</p>
-                </div>
+              {
+                this.state.libraries === undefined ? 
+                (
+                  ""
+                ) 
+                :
+                (
+                    <div data-open="exampleModal2" className="libraries-card create">
+                      <img src="../../assets/toolkit/images/007-plus.svg" alt />
+                      <p className="pink bold">Create new library</p>
+                    </div>
+                )
+              }
                 {
-                  this.state.libraries.map(library => {
-                      return <LibraryCard key={library.id} library={library} />
-                  })
+                  this.state.libraries === undefined ?
+                  (
+                    <Loading />
+                  )
+                  :
+                  (
+                    this.state.libraries.map(library => {
+                        return <LibraryCard key={library.id} library={library} />
+                    })
+
+                  )
                 }
               </div>
             </div>
