@@ -1,6 +1,7 @@
 import React from "react";
 import Loading from "./loading";
 import gql from "graphql-tag";
+import Header from "./header";
 
 class Home extends React.Component {
   constructor(props){
@@ -55,6 +56,7 @@ class Home extends React.Component {
   render() {
     return (
       <div>
+      <Header user={this.props.user} />
         <div className="secondary-header">
           <div className="container">
             <div className="secodary-header__content">
