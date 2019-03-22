@@ -1,19 +1,19 @@
 import React from "react";
-import Library from "./library";
 import LibraryCard from "./libraryCard";
 import gql from "graphql-tag";
 import Loading from "./loading";
+import Header from "./header";
 
 class Profile extends React.Component {
   constructor(props) {
     super(props);
-    this.props = props;
     this.state = {
       libraries: undefined   
     }
 
   }
   async componentDidMount() {
+    console.log(this.props);
     const result = await this.props.client.query({
         query: gql`
           query {
@@ -67,6 +67,7 @@ class Profile extends React.Component {
   render() {
     return (
       <div>
+      <Header user={this.props.user} />
         <div className="container">
           <div className="profile__content">
 
