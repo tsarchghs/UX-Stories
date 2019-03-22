@@ -11,6 +11,7 @@ class Profile extends React.Component {
     this.state = {
       libraries: undefined   
     }
+
   }
   async componentDidMount() {
     const result = await this.props.client.query({
@@ -32,6 +33,36 @@ class Profile extends React.Component {
     this.setState({
       libraries: result.data.libraries
     })
+    document.getElementById("createLibraryButton").onclick = async () => {
+      document.getElementById("inside_exampleModal2").style = "display:none;"
+      document.getElementById("exampleModal2_loading").style = "display:block;"
+      let libraryName = document.getElementById("libraryName").value;
+      let data = await this.props.client.mutate({
+        mutation: gql`
+          mutation {
+            createLibrary(createLibraryInput:{
+              name:"${libraryName}"
+            }) 
+            {
+              id
+              name
+              stories {
+                thumbnail {
+                  url
+                }
+              }
+            }            
+          }
+        `
+      })
+      this.setState(prevState => ({
+        libraries: prevState.libraries.concat(data.data.createLibrary)
+      }));
+      document.getElementsByClassName("reveal-overlay")[0].click()
+      document.getElementById("inside_exampleModal2").style = "display:block;"
+      document.getElementById("exampleModal2_loading").style = "display:none;"
+      document.getElementById("libraryName").value = ""
+    }
   }
   render() {
     return (
@@ -96,26 +127,6 @@ class Profile extends React.Component {
               </div>
             </div>
           </div>
-        </div>
-        {/* This is the first modal */}
-        <div className="modal reveal" id="exampleModal2" data-reveal>
-          <h3 className="modal__title">Create New library</h3>
-          <div>
-            <input className="input" type="text" placeholder="Library name" />
-          </div>
-          <div className="text-right">
-            <button className="button">Create</button>
-          </div>
-          <button className="close-button" data-close aria-label="Close reveal" type="button">
-            <img src="../../assets/toolkit/images/006-error.svg" alt />
-          </button>
-        </div>
-        {/* This is the nested modal */}
-        <div className=" reveal" id="exampleModal3" data-reveal>
-          <h2>ANOTHER MODAL!!!</h2>
-          <button className="close-button" data-close aria-label="Close reveal" type="button">
-            <span aria-hidden="true">×</span>
-          </button>
         </div>
       </div>
     );
