@@ -2,8 +2,53 @@ const fileHandling = require("../../modules/fileApi");
 const permissions = require("../permissions");
 
 const stories = async (root,args,context) => {
-	const stories = await context.prisma.stories();
-	return stories;
+	if (args.storiesFilterInput && 
+		!(
+			args.storiesFilterInput.appCategory || args.storiesFilterInput.appName_contains ||
+			(args.storiesFilterInput.storyCategories && args.storiesFilterInput.storyCategories.length) ||
+			(args.storiesFilterInput.elements && args.storiesFilterInput.elements.length)
+		)	
+	) {
+		throw new Error("If storiesFilterInput provided, appCategory,storyCategory or element must be specified")
+	}
+	const filterBy = {where:{AND:[]}};
+	if (args.storiesFilterInput){
+		if (args.storiesFilterInput.appName_contains){
+			filterBy["where"]["AND"] = [{
+				app: {
+					name_contains: args.storiesFilterInput.appName_contains
+				}
+			}]
+		}
+		if (args.storiesFilterInput.appCategory){
+			filterBy["where"]["app"] = {
+				"category": {
+					id: args.storiesFilterInput.appCategory
+				}
+			}
+		}
+		if (args.storiesFilterInput.storyCategories && args.storiesFilterInput.storyCategories.length){
+			filterBy["where"]["AND"] = filterBy["where"]["AND"].concat(
+				args.storiesFilterInput.storyCategories.map(storyCategory => ({
+					categories_some: {
+						id: storyCategory
+					}
+				}))
+			)
+		}
+		if (args.storiesFilterInput.elements && args.storiesFilterInput.elements.length){
+			filterBy["where"]["AND"] = filterBy["where"]["AND"].concat(
+				args.storiesFilterInput.elements.map(storyElement => (
+					{
+						"elements_some": {
+							id: storyElement
+						}
+					}
+				)))
+		}
+	}
+	const storiesL = context.prisma.stories(filterBy);
+	return storiesL;
 }
 
 const createStory = async (root,args,context) => {
