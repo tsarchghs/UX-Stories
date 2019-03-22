@@ -4,7 +4,7 @@ const permissions = require("../permissions");
 const stories = async (root,args,context) => {
 	if (args.storiesFilterInput && 
 		!(
-			args.storiesFilterInput.appCategory || args.storiesFilterInput.appName_contains ||
+			args.storiesFilterInput.appCategory || typeof(args.storiesFilterInput.appName_contains) === "string" ||
 			(args.storiesFilterInput.storyCategories && args.storiesFilterInput.storyCategories.length) ||
 			(args.storiesFilterInput.elements && args.storiesFilterInput.elements.length)
 		)	
