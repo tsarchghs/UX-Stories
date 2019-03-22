@@ -1,11 +1,12 @@
 import React from "react";
+import { Link } from "react-router-dom";
 
 class LibraryCard extends React.Component {
   render() {
     return (
         <div className="libraries-card">
           <div className="libraries-card__top">
-            <h4 className="bold">{this.props.library.name}</h4>
+            <Link to={`/library/${this.props.library.id}`}><h4 className="bold">{this.props.library.name}</h4></Link>
             <div className="show-dropdown close">
               <img src="../../assets/toolkit/images/edit.svg" className="pop-ed" alt />
               <div className="edit-dropdown">
@@ -19,7 +20,7 @@ class LibraryCard extends React.Component {
             // checks if there are more or equal stories to 4 if yes it slices it if not it doesn't
             (this.props.library.stories.length - 4 < 0 ? this.props.library.stories : this.props.library.stories.slice(this.props.library.stories.length - 4)).map(story => {
               return (
-                <img src={story.thumbnail.url} alt style={{width:60,height:150}} />
+                                          <Link to={`/library/${this.props.library.id}`}><img src={story.thumbnail.url} alt style={{width:60,height:150}} /> </Link>
               ); 
             })
           }
