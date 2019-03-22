@@ -1,5 +1,22 @@
 const permissions = require("../permissions");
 
+const library = async (root,args,context) => {
+	if (!args.libraryInput){
+		throw new Error("args.libraryInput required");
+	}
+	permissions.loginPermission(context,"MEMBER");
+	const createBy = context.user;
+	const library = await context.prisma.libraries({
+		where:{
+			id: args.libraryInput.id,
+			createBy: {
+				id: createBy.id
+			}
+		}
+	})
+	return library[0];
+}
+
 const libraries = async (root,args,context) => {
 	permissions.loginPermission(context,"MEMBER")
 	const createBy = context.user
@@ -119,6 +136,7 @@ const stories = async (parent,args,context) => {
 }
 
 module.exports = {
+	library,
 	libraries,
 	createLibrary,
 	editLibrary,

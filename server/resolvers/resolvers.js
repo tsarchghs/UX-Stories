@@ -14,6 +14,7 @@ module.exports = {
 		login: authResolvers.login,
 		apps: appResolvers.apps,
 		stories: storyResolvers.stories,
+		library: libraryResolvers.library,
 		libraries: libraryResolvers.libraries,
 		storyCategories: storyCategoryResolvers.storyCategories,
 		getLoggedInUser: userResolvers.getLoggedInUser
