@@ -4,10 +4,10 @@ import ApolloClient from "apollo-boost";
 import gql from "graphql-tag";
 import Profile from "./components/profile";
 import Home from "./components/home";
-import Header from "./components/header";
 import Login from "./components/login";
 import Loading from "./components/loading";
 import Cookies from "js-cookie";
+import Library from "./components/library";
 
 
 var client = new ApolloClient({
@@ -122,7 +122,6 @@ class App extends Component {
                         
                         (    
                             <div>
-                                <Header user={this.state.user} />
                                             <Route path="/" exact component={() => {
                                                 return <Home user={this.state.user} client={client} />
                                             }} />
@@ -131,6 +130,7 @@ class App extends Component {
                                                     <Profile user={this.state.user} client={client} />
                                                 );
                                             }} />
+                                            <Route path="/library/:id" component={({match}) => <Library user={this.state.user} client={client} match={match}/> } />
                             </div>
                         )
                     )
