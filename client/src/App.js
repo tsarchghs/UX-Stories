@@ -124,7 +124,7 @@ class App extends Component {
                             <div>
                                 <Header user={this.state.user} />
                                             <Route path="/" exact component={() => {
-                                                return <Home user={this.state.user} />
+                                                return <Home user={this.state.user} client={client} />
                                             }} />
                                             <Route path="/profile" component={() => {
                                                 return (
