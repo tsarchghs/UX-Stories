@@ -2,7 +2,7 @@ import React from "react";
 import Loading from "./loading";
 import gql from "graphql-tag";
 import Header from "./header";
-import {getStories,getAppCategories,getStoryCategories,getStoryElements} from "../helpers";
+import {getStories,getAppCategories,getStoryCategories,getStoryElements,getActiveFilters} from "../helpers";
 
 class Home extends React.Component {
   constructor(props){
@@ -19,6 +19,7 @@ class Home extends React.Component {
       }
     }
     this.search = this.search.bind(this);
+    this.resetFilters = this.resetFilters.bind(this);
   }
   async componentDidMount() {
     let stories = await getStories(this.props.client);
@@ -32,6 +33,7 @@ class Home extends React.Component {
       storyCategories: storyCategories,
       storyElements: storyElements
     })    
+    console.log(storyCategories);
   }
   async search(storyName_contains) {
     this.setState({
@@ -103,6 +105,16 @@ class Home extends React.Component {
       }
     }
   }
+  resetFilters(){
+    this.setState(prevState => {
+      let state = prevState;
+      state.filterBy.appCategory = undefined
+      state.filterBy.storyCategories = {}
+      state.filterBy.storyElements = {}
+      console.log(state);
+      return state;
+    },() => this.search(document.getElementById("storyName_contains").value))
+  }
   render() {
     console.log(this.state,122);
     return (
@@ -150,7 +162,7 @@ class Home extends React.Component {
                       checked={this.state.filterBy.appCategory === appCategory.id}
                       onClick={async (e) => await this.handleFilterClick(e,appCategory,"appCategory")}
                     />
-                      <label htmlFor="huey">{appCategory.name}</label>
+                      <label id={appCategory.id+"_label"} htmlFor="huey">{appCategory.name}</label>
                   </div>
                 );
               })
@@ -169,7 +181,7 @@ class Home extends React.Component {
                           onClick={async (e) => await this.handleFilterClick(e,storyCategory,"storyCategories")}
                           checked={this.state.filterBy.storyCategories[storyCategory.id]}
                         />
-                        <label htmlFor="scales">{storyCategory.name}</label>
+                        <label id={storyCategory.id+"_label"}  htmlFor="scales">{storyCategory.name}</label>
                       </div>
                     );
                   })
@@ -186,10 +198,10 @@ class Home extends React.Component {
                             type="checkbox" 
                             id={storyElement.id} 
                             name={storyElement.name}
-                            onClick={async (e) => await   this.handleFilterClick(e,storyElement,"storyElements")}
+                            onClick={async (e) => await this.handleFilterClick(e,storyElement,"storyElements")}
                             checked={this.state.filterBy.storyElements[storyElement.id]}
                            />
-                          <label htmlFor="scales">{storyElement.name}</label>
+                          <label id={storyElement.id+"_label"}  htmlFor="scales">{storyElement.name}</label>
                         </div>
                       )
                     })
@@ -201,16 +213,41 @@ class Home extends React.Component {
             <div className="container">
               <div className="results__content">
                 <p className="results__results bold">Showing {this.state.stories ? this.state.stories.length : 0} Results</p>
-                <div className="ux-label ">
-                  <p className="light-gray">Social networking</p>
-                  <span><img src="/assets/toolkit/images/008-delete.svg" alt /></span>
-                </div>      <div className="ux-label ">
-                  <p className="light-gray">Social networking</p>
-                  <span><img src="/assets/toolkit/images/008-delete.svg" alt /></span>
-                </div>      <div className="ux-label ">
-                  <p className="light-gray">Social networking</p>
-                  <span><img src="/assets/toolkit/images/008-delete.svg" alt /></span>
-                </div>      <p className="pink"><a href="#">Clear all filters</a></p>
+                {
+                  this.state.filterBy.appCategory ? 
+                  (
+                        <div className="ux-label ">
+                          <p className="light-gray">{document.getElementById(this.state.filterBy.appCategory+"_label").innerHTML}</p>
+                          <span><img src="/assets/toolkit/images/008-delete.svg" alt /></span>
+                        </div>  
+                  )
+                  :
+                  (
+                    ""
+                  )
+                }
+                {
+                  getActiveFilters(this.state,"storyCategories").map(storyCategory => {
+                      return (
+                        <div className="ux-label ">
+                          <p className="light-gray">{document.getElementById(storyCategory+"_label").innerHTML}</p>
+                          <span><img src="/assets/toolkit/images/008-delete.svg" alt /></span>
+                        </div>  
+                      );    
+                  })                
+                }
+              {
+                getActiveFilters(this.state,"elements").map(storyCategory => {
+                    return (
+                      <div className="ux-label ">
+                        <p className="light-gray">{document.getElementById(storyCategory+"_label").innerHTML}</p>
+                        <span><img src="/assets/toolkit/images/008-delete.svg" alt /></span>
+                      </div>  
+                    );    
+                 })
+              }
+
+                <p onClick={this.resetFilters} className="pink"><a href="#">Clear all filters</a></p>
               </div>
             </div>
           </div><div className="cards">
@@ -229,7 +266,7 @@ class Home extends React.Component {
                 
                 (
                   this.state.stories.map(story => 
-                    <a href="#" key={story.id}><img style={{width:300,height:600}} key={story.id} src={story.thumbnail.url} alt /></a>
+                    <a href="#" key={story.id}><img style={{borderRadius:30,width:300,height:600}} key={story.id} src={story.thumbnail.url} alt /></a>
                   )
                 )
               }

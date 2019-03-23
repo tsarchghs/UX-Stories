@@ -2,7 +2,7 @@ import React from "react";
 import Loading from "./loading";
 import LibraryHeader from "./libraryHeader";
 import gql from "graphql-tag";
-import {getStoryCategories,getStoryElements} from "../helpers";
+import {getStoryCategories,getStoryElements,getActiveFilters} from "../helpers";
 
 class Library extends React.Component {
 	constructor(props){
@@ -16,8 +16,17 @@ class Library extends React.Component {
 		        storyElements: {}
 	      }
 		}
+		this.all_stories = undefined;
 		this.handleFilterClick = this.handleFilterClick.bind(this);
 		this.update = this.update.bind(this);
+		this.resetFilters = this.resetFilters.bind(this);
+	}
+	async componentWillUnmount() {
+		this.setState(prevState => {
+			let state = prevState;
+			state.library.stories = this.all_stories;
+			return state;
+		})
 	}
 	async componentDidMount() {
 		try {
@@ -52,6 +61,7 @@ class Library extends React.Component {
 		this.setState({
 			library: results.data.library
 		})
+		this.all_stories = results.data.library;
 	}
 	async handleFilterClick(e,obj,type) {
 		this.setState(prevState => {
@@ -116,6 +126,16 @@ class Library extends React.Component {
 		})
 		console.log(this.state.library);
 	}
+	resetFilters(){
+	    this.setState(prevState => {
+	      let state = prevState;
+	      state.filterBy.appCategory = undefined
+	      state.filterBy.storyCategories = {}
+	      state.filterBy.storyElements = {}
+	      console.log(state);
+	      return state;
+	    },this.update);
+	  }
 	render() {
 		return (
 			<div>
@@ -140,80 +160,108 @@ class Library extends React.Component {
 									  <button className="button white">Filter with Categories<img src="/assets/toolkit/images/008-delete.svg" alt /></button>
 									</div>              <div className="filter">
 									  <button className="button white">Filter with Stories<img src="/assets/toolkit/images/008-delete.svg" alt /></button>
-									</div>          </div>
+									</div>          
+								</div>
 								</div>
 							  </div>
 							</div>
-            <div style={{position:"inline"}}>
-                <p>Stories:</p>
-                {
-                  this.state.storyCategories.map(storyCategory => {
-                    return (
-                      <div style={{position:"inline"}}>
-                        <input 
-                          type="checkbox" 
-                          id={storyCategory.id} 
-                          name={storyCategory.name}
-                          onClick={async (e) => await this.handleFilterClick(e,storyCategory,"storyCategories")}
-                          checked={this.state.filterBy.storyCategories[storyCategory.id]}
-                        />
-                        <label htmlFor="scales">{storyCategory.name}</label>
-                      </div>
-                    );
-                  })
-                }
-              </div>
-              <hr/>
-            <div style={{position:"inline"}}>
-                <p>Elements:</p>
-                  {
-                    this.state.storyElements.map(storyElement => {
-                      return (
-                        <div style={{position:"inline"}}>
-                          <input 
-                            type="checkbox" 
-                            id={storyElement.id} 
-                            name={storyElement.name}
-                            onClick={async (e) => await   this.handleFilterClick(e,storyElement,"storyElements")}
-                            checked={this.state.filterBy.storyElements[storyElement.id]}
-                           />
-                          <label htmlFor="scales">{storyElement.name}</label>
-                        </div>
-                      )
-                    })
-                  }
-              </div>
-			{
-				this.state.library.stories === undefined ? 
-
-				(
-					<Loading style={{margin:150}}/>
-				)
-				:
-				
-				(
-							<div className="cards">
-							  <div className="container">
-								<div className="cards__content">
+				            <div style={{position:"inline"}}>
+				                <p>Stories:</p>
+				                {
+				                  this.state.storyCategories.map(storyCategory => {
+				                    return (
+				                      <div style={{position:"inline"}}>
+				                        <input 
+				                          type="checkbox" 
+				                          id={storyCategory.id} 
+				                          name={storyCategory.name}
+				                          onClick={async (e) => await this.handleFilterClick(e,storyCategory,"storyCategories")}
+				                          checked={this.state.filterBy.storyCategories[storyCategory.id]}
+				                        />
+				                        <label id={storyCategory.id+"_label"} htmlFor="scales">{storyCategory.name}</label>
+				                      </div>
+				                    );
+				                  })
+				                }
+				              </div>
+				              <hr/>
+				            <div style={{position:"inline"}}>
+				                <p>Elements:</p>
+				                  {
+				                    this.state.storyElements.map(storyElement => {
+				                      return (
+				                        <div style={{position:"inline"}}>
+				                          <input 
+				                            type="checkbox" 
+				                            id={storyElement.id} 
+				                            name={storyElement.name}
+				                            onClick={async (e) => await   this.handleFilterClick(e,storyElement,"storyElements")}
+				                            checked={this.state.filterBy.storyElements[storyElement.id]}
+				                           />
+				                          <label id={storyElement.id+"_label"} htmlFor="scales">{storyElement.name}</label>
+				                        </div>
+				                      )
+				                    })
+				                  }
+				              </div>
+				          <div className="results">
+					            <div className="container">
+					              <div className="results__content">
+					                	<p className="results__results bold">Showing {this.state.library.stories ? this.state.library.stories.length : 0} Results</p>
+					                	{
+							                getActiveFilters(this.state,"storyCategories").map(storyCategory => {
+							                    return (
+							                      <div className="ux-label ">
+							                        <p className="light-gray">{document.getElementById(storyCategory+"_label").innerHTML}</p>
+							                        <span><img src="/assets/toolkit/images/008-delete.svg" alt /></span>
+							                      </div>  
+							                    );    
+							                 })
+						              }
+				                	{
+						                getActiveFilters(this.state,"elements").map(storyElement => {
+						                    return (
+						                      <div className="ux-label ">
+						                        <p className="light-gray">{document.getElementById(storyElement+"_label").innerHTML}</p>
+						                        <span><img src="/assets/toolkit/images/008-delete.svg" alt /></span>
+						                      </div>  
+						                    );    
+						                 })
+					              }
+					                <p onClick={this.resetFilters} className="pink"><a href="#">Clear all filters</a></p>
+					            	</div>
+					           </div>
 								{
-									this.state.library.stories.length ? "" : <center>{"Nothing to show"}</center>   
+									this.state.library.stories === undefined ? 
+
+									(
+										<Loading style={{margin:150}}/>
+									)
+									:
+									
+									(
+										<div className="cards">
+										  <div className="container">
+											<div className="cards__content">
+												{
+													this.state.library.stories.length ? "" : <center>{"Nothing to show"}</center>   
+												}
+												{
+													this.state.library.stories.map(story => 
+													  <a href="#" key={story.id}><img style={{borderRadius:30,width:300,height:600}} key={story.id} src={story.thumbnail.url} alt /></a>
+													)
+												}
+											</div>
+										  </div>
+										</div>
+									)
 								}
-									{
-										this.state.library.stories.map(story => 
-										  <a href="#" key={story.id}><img style={{borderRadius:30,width:300,height:600}} key={story.id} src={story.thumbnail.url} alt /></a>
-										)
-									}
-								</div>
-							  </div>
 							</div>
-				)
-			}
 						</div>
-						)
-				}
-				</div>
-		);
-	}
+			)
+		}
+		</div>
+	)}
 }
 
 export default Library;
