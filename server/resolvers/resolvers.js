@@ -13,6 +13,8 @@ module.exports = {
 	Query: {
 		login: authResolvers.login,
 		apps: appResolvers.apps,
+		appCategories: appCategoryResolvers.appCategories,
+		storyElements: storyElementResolvers.storyElements,
 		stories: storyResolvers.stories,
 		library: libraryResolvers.library,
 		libraries: libraryResolvers.libraries,
