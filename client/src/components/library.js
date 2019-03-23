@@ -126,6 +126,13 @@ class Library extends React.Component {
 		})
 		console.log(this.state.library);
 	}
+	unFilter(type,obj){
+	    this.setState(prevState => {
+	      let state = prevState;
+	      state.filterBy[type][obj] = false;
+	      return state;
+	    },this.update);
+	  }
 	resetFilters(){
 	    this.setState(prevState => {
 	      let state = prevState;
@@ -213,7 +220,7 @@ class Library extends React.Component {
 							                    return (
 							                      <div className="ux-label ">
 							                        <p className="light-gray">{document.getElementById(storyCategory+"_label").innerHTML}</p>
-							                        <span><img src="/assets/toolkit/images/008-delete.svg" alt /></span>
+							                        <span><a href="#"><img onClick={() => this.unFilter("storyCategories",storyCategory)} src="/assets/toolkit/images/008-delete.svg" alt /></a></span>
 							                      </div>  
 							                    );    
 							                 })
@@ -223,7 +230,7 @@ class Library extends React.Component {
 						                    return (
 						                      <div className="ux-label ">
 						                        <p className="light-gray">{document.getElementById(storyElement+"_label").innerHTML}</p>
-						                        <span><img src="/assets/toolkit/images/008-delete.svg" alt /></span>
+						                        <span><a href="#"><img onClick={() => this.unFilter("storyElements",storyElement)} src="/assets/toolkit/images/008-delete.svg" alt /></a></span>
 						                      </div>  
 						                    );    
 						                 })

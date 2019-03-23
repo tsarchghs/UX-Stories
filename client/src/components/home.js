@@ -115,6 +115,13 @@ class Home extends React.Component {
       return state;
     },() => this.search(document.getElementById("storyName_contains").value))
   }
+  unFilter(type,obj){
+    this.setState(prevState => {
+      let state = prevState;
+      state.filterBy[type][obj] = false;
+      return state;
+    },() => this.search(document.getElementById("storyName_contains").value))
+  }
   render() {
     console.log(this.state,122);
     return (
@@ -231,17 +238,17 @@ class Home extends React.Component {
                       return (
                         <div className="ux-label ">
                           <p className="light-gray">{document.getElementById(storyCategory+"_label").innerHTML}</p>
-                          <span><img src="/assets/toolkit/images/008-delete.svg" alt /></span>
+                          <span><a href="#"><img onClick={() => this.unFilter("storyCategories",storyCategory)} src="/assets/toolkit/images/008-delete.svg" alt /></a></span>
                         </div>  
                       );    
                   })                
                 }
               {
-                getActiveFilters(this.state,"elements").map(storyCategory => {
+                getActiveFilters(this.state,"elements").map(storyElement => {
                     return (
-                      <div className="ux-label ">
-                        <p className="light-gray">{document.getElementById(storyCategory+"_label").innerHTML}</p>
-                        <span><img src="/assets/toolkit/images/008-delete.svg" alt /></span>
+                      <div className="ux-label">
+                        <p className="light-gray">{document.getElementById(storyElement+"_label").innerHTML}</p>
+                        <span><a href="#"><img onClick={() => this.unFilter("storyElements",storyElement)} src="/assets/toolkit/images/008-delete.svg" alt /></a></span>
                       </div>  
                     );    
                  })
