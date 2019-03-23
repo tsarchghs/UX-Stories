@@ -4,7 +4,7 @@ const permissions = require("../permissions");
 const stories = async (root,args,context) => {
 	if (args.storiesFilterInput && 
 		!(
-			args.storiesFilterInput.appCategory || typeof(args.storiesFilterInput.appName_contains) === "string" ||
+			args.storiesFilterInput.appCategory || typeof(args.storiesFilterInput.storyName_contains) === "string" ||
 			(args.storiesFilterInput.storyCategories && args.storiesFilterInput.storyCategories.length) ||
 			(args.storiesFilterInput.elements && args.storiesFilterInput.elements.length)
 		)	
@@ -13,10 +13,10 @@ const stories = async (root,args,context) => {
 	}
 	const filterBy = {where:{AND:[]}};
 	if (args.storiesFilterInput){
-		if (args.storiesFilterInput.appName_contains){
+		if (args.storiesFilterInput.storyName_contains){
 			filterBy["where"]["AND"] = [{
-				app: {
-					name_contains: args.storiesFilterInput.appName_contains
+				categories_some:{
+					name_contains: args.storiesFilterInput.storyName_contains
 				}
 			}]
 		}
