@@ -7,12 +7,21 @@ class Home extends React.Component {
   constructor(props){
     super(props);
     this.state = {
-      stories: undefined
+      stories: undefined,
+      appCategories: undefined,
+      storyCategories: undefined,
+      storyElements: undefined,
+      filterBy: {
+        appCategory: undefined,
+        storyCategories: {},
+        storyElements: {}
+      }
     }
     this.search = this.search.bind(this);
+    console.log(this.state.filterBy.storyCategories[123]);
   }
   async componentDidMount() {
-    let results = await this.props.client.query({
+    let storiesResults = await this.props.client.query({
       query: gql`
         query {
           stories {
@@ -24,99 +33,254 @@ class Home extends React.Component {
         }
       `
     })
-    let stories = results.data.stories;
-    console.log(stories);
+    let appCategoriesResults = await this.props.client.query({
+      query: gql`
+        query {
+          appCategories{
+            id
+            name
+          }
+        }
+      `
+    })
+    let storyCategoriesResults = await this.props.client.query({
+      query: gql`
+        query {
+          storyCategories {
+            id
+            name
+          }
+        }
+        `
+    })
+    let storyElementsResults = await this.props.client.query({
+      query: gql`
+        query {
+          storyElements {
+            id
+            name
+          }
+        }
+      `
+    })
+    let stories = storiesResults.data.stories;
+    let appCategories = appCategoriesResults.data.appCategories;
+    let storyCategories = storyCategoriesResults.data.storyCategories;
+    let storyElements = storyElementsResults.data.storyElements;
     this.setState({
-      stories: stories
+      stories: stories,
+      appCategories: appCategories,
+      storyCategories: storyCategories,
+      storyElements: storyElements
     })    
   }
-  async search(e) {
+  async search(storyName_contains) {
     this.setState({
       stories: undefined
     })
+
+    var storyCategories = [];
+    for (var key in this.state.filterBy.storyCategories) {
+      if (this.state.filterBy.storyCategories[key]){
+        storyCategories.push(key);
+      }
+    }
+    var elements = [];
+    for (var key in this.state.filterBy.storyElements) {
+      if (this.state.filterBy.storyElements[key]){
+        elements.push(key);
+      }
+    }
+    console.log(storyName_contains,this.state.filterBy.appCategory,storyCategories,2,elements);
     let results = await this.props.client.query({
       query: gql`
         query {
           stories(storiesFilterInput:{
-            appName_contains:"${e.target.value}"
-          }){
+            storyName_contains:"${storyName_contains}"
+            ${this.state.filterBy.appCategory === undefined ? "" : `appCategory: "${this.state.filterBy.appCategory}"`}
+            storyCategories: ${JSON.stringify(storyCategories)}
+            elements: ${JSON.stringify(elements)}
+          }) {
             id
             thumbnail {
               url
             }
           }
         }
-      `
+        `
     })
     let stories = results.data.stories;
     this.setState({
       stories: stories
     })
   }
+  async handleFilterClick(e,obj,type) {
+    if (type === "appCategory"){
+      this.setState((prevState) => {
+        let state = prevState
+        state.filterBy.appCategory = obj.id
+        return state
+      },() => this.search(document.getElementById("storyName_contains").value))
+    } else {
+      if (type === "storyElements") {
+        var dict = this.state.filterBy.storyElements; 
+      } else if (type === "storyCategories") {
+        var dict = this.state.filterBy.storyCategories;
+      } 
+      if (dict[obj.id] === undefined){
+        dict[obj.id] = false;
+      }
+      console.log(obj,145);
+      if (!dict[obj.id]){
+        this.setState((prevState) => {
+          let state = prevState.filterBy[type] = {...prevState.filterBy[type],[obj.id]:true}
+          return state
+        },() => this.search(document.getElementById("storyName_contains").value))
+      } else {
+        this.setState((prevState) => {
+          let state = prevState.filterBy[type] = {...prevState.filterBy[type],[obj.id]:false}
+          return state
+        },() => this.search(document.getElementById("storyName_contains").value))
+      }
+    }
+  }
   render() {
+    console.log(this.state,122);
     return (
       <div>
-      <Header user={this.props.user} />
-        <div className="secondary-header">
-          <div className="container">
-            <div className="secodary-header__content">
-              <div className="flex  ac">
-                <h2 className="white">Browse Stories</h2>
-                <span className="seperator" />
-                <div className="search">
-                  <img src="/assets/toolkit/images/search-icon.svg" alt />
-                  <input onChange={this.search} type="text" placeholder="Search by app name..." />
-                </div>      </div>
-              <div className="flex">
-                <div className="filter">
-                  <button className="button white">Filter with Categories<img src="/assets/toolkit/images/008-delete.svg" alt /></button>
-                </div>        <div className="filter">
-                  <button className="button white">Filter with Stories<img src="/assets/toolkit/images/008-delete.svg" alt /></button>
-                </div>        <div className="filter">
-                  <button className="button white">Filter with Elements<img src="/assets/toolkit/images/008-delete.svg" alt /></button>
-                </div>      </div>
+        {
+          !this.state.appCategories || !this.state.storyCategories || !this.state.storyElements ?
+          (
+            <Loading style={{margin:280}}/>
+          )
+          :
+          
+          (
+ <div>
+        <Header user={this.props.user} />
+          <div className="secondary-header">
+            <div className="container">
+              <div className="secodary-header__content">
+                <div className="flex  ac">
+                  <h2 className="white">Browse Stories</h2>
+                  <span className="seperator" />
+                  <div className="search">
+                    <img src="/assets/toolkit/images/search-icon.svg" alt />
+                    <input id="storyName_contains" onChange={(e) => this.search(e.target.value)} type="text" placeholder="Search by story..." />
+                  </div>      </div>
+                <div className="flex">
+                  <div className="filter">
+                    <button className="button white">Filter with Categories<img src="/assets/toolkit/images/008-delete.svg" alt /></button>
+                  </div>        <div className="filter">
+                    <button className="button white">Filter with Stories<img src="/assets/toolkit/images/008-delete.svg" alt /></button>
+                  </div>        <div className="filter">
+                    <button className="button white">Filter with Elements<img src="/assets/toolkit/images/008-delete.svg" alt /></button>
+                  </div>      </div>
+              </div>
             </div>
           </div>
-        </div>
-        <div className="results">
-          <div className="container">
-            <div className="results__content">
-              <p className="results__results bold">Showing {this.state.stories ? this.state.stories.length : 0} Results</p>
-              <div className="ux-label ">
-                <p className="light-gray">Social networking</p>
-                <span><img src="/assets/toolkit/images/008-delete.svg" alt /></span>
-              </div>      <div className="ux-label ">
-                <p className="light-gray">Social networking</p>
-                <span><img src="/assets/toolkit/images/008-delete.svg" alt /></span>
-              </div>      <div className="ux-label ">
-                <p className="light-gray">Social networking</p>
-                <span><img src="/assets/toolkit/images/008-delete.svg" alt /></span>
-              </div>      <p className="pink"><a href="#">Clear all filters</a></p>
-            </div>
-          </div>
-        </div><div className="cards">
-          <div className="container">
-            <div className="cards__content">
+            <div>App Category
             {
-              this.state.stories && !this.state.stories.length ? <center>{"Nothing to show"}</center> : ""
+              this.state.appCategories.map(appCategory => {
+                return (
+                  <div>
+                    <input 
+                      type="radio" 
+                      id={appCategory.id} 
+                      name={appCategory.name}
+                      checked={this.state.filterBy.appCategory === appCategory.id}
+                      onClick={async (e) => await this.handleFilterClick(e,appCategory,"appCategory")}
+                    />
+                      <label htmlFor="huey">{appCategory.name}</label>
+                  </div>
+                );
+              })
             }
-            {
-              this.state.stories === undefined ?
-              (
-                <Loading />
-              ) 
+          <hr/>
+            <div style={{position:"inline"}}>
+                <p>Stories:</p>
+                {
+                  this.state.storyCategories.map(storyCategory => {
+                    return (
+                      <div style={{position:"inline"}}>
+                        <input 
+                          type="checkbox" 
+                          id={storyCategory.id} 
+                          name={storyCategory.name}
+                          onClick={async (e) => await this.handleFilterClick(e,storyCategory,"storyCategories")}
+                          checked={this.state.filterBy.storyCategories[storyCategory.id]}
+                        />
+                        <label htmlFor="scales">{storyCategory.name}</label>
+                      </div>
+                    );
+                  })
+                }
+              </div>
+              <hr/>
+            <div style={{position:"inline"}}>
+                <p>Elements:</p>
+                  {
+                    this.state.storyElements.map(storyElement => {
+                      return (
+                        <div style={{position:"inline"}}>
+                          <input 
+                            type="checkbox" 
+                            id={storyElement.id} 
+                            name={storyElement.name}
+                            onClick={async (e) => await   this.handleFilterClick(e,storyElement,"storyElements")}
+                            checked={this.state.filterBy.storyElements[storyElement.id]}
+                           />
+                          <label htmlFor="scales">{storyElement.name}</label>
+                        </div>
+                      )
+                    })
+                  }
+              </div>
+          <div>
+        </div>
+          <div className="results">
+            <div className="container">
+              <div className="results__content">
+                <p className="results__results bold">Showing {this.state.stories ? this.state.stories.length : 0} Results</p>
+                <div className="ux-label ">
+                  <p className="light-gray">Social networking</p>
+                  <span><img src="/assets/toolkit/images/008-delete.svg" alt /></span>
+                </div>      <div className="ux-label ">
+                  <p className="light-gray">Social networking</p>
+                  <span><img src="/assets/toolkit/images/008-delete.svg" alt /></span>
+                </div>      <div className="ux-label ">
+                  <p className="light-gray">Social networking</p>
+                  <span><img src="/assets/toolkit/images/008-delete.svg" alt /></span>
+                </div>      <p className="pink"><a href="#">Clear all filters</a></p>
+              </div>
+            </div>
+          </div><div className="cards">
+            <div className="container">
+              <div className="cards__content">
+              {
+                this.state.stories && !this.state.stories.length ? <center>{"Nothing to show"}</center> : ""
+              }
+              {
+                this.state.stories === undefined ?
+                (
+                  <Loading />
+                ) 
 
-              :
-              
-              (
-                this.state.stories.map(story => 
-                  <a href="#" key={story.id}><img style={{width:300,height:600}} key={story.id} src={story.thumbnail.url} alt /></a>
+                :
+                
+                (
+                  this.state.stories.map(story => 
+                    <a href="#" key={story.id}><img style={{width:300,height:600}} key={story.id} src={story.thumbnail.url} alt /></a>
+                  )
                 )
-              )
-            }
+              }
+              </div>
             </div>
           </div>
         </div>
+      </div>
+          )
+        }
       </div>
     );
   }
