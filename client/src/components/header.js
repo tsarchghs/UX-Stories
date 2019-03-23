@@ -24,6 +24,7 @@ class Header extends React.Component {
 			                	<img className="profile-nav__img" src={this.props.user && this.props.user.profile_photo ? this.props.user.profile_photo.url : "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQOo9ftjYQCU8HW1YByx0oAQdegRxO51mQN0tKKenGRnDZb-_D6"} alt />
 		              		</Link>
 		              	</div>
+		                <p className="light-gray"><a onClick={this.props.user.logout}>Logout</a></p>
 		              </div>    
 	              </div>
 	          </div>
