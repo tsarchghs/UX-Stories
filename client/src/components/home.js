@@ -118,6 +118,10 @@ class Home extends React.Component {
   unFilter(type,obj){
     this.setState(prevState => {
       let state = prevState;
+      if (type === "appCategory"){
+        state.filterBy.appCategory = undefined
+        return state;
+      }
       state.filterBy[type][obj] = false;
       return state;
     },() => this.search(document.getElementById("storyName_contains").value))
@@ -225,7 +229,7 @@ class Home extends React.Component {
                   (
                         <div className="ux-label ">
                           <p className="light-gray">{document.getElementById(this.state.filterBy.appCategory+"_label").innerHTML}</p>
-                          <span><img src="/assets/toolkit/images/008-delete.svg" alt /></span>
+                          <span><a href="#"><img onClick={() => this.unFilter("appCategory")} src="/assets/toolkit/images/008-delete.svg" alt /></a></span>
                         </div>  
                   )
                   :
