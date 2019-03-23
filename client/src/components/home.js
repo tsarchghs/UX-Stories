@@ -2,6 +2,7 @@ import React from "react";
 import Loading from "./loading";
 import gql from "graphql-tag";
 import Header from "./header";
+import {getStories,getAppCategories,getStoryCategories,getStoryElements} from "../helpers";
 
 class Home extends React.Component {
   constructor(props){
@@ -18,55 +19,13 @@ class Home extends React.Component {
       }
     }
     this.search = this.search.bind(this);
-    console.log(this.state.filterBy.storyCategories[123]);
   }
   async componentDidMount() {
-    let storiesResults = await this.props.client.query({
-      query: gql`
-        query {
-          stories {
-            id
-            thumbnail {
-              url
-            }
-          }
-        }
-      `
-    })
-    let appCategoriesResults = await this.props.client.query({
-      query: gql`
-        query {
-          appCategories{
-            id
-            name
-          }
-        }
-      `
-    })
-    let storyCategoriesResults = await this.props.client.query({
-      query: gql`
-        query {
-          storyCategories {
-            id
-            name
-          }
-        }
-        `
-    })
-    let storyElementsResults = await this.props.client.query({
-      query: gql`
-        query {
-          storyElements {
-            id
-            name
-          }
-        }
-      `
-    })
-    let stories = storiesResults.data.stories;
-    let appCategories = appCategoriesResults.data.appCategories;
-    let storyCategories = storyCategoriesResults.data.storyCategories;
-    let storyElements = storyElementsResults.data.storyElements;
+    let stories = await getStories(this.props.client);
+    let appCategories = await getAppCategories(this.props.client);
+    let storyCategories = await getStoryCategories(this.props.client);
+    let storyElements = await getStoryElements(this.props.client);
+
     this.setState({
       stories: stories,
       appCategories: appCategories,
