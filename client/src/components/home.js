@@ -148,6 +148,7 @@ class Home extends React.Component {
     console.log(this.state,122);
     return (
       <div>
+      <Header user={this.props.user} />
         {
           !this.state.appCategories || !this.state.storyCategories || !this.state.storyElements ?
           (
@@ -157,7 +158,6 @@ class Home extends React.Component {
           
           (
  <div>
-        <Header user={this.props.user} />
           <div className="secondary-header">
             <div className="container">
               <div className="secodary-header__content">
