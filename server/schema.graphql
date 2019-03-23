@@ -226,6 +226,7 @@ input LibraryFilterInput {
 }
 
 input StoriesFilterInput {
+  inLibrary: ID
   storyName_contains: String
   appCategory: ID
   storyCategories: [ID!]
