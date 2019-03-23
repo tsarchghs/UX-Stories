@@ -1,5 +1,9 @@
 const permissions = require("../permissions");
 
+const appCategories = async (root,args,context) => {
+	return await context.prisma.appCategories();
+}
+
 const createAppCategory = async (root,args,context) => {
 	permissions.loginPermission(context,"ADMIN")
 	if (!args.appCategoryInput.name) {
@@ -39,6 +43,7 @@ const deleteAppCategory = async (root,args,context) => {
 }
 
 module.exports = {
+	appCategories,
 	createAppCategory,
 	editAppCategory,
 	deleteAppCategory
