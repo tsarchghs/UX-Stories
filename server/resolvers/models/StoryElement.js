@@ -1,5 +1,9 @@
 const permissions = require("../permissions");
 
+const storyElements = async (root,args,context) => {
+	return await context.prisma.storyElements();
+}
+
 const createStoryElement = async (root,args,context) => {
 	permissions.loginPermission(context,"ADMIN")
 	if (!args.storyElementInput.name) {
@@ -56,6 +60,7 @@ const deleteStoryElement = async (root,args,context) => {
 
 
 module.exports = {
+	storyElements,
 	createStoryElement,
 	editStoryElement,
 	deleteStoryElement,
