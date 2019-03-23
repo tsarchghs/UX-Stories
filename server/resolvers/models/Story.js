@@ -6,13 +6,18 @@ const stories = async (root,args,context) => {
 		!(
 			args.storiesFilterInput.appCategory || typeof(args.storiesFilterInput.storyName_contains) === "string" ||
 			(args.storiesFilterInput.storyCategories && args.storiesFilterInput.storyCategories.length) ||
-			(args.storiesFilterInput.elements && args.storiesFilterInput.elements.length)
+			(args.storiesFilterInput.elements && args.storiesFilterInput.elements.length) || args.storiesFilterInput.inLibrary
 		)	
 	) {
-		throw new Error("If storiesFilterInput provided, appCategory,storyCategory or element must be specified")
+		throw new Error("If storiesFilterInput provided, appCategory,storyCategory,inLibrary or element must be specified")
 	}
 	const filterBy = {where:{AND:[]}};
 	if (args.storiesFilterInput){
+		if (args.storiesFilterInput.inLibrary){
+			filterBy["where"]["libraries_some"] = {
+				id: args.storiesFilterInput.inLibrary
+			}
+		}
 		if (args.storiesFilterInput.storyName_contains){
 			filterBy["where"]["AND"] = [{
 				categories_some:{
