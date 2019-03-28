@@ -2,13 +2,16 @@ import React from "react";
 import { Link } from "react-router-dom";
 
 class LibraryCard extends React.Component {
+  toggleDropDown(e){
+    e.target.parentElement.className == "show-dropdown close" ? e.target.parentElement.className = "show-dropdown" : e.target.parentElement.className = "show-dropdown close"
+  }
   render() {
     return (
         <div className="libraries-card">
           <div className="libraries-card__top">
             <Link to={`/library/${this.props.library.id}`}><h4 className="bold">{this.props.library.name}</h4></Link>
-            <div className="show-dropdown close">
-              <img src="../../assets/toolkit/images/edit.svg" className="pop-ed" alt />
+            <div className="show-dropdown close" id={`toggleDropDown_${this.props.library.id}`}>
+              <img src="../../assets/toolkit/images/edit.svg" onClick={this.toggleDropDown} className="pop-ed" alt />
               <div className="edit-dropdown">
                 <a href="#"><img src="../../assets/toolkit/images/edit-p.svg" alt /><p className="bold">Edit</p></a>
                 <a href="#"><img src="../../assets/toolkit/images/edit-p.svg" alt /><p className="bold">Delete</p></a>
