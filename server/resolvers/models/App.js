@@ -1,9 +1,15 @@
 const fileHandling = require("../../modules/fileApi");
 const permissions = require("../permissions");
 
+const app = async (root,args,context) => {
+	return await context.prisma.app({
+		id: args.id
+	})
+}
+
 const apps = async (root,args,context) => {
 	if (args.appFilterInput && 
-		!(args.appFilterInput.category || 
+		!(args.appFilterInput.id || args.appFilterInput.category ||
 			(
 				args.appFilterInput.storyCategories &&
 				args.appFilterInput.storyCategories.length
@@ -15,9 +21,12 @@ const apps = async (root,args,context) => {
 			)
 		)
 	){
-		throw new Error("You must specifiy either one of category/storyCategory or elements arguments when passing appFilterInput.");
+		throw new Error("You must specifiy either one of id,category/storyCategory or elements arguments when passing appFilterInput.");
 	}
 	const filterBy = {where:{}}
+	if (args.appFilterInput && args.appFilterInput.id){
+		filterBy["where"]["id"] = args.appFilterInput.id
+	}
 	if (args.appFilterInput && args.appFilterInput.category) {
 		filterBy["where"]["category"] = {name:args.appFilterInput.category}
 	}
@@ -37,7 +46,7 @@ const apps = async (root,args,context) => {
 			AND: args.appFilterInput.elements.map(storyElement => (
 					{			
 						elements_some: {
-							name: storyElement
+							id: storyElement
 						}
 					}
 				))
@@ -154,6 +163,7 @@ const logo = async (parent,args,context) => {
 }
 
 module.exports = {
+	app,
 	createApp,
 	apps,
 	stories,
