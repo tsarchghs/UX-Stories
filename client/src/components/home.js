@@ -64,34 +64,15 @@ class Home extends React.Component {
     })
   }
   async handleFilterClick(e,obj,type) {
-    if (type === "appCategory"){
-      this.setState((prevState) => {
-        let state = prevState
+    this.setState((prevState) => {
+      let state = prevState;
+      if (type === "appCategory"){
         state.filterBy.appCategory = obj.id
-        return state
-      },() => this.search(document.getElementById("storyName_contains").value))
-    } else {
-      if (type === "storyElements") {
-        var dict = this.state.filterBy.storyElements; 
-      } else if (type === "storyCategories") {
-        var dict = this.state.filterBy.storyCategories;
-      } 
-      if (dict[obj.id] === undefined){
-        dict[obj.id] = false;
-      }
-      console.log(obj,145);
-      if (!dict[obj.id]){
-        this.setState((prevState) => {
-          let state = prevState.filterBy[type] = {...prevState.filterBy[type],[obj.id]:true}
-          return state
-        },() => this.search(document.getElementById("storyName_contains").value))
       } else {
-        this.setState((prevState) => {
-          let state = prevState.filterBy[type] = {...prevState.filterBy[type],[obj.id]:false}
-          return state
-        },() => this.search(document.getElementById("storyName_contains").value))
+        state = prevState.filterBy[type] = {...prevState.filterBy[type],[obj.id]:!prevState.filterBy[type][obj.id]}
       }
-    }
+      return state
+    },() => this.search(document.getElementById("storyName_contains").value))
   }
   resetFilters(){
     this.setState(prevState => {
@@ -250,8 +231,10 @@ class Home extends React.Component {
                     );    
                  })
               }
-
-                <p onClick={this.resetFilters} className="pink"><a href="#">Clear all filters</a></p>
+              {
+                !(this.state.filterBy.appCategory || getActiveFilters(this.state,"storyElements").concat(getActiveFilters(this.state,"storyCategories")).length) ?  "" :
+                  <p onClick={this.resetFilters} className="pink"><a href="#">Clear all filters</a></p>
+              }
               </div>
             </div>
           </div><div className="cards">
