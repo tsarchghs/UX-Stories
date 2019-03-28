@@ -12,6 +12,7 @@ const userResolvers = require("./models/User");
 module.exports = {
 	Query: {
 		login: authResolvers.login,
+		app: appResolvers.app,
 		apps: appResolvers.apps,
 		appCategories: appCategoryResolvers.appCategories,
 		storyElements: storyElementResolvers.storyElements,
