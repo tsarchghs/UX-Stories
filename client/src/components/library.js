@@ -2,7 +2,7 @@ import React from "react";
 import Loading from "./loading";
 import LibraryHeader from "./libraryHeader";
 import gql from "graphql-tag";
-import {getStoryCategories,getStoryElements,getActiveFilters} from "../helpers";
+import {getStoryCategories,getStoryElements,getActiveFilters,insertActiveFilters} from "../helpers";
 
 class Library extends React.Component {
 	constructor(props){
@@ -57,7 +57,6 @@ class Library extends React.Component {
 		} catch (e) {
 			console.log(e);
 		}
-		console.log(results);
 		this.setState({
 			library: results.data.library
 		})
@@ -69,47 +68,22 @@ class Library extends React.Component {
 			state.library.stories = undefined;
 			return state;
 		})
-	      if (type === "storyElements") {
-	        var dict = this.state.filterBy.storyElements; 
-	      } else if (type === "storyCategories") {
-	        var dict = this.state.filterBy.storyCategories;
-	      } 
-	      if (dict[obj.id] === undefined){
-	        dict[obj.id] = false;
-	      }
-	      console.log(obj,145);
-	      if (!dict[obj.id]){
-	        this.setState((prevState) => {
-	          let state = prevState.filterBy[type] = {...prevState.filterBy[type],[obj.id]:true}
-	          return state
-	        },this.update)
-	      } else {
-	        this.setState((prevState) => {
-	          let state = prevState.filterBy[type] = {...prevState.filterBy[type],[obj.id]:false}
-	          return state
-	        },this.update)
-	      }
+		  this.setState((prevState) => {
+	      let state = prevState.filterBy[type] = {...prevState.filterBy[type],
+	      										[obj.id]:!prevState.filterBy[type][obj.id]}
+	      return state
+	    },this.update)
 	  }
 	async update() {
-	    var storyCategories = [];
-	    for (var key in this.state.filterBy.storyCategories) {
-	      if (this.state.filterBy.storyCategories[key]){
-	        storyCategories.push(key);
-	      }
-	    }
-	    var elements = [];
-	    for (var key in this.state.filterBy.storyElements) {
-	      if (this.state.filterBy.storyElements[key]){
-	        elements.push(key);
-	      }
-	    }
+	    let filters = {"storyCategories":[],"storyElements":[]};
+	    filters = insertActiveFilters(filters,this.state);
 		let results = await this.props.client.query({
 			query: gql`
 				query {
 					stories(storiesFilterInput:{
 				    inLibrary:"cjtljmt7dtft20b91aj1our7n"
-		            storyCategories: ${JSON.stringify(storyCategories)}
-		            elements:${JSON.stringify(elements)}
+		            storyCategories: ${JSON.stringify(filters.storyCategories)}
+		            elements:${JSON.stringify(filters.storyElements)}
 				  }){
 				      id
 				      thumbnail {
@@ -124,7 +98,6 @@ class Library extends React.Component {
 			state.library.stories = results.data.stories;
 			return state;
 		})
-		console.log(this.state.library);
 	}
 	unFilter(type,obj){
 	    this.setState(prevState => {
@@ -139,7 +112,6 @@ class Library extends React.Component {
 	      state.filterBy.appCategory = undefined
 	      state.filterBy.storyCategories = {}
 	      state.filterBy.storyElements = {}
-	      console.log(state);
 	      return state;
 	    },this.update);
 	  }
@@ -182,8 +154,8 @@ class Library extends React.Component {
 				                          type="checkbox" 
 				                          id={storyCategory.id} 
 				                          name={storyCategory.name}
-				                          onClick={async (e) => await this.handleFilterClick(e,storyCategory,"storyCategories")}
-				                          checked={this.state.filterBy.storyCategories[storyCategory.id]}
+				                          onChange={async (e) => await this.handleFilterClick(e,storyCategory,"storyCategories")}
+				                          checked={this.state.filterBy.storyCategories[storyCategory.id] !== undefined && this.state.filterBy.storyCategories[storyCategory.id]}
 				                        />
 				                        <label id={storyCategory.id+"_label"} htmlFor="scales">{storyCategory.name}</label>
 				                      </div>
@@ -202,8 +174,8 @@ class Library extends React.Component {
 				                            type="checkbox" 
 				                            id={storyElement.id} 
 				                            name={storyElement.name}
-				                            onClick={async (e) => await   this.handleFilterClick(e,storyElement,"storyElements")}
-				                            checked={this.state.filterBy.storyElements[storyElement.id]}
+				                            onChange={async (e) => await this.handleFilterClick(e,storyElement,"storyElements")}
+				                            checked={this.state.filterBy.storyElements[storyElement.id] !== undefined && this.state.filterBy.storyElements[storyElement.id]}
 				                           />
 				                          <label id={storyElement.id+"_label"} htmlFor="scales">{storyElement.name}</label>
 				                        </div>
@@ -226,7 +198,7 @@ class Library extends React.Component {
 							                 })
 						              }
 				                	{
-						                getActiveFilters(this.state,"elements").map(storyElement => {
+						                getActiveFilters(this.state,"storyElements").map(storyElement => {
 						                    return (
 						                      <div className="ux-label ">
 						                        <p className="light-gray">{document.getElementById(storyElement+"_label").innerHTML}</p>

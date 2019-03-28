@@ -2,7 +2,8 @@ import React from "react";
 import Loading from "./loading";
 import gql from "graphql-tag";
 import Header from "./header";
-import {getStories,getAppCategories,getStoryCategories,getStoryElements,getActiveFilters} from "../helpers";
+import { Link } from "react-router-dom";
+import {getStories,getAppCategories,getStoryCategories,getStoryElements,getActiveFilters,insertActiveFilters} from "../helpers";
 
 class Home extends React.Component {
   constructor(props){
@@ -33,34 +34,21 @@ class Home extends React.Component {
       storyCategories: storyCategories,
       storyElements: storyElements
     })    
-    console.log(storyCategories);
   }
   async search(storyName_contains) {
     this.setState({
       stories: undefined
     })
-
-    var storyCategories = [];
-    for (var key in this.state.filterBy.storyCategories) {
-      if (this.state.filterBy.storyCategories[key]){
-        storyCategories.push(key);
-      }
-    }
-    var elements = [];
-    for (var key in this.state.filterBy.storyElements) {
-      if (this.state.filterBy.storyElements[key]){
-        elements.push(key);
-      }
-    }
-    console.log(storyName_contains,this.state.filterBy.appCategory,storyCategories,2,elements);
+    let filters = {"storyCategories":[],"storyElements":[]};
+    filters = insertActiveFilters(filters,this.state);
     let results = await this.props.client.query({
       query: gql`
         query {
           stories(storiesFilterInput:{
             storyName_contains:"${storyName_contains}"
             ${this.state.filterBy.appCategory === undefined ? "" : `appCategory: "${this.state.filterBy.appCategory}"`}
-            storyCategories: ${JSON.stringify(storyCategories)}
-            elements: ${JSON.stringify(elements)}
+            storyCategories: ${JSON.stringify(filters.storyCategories)}
+            elements: ${JSON.stringify(filters.storyElements)}
           }) {
             id
             thumbnail {
@@ -116,6 +104,11 @@ class Home extends React.Component {
     },() => this.search(document.getElementById("storyName_contains").value))
   }
   unFilter(type,obj){
+    if (this.state.stories){
+      this.setState({
+        stories: undefined
+      })
+    }
     this.setState(prevState => {
       let state = prevState;
       if (type === "appCategory"){
@@ -248,7 +241,7 @@ class Home extends React.Component {
                   })                
                 }
               {
-                getActiveFilters(this.state,"elements").map(storyElement => {
+                getActiveFilters(this.state,"storyElements").map(storyElement => {
                     return (
                       <div className="ux-label">
                         <p className="light-gray">{document.getElementById(storyElement+"_label").innerHTML}</p>
@@ -277,7 +270,7 @@ class Home extends React.Component {
                 
                 (
                   this.state.stories.map(story => 
-                    <a href="#" key={story.id}><img style={{borderRadius:30,width:300,height:600}} key={story.id} src={story.thumbnail.url} alt /></a>
+                      <a href="#" key={story.id}><img style={{borderRadius:30,width:300,height:600}} key={story.id} src={story.thumbnail.url} alt /></a>
                   )
                 )
               }
