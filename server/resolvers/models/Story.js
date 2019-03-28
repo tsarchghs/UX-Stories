@@ -4,15 +4,22 @@ const permissions = require("../permissions");
 const stories = async (root,args,context) => {
 	if (args.storiesFilterInput && 
 		!(
-			args.storiesFilterInput.appCategory || typeof(args.storiesFilterInput.storyName_contains) === "string" ||
+			args.storiesFilterInput.app || args.storiesFilterInput.appCategory || typeof(args.storiesFilterInput.storyName_contains) === "string" ||
 			(args.storiesFilterInput.storyCategories && args.storiesFilterInput.storyCategories.length) ||
+			(args.storiesFilterInput.appVersions && args.storiesFilterInput.appVersions.length) ||
+
 			(args.storiesFilterInput.elements && args.storiesFilterInput.elements.length) || args.storiesFilterInput.inLibrary
 		)	
 	) {
-		throw new Error("If storiesFilterInput provided, appCategory,storyCategory,inLibrary or element must be specified")
+		throw new Error("If storiesFilterInput provided, appVersions,appCategory,storyCategory,inLibrary or element must be specified")
 	}
 	const filterBy = {where:{AND:[]}};
 	if (args.storiesFilterInput){
+		if (args.storiesFilterInput.app){
+			filterBy["where"]["app"] = {
+				id: args.storiesFilterInput.app
+			}
+		}
 		if (args.storiesFilterInput.inLibrary){
 			filterBy["where"]["libraries_some"] = {
 				id: args.storiesFilterInput.inLibrary
@@ -47,6 +54,16 @@ const stories = async (root,args,context) => {
 					{
 						"elements_some": {
 							id: storyElement
+						}
+					}
+				)))
+		}
+		if (args.storiesFilterInput.appVersions && args.storiesFilterInput.appVersions.length){
+			filterBy["where"]["AND"] = filterBy["where"]["AND"].concat(
+				args.storiesFilterInput.appVersions.map(appVersion => (
+					{
+						"versions_some": {
+							id: appVersion
 						}
 					}
 				)))
