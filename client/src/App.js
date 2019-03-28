@@ -9,6 +9,7 @@ import Loading from "./components/loading";
 import Cookies from "js-cookie";
 import Library from "./components/library";
 import Register from "./components/register";
+import SingleApp from "./components/singleApp";
 
 //Cookies.set("auth_token","");
 var client = new ApolloClient({
@@ -201,6 +202,7 @@ class App extends Component {
                                     );
                                 }} />
                                 <Route path="/library/:id" component={({match}) => <Library user={this.state.user} client={client} match={match}/> } />
+                                <Route path="/app/:id" component={({match}) => <SingleApp user={this.state.user} client={client} match={match}/> } />
                             </div>
                         )
                     )
