@@ -226,11 +226,13 @@ input LibraryFilterInput {
 }
 
 input StoriesFilterInput {
+  app: ID
   inLibrary: ID
   storyName_contains: String
   appCategory: ID
   storyCategories: [ID!]
   elements: [ID!]
+  appVersions: [ID!]
 }
 
 input LibraryInput {
@@ -246,6 +248,7 @@ type Library {
 
 type Query {
 	login(email: String!, password: String!): AuthData
+  app(id:ID!): App
   apps(appFilterInput: AppFilterInput): [App!]!
   appCategories: [AppCategory!]!
   storyElements: [StoryElement!]!
