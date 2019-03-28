@@ -60,23 +60,24 @@ const getStoryElements = async (client) => {
 }
 
 const getActiveFilters = (state,type) => {
-  if (type === "storyCategories"){
-    var storyCategories = [];
-    for (var key in state.filterBy.storyCategories) {
-      if (state.filterBy.storyCategories[key]){
-        storyCategories.push(key);
-      }
+  let list = []
+  for (var key in state.filterBy[type]) {
+    if (state.filterBy[type][key]){
+      list.push(key);
     }
-    return storyCategories
-  } else if (type === "elements") {
-    var elements = [];
-    for (var key in state.filterBy.storyElements) {
-      if (state.filterBy.storyElements[key]){
-        elements.push(key);
-      }
-    }
-    return elements
   }
+  return list
+}
+
+const insertActiveFilters = (filters,state) => {
+    for (var type_ in filters){
+      for (var obj in state.filterBy[type_]){
+          if (state.filterBy[type_][obj]){
+            filters[type_].push(obj)
+          }
+      }
+    }
+    return filters;
 }
 
 export {
@@ -84,5 +85,6 @@ export {
 	getAppCategories,
 	getStoryCategories,
 	getStoryElements,
-  getActiveFilters
+  getActiveFilters,
+  insertActiveFilters
 }
