@@ -207,7 +207,10 @@ class Library extends React.Component {
 						                    );    
 						                 })
 					              }
-					                <p onClick={this.resetFilters} className="pink"><a href="#">Clear all filters</a></p>
+					              {
+					              	!getActiveFilters(this.state,"storyElements").concat(getActiveFilters(this.state,"storyCategories")).length ?  "" :
+					                	<p onClick={this.resetFilters} className="pink"><a href="#">Clear all filters</a></p>
+					              }
 					            	</div>
 					           </div>
 								{
