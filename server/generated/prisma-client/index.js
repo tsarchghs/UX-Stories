@@ -5,15 +5,15 @@ var typeDefs = require("./prisma-schema").typeDefs;
 
 var models = [
   {
+    name: "File",
+    embedded: false
+  },
+  {
+    name: "Video",
+    embedded: false
+  },
+  {
     name: "User",
-    embedded: false
-  },
-  {
-    name: "App",
-    embedded: false
-  },
-  {
-    name: "AppCategory",
     embedded: false
   },
   {
@@ -21,11 +21,7 @@ var models = [
     embedded: false
   },
   {
-    name: "File",
-    embedded: false
-  },
-  {
-    name: "Story",
+    name: "AppCategory",
     embedded: false
   },
   {
@@ -34,6 +30,14 @@ var models = [
   },
   {
     name: "StoryElement",
+    embedded: false
+  },
+  {
+    name: "App",
+    embedded: false
+  },
+  {
+    name: "Story",
     embedded: false
   },
   {
