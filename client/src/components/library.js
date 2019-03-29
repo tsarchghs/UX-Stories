@@ -3,6 +3,7 @@ import Loading from "./loading";
 import LibraryHeader from "./libraryHeader";
 import gql from "graphql-tag";
 import {getStoryCategories,getStoryElements,getActiveFilters,insertActiveFilters} from "../helpers";
+import E404 from "./E404";
 
 class Library extends React.Component {
 	constructor(props){
@@ -14,7 +15,8 @@ class Library extends React.Component {
 		    filterBy: {
 		        storyCategories: {},
 		        storyElements: {}
-	      }
+	      	},
+	      	show404: false
 		}
 		this.all_stories = undefined;
 		this.handleFilterClick = this.handleFilterClick.bind(this);
@@ -48,6 +50,12 @@ class Library extends React.Component {
 					}
 				`
 			})
+			if (!results.data.library) {
+				this.setState({
+					show404: true
+				})
+				return;
+			}
 		    let storyCategories = await getStoryCategories(this.props.client);
 		    let storyElements = await getStoryElements(this.props.client);
 		    this.setState({
@@ -120,9 +128,13 @@ class Library extends React.Component {
 			<div>
 				<LibraryHeader user={this.props.user} />
 				{
-						this.state.library === undefined || !this.state.storyCategories || !this.state.storyElements ?
+					this.state.show404 ? <E404/> : ""
+
+				}
+				{
+						this.state.show404 || (this.state.library === undefined || !this.state.storyCategories || !this.state.storyElements) ?
 						(
-							<Loading style={{margin:150}}/>
+							this.state.show404 ? "" : <Loading/>
 						)
 						:
 						(
