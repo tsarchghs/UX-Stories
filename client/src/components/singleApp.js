@@ -3,6 +3,7 @@ import Header from "./header";
 import Loading from "./loading";
 import gql from "graphql-tag";
 import {getStories,getAppCategories,getStoryCategories,getStoryElements,getActiveFilters,insertActiveFilters} from "../helpers";
+import E404 from "./E404";
 
 class SingleApp extends React.Component {
   constructor(props){
@@ -16,7 +17,8 @@ class SingleApp extends React.Component {
         storyCategories: {},
         storyElements: {},
         appVersions:{}
-      }
+      },
+      show404: false
     }
     this.handleFilterClick.bind(this);
     this.resetFilters.bind(this);
@@ -53,6 +55,12 @@ class SingleApp extends React.Component {
         }
       `
     })
+    if (!app.data.app){
+      this.setState({
+        show404: true
+      })
+      return;
+    }
     let storyElements = await getStoryElements(this.props.client);
     let storyCategories = await getStoryCategories(this.props.client);
     this.setState({
@@ -129,8 +137,14 @@ class SingleApp extends React.Component {
         <div className="header back__header">
 	      <Header user={this.props.user} />
         {
+          this.state.show404 ? <E404/> : ""
+        }
+        {
 
-          !this.state.app ? <Loading />
+          !this.state.app || this.state.show404 ? 
+          (
+            this.state.show404 ? "" : <Loading/>
+          )
 
           :
           
@@ -244,8 +258,13 @@ class SingleApp extends React.Component {
               <hr/>
                     <br/>     
 
-
-                    <a href="#"><p onClick={() => this.resetFilters()} className="pink">Clear all filters</p></a>
+                    {
+                      Object.keys(getActiveFilters(this.state,"storyCategories")).length ||  
+                      Object.keys(getActiveFilters(this.state,"storyElements")).length || 
+                      Object.keys(getActiveFilters(this.state,"appVersions")).length 
+                      ? <a href="#"><p onClick={() => this.resetFilters()} className="pink">Clear all filters</p></a>
+                      : ""
+                    }
                   </div>
                 </div>
               </div>      <div className="cards">
