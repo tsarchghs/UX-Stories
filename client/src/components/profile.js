@@ -8,9 +8,10 @@ class Profile extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      libraries: undefined   
+      libraries: undefined,
+      user_profile: this.props.user && this.props.user.profile_photo ? this.props.user.profile_photo : undefined,
+      user_profile_onClick: undefined
     }
-
   }
   async componentDidMount() {
     console.log(this.props);
@@ -64,6 +65,16 @@ class Profile extends React.Component {
       document.getElementById("libraryName").value = ""
     }
   }
+  profileOnMouseEnter() {
+    this.setState({
+      user_profile:"https://cdn3.iconfinder.com/data/icons/glypho-photography/64/camera-upload-to-512.png"
+    })
+  }
+  profileOnMouseLeave(){
+    this.setState({
+      user_profile: this.props.user && this.props.user.profile_photo ? this.props.user.profile_photo : undefined
+    })
+  }
   render() {
     return (
       <div>
@@ -76,10 +87,16 @@ class Profile extends React.Component {
                 ( 
                   <div className="profile-card">             
                               <div className="user-profile">
-                                <div className="user-profile__img" style={{
+                                <div 
+                                  onMouseEnter={() => this.profileOnMouseEnter()} 
+                                  onMouseLeave={() => this.profileOnMouseLeave()} 
+                                  onClick={this.state.user_profile_onClick}
+                                  className="user-profile__img" style={{
                                   backgroundImage: (
-                                    `url(${this.props.user && this.props.user.profile_photo ? this.props.user.profile_photo.url : "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQOo9ftjYQCU8HW1YByx0oAQdegRxO51mQN0tKKenGRnDZb-_D6"})`
-                                    )
+                                    `url(${this.state.user_profile ? this.state.user_profile : "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQOo9ftjYQCU8HW1YByx0oAQdegRxO51mQN0tKKenGRnDZb-_D6"})`
+                                    ),
+                                  maxWidth:100,
+                                  maxHeight:100
                                 }} />
                                 <div className="flex fd-column jc-se">
                                   <h2>{this.props.user.first_name} {this.props.user.last_name}</h2>
@@ -107,7 +124,7 @@ class Profile extends React.Component {
                 :
                 (
                     <div data-open="exampleModal2" className="libraries-card create">
-                      <img src="../../assets/toolkit/images/007-plus.svg" alt />
+                      <img src="../../assets/toolkit/images/007-plus.svg" />
                       <p className="pink bold">Create new library</p>
                     </div>
                 )
