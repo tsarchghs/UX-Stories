@@ -1,79 +1,82 @@
-const permissions = require("../permissions");
 
-const createAppVersion = async (root,args,context) => {
-	permissions.loginPermission(context,"ADMIN")
-	if (!args.appVersionInput.version) {
-		throw new Error("version argument is empty")
+const appVersions = (root,args,context,info) => {
+	return context.db.query.appVersions({},info);
+}
+
+const createAppVersion = async (root,args,context,info) => {
+	if (!args.name) {
+		throw new Error("name argument is empty")
 	}
-	const appVersion = await context.prisma.createAppVersion({
-		version: args.appVersionInput.version,
-	})
+	const appVersion = await context.db.mutation.createAppVersion({
+		data:{
+			name: args.name
+		}
+	},info)
 	return appVersion
 }
 
-const appVersionToApp = async (root,args,context) => {
-	permissions.loginPermission(context,"ADMIN")
-	if (!args.appVersionToAppInput.appVersion || !args.appVersionToAppInput.app) {
+const appVersionToApp = async (root,args,context,info) => {
+	if (!args.appVersion || !args.app) {
 		throw new Error("appVersion and/or app argument is empty")
 	}
-	const app = await context.prisma.updateApp({
-		where: {id:args.appVersionToAppInput.app},
+	const app = await context.db.mutation.updateApp({
+		where: {id:args.app},
 		data: {
-			versions: {
-				[args.appVersionToAppInput.type]: { id: args.appVersionToAppInput.appVersion }
+			appVersions: {
+				[args.type]: { id: args.appVersion }
 			}
 		}
-	})
+	},info);
 	return app
-
 }
-const appVersionToStory = async (root,args,context) => {
-	permissions.loginPermission(context,"ADMIN")
-	if (!args.appVersionToStoryInput.appVersion || !args.appVersionToStoryInput.story) {
+
+const appVersionToStory = async (root,args,context,info) => {
+	if (!args.appVersion || !args.story) {
 		throw new Error("appVersion and/or story argument is empty")
 	}
-	const story = await context.prisma.updateStory({
-		where: {id:args.appVersionToStoryInput.story},
+	const story = await context.db.mutation.updateStory({
+		where: {id:args.story},
 		data: {
-			versions: {
-				[args.appVersionToStoryInput.type]: { id: args.appVersionToStoryInput.appVersion }
+			appVersions: {
+				[args.type]: { id: args.appVersion }
 			}
 		}
-	})
+	},info)
 	return story
 }
 
-const editAppVersion = async (root,args,context) => {
-	permissions.loginPermission(context,"ADMIN")
-	if (!args.editAppVersionInput.version || !args.editAppVersionInput.id) {
+const editAppVersion = async (root,args,context,info) => {
+	if (!args.name || !args.id) {
 		throw new Error("version/id argument is empty")
 	}
-	const appVersion = await context.prisma.updateAppVersion({
+	const appVersion = await context.db.mutation.updateAppVersion({
 		where: {
-			id: args.editAppVersionInput.id
+			id: args.id
 		},
 		data: {
-			version: args.editAppVersionInput.version	
+			name: args.name	
 		}
-	})
+	},info)
 	return appVersion
 }
 
-const deleteAppVersion = async (root,args,context) => {
-	permissions.loginPermission(context,"ADMIN")
-	if (!args.deleteAppVersionInput.id) {
+const deleteAppVersion = async (root,args,context,info) => {
+	if (!args.id) {
 		throw new Error("id argument is empty")
 	}
-	const appVersion = await context.prisma.deleteAppVersion({
-		id: args.deleteAppVersionInput.id
-	})
+	const appVersion = await context.db.mutation.deleteAppVersion({
+		where:{
+			id: args.id
+		}
+	},info)
 	return appVersion
 }
 
 module.exports = {
+	appVersions,
 	createAppVersion,
-	editAppVersion,
-	deleteAppVersion,
 	appVersionToApp,
-	appVersionToStory
+	appVersionToStory,
+	editAppVersion,
+	deleteAppVersion
 }

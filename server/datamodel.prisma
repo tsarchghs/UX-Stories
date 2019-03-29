@@ -5,88 +5,83 @@ enum Platform {
 }
 
 enum AccountType {
-	MEMBER
-	ADMIN
+  MEMBER
+  ADMIN
+}
+
+type File {
+  id: ID! @unique
+  filename: String!
+  mimetype: String!
+  encoding: String!
+  url: String! @unique  
+}
+
+type Video {
+  id: ID! @unique
+  file: File!
 }
 
 type User {
   id: ID! @unique
   email: String! @unique
+  password: String!
   first_name: String!
   last_name: String!
-  password: String!
-  profile_photo: File @relation(name: "UserFileRel")
+  job_title: String!
   role: AccountType!
+  profile_photo: File
   apps: [App!]!
   libraries: [Library!]!
 }
 
-type App {
+type AppVersion {
   id: ID! @unique
-  createBy: User!
-  name: String!
-  description: String
-  company: String!
-  platform: Platform!
-  logo: File @relation(name: "AppLogoRel")
-  versions: [AppVersion!]!
-  category: AppCategory!
-  stories: [Story!]! @relation(name: "AppStoryRel")
+  name: String! 
 }
 
 type AppCategory {
   id: ID! @unique
   name: String! @unique
-  apps: [App!]!
-}
-
-type AppVersion {
-  id: ID! @unique
-  version: String! @unique
-  apps: [App!]!
-  stories: [Story!]!
-}
-
-type File {
-  id: ID! @unique
-  createdAt: DateTime!
-  updatedAt: DateTime!
-  filename: String!
-  mimetype: String!
-  encoding: String!
-  url: String! @unique
-  apps: [App!]! @relation(name: "AppFileRel")
-  stories: [Story!]! @relation(name: "StoryFileRel")
-  user: User @relation(name: "UserFileRel")
-}
-
-type Story {
-  id: ID! @unique
-  app: App! @relation(name: "AppStoryRel")
-  createBy: User!
-  video: File! @relation(name: "StoryVideoRel")
-  thumbnail: File! @relation(name: "StoryThumbnailRel")
-  versions: [AppVersion!]!
-  categories: [StoryCategory!]!
-  elements: [StoryElement!]!
-  libraries: [Library!]!
 }
 
 type StoryCategory {
   id: ID! @unique
   name: String! @unique
-  stories: [Story!]!
 }
 
 type StoryElement {
   id: ID! @unique
   name: String! @unique
+}
+
+type App {
+  id: ID! @unique
+  createdBy: User!
+  appCategory: AppCategory!
+  appVersions: [AppVersion!]!
   stories: [Story!]!
+  name: String!
+  description: String
+  company: String!
+  logo: File!
+  platform: Platform!
+}
+
+type Story {
+  id: ID! @unique
+  createdBy: User!
+  app: App!
+  appVersions: [AppVersion!]!
+  storyCategories: [StoryCategory!]!
+  storyElements: [StoryElement!]!
+  video: Video!
+  thumbnail: File!
 }
 
 type Library {
   id: ID! @unique
-  createBy: User!
-  name: String!
+  createdBy: User!
   stories: [Story!]!
+  name: String!
 }

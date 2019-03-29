@@ -4,226 +4,114 @@ enum Platform {
   ANDROID
 }
 
+enum AccountType {
+  MEMBER
+  ADMIN
+}
+
 enum LinkType {
   connect
   disconnect  
 }
 
-enum AccountType {
-	MEMBER
-	ADMIN
-}
-
-type AppCategory {
-  id: ID!
-  name: String!
-  apps: [App!]!
-}
-
-type AppVersion {
-  id: ID!
-  version: String!
-  apps: [App!]!
-  stories: [Story!]!
-}
-
-type StoryCategory {
-  id: ID!
-  name: String!
-  stories: [Story!]!
+type AuthData {
+  userId: ID!
+  token: String!
+  expiresIn: Int!
 }
 
 type File {
   id: ID!
-  url: String!
-}
-
-input FileInput {
+  filename: String!
   mimetype: String!
-  base64: String!
+  encoding: String!
+  url: String!  
 }
 
-type AuthData {
-	userId: ID!
-	token: String!
-	expiresIn: Int!
+type Video {
+  id: ID!
+  file: File!
 }
 
 type User {
   id: ID!
   email: String!
+  password: String!
   first_name: String!
   last_name: String!
-  password: String
-  profile_photo: File
+  job_title: String!
   role: AccountType!
+  profile_photo: File
   apps: [App!]!
   libraries: [Library!]!
 }
 
-type App {
+type AppVersion {
   id: ID!
-  createBy: User!
-  name: String!
-  description: String
-  company: String!
-  platform: Platform!
-  logo: File!
-  versions: [AppVersion!]!
-  category: AppCategory!
-  stories: [Story!]!
+  name: String! 
 }
 
-type Story {
-  id: ID! 
-  app: App!
-  createBy: User!
-  video: File!
-  thumbnail: File!
-  versions: [AppVersion!]!
-  categories: [StoryCategory!]!
-  elements: [StoryElement!]!
-}
-
-input CreateStoryInput {
-  app: ID!
-  video: FileInput!
-  thumbnail: FileInput!
-  versions: [ID!]!
-  categories: [ID!]!
-}
-
-input AppVersionInput {
-  version: String!
-}
-
-input EditAppVersionInput {
-  id: ID!
-  version: String!
-}
-
-input DeleteAppVersionInput {
-  id: ID!
-}
-
-input AppCategoryInput {
-  name: String!
-}
-
-input EditAppCategoryInput {
+type AppCategory {
   id: ID!
   name: String!
 }
 
-input StoryCategoryInput {
-  name: String!
-}
-
-input EditStoryCategoryInput {
+type StoryCategory {
   id: ID!
   name: String!
-}
-
-input DeleteAppCategoryInput {
-  id: ID!
-}
-
-input DeleteStoryCategoryInput {
-  id: ID!
-}
-
-input StoryElementInput {
-  name: String!
-}
-
-input EditStoryElementInput {
-  id: ID!
-  name: String!
-}
-
-input DeleteStoryElementInput {
-  id: ID!
 }
 
 type StoryElement {
   id: ID!
   name: String!
+}
+
+type App {
+  id: ID!
+  createdBy: User!
+  appCategory: AppCategory!
+  appVersions: [AppVersion!]!
   stories: [Story!]!
-}
-
-input AppInput {
   name: String!
-  description: String!
+  description: String
   company: String!
+  logo: File!
   platform: Platform!
-  logo: FileInput!
-  version: String!
-  category: String!
 }
 
-input AppVersionToAppInput {
-  appVersion: ID!
-  app: ID!
-  type: LinkType!
-}
-
-input appVersionToStoryInput {
-  appVersion: ID!
-  story: ID! 
-  type: LinkType!
-}
-
-input StoryElementToStoryInput {
-  storyElement: ID!
-  story: ID!
-  type: LinkType! 
-}
-
-input StoryCategoryToStoryInput {
-  storyCategory: ID!
-  story: ID!
-  type: LinkType! 
-}
-
-input CreateLibraryInput {
-  name: String!  
-}
-
-input EditLibraryInput {
+type Story {
   id: ID!
-  name: String!  
+  app: App!
+  appVersions: [AppVersion!]!
+  storyCategories: [StoryCategory!]!
+  storyElements: [StoryElement!]!
+  video: Video!
+  thumbnail: File!
 }
 
-input DeleteLibraryInput {
+type Library {
   id: ID!
+  createdBy: User!
+  stories: [Story!]!
+  name: String!
 }
 
-input StoryToLibraryInput {
-  story: ID!
-  library: ID!
-  type: LinkType!
-}
-
-input StoriesInput {
-  app: ID!  
-}
-
-input StoryToAppInput {
-  story: ID!
-  app: ID!
-  type: LinkType!
+input FileInput {
+  base64: String! 
+  mimetype: String!
 }
 
 input AppFilterInput {
-  category: ID
+  appCategory: String!
   storyCategories: [ID!]
-  elements: [ID!]
+  storyElements: [ID!]
 }
 
 input LibraryFilterInput {
-   categories: [ID!]
-   elements: [ID!]
+   storyCategories: [String!]
+   storyElements: [String!]
 }
+
 
 input StoriesFilterInput {
   app: ID
@@ -231,66 +119,126 @@ input StoriesFilterInput {
   storyName_contains: String
   appCategory: ID
   storyCategories: [ID!]
-  elements: [ID!]
+  storyElements: [ID!]
   appVersions: [ID!]
 }
 
-input LibraryInput {
-  id: ID!
-}
-
-type Library {
-  id: ID!
-  createBy: User!
-  name: String!
-  stories: [Story!]!
-}
-
 type Query {
-	login(email: String!, password: String!): AuthData
-  app(id:ID!): App
+  login(
+    email: String!
+    password: String!
+  ): AuthData!
+  getLoggedInUser: User
+  app(id: ID!): App
   apps(appFilterInput: AppFilterInput): [App!]!
+  appVersions: [AppVersion!]!
   appCategories: [AppCategory!]!
-  storyElements: [StoryElement!]!
-  stories(storiesFilterInput: StoriesFilterInput): [Story!]!
-  library(libraryInput: LibraryInput!): Library
-  libraries(libraryFilterInput: LibraryFilterInput): [Library!]!
+  stories(
+    storiesFilterInput: StoriesFilterInput  
+  ): [Story!]!
   storyCategories: [StoryCategory!]!
-  getLoggedInUser: User!
+  storyElements: [StoryElement!]!
+  library(
+    id: ID!
+  ): Library
+
+  libraries(
+    libraryFilterInput: LibraryFilterInput
+  ): [Library!]!
 }
 
 type Mutation {
-	signUp(email: String!,first_name: String!,last_name: String!,password: String!,profile_photo:FileInput): AuthData
-	
-  createApp(appInput: AppInput!): App!
-  
-  createAppCategory(appCategoryInput: AppCategoryInput!): AppCategory!
-  editAppCategory(editAppCategoryInput: EditAppCategoryInput!): AppCategory!
-  deleteAppCategory(deleteAppCategoryInput: DeleteAppCategoryInput!): AppCategory!
+  signUp(
+    first_name: String!
+    last_name: String!
+    email: String!
+    password: String!
+    job_title: String!
+    profile_photo: FileInput
+  ): AuthData!
 
-  createAppVersion(appVersionInput: AppVersionInput!): AppVersion!
-  editAppVersion(editAppVersionInput: EditAppVersionInput!): AppVersion!
-  deleteAppVersion(deleteAppVersionInput: DeleteAppVersionInput!): AppVersion!
-  appVersionToApp(appVersionToAppInput: AppVersionToAppInput!): App!
-  appVersionToStory(appVersionToStoryInput: appVersionToStoryInput!): App!
+  createApp(
+    name: String!
+    description: String!
+    platform: Platform!
+    logo: FileInput!
+    appVersion: String!
+    appCategory: String!
+    company: String!
+  ): App!
 
-  createStoryCategory(storyCategoryInput: StoryCategoryInput!): StoryCategory!
-  editStoryCategory(editStoryCategoryInput: EditStoryCategoryInput!): StoryCategory!
-  deleteStoryCategory(deleteStoryCategoryInput: DeleteStoryCategoryInput): StoryCategory!
-  storyCategoryToStory(storyCategoryToStoryInput: StoryCategoryToStoryInput!): Story!
+  createAppCategory(
+    name: String!
+  ): AppCategory!
 
-  createStoryElement(storyElementInput: StoryElementInput!): StoryElement!
-  editStoryElement(editStoryElementInput: EditStoryElementInput!): StoryElement!
-  deleteStoryElement(deleteStoryElementInput: DeleteStoryElementInput!): StoryElement!
-  storyElementToStory(storyElementToStoryInput: StoryElementToStoryInput!): Story!
+  editAppCategory(
+    id: ID!
+    name: String!
+  ): AppCategory!
 
-  createLibrary(createLibraryInput: CreateLibraryInput!): Library!
-  editLibrary(editLibraryInput: EditLibraryInput!): Library!
-  deleteLibrary(deleteLibraryInput: DeleteLibraryInput!): Library!
+  deleteAppCategory(
+    id: ID!
+  ): AppCategory!
 
-  createStory(createStoryInput: CreateStoryInput!): Story!
-  storyToLibrary(storyToLibraryInput: StoryToLibraryInput!): Library!
-  storyToApp(storyToAppInput: StoryToAppInput!): Library!
+  createAppVersion(
+    name: String!
+  ): AppVersion!
 
-  uploadFile(file: FileInput!): File!
+  appVersionToApp(
+    app: ID!
+    appVersion: ID!
+    type: LinkType!
+  ): App!
+
+  appVersionToStory(
+    story: ID!
+    appVersion: ID!
+    type: LinkType!
+  ): Story!
+
+  editAppVersion(
+    id: ID!
+    name: String!
+  ): AppVersion
+
+  deleteAppVersion(
+    id: ID!
+  ): AppVersion!
+
+  uploadFile(
+    file: FileInput!
+  ): File!
+
+  createLibrary(
+    name: String!
+  ): Library!
+
+  editLibrary(
+    id: ID!
+    name: String!
+  ): Library!
+
+  createStory(
+    app: ID!
+    video: FileInput!
+    thumbnail: FileInput
+    appVersions: [ID!]!
+    storyCategories: [ID!]!
+  ): Story!
+
+  storyToLibrary(
+    story: ID!
+    library: ID!
+    type: LinkType!
+  ): Library!
+
+  storyToApp(
+    story: ID!
+    app: ID!
+    type: LinkType!
+  ): App!
+
+  createStoryCategory(
+    name: String!
+  ): StoryCategory!
 }

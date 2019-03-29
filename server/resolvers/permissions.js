@@ -10,10 +10,10 @@ module.exports = {
 		}
 	},
 	libraryPermission: async (context,libraryId) => {
-		const libraries = await context.prisma.libraries({
+		const libraries = await context.db.query.libraries({
 			where: {
 				id: libraryId,
-				createBy: {
+				createdBy: {
 					id: context.user.id
 				}
 			}
@@ -23,10 +23,10 @@ module.exports = {
 		}
 	},
 	storyToLibraryPermission: async (context,libraryId) => {
-		const libraries = await context.prisma.libraries({
+		const libraries = await context.db.query.libraries({
 			where: {
 				id: libraryId,
-				createBy :{
+				createdBy :{
 					id: context.user.id
 				}
 			}

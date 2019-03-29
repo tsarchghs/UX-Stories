@@ -1,86 +1,45 @@
 const authResolvers = require("./authentication");
+const userResolvers = require("./models/User");
+const storyCategoryResolvers = require("./models/StoryCategory");
 const appCategoryResolvers = require("./models/AppCategory");
+const storyElementResolvers = require("./models/StoryElement");
 const appVersionResolvers = require("./models/AppVersion");
 const appResolvers = require("./models/App");
-const storyCategoryResolvers = require("./models/StoryCategory");
 const fileResolvers = require("./models/File");
-const storyElementResolvers = require("./models/StoryElement");
-const storyResolvers = require("./models/Story");
 const libraryResolvers = require("./models/Library");
-const userResolvers = require("./models/User");
+const storyResolvers = require("./models/Story");
 
 module.exports = {
 	Query: {
 		login: authResolvers.login,
+		getLoggedInUser: userResolvers.getLoggedInUser,
 		app: appResolvers.app,
 		apps: appResolvers.apps,
 		appCategories: appCategoryResolvers.appCategories,
-		storyElements: storyElementResolvers.storyElements,
+		appVersions: appVersionResolvers.appVersions,
 		stories: storyResolvers.stories,
-		library: libraryResolvers.library,
-		libraries: libraryResolvers.libraries,
 		storyCategories: storyCategoryResolvers.storyCategories,
-		getLoggedInUser: userResolvers.getLoggedInUser
+		storyElements: storyElementResolvers.storyElements,
+		library: libraryResolvers.library,
+		libraries: libraryResolvers.libraries
 	},
 	Mutation: {
 		signUp: authResolvers.signUp,
-
+		createApp: appResolvers.createApp,
 		createAppCategory: appCategoryResolvers.createAppCategory,
 		editAppCategory: appCategoryResolvers.editAppCategory,
 		deleteAppCategory: appCategoryResolvers.deleteAppCategory,
-
 		createAppVersion: appVersionResolvers.createAppVersion,
-		editAppVersion: appVersionResolvers.editAppVersion,
-		deleteAppVersion: appVersionResolvers.deleteAppVersion,
 		appVersionToApp: appVersionResolvers.appVersionToApp,
 		appVersionToStory: appVersionResolvers.appVersionToStory,
-
-		createApp: appResolvers.createApp,
-		uploadFile: fileResolvers.uploadFile,
-
-		createStoryCategory: storyCategoryResolvers.createStoryCategory,
-		editStoryCategory: storyCategoryResolvers.editStoryCategory,
-		deleteStoryCategory: storyCategoryResolvers.deleteStoryCategory,
-		storyCategoryToStory: storyCategoryResolvers.storyCategoryToStory,
-
-		createStoryElement: storyElementResolvers.createStoryElement,
-		editStoryElement: storyElementResolvers.editStoryElement,
-		deleteStoryElement: storyElementResolvers.deleteStoryElement,
-		storyElementToStory: storyElementResolvers.storyElementToStory,
-
+		editAppVersion: appVersionResolvers.editAppVersion,
+		deleteAppVersion: appVersionResolvers.deleteAppVersion,
 		createLibrary: libraryResolvers.createLibrary,
 		editLibrary: libraryResolvers.editLibrary,
-		deleteLibrary: libraryResolvers.deleteLibrary,
-
 		createStory: storyResolvers.createStory,
 		storyToLibrary: storyResolvers.storyToLibrary,
-		storyToApp: storyResolvers.storyToApp
-	},
-	User: {
-		libraries: userResolvers.libraries,
-		profile_photo: userResolvers.profile_photo
-	},
-	App: {
-		stories: appResolvers.stories,
-		createBy: appResolvers.createBy,
-		versions: appResolvers.versions,
-		category: appResolvers.category,
-		logo: appResolvers.logo
-	},
-	Story: {
-		video: storyResolvers.video,
-		elements: storyResolvers.elements,
-		categories: storyResolvers.categories,
-		versions: storyResolvers.versions,
-		thumbnail: storyResolvers.thumbnail,
-		app: storyResolvers.app,
-		createBy: storyResolvers.createBy
-	},
-	StoryCategory: {
-		stories: storyCategoryResolvers.stories
-	},
-	Library: {
-		createBy: libraryResolvers.createBy,
-		stories: libraryResolvers.stories
+		storyToApp: storyResolvers.storyToApp,
+		createStoryCategory: storyCategoryResolvers.createStoryCategory,
+		uploadFile: fileResolvers.uploadFile
 	}
 }

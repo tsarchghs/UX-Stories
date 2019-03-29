@@ -1,14 +1,14 @@
 const fileHandling = require("../../modules/fileApi");
 const permissions = require("../permissions");
 
-const stories = async (root,args,context) => {
+const stories = async (root,args,context,info) => {
 	if (args.storiesFilterInput && 
 		!(
 			args.storiesFilterInput.app || args.storiesFilterInput.appCategory || typeof(args.storiesFilterInput.storyName_contains) === "string" ||
 			(args.storiesFilterInput.storyCategories && args.storiesFilterInput.storyCategories.length) ||
 			(args.storiesFilterInput.appVersions && args.storiesFilterInput.appVersions.length) ||
 
-			(args.storiesFilterInput.elements && args.storiesFilterInput.elements.length) || args.storiesFilterInput.inLibrary
+			(args.storiesFilterInput.storyElements && args.storiesFilterInput.storyElements.length) || args.storiesFilterInput.inLibrary
 		)	
 	) {
 		throw new Error("If storiesFilterInput provided, appVersions,appCategory,storyCategory,inLibrary or element must be specified")
@@ -27,14 +27,14 @@ const stories = async (root,args,context) => {
 		}
 		if (args.storiesFilterInput.storyName_contains){
 			filterBy["where"]["AND"] = [{
-				categories_some:{
+				storyCategories_some:{
 					name_contains: args.storiesFilterInput.storyName_contains
 				}
 			}]
 		}
 		if (args.storiesFilterInput.appCategory){
 			filterBy["where"]["app"] = {
-				"category": {
+				"appCategory": {
 					id: args.storiesFilterInput.appCategory
 				}
 			}
@@ -42,17 +42,17 @@ const stories = async (root,args,context) => {
 		if (args.storiesFilterInput.storyCategories && args.storiesFilterInput.storyCategories.length){
 			filterBy["where"]["AND"] = filterBy["where"]["AND"].concat(
 				args.storiesFilterInput.storyCategories.map(storyCategory => ({
-					categories_some: {
+					storyCategories: {
 						id: storyCategory
 					}
 				}))
 			)
 		}
-		if (args.storiesFilterInput.elements && args.storiesFilterInput.elements.length){
+		if (args.storiesFilterInput.storyElements && args.storiesFilterInput.storyElements.length){
 			filterBy["where"]["AND"] = filterBy["where"]["AND"].concat(
-				args.storiesFilterInput.elements.map(storyElement => (
+				args.storiesFilterInput.storyElements.map(storyElement => (
 					{
-						"elements_some": {
+						"storyElements_some": {
 							id: storyElement
 						}
 					}
@@ -62,211 +62,111 @@ const stories = async (root,args,context) => {
 			filterBy["where"]["AND"] = filterBy["where"]["AND"].concat(
 				args.storiesFilterInput.appVersions.map(appVersion => (
 					{
-						"versions_some": {
+						"appVersions_some": {
 							id: appVersion
 						}
 					}
 				)))
 		}
 	}
-	const storiesL = context.prisma.stories(filterBy);
+	const storiesL = context.db.query.stories(filterBy,info);
 	return storiesL;
 }
 
-const createStory = async (root,args,context) => {
+const createStory = async (root,args,context,info) => {
 	permissions.loginPermission(context,"ADMIN")
 	if (
-		!args.createStoryInput.app || 
-		!args.createStoryInput.video ||
-		!args.createStoryInput.thumbnail || 
-		!args.createStoryInput.versions ||
-		!args.createStoryInput.categories
+		!args.app || 
+		!args.video ||
+		!args.thumbnail || 
+		!args.appVersions ||
+		!args.storyCategories
 	){
 		throw new Error("Please make sure that all of your arguments are non empty!");
 	}
 	const createBy = context.user
-	const video = await fileHandling.processUpload(args.createStoryInput.video.base64,
-													args.createStoryInput.video.mimetype,
+	const videoFile = await fileHandling.processUpload(args.video.base64,
+													args.video.mimetype,
 													context);
-	const thumbnail = await fileHandling.processUpload(args.createStoryInput.thumbnail.base64,
-														args.createStoryInput.thumbnail.mimetype,
+	const thumbnail = await fileHandling.processUpload(args.thumbnail.base64,
+														args.thumbnail.mimetype,
 														context);
 
-	const connectAppVersions = args.createStoryInput.versions.map(x => ({id: x}));
-	const connectAppCategories = args.createStoryInput.categories.map(x => ({id: x}));
-	const story = await context.prisma.createStory({
-		createBy: {
-			connect: {
-				id: createBy.id
-			}
-		},
-		app: {
-			connect: {
-				id: args.createStoryInput.app
-			}
-		},
-		video: {
-			connect: {
-				id: video.id
-			}
-		},
-		thumbnail: {
-			connect: {
-				id: thumbnail.id
-			}
-		},
-		versions: {
-			connect: [...connectAppVersions,]
-		},
-		categories: {
-			connect: [...connectAppCategories]
-		}
-	})
-	await context.prisma.updateFile({
-		where: { id: thumbnail.id },
-		data: {
-			stories: {
-				connect: { id: story.id }
+	const connectAppVersions = args.appVersions.map(x => ({id: x}));
+	const connectAppCategories = args.storyCategories.map(x => ({id: x}));
+	const story = await context.db.mutation.createStory({
+		data:{
+			createdBy: {
+				connect: {
+					id: createBy.id
+				}
+			},
+			app: {
+				connect: {
+					id: args.app
+				}
+			},
+			video: {
+				create:{
+					file: {
+						connect:{
+							id: videoFile.id
+						}
+					}
+				}
+			},
+			thumbnail: {
+				connect: {
+					id: thumbnail.id
+				}
+			},
+			appVersions: {
+				connect: [...connectAppVersions,]
+			},
+			storyCategories: {
+				connect: [...connectAppCategories]
 			}
 		}
-	})
-	await context.prisma.updateFile({
-		where: { id: video.id },
-		data: {
-			stories: {
-				connect: { id: story.id }
-			}
-		}
-	})
+	},info)
 	return story
 }
 
-
-const storyToLibrary = async (root,args,context) => {
+const storyToLibrary = async (root,args,context,info) => {
 	permissions.loginPermission(context,"MEMBER")
-	if (!args.storyToLibraryInput.story || !args.storyToLibraryInput.library) {
+	if (!args.story || !args.library) {
 		throw new Error("Please check that all of your arguments are not empty!")
 	}
-	await permissions.storyToLibraryPermission(context,args.storyToLibraryInput.library);
-	const library = await context.prisma.updateLibrary({
-		where: { id: args.storyToLibraryInput.library },
+	await permissions.storyToLibraryPermission(context,args.library);
+	const library = await context.db.mutation.updateLibrary({
+		where: { id: args.library },
 		data: {
 			stories: {
-				[args.storyToLibraryInput.type]: { id:args.storyToLibraryInput.story }
+				[args.type]: { id:args.story }
 			}
 		}
-	})
+	},info)
 	return library;
 }
 
-const storyToApp = async (root,args,context) => {
+const storyToApp = async (root,args,context,info) => {
 	permissions.loginPermission(context,"ADMIN")
-	if (!args.storyToAppInput.story || !args.storyToAppInput.app) {
+	if (!args.story || !args.app) {
 		throw new Error("Please check that all of your arguments are not empty!")
 	}
-	const app = await context.prisma.updateApp({
-		where: { id: args.storyToAppInput.app },
+	const app = await context.db.mutation.updateApp({
+		where: { id: args.app },
 		data: {
 			stories: {
-				[args.storyToAppInput.type]: { id:args.storyToAppInput.story }
+				[args.type]: { id:args.story }
 			}
 		}
-	})
+	},info)
 	return app;
-}
-
-const video = async (parent,args,context) => {
-	const video = await context.prisma.files({
-		where: {
-			stories_some: {
-				id: parent.id
-			},
-			mimetype_contains:"video"
-		}
-	})
-	return video[0];
-}
-
-const elements = async (parent,args,context) => {
-	const storyElements = await context.prisma.storyElements({
-		where: {
-			stories_some: {
-				id: parent.id
-			}
-		}
-	})
-	return storyElements
-}
-
-const categories = async (parent,args,context) => {
-	const storyCategories = await context.prisma.storyCategories({
-		where:{
-			stories_some:{
-				id: parent.id
-			}
-		}
-	})
-	return storyCategories
-}
-
-const versions = async (parent,args,context) => {
-	const appVersions = await context.prisma.appVersions({
-		where:{
-			stories_some: {
-				id: parent.id
-			}
-		}
-	})
-	return appVersions
-}
-
-const thumbnail = async (parent,args,context) => {
-	const thumbnail = await context.prisma.files({
-		where: {
-			stories_some: {
-				id: parent.id
-			},
-			mimetype_contains:"image"
-		}
-	})
-	return thumbnail[thumbnail.length-1];
-}
-
-const app = async (parent,args,context) => {
-	const app = await context.prisma.apps({
-		where:{
-			stories_some:{
-				id: parent.id
-			}
-		}
-	})
-	return app[0];
-}
-
-const createBy = async (parent,args,context) => {
-	const user = await context.prisma.users({
-		where:{
-			apps_some:{
-				stories_some: {
-					id: parent.id
-				}
-			}
-		}
-	})
-	user[0].password = null;
-	return user[0];
 }
 
 module.exports = {
 	stories,
 	createStory,
 	storyToLibrary,
-	storyToApp,
-	video,
-	elements,
-	categories,
-	versions,
-	thumbnail,
-	app,
-	createBy
+	storyToApp
 }
