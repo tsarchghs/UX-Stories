@@ -229,7 +229,7 @@ const thumbnail = async (parent,args,context) => {
 			mimetype_contains:"image"
 		}
 	})
-	return thumbnail[0];
+	return thumbnail[thumbnail.length-1];
 }
 
 const app = async (parent,args,context) => {
