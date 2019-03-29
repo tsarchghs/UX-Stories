@@ -38,6 +38,7 @@ class App extends Component {
         this.register = this.register.bind(this);
     }
     async componentDidMount() {
+        console.log(this.state.user);
         try {
             var data = await client.query({
                     query: gql`
@@ -87,14 +88,12 @@ class App extends Component {
                     }
                 `
             })
-        console.log(data);
         } catch (e) {
             if (e.message === "GraphQL error: Invalid credentials") {
                 this.setState({
                     show_message:"Invalid credentials"
                 });
             }
-            console.log(e);
         }
         if (data) {
             Cookies.set("auth_token",data.data.login.token);
@@ -162,51 +161,53 @@ class App extends Component {
 
                     :
                     (
-                        this.state.user === null ?
-                        (
                             <div>
-                                 <Route path="/" exact component={() => <Redirect to="/login"/> } />
+                                <Route path="/" exact component={() => {
+                                    console.log(this.state.user);
+                                    return (
+                                        this.state.user
+                                        ? <Home user={this.state.user} client={client} />
+                                        : <Redirect to="/login"/>
+                                    )
+
+                                }} />
                                 <Route path="/register" exact component={() => {
                                     return (
-                                        <Register register={this.register} show_message_register={""} />
+                                        this.state.user 
+                                        ? <Redirect to="/" /> 
+                                        : <Register register={this.register} show_message_register={""} />
                                     );
                                 }} />
                                 <Route path="/login" exact component={()  => {
                                     return (
-                                        <Login login={this.login} show_message={this.state.show_message} />
+                                        this.state.user 
+                                        ? <Redirect to="/" />
+                                        : <Login login={this.login} show_message={this.state.show_message} />
                                     );
                                 }} />
-                            </div>
-                        ) 
-                        :
-                        (    
-                            <div>
-                                <Route path="/register" exact component={() => {
-                                    return (
-                                        <Redirect to="/" />
-                                    )
-                                }} />
-                                <Route path="/login" exact component={() => {
-                                    return (
-                                        <Redirect to="/" />
-                                    )
-                                }} />
-                                <Route path="/" exact component={() => {
-                                    return (
-                                        <Home user={this.state.user} client={client} />
-                                    );
-                                }} />
-                                <Route path="/profile" component={() => {
-                                    return (
-                                        <Profile user={this.state.user} client={client} />
-                                    );
-                                }} />
-                                <Route path="/library/:id" component={({match}) => <Library user={this.state.user} client={client} match={match}/> } />
-                                <Route path="/app/:id" component={({match}) => <SingleApp user={this.state.user} client={client} match={match}/> } />
-                            </div>
-                        )
+                            <Route path="/profile" component={() => {
+                                return (
+                                    this.state.user
+                                    ? <Profile user={this.state.user} client={client} />
+                                    : <Redirect to="/login?success=profile"/>
+                                );
+                            }} />
+                            <Route path="/library/:id" component={({match}) => {
+                                return (
+                                    this.state.user
+                                    ? <Library user={this.state.user} client={client} match={match}/>
+                                    : <Redirect to={`/login?success=library:${match.params.id}`}/>
+                                )
+                            }} />
+                            <Route path="/app/:id" component={({match}) => {
+                                return (
+                                    this.state.user 
+                                    ? <SingleApp user={this.state.user} client={client} match={match}/>
+                                    : <Redirect to={`/login?success=app:${match.params.id}`}/>
+                                );
+                            }} />
+                            </div> 
                     )
-
                 }
             </Router>
         );
