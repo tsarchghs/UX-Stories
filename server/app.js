@@ -1,6 +1,5 @@
 const graphqlServer = require("graphql-yoga").GraphQLServer;
 const resolvers = require("./resolvers/resolvers");
-const { prisma } = require("./generated/prisma-client");
 const prismaTypeDefs = require("./generated/prisma-client/prisma-schema.js").typeDefs;
 const { Prisma } = require("prisma-binding");
 const { static } = require("express");
@@ -14,10 +13,16 @@ const configs = require("./configs");
 // const passport = require("passport");
 // require("./strategies/jwtStrategy")(passport);
 
+const prismaDb = new Prisma({
+	typeDefs:prismaTypeDefs,
+	endpoint:"https://eu1.prisma.sh/gjergj-kadriu-c6f550/stories/dev",
+	debug: false
+})
+
 const server = new graphqlServer({
 	typeDefs: "./schema.graphql", 
 	resolvers,
-	context: async req => {
+	context: async (req) => {
 		var user = undefined
 		var loggedIn = false
 		if (req.request.headers["authorization"]){
@@ -32,20 +37,16 @@ const server = new graphqlServer({
 				return decoded
 			});
 			if (decoded){
-				user = await prisma.user({id:decoded.userId});
+				user = await prismaDb.query.user({where:{id:decoded.userId}})
 				loggedIn = true;
 			}
 		}
 		if (user) user.password = null;
 		return {
 			req,
-			user,
+			user: user,
 			loggedIn,
-			db: new Prisma({
-				typeDefs:prismaTypeDefs,
-				endpoint:"https://eu1.prisma.sh/gjergj-kadriu-c6f550/stories/dev",
-				debug: false
-			})
+			db: prismaDb
 		}
 	}
 });
