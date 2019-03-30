@@ -38,7 +38,7 @@ class SingleApp extends React.Component {
             logo {
               url
             }
-            category { 
+            appCategory { 
               name
             }
             stories {
@@ -47,9 +47,9 @@ class SingleApp extends React.Component {
                 url
               }
             }
-            versions {
+            appVersions {
               id
-              version
+              name
             }
           }
         }
@@ -93,10 +93,10 @@ class SingleApp extends React.Component {
       query:gql`
         query {
           stories(storiesFilterInput:{
-            app:"${this.state.app.id}"
-            appVersions:${JSON.stringify(filters.appVersions)}
-            storyCategories:${JSON.stringify(filters.storyCategories)}
-            elements:${JSON.stringify(filters.storyElements)}
+              app:"${this.state.app.id}"
+              appVersions:${JSON.stringify(filters.appVersions)}
+              storyCategories:${JSON.stringify(filters.storyCategories)}
+              storyElements:${JSON.stringify(filters.storyElements)}
           }) {
             id
             thumbnail {
@@ -158,10 +158,10 @@ class SingleApp extends React.Component {
               <p className="bold">© Copyright {this.state.app.company}</p>
               <span className="horisontal-seperator" />
               <p className="light-gray">Category</p>
-              <h5 className="bold">{this.state.app.category.name}</h5>
+              <h5 className="bold">{this.state.app.appCategory.name}</h5>
               <span className="horisontal-seperator" />
               <p className="light-gray">Current version</p>
-              <h5 className="bold">{this.state.app.versions[this.state.app.versions.length - 1].version}</h5>
+              <h5 className="bold">{this.state.app.appVersions[this.state.app.appVersions.length - 1].name}</h5>
             </div>
             <div>
               <div className="container">
@@ -221,17 +221,17 @@ class SingleApp extends React.Component {
                       .concat(
 
 
-                          this.state.app.versions.map(version => {
+                          this.state.app.appVersions.map(version => {
                                                       return (
                                                         <div style={{position:"inline"}}>
                                                           <input 
                                                             type="checkbox" 
                                                             id={version.id} 
-                                                            name={version.version}
+                                                            name={version.name}
                                                             checked={this.state.filterBy["appVersions"][version.id] !== undefined && this.state.filterBy["appVersions"][version.id]}
                                                             onChange={(e) => this.handleFilterClick(e,"appVersions")}
                                                           />
-                                                          <label id={version.id+"_label"}  htmlFor="scales">{version.version}</label>
+                                                          <label id={version.id+"_label"}  htmlFor="scales">{version.name}</label>
                                                         </div>
                                                       );
                                         })

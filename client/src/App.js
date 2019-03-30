@@ -19,13 +19,6 @@ var client = new ApolloClient({
     }
 })
 
-// const client = new ApolloClient({
-//     uri: "http://localhost:4000/",
-//     headers: {
-//       "Authorization": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiJjanRqN21ocHk2MzBqMGI5MXJucG1zNzlzIiwiaWF0IjoxNTUzMjA3NDY5fQ.YyMqWk8zRE_V02Ic9leg5kuffj8samTQoRdSe4a655w"
-//     }
-// })
-
 class App extends Component {
     constructor(props){
         super(props);
@@ -47,6 +40,7 @@ class App extends Component {
                             first_name
                             last_name
                             email
+                            job_title
                             profile_photo {
                               url
                             }

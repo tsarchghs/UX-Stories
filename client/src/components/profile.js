@@ -41,9 +41,9 @@ class Profile extends React.Component {
       let data = await this.props.client.mutate({
         mutation: gql`
           mutation {
-            createLibrary(createLibraryInput:{
+            createLibrary(
               name:"${libraryName}"
-            }) 
+            ) 
             {
               id
               name
@@ -100,7 +100,7 @@ class Profile extends React.Component {
                                 }} />
                                 <div className="flex fd-column jc-se">
                                   <h2>{this.props.user.first_name} {this.props.user.last_name}</h2>
-                                  <p className="light-gray">Senior UX Designer</p>
+                                  <p className="light-gray">{this.props.user.job_title}</p>
                                 </div>
                               </div>  <button className="button">Edit Profile</button>
                     </div>

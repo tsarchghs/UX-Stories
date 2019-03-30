@@ -35,9 +35,9 @@ class Library extends React.Component {
 			var results = await this.props.client.query({
 				query: gql`
 					query {
-						library(libraryInput:{
+						library(
 							id:"${this.props.match.params.id}"
-					  }) {
+						) {
 						id
 						name
 						stories {
@@ -89,9 +89,9 @@ class Library extends React.Component {
 			query: gql`
 				query {
 					stories(storiesFilterInput:{
-				    inLibrary:"cjtljmt7dtft20b91aj1our7n"
-		            storyCategories: ${JSON.stringify(filters.storyCategories)}
-		            elements:${JSON.stringify(filters.storyElements)}
+					    inLibrary:"cjtljmt7dtft20b91aj1our7n"
+			            storyCategories: ${JSON.stringify(filters.storyCategories)}
+			            storyElements:${JSON.stringify(filters.storyElements)}
 				  }){
 				      id
 				      thumbnail {
