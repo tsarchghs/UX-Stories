@@ -1,9 +1,11 @@
+const permissions = require("../permissions");
 
 const appCategories = (root,args,context,info) => {
 	return context.db.query.appCategories({},info);
 }
 
 const createAppCategory = async (root,args,context,info) => {
+	permissions.loginPermission(context,"ADMIN")
 	if (!args.name) {
 		throw new Error("Please check that all of your arguments are not empty!")
 	}
@@ -16,6 +18,7 @@ const createAppCategory = async (root,args,context,info) => {
 }
 
 const editAppCategory = async (root,args,context,info) => {
+	permissions.loginPermission(context,"ADMIN")
 	if (!args.name || !args.id) {
 		throw new Error("Please check that all of your arguments are not empty!")
 	}
@@ -31,6 +34,7 @@ const editAppCategory = async (root,args,context,info) => {
 }
 
 const deleteAppCategory = async (root,args,context,info) => {
+	permissions.loginPermission(context,"ADMIN")
 	if (!args.id) {
 		throw new Error("id argument is empty")
 	}
