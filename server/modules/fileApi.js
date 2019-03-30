@@ -34,8 +34,8 @@ const processUpload = async (upload,mimetype,context,save_encoding=false) => {
 		encoding: encoding,
 		url: "http://localhost:4000/static" + path
 	}
-	const file = context.prisma.createFile({
-		...data
+	const file = context.db.mutation.createFile({
+		data
 	})
 	return file;
 }
