@@ -22,13 +22,18 @@ type Video {
   file: File!
 }
 
+type Job {
+  id: ID! @unique
+  name: String! @unique
+}
+
 type User {
   id: ID! @unique
   email: String! @unique
   password: String!
   first_name: String!
   last_name: String!
-  job_title: String!
+  job: Job!
   role: AccountType!
   profile_photo: File
   apps: [App!]!
