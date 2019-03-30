@@ -29,6 +29,7 @@ class App extends Component {
         this.login = this.login.bind(this);
         this.logout = this.logout.bind(this);
         this.register = this.register.bind(this);
+        this.updateProfile = this.updateProfile.bind(this);
     }
     async componentDidMount() {
         console.log(this.state.user);
@@ -40,7 +41,10 @@ class App extends Component {
                             first_name
                             last_name
                             email
-                            job_title
+                            job {
+                                id
+                                name
+                            }
                             profile_photo {
                               url
                             }
@@ -102,10 +106,12 @@ class App extends Component {
     }
     async register(e) {
         e.preventDefault();
-        const r_first_name = document.getElementById("r_first_name").value;
-        const r_last_name = document.getElementById("r_last_name").value;
+        const full_name = document.getElementById("r_full_name").value.split(" ");
+        const r_first_name = full_name[0];
+        const r_last_name = full_name.length === 3 ? full_name[2] : full_name[1];
         const r_email = document.getElementById("r_email").value;
         const r_password = document.getElementById("r_password").value;
+        const r_job = document.getElementById("r_job").value;
         const results = await client.mutate({
             mutation: gql`
                 mutation {
@@ -114,13 +120,13 @@ class App extends Component {
                         last_name:"${r_last_name}"
                         email:"${r_email}"
                         password:"${r_password}"
+                        job:"${r_job}"
                     ) { 
                         token
                     }
                 }
             `
         })
-        console.log(results.data.signUp.token);
         client = new ApolloClient({
             uri: "http://localhost:4000/",
             headers: {
@@ -142,6 +148,48 @@ class App extends Component {
         })
 
         Cookies.set("auth_token","");
+    }
+    async updateProfile() {
+        let full_name = document.getElementById("p_full_name").value;
+        let job = document.getElementById("p_job").value;
+        let email = document.getElementById("p_email").value;
+        let password = document.getElementById("p_password").value;
+        let base64 = document.getElementById("profile_image").src.replace(/^data:([A-Za-z-+/]+);base64,/, '');
+        var profile_image = document.getElementById("profile_image")
+        let data = await client.mutate({
+            mutation: gql`
+                mutation {
+                    editProfile(
+                        full_name: "${full_name}"
+                        job: "${job}"
+                        email: "${email}"
+                        ${
+                            !profile_image.changed ? "" : `
+                            profile_photo: {
+                                mimetype: "image/png"
+                                base64: "${base64}"
+                            }
+                            `
+                        }
+                    ) {
+                            first_name
+                            last_name
+                            email
+                            job {
+                                id
+                                name
+                            }
+                            profile_photo {
+                              url
+                            }
+                    }
+                }
+            `
+        })
+        this.setState({
+            user: data.data.editProfile
+        })
+        document.getElementById("closeEditProfile").click();
     }
     render(){
         return (
@@ -169,7 +217,7 @@ class App extends Component {
                                     return (
                                         this.state.user 
                                         ? <Redirect to="/" /> 
-                                        : <Register register={this.register} show_message_register={""} />
+                                        : <Register client={client} register={this.register} show_message_register={""} />
                                     );
                                 }} />
                                 <Route path="/login" exact component={()  => {
@@ -182,7 +230,7 @@ class App extends Component {
                             <Route path="/profile" component={() => {
                                 return (
                                     this.state.user
-                                    ? <Profile user={this.state.user} client={client} />
+                                    ? <Profile updateProfile={this.updateProfile} user={this.state.user} client={client} />
                                     : <Redirect to="/login?success=profile"/>
                                 );
                             }} />
