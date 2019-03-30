@@ -197,7 +197,7 @@ const editStory = async (root,args,context,info) =>{
 		const story = await context.db.mutation.updateStory({
 			data,
 			where:{id:args.id}
-		})
+		},info)
 		return story;
 	} else {
 		throw new Error("At least an argument other than id must be specified");
