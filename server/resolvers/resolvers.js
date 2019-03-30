@@ -8,6 +8,7 @@ const appResolvers = require("./models/App");
 const fileResolvers = require("./models/File");
 const libraryResolvers = require("./models/Library");
 const storyResolvers = require("./models/Story");
+const jobResolvers = require("./models/Job");
 
 module.exports = {
 	Query: {
@@ -21,7 +22,8 @@ module.exports = {
 		storyCategories: storyCategoryResolvers.storyCategories,
 		storyElements: storyElementResolvers.storyElements,
 		library: libraryResolvers.library,
-		libraries: libraryResolvers.libraries
+		libraries: libraryResolvers.libraries,
+		jobs: jobResolvers.jobs
 	},
 	Mutation: {
 		signUp: authResolvers.signUp,
@@ -49,6 +51,9 @@ module.exports = {
 		storyElementToStory: storyElementResolvers.storyElementToStory,
 		editStoryElement: storyElementResolvers.editStoryElement,
 		deleteStoryElement: storyElementResolvers.deleteStoryElement,
+		createJob: jobResolvers.createJob,
+		editJob: jobResolvers.editJob,
+		deleteJob: jobResolvers.deleteJob,
 		uploadFile: fileResolvers.uploadFile
 	}
 }
