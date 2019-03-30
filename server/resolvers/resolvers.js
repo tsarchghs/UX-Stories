@@ -26,6 +26,7 @@ module.exports = {
 	Mutation: {
 		signUp: authResolvers.signUp,
 		createApp: appResolvers.createApp,
+		editApp: appResolvers.editApp,
 		createAppCategory: appCategoryResolvers.createAppCategory,
 		editAppCategory: appCategoryResolvers.editAppCategory,
 		deleteAppCategory: appCategoryResolvers.deleteAppCategory,
