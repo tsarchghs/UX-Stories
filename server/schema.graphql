@@ -33,6 +33,11 @@ type Video {
   file: File!
 }
 
+type Job {
+  id: ID!
+  name: String!
+}
+
 type User {
   id: ID!
   email: String!
@@ -160,6 +165,8 @@ type Query {
   libraries(
     libraryFilterInput: LibraryFilterInput
   ): [Library!]!
+
+  jobs: [Job!]!
 }
 
 type Mutation {
@@ -168,7 +175,7 @@ type Mutation {
     last_name: String!
     email: String!
     password: String!
-    job_title: String!
+    job: ID!
     profile_photo: FileInput
   ): AuthData!
 
@@ -312,4 +319,18 @@ type Mutation {
   deleteStoryElement(
     id: ID!
   ): StoryElement!
+
+  createJob(
+    name: String!
+  ): Job!
+
+  editJob(
+    id: ID!
+    name: String!
+  ): Job!
+
+  deleteJob(
+    id: ID!
+  ): Job!
+
 }
