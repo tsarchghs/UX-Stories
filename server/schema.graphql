@@ -85,6 +85,7 @@ type Story {
   appVersions: [AppVersion!]!
   storyCategories: [StoryCategory!]!
   storyElements: [StoryElement!]!
+  libraries: [Library!]!
   video: Video!
   thumbnail: File!
 }
@@ -112,7 +113,6 @@ input LibraryFilterInput {
    storyElements: [String!]
 }
 
-
 input StoriesFilterInput {
   app: ID
   inLibrary: ID
@@ -121,6 +121,21 @@ input StoriesFilterInput {
   storyCategories: [ID!]
   storyElements: [ID!]
   appVersions: [ID!]
+}
+
+input AppVersionLinkInput {
+  appVersion: ID!
+  type: LinkType!
+}
+
+input StoryCategoryLinkType {
+  storyCategory: ID!
+  type: LinkType!
+}
+
+input StoryElementLinkType {
+  storyElement: ID!
+  type: LinkType!
 }
 
 type Query {
@@ -224,6 +239,17 @@ type Mutation {
     thumbnail: FileInput
     appVersions: [ID!]!
     storyCategories: [ID!]!
+    storyElements: [ID!]!
+  ): Story!
+
+  editStory(
+    id: ID!
+    app: ID
+    video: FileInput
+    thumbnail: FileInput
+    appVersions: [AppVersionLinkInput!]
+    storyCategories: [StoryCategoryLinkType!]
+    storyElements: [StoryElementLinkType!]
   ): Story!
 
   storyToLibrary(
