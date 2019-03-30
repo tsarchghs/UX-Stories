@@ -75,6 +75,7 @@ type Story {
   appVersions: [AppVersion!]!
   storyCategories: [StoryCategory!]!
   storyElements: [StoryElement!]!
+  libraries: [Library!]!
   video: Video!
   thumbnail: File!
 }
