@@ -905,7 +905,7 @@ type LibraryConnection {
 
 input LibraryCreateInput {
   createdBy: UserCreateOneWithoutLibrariesInput!
-  stories: StoryCreateManyInput
+  stories: StoryCreateManyWithoutLibrariesInput
   name: String!
 }
 
@@ -914,8 +914,18 @@ input LibraryCreateManyWithoutCreatedByInput {
   connect: [LibraryWhereUniqueInput!]
 }
 
+input LibraryCreateManyWithoutStoriesInput {
+  create: [LibraryCreateWithoutStoriesInput!]
+  connect: [LibraryWhereUniqueInput!]
+}
+
 input LibraryCreateWithoutCreatedByInput {
-  stories: StoryCreateManyInput
+  stories: StoryCreateManyWithoutLibrariesInput
+  name: String!
+}
+
+input LibraryCreateWithoutStoriesInput {
+  createdBy: UserCreateOneWithoutLibrariesInput!
   name: String!
 }
 
@@ -994,7 +1004,7 @@ input LibrarySubscriptionWhereInput {
 
 input LibraryUpdateInput {
   createdBy: UserUpdateOneRequiredWithoutLibrariesInput
-  stories: StoryUpdateManyInput
+  stories: StoryUpdateManyWithoutLibrariesInput
   name: String
 }
 
@@ -1018,13 +1028,30 @@ input LibraryUpdateManyWithoutCreatedByInput {
   updateMany: [LibraryUpdateManyWithWhereNestedInput!]
 }
 
+input LibraryUpdateManyWithoutStoriesInput {
+  create: [LibraryCreateWithoutStoriesInput!]
+  delete: [LibraryWhereUniqueInput!]
+  connect: [LibraryWhereUniqueInput!]
+  set: [LibraryWhereUniqueInput!]
+  disconnect: [LibraryWhereUniqueInput!]
+  update: [LibraryUpdateWithWhereUniqueWithoutStoriesInput!]
+  upsert: [LibraryUpsertWithWhereUniqueWithoutStoriesInput!]
+  deleteMany: [LibraryScalarWhereInput!]
+  updateMany: [LibraryUpdateManyWithWhereNestedInput!]
+}
+
 input LibraryUpdateManyWithWhereNestedInput {
   where: LibraryScalarWhereInput!
   data: LibraryUpdateManyDataInput!
 }
 
 input LibraryUpdateWithoutCreatedByDataInput {
-  stories: StoryUpdateManyInput
+  stories: StoryUpdateManyWithoutLibrariesInput
+  name: String
+}
+
+input LibraryUpdateWithoutStoriesDataInput {
+  createdBy: UserUpdateOneRequiredWithoutLibrariesInput
   name: String
 }
 
@@ -1033,10 +1060,21 @@ input LibraryUpdateWithWhereUniqueWithoutCreatedByInput {
   data: LibraryUpdateWithoutCreatedByDataInput!
 }
 
+input LibraryUpdateWithWhereUniqueWithoutStoriesInput {
+  where: LibraryWhereUniqueInput!
+  data: LibraryUpdateWithoutStoriesDataInput!
+}
+
 input LibraryUpsertWithWhereUniqueWithoutCreatedByInput {
   where: LibraryWhereUniqueInput!
   update: LibraryUpdateWithoutCreatedByDataInput!
   create: LibraryCreateWithoutCreatedByInput!
+}
+
+input LibraryUpsertWithWhereUniqueWithoutStoriesInput {
+  where: LibraryWhereUniqueInput!
+  update: LibraryUpdateWithoutStoriesDataInput!
+  create: LibraryCreateWithoutStoriesInput!
 }
 
 input LibraryWhereInput {
@@ -1207,6 +1245,7 @@ type Story {
   appVersions(where: AppVersionWhereInput, orderBy: AppVersionOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [AppVersion!]
   storyCategories(where: StoryCategoryWhereInput, orderBy: StoryCategoryOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [StoryCategory!]
   storyElements(where: StoryElementWhereInput, orderBy: StoryElementOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [StoryElement!]
+  libraries(where: LibraryWhereInput, orderBy: LibraryOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Library!]
   video: Video!
   thumbnail: File!
 }
@@ -1399,13 +1438,9 @@ input StoryCreateInput {
   appVersions: AppVersionCreateManyInput
   storyCategories: StoryCategoryCreateManyInput
   storyElements: StoryElementCreateManyInput
+  libraries: LibraryCreateManyWithoutStoriesInput
   video: VideoCreateOneInput!
   thumbnail: FileCreateOneInput!
-}
-
-input StoryCreateManyInput {
-  create: [StoryCreateInput!]
-  connect: [StoryWhereUniqueInput!]
 }
 
 input StoryCreateManyWithoutAppInput {
@@ -1413,8 +1448,24 @@ input StoryCreateManyWithoutAppInput {
   connect: [StoryWhereUniqueInput!]
 }
 
+input StoryCreateManyWithoutLibrariesInput {
+  create: [StoryCreateWithoutLibrariesInput!]
+  connect: [StoryWhereUniqueInput!]
+}
+
 input StoryCreateWithoutAppInput {
   createdBy: UserCreateOneInput!
+  appVersions: AppVersionCreateManyInput
+  storyCategories: StoryCategoryCreateManyInput
+  storyElements: StoryElementCreateManyInput
+  libraries: LibraryCreateManyWithoutStoriesInput
+  video: VideoCreateOneInput!
+  thumbnail: FileCreateOneInput!
+}
+
+input StoryCreateWithoutLibrariesInput {
+  createdBy: UserCreateOneInput!
+  app: AppCreateOneWithoutStoriesInput!
   appVersions: AppVersionCreateManyInput
   storyCategories: StoryCategoryCreateManyInput
   storyElements: StoryElementCreateManyInput
@@ -1654,35 +1705,15 @@ input StorySubscriptionWhereInput {
   NOT: [StorySubscriptionWhereInput!]
 }
 
-input StoryUpdateDataInput {
-  createdBy: UserUpdateOneRequiredInput
-  app: AppUpdateOneRequiredWithoutStoriesInput
-  appVersions: AppVersionUpdateManyInput
-  storyCategories: StoryCategoryUpdateManyInput
-  storyElements: StoryElementUpdateManyInput
-  video: VideoUpdateOneRequiredInput
-  thumbnail: FileUpdateOneRequiredInput
-}
-
 input StoryUpdateInput {
   createdBy: UserUpdateOneRequiredInput
   app: AppUpdateOneRequiredWithoutStoriesInput
   appVersions: AppVersionUpdateManyInput
   storyCategories: StoryCategoryUpdateManyInput
   storyElements: StoryElementUpdateManyInput
+  libraries: LibraryUpdateManyWithoutStoriesInput
   video: VideoUpdateOneRequiredInput
   thumbnail: FileUpdateOneRequiredInput
-}
-
-input StoryUpdateManyInput {
-  create: [StoryCreateInput!]
-  update: [StoryUpdateWithWhereUniqueNestedInput!]
-  upsert: [StoryUpsertWithWhereUniqueNestedInput!]
-  delete: [StoryWhereUniqueInput!]
-  connect: [StoryWhereUniqueInput!]
-  set: [StoryWhereUniqueInput!]
-  disconnect: [StoryWhereUniqueInput!]
-  deleteMany: [StoryScalarWhereInput!]
 }
 
 input StoryUpdateManyWithoutAppInput {
@@ -1696,8 +1727,30 @@ input StoryUpdateManyWithoutAppInput {
   deleteMany: [StoryScalarWhereInput!]
 }
 
+input StoryUpdateManyWithoutLibrariesInput {
+  create: [StoryCreateWithoutLibrariesInput!]
+  delete: [StoryWhereUniqueInput!]
+  connect: [StoryWhereUniqueInput!]
+  set: [StoryWhereUniqueInput!]
+  disconnect: [StoryWhereUniqueInput!]
+  update: [StoryUpdateWithWhereUniqueWithoutLibrariesInput!]
+  upsert: [StoryUpsertWithWhereUniqueWithoutLibrariesInput!]
+  deleteMany: [StoryScalarWhereInput!]
+}
+
 input StoryUpdateWithoutAppDataInput {
   createdBy: UserUpdateOneRequiredInput
+  appVersions: AppVersionUpdateManyInput
+  storyCategories: StoryCategoryUpdateManyInput
+  storyElements: StoryElementUpdateManyInput
+  libraries: LibraryUpdateManyWithoutStoriesInput
+  video: VideoUpdateOneRequiredInput
+  thumbnail: FileUpdateOneRequiredInput
+}
+
+input StoryUpdateWithoutLibrariesDataInput {
+  createdBy: UserUpdateOneRequiredInput
+  app: AppUpdateOneRequiredWithoutStoriesInput
   appVersions: AppVersionUpdateManyInput
   storyCategories: StoryCategoryUpdateManyInput
   storyElements: StoryElementUpdateManyInput
@@ -1705,26 +1758,26 @@ input StoryUpdateWithoutAppDataInput {
   thumbnail: FileUpdateOneRequiredInput
 }
 
-input StoryUpdateWithWhereUniqueNestedInput {
-  where: StoryWhereUniqueInput!
-  data: StoryUpdateDataInput!
-}
-
 input StoryUpdateWithWhereUniqueWithoutAppInput {
   where: StoryWhereUniqueInput!
   data: StoryUpdateWithoutAppDataInput!
 }
 
-input StoryUpsertWithWhereUniqueNestedInput {
+input StoryUpdateWithWhereUniqueWithoutLibrariesInput {
   where: StoryWhereUniqueInput!
-  update: StoryUpdateDataInput!
-  create: StoryCreateInput!
+  data: StoryUpdateWithoutLibrariesDataInput!
 }
 
 input StoryUpsertWithWhereUniqueWithoutAppInput {
   where: StoryWhereUniqueInput!
   update: StoryUpdateWithoutAppDataInput!
   create: StoryCreateWithoutAppInput!
+}
+
+input StoryUpsertWithWhereUniqueWithoutLibrariesInput {
+  where: StoryWhereUniqueInput!
+  update: StoryUpdateWithoutLibrariesDataInput!
+  create: StoryCreateWithoutLibrariesInput!
 }
 
 input StoryWhereInput {
@@ -1753,6 +1806,9 @@ input StoryWhereInput {
   storyElements_every: StoryElementWhereInput
   storyElements_some: StoryElementWhereInput
   storyElements_none: StoryElementWhereInput
+  libraries_every: LibraryWhereInput
+  libraries_some: LibraryWhereInput
+  libraries_none: LibraryWhereInput
   video: VideoWhereInput
   thumbnail: FileWhereInput
   AND: [StoryWhereInput!]
