@@ -129,7 +129,7 @@ const createStory = async (root,args,context,info) => {
 				connect: [...connectAppCategories]
 			},
 			storyElements: {
-				conenct: [...connectStoryElements]
+				connect: [...connectStoryElements]
 			}
 		}
 	},info)
