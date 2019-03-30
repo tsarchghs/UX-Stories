@@ -4,17 +4,69 @@ import gql from "graphql-tag";
 import Loading from "./loading";
 import Header from "./header";
 
+const handleUploadPhotoInput = element => {
+  var file = element.files[0];
+  var reader = new FileReader();
+  reader.onloadend = function() {
+    element.base64 = reader.result
+    console.log(reader.result);
+    document.getElementById("profile_image").src = reader.result
+    document.getElementById("profile_image").changed = true;
+  }
+  try {
+    reader.readAsDataURL(file);
+  } catch(e) {
+    console.log("Failed to get dataurl");
+  }
+}
+
+
 class Profile extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
       libraries: undefined,
-      user_profile: this.props.user && this.props.user.profile_photo ? this.props.user.profile_photo : undefined,
-      user_profile_onClick: undefined
+      profile_photo: this.props.user && this.props.user.profile_photo ? this.props.user.profile_photo.url : undefined,
+      jobs: undefined
     }
   }
   async componentDidMount() {
-    console.log(this.props);
+    let uploadPhotoInput = document.getElementById("uploadPhotoInput")
+    document.getElementById("uploadPhotoInput").onchange = () => handleUploadPhotoInput(document.getElementById("uploadPhotoInput"));
+    document.getElementById("uploadPhotoButton").onclick = () => document.getElementById("uploadPhotoInput").click()
+    document.getElementById("edit_profile").onsubmit = async (e) => {
+      e.preventDefault();
+      document.getElementById("edit_profile").style = "display:none;"
+      document.getElementById("loadingProfile").style = "display:block;"
+
+      this.props.updateProfile();
+    }
+    const jobs = this.props.client.query({
+      query: gql`
+        query {
+          jobs {
+            id
+            name
+          }
+        }
+      `
+    }).then(data => {
+      this.setState({
+        jobs: data.data.jobs
+      })
+      document.getElementById("p_job").innerHTML = this.state.jobs.map(job => {
+        return `<option id=${job.name} value=${job.id} 
+        ${
+          job.id === this.props.user.job.id ? "selected" : ""
+        }        
+        >${job.name}</option>`
+      })
+      document.getElementById("p_full_name").value = `${this.props.user.first_name} ${this.props.user.last_name}` 
+      document.getElementById("profile_image").src = this.state.profile_photo ? this.state.profile_photo : "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQOo9ftjYQCU8HW1YByx0oAQdegRxO51mQN0tKKenGRnDZb-_D6"
+      document.getElementById("p_email").value = this.props.user.email
+      document.getElementById("edit_profile").style = "display:block;"
+      document.getElementById("loadingProfile").style = "display:none;"
+    })
     const result = await this.props.client.query({
         query: gql`
           query {
@@ -65,16 +117,6 @@ class Profile extends React.Component {
       document.getElementById("libraryName").value = ""
     }
   }
-  profileOnMouseEnter() {
-    this.setState({
-      user_profile:"https://cdn3.iconfinder.com/data/icons/glypho-photography/64/camera-upload-to-512.png"
-    })
-  }
-  profileOnMouseLeave(){
-    this.setState({
-      user_profile: this.props.user && this.props.user.profile_photo ? this.props.user.profile_photo : undefined
-    })
-  }
   render() {
     return (
       <div>
@@ -88,21 +130,18 @@ class Profile extends React.Component {
                   <div className="profile-card">             
                               <div className="user-profile">
                                 <div 
-                                  onMouseEnter={() => this.profileOnMouseEnter()} 
-                                  onMouseLeave={() => this.profileOnMouseLeave()} 
-                                  onClick={this.state.user_profile_onClick}
                                   className="user-profile__img" style={{
                                   backgroundImage: (
-                                    `url(${this.state.user_profile ? this.state.user_profile : "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQOo9ftjYQCU8HW1YByx0oAQdegRxO51mQN0tKKenGRnDZb-_D6"})`
+                                    `url(${this.state.profile_photo ? this.state.profile_photo : "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQOo9ftjYQCU8HW1YByx0oAQdegRxO51mQN0tKKenGRnDZb-_D6"})`
                                     ),
                                   maxWidth:100,
                                   maxHeight:100
                                 }} />
                                 <div className="flex fd-column jc-se">
                                   <h2>{this.props.user.first_name} {this.props.user.last_name}</h2>
-                                  <p className="light-gray">{this.props.user.job_title}</p>
+                                  <p className="light-gray">{this.props.user.job.name}</p>
                                 </div>
-                              </div>  <button className="button">Edit Profile</button>
+                              </div>  <button data-open="editProfile" className="button">Edit Profile</button>
                     </div>
                     ) :
                     ( 
