@@ -24,6 +24,10 @@ type AggregateFile {
   count: Int!
 }
 
+type AggregateJob {
+  count: Int!
+}
+
 type AggregateLibrary {
   count: Int!
 }
@@ -890,6 +894,128 @@ input FileWhereUniqueInput {
   url: String
 }
 
+type Job {
+  id: ID!
+  name: String!
+}
+
+type JobConnection {
+  pageInfo: PageInfo!
+  edges: [JobEdge]!
+  aggregate: AggregateJob!
+}
+
+input JobCreateInput {
+  name: String!
+}
+
+input JobCreateOneInput {
+  create: JobCreateInput
+  connect: JobWhereUniqueInput
+}
+
+type JobEdge {
+  node: Job!
+  cursor: String!
+}
+
+enum JobOrderByInput {
+  id_ASC
+  id_DESC
+  name_ASC
+  name_DESC
+  createdAt_ASC
+  createdAt_DESC
+  updatedAt_ASC
+  updatedAt_DESC
+}
+
+type JobPreviousValues {
+  id: ID!
+  name: String!
+}
+
+type JobSubscriptionPayload {
+  mutation: MutationType!
+  node: Job
+  updatedFields: [String!]
+  previousValues: JobPreviousValues
+}
+
+input JobSubscriptionWhereInput {
+  mutation_in: [MutationType!]
+  updatedFields_contains: String
+  updatedFields_contains_every: [String!]
+  updatedFields_contains_some: [String!]
+  node: JobWhereInput
+  AND: [JobSubscriptionWhereInput!]
+  OR: [JobSubscriptionWhereInput!]
+  NOT: [JobSubscriptionWhereInput!]
+}
+
+input JobUpdateDataInput {
+  name: String
+}
+
+input JobUpdateInput {
+  name: String
+}
+
+input JobUpdateManyMutationInput {
+  name: String
+}
+
+input JobUpdateOneRequiredInput {
+  create: JobCreateInput
+  update: JobUpdateDataInput
+  upsert: JobUpsertNestedInput
+  connect: JobWhereUniqueInput
+}
+
+input JobUpsertNestedInput {
+  update: JobUpdateDataInput!
+  create: JobCreateInput!
+}
+
+input JobWhereInput {
+  id: ID
+  id_not: ID
+  id_in: [ID!]
+  id_not_in: [ID!]
+  id_lt: ID
+  id_lte: ID
+  id_gt: ID
+  id_gte: ID
+  id_contains: ID
+  id_not_contains: ID
+  id_starts_with: ID
+  id_not_starts_with: ID
+  id_ends_with: ID
+  id_not_ends_with: ID
+  name: String
+  name_not: String
+  name_in: [String!]
+  name_not_in: [String!]
+  name_lt: String
+  name_lte: String
+  name_gt: String
+  name_gte: String
+  name_contains: String
+  name_not_contains: String
+  name_starts_with: String
+  name_not_starts_with: String
+  name_ends_with: String
+  name_not_ends_with: String
+  AND: [JobWhereInput!]
+  OR: [JobWhereInput!]
+  NOT: [JobWhereInput!]
+}
+
+input JobWhereUniqueInput {
+  id: ID
+  name: String
+}
+
 type Library {
   id: ID!
   createdBy: User!
@@ -1146,6 +1272,12 @@ type Mutation {
   upsertFile(where: FileWhereUniqueInput!, create: FileCreateInput!, update: FileUpdateInput!): File!
   deleteFile(where: FileWhereUniqueInput!): File
   deleteManyFiles(where: FileWhereInput): BatchPayload!
+  createJob(data: JobCreateInput!): Job!
+  updateJob(data: JobUpdateInput!, where: JobWhereUniqueInput!): Job
+  updateManyJobs(data: JobUpdateManyMutationInput!, where: JobWhereInput): BatchPayload!
+  upsertJob(where: JobWhereUniqueInput!, create: JobCreateInput!, update: JobUpdateInput!): Job!
+  deleteJob(where: JobWhereUniqueInput!): Job
+  deleteManyJobs(where: JobWhereInput): BatchPayload!
   createLibrary(data: LibraryCreateInput!): Library!
   updateLibrary(data: LibraryUpdateInput!, where: LibraryWhereUniqueInput!): Library
   updateManyLibraries(data: LibraryUpdateManyMutationInput!, where: LibraryWhereInput): BatchPayload!
@@ -1217,6 +1349,9 @@ type Query {
   file(where: FileWhereUniqueInput!): File
   files(where: FileWhereInput, orderBy: FileOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [File]!
   filesConnection(where: FileWhereInput, orderBy: FileOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): FileConnection!
+  job(where: JobWhereUniqueInput!): Job
+  jobs(where: JobWhereInput, orderBy: JobOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Job]!
+  jobsConnection(where: JobWhereInput, orderBy: JobOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): JobConnection!
   library(where: LibraryWhereUniqueInput!): Library
   libraries(where: LibraryWhereInput, orderBy: LibraryOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Library]!
   librariesConnection(where: LibraryWhereInput, orderBy: LibraryOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): LibraryConnection!
@@ -1825,6 +1960,7 @@ type Subscription {
   appCategory(where: AppCategorySubscriptionWhereInput): AppCategorySubscriptionPayload
   appVersion(where: AppVersionSubscriptionWhereInput): AppVersionSubscriptionPayload
   file(where: FileSubscriptionWhereInput): FileSubscriptionPayload
+  job(where: JobSubscriptionWhereInput): JobSubscriptionPayload
   library(where: LibrarySubscriptionWhereInput): LibrarySubscriptionPayload
   story(where: StorySubscriptionWhereInput): StorySubscriptionPayload
   storyCategory(where: StoryCategorySubscriptionWhereInput): StoryCategorySubscriptionPayload
@@ -1839,7 +1975,7 @@ type User {
   password: String!
   first_name: String!
   last_name: String!
-  job_title: String!
+  job: Job!
   role: AccountType!
   profile_photo: File
   apps(where: AppWhereInput, orderBy: AppOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [App!]
@@ -1857,7 +1993,7 @@ input UserCreateInput {
   password: String!
   first_name: String!
   last_name: String!
-  job_title: String!
+  job: JobCreateOneInput!
   role: AccountType!
   profile_photo: FileCreateOneInput
   apps: AppCreateManyWithoutCreatedByInput
@@ -1884,7 +2020,7 @@ input UserCreateWithoutAppsInput {
   password: String!
   first_name: String!
   last_name: String!
-  job_title: String!
+  job: JobCreateOneInput!
   role: AccountType!
   profile_photo: FileCreateOneInput
   libraries: LibraryCreateManyWithoutCreatedByInput
@@ -1895,7 +2031,7 @@ input UserCreateWithoutLibrariesInput {
   password: String!
   first_name: String!
   last_name: String!
-  job_title: String!
+  job: JobCreateOneInput!
   role: AccountType!
   profile_photo: FileCreateOneInput
   apps: AppCreateManyWithoutCreatedByInput
@@ -1917,8 +2053,6 @@ enum UserOrderByInput {
   first_name_DESC
   last_name_ASC
   last_name_DESC
-  job_title_ASC
-  job_title_DESC
   role_ASC
   role_DESC
   createdAt_ASC
@@ -1933,7 +2067,6 @@ type UserPreviousValues {
   password: String!
   first_name: String!
   last_name: String!
-  job_title: String!
   role: AccountType!
 }
 
@@ -1960,7 +2093,7 @@ input UserUpdateDataInput {
   password: String
   first_name: String
   last_name: String
-  job_title: String
+  job: JobUpdateOneRequiredInput
   role: AccountType
   profile_photo: FileUpdateOneInput
   apps: AppUpdateManyWithoutCreatedByInput
@@ -1972,7 +2105,7 @@ input UserUpdateInput {
   password: String
   first_name: String
   last_name: String
-  job_title: String
+  job: JobUpdateOneRequiredInput
   role: AccountType
   profile_photo: FileUpdateOneInput
   apps: AppUpdateManyWithoutCreatedByInput
@@ -1984,7 +2117,6 @@ input UserUpdateManyMutationInput {
   password: String
   first_name: String
   last_name: String
-  job_title: String
   role: AccountType
 }
 
@@ -2014,7 +2146,7 @@ input UserUpdateWithoutAppsDataInput {
   password: String
   first_name: String
   last_name: String
-  job_title: String
+  job: JobUpdateOneRequiredInput
   role: AccountType
   profile_photo: FileUpdateOneInput
   libraries: LibraryUpdateManyWithoutCreatedByInput
@@ -2025,7 +2157,7 @@ input UserUpdateWithoutLibrariesDataInput {
   password: String
   first_name: String
   last_name: String
-  job_title: String
+  job: JobUpdateOneRequiredInput
   role: AccountType
   profile_photo: FileUpdateOneInput
   apps: AppUpdateManyWithoutCreatedByInput
@@ -2117,20 +2249,7 @@ input UserWhereInput {
   last_name_not_starts_with: String
   last_name_ends_with: String
   last_name_not_ends_with: String
-  job_title: String
-  job_title_not: String
-  job_title_in: [String!]
-  job_title_not_in: [String!]
-  job_title_lt: String
-  job_title_lte: String
-  job_title_gt: String
-  job_title_gte: String
-  job_title_contains: String
-  job_title_not_contains: String
-  job_title_starts_with: String
-  job_title_not_starts_with: String
-  job_title_ends_with: String
-  job_title_not_ends_with: String
+  job: JobWhereInput
   role: AccountType
   role_not: AccountType
   role_in: [AccountType!]
