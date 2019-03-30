@@ -44,7 +44,7 @@ type User {
   password: String!
   first_name: String!
   last_name: String!
-  job_title: String!
+  job: Job!
   role: AccountType!
   profile_photo: File
   apps: [App!]!
@@ -178,6 +178,14 @@ type Mutation {
     job: ID!
     profile_photo: FileInput
   ): AuthData!
+
+  editProfile(
+    full_name: String
+    job: ID
+    email: String
+    password: String
+    profile_photo: FileInput
+  ): User!
 
   createApp(
     name: String!
