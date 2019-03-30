@@ -1,9 +1,11 @@
+const permissions = require("../permissions");
 
 const appVersions = (root,args,context,info) => {
 	return context.db.query.appVersions({},info);
 }
 
 const createAppVersion = async (root,args,context,info) => {
+	permissions.loginPermission(context,"ADMIN")
 	if (!args.name) {
 		throw new Error("name argument is empty")
 	}
@@ -16,6 +18,7 @@ const createAppVersion = async (root,args,context,info) => {
 }
 
 const appVersionToApp = async (root,args,context,info) => {
+	permissions.loginPermission(context,"ADMIN")
 	if (!args.appVersion || !args.app) {
 		throw new Error("appVersion and/or app argument is empty")
 	}
@@ -31,6 +34,7 @@ const appVersionToApp = async (root,args,context,info) => {
 }
 
 const appVersionToStory = async (root,args,context,info) => {
+	permissions.loginPermission(context,"ADMIN")
 	if (!args.appVersion || !args.story) {
 		throw new Error("appVersion and/or story argument is empty")
 	}
@@ -46,6 +50,7 @@ const appVersionToStory = async (root,args,context,info) => {
 }
 
 const editAppVersion = async (root,args,context,info) => {
+	permissions.loginPermission(context,"ADMIN")
 	if (!args.name || !args.id) {
 		throw new Error("version/id argument is empty")
 	}
@@ -61,6 +66,7 @@ const editAppVersion = async (root,args,context,info) => {
 }
 
 const deleteAppVersion = async (root,args,context,info) => {
+	permissions.loginPermission(context,"ADMIN")
 	if (!args.id) {
 		throw new Error("id argument is empty")
 	}
