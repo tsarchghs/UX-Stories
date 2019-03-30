@@ -34,7 +34,7 @@ const login = async (root,args,context) => {
 const signUp = async (root,args,context) => {
 	var hasLogo; 
 	var profile_photo;
-	if (!args.email || !args.first_name || !args.last_name || !args.password || !args.job_title){
+	if (!args.email || !args.first_name || !args.last_name || !args.password || !args.job){
 		throw new Error("Please check that all of your arguments are not empty!")
 	}
 	if (args.profile_photo && !(args.profile_photo.base64 && args.profile_photo.mimetype)) {
@@ -51,16 +51,18 @@ const signUp = async (root,args,context) => {
 		email: args.email,
 		first_name: args.first_name,
 		last_name: args.last_name,
-		job_title: args.job_title,
 		password: hashed_password,
-		role: "MEMBER"
+		role: "MEMBER",
+		job: {
+			connect:{id:args.job}
+		}
 	}
 	if (profile_photo){
 		userParams["profile_photo"] = {
 			connect: { id: profile_photo.id }
 		}
 	}
-	const user = await context.db.mutation.createUser({data:{...userParams}});
+	const user = await context.db.mutation.createUser({data:userParams});
 	return {
 		userId: user.id,
 		token: createToken(user.id),
