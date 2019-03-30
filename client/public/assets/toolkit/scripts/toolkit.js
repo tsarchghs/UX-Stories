@@ -72,6 +72,22 @@
 		$(this).toggleClass('close');
 	});
 
+	var position = 0;
+
+	$('.input__wo-border .fmt').each(function (index) {
+		$(this).css("top", position + "px");
+
+		position--;
+	});
+
+	$('.input__wo-border .fmt').focusin(function () {
+		$(this).addClass("index");
+	});
+
+	$('.input__wo-border .fmt').focusout(function () {
+		$(this).removeClass("index");
+	});
+
 	$(function () {
 		// $('input, textarea').placeholder();
 		$(document).foundation();
