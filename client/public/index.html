@@ -52,12 +52,47 @@
                     <img src="../../assets/toolkit/images/006-error.svg" alt />
                   </button>
                 </div>
-                <div class=" reveal" id="exampleModal3" data-reveal>
-                  <h2>ANOTHER MODAL!!!</h2>
-                  <button class="close-button" data-close aria-label="Close reveal" type="button">
-                    <span aria-hidden="true">×</span>
-                  </button>
+                            
+            <div class="modal reveal" id="editProfile" data-reveal>
+              <div id="loadingProfile">
+                <center style={this.props.style}>
+                    <img src="/assets/toolkit/images/logo.svg" alt /><br/>
+                    <img src="https://loading.io/spinners/rolling/lg.curve-bars-loading-indicator.gif" />
+                </center>
+              </div>
+
+              <form id="edit_profile" style="display: none;">
+                <h3 class="modal__title">Edit profile</h3>
+                  <div class="modal__content">
+                    <div class="modal__upload">
+                      <img id="profile_image" class="modal__img" src="https://scontent.fprn1-1.fna.fbcdn.net/v/t1.0-1/p160x160/35988964_1041356179350456_5301902918050381824_n.jpg?_nc_cat=105&_nc_ht=scontent.fprn1-1.fna&oh=2142e132de1a494501a3fc90d51e365c&oe=5D4FB1D7" />
+                      <input type="file" id="uploadPhotoInput" hidden>
+                      <button type="button" id="uploadPhotoButton" class="button naked smaller">Upload photo</button>
+                    </div>
+                    <div class="modal__form">
+                      <p class="bold">Personal</p>
+                      <input class="input" id="p_full_name" type="text" placeholder="First and last name">
+                      <div class="select__div">
+                        <select id="p_job">
+                        </select>
+                      </div>
+                    </div>
+                    <div class="modal__form">
+                      <p class="bold">Account</p>
+                      <input class="input" id="p_email" type="email" placeholder="Email">
+                      <input class="input" id="p_password" type="password" placeholder="New password">
+                    </div>
+                  </div>
+                <div class="text-right">
+                  <button class="button smaller">Update profile</button>
                 </div>
+                <button id="closeEditProfile" class="close-button" data-close aria-label="Close reveal" type="button">
+                  <img src="../../assets/toolkit/images/006-error.svg" alt="">
+                </button>
+              </div>
+            </form>
+
+
     </div>
       
 
