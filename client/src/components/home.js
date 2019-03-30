@@ -48,7 +48,7 @@ class Home extends React.Component {
             storyName_contains:"${storyName_contains}"
             ${this.state.filterBy.appCategory === undefined ? "" : `appCategory: "${this.state.filterBy.appCategory}"`}
             storyCategories: ${JSON.stringify(filters.storyCategories)}
-            elements: ${JSON.stringify(filters.storyElements)}
+            storyElements: ${JSON.stringify(filters.storyElements)}
           }) {
             id
             thumbnail {
