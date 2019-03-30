@@ -1,8 +1,8 @@
 
 
 module.exports = {
-	loginPermission: (context,role) => {
-		if (!context.loggedIn || !context.user) {
+	loginPermission: (context,role) => {	
+		if (!context.user) {
 			throw new Error("You must be logged in");
 		}
 		if (role === "ADMIN" && (context.user.role === "MEMBER") ) {
