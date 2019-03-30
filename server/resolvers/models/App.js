@@ -54,7 +54,7 @@ const apps = async (root,args,context,info) => {
 				))
 		}
 	}
-	const apps = await context.db.query	.apps(filterBy,info);
+	const apps = await context.db.query.apps(filterBy,info);
 	return apps;
 }
 
