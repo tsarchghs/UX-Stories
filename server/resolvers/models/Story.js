@@ -42,7 +42,7 @@ const stories = async (root,args,context,info) => {
 		if (args.storiesFilterInput.storyCategories && args.storiesFilterInput.storyCategories.length){
 			filterBy["where"]["AND"] = filterBy["where"]["AND"].concat(
 				args.storiesFilterInput.storyCategories.map(storyCategory => ({
-					storyCategories: {
+					storyCategories_some: {
 						id: storyCategory
 					}
 				}))
@@ -80,7 +80,8 @@ const createStory = async (root,args,context,info) => {
 		!args.video ||
 		!args.thumbnail || 
 		!args.appVersions ||
-		!args.storyCategories
+		!args.storyCategories ||
+		!args.storyElements
 	){
 		throw new Error("Please make sure that all of your arguments are non empty!");
 	}
@@ -94,6 +95,7 @@ const createStory = async (root,args,context,info) => {
 
 	const connectAppVersions = args.appVersions.map(x => ({id: x}));
 	const connectAppCategories = args.storyCategories.map(x => ({id: x}));
+	const connectStoryElements = args.storyElements.map(x => ({id: x}));
 	const story = await context.db.mutation.createStory({
 		data:{
 			createdBy: {
@@ -125,10 +127,81 @@ const createStory = async (root,args,context,info) => {
 			},
 			storyCategories: {
 				connect: [...connectAppCategories]
+			},
+			storyElements: {
+				conenct: [...connectStoryElements]
 			}
 		}
 	},info)
 	return story
+}
+
+const editStory = async (root,args,context,info) =>{
+	permissions.loginPermission(context,"ADMIN")
+	if (!args.id){
+		throw new Error("id argument is required");
+	}
+	if (args.app || (args.appVersions && args.appVersions.length) ||
+		(args.storyCategories && args.storyCategories.length) ||
+		(args.storyElements && args.storyElements.length) ||
+		(args.video && args.video.base64 && args.video.mimetype) ||
+		(args.thumbnail && args.thumbnail.base64 && args.thumbnail.mimetype) 
+	){
+		let data = {}
+		if (args.app) {
+			data["app"] = {
+				connect:{id:args.app}
+			}
+		}
+		if (args.storyElements && args.storyElements.length){
+			let links = {}
+			args.storyElements.map(x => {
+				links[x.type] = {id:x.storyElement}
+			});
+			data["storyElements"] = links
+		}
+		if (args.appVersions && args.appVersions.length){
+			let links = {}
+			args.appVersion.map(x => {
+				links[x.type] = {id:x.appVersion}
+			});
+
+			data["appVersions"] = links
+		}
+		if (args.storyCategories && args.storyCategories.length){
+			let links = {}
+			args.storyCategories.map(x => {
+				links[x.type] = {id:x.storyCategory}
+			});
+			data["storyCategories"] = links
+		}
+		if (args.thumbnail && args.thumbnail.base64 && args.thumbnail.mimetype){
+			const thumbnail = await fileHandling.processUpload(args.thumbnail.base64,
+																args.thumbnail.mimetype,
+																context);
+			data["thumbnail"] = {connect:{id:thumbnail.id}};
+		}
+		if (args.video && args.video.base64 && args.video.mimetype){
+			const videoFile = await fileHandling.processUpload(args.video.base64,
+															args.video.mimetype,
+															context);
+			data["video"] = {
+				create:{
+					file:{
+						connect:{
+							id:videoFile.id}
+						}
+					}
+				} 
+		}
+		const story = await context.db.mutation.updateStory({
+			data,
+			where:{id:args.id}
+		})
+		return story;
+	} else {
+		throw new Error("At least an argument other than id must be specified");
+	}
 }
 
 const storyToLibrary = async (root,args,context,info) => {
@@ -168,5 +241,6 @@ module.exports = {
 	stories,
 	createStory,
 	storyToLibrary,
-	storyToApp
+	storyToApp,
+	editStory
 }
