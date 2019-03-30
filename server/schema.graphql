@@ -182,6 +182,17 @@ type Mutation {
     company: String!
   ): App!
 
+  editApp(
+    id: ID!
+    name: String
+    description: String
+    platform: Platform
+    logo: FileInput
+    appVersions: [AppVersionLinkInput!]
+    appCategory: String
+    company: String
+    ): App!
+
   createAppCategory(
     name: String!
   ): AppCategory!
