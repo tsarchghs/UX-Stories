@@ -241,4 +241,38 @@ type Mutation {
   createStoryCategory(
     name: String!
   ): StoryCategory!
+
+  storyCategoryToStory(
+    storyCategory: ID!
+    story: ID!  
+    type: LinkType!
+  ): Story!
+
+  editStoryCategory(
+    id: ID!
+    name: String!
+  ): StoryCategory!
+
+  deleteStoryCategory(
+    id: ID!
+  ): StoryCategory!
+
+  createStoryElement(
+    name: String!
+  ): StoryElement!
+
+  storyElementToStory(
+    story: ID!
+    storyElement: ID! 
+    type: LinkType!  
+  ): Story!
+
+  editStoryElement(
+    id: ID!
+    name: String!
+  ): StoryElement!
+
+  deleteStoryElement(
+    id: ID!
+  ): StoryElement!
 }

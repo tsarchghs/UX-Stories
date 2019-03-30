@@ -40,6 +40,13 @@ module.exports = {
 		storyToLibrary: storyResolvers.storyToLibrary,
 		storyToApp: storyResolvers.storyToApp,
 		createStoryCategory: storyCategoryResolvers.createStoryCategory,
+		storyCategoryToStory: storyCategoryResolvers.storyCategoryToStory,
+		editStoryCategory: storyCategoryResolvers.editStoryCategory,
+		deleteStoryCategory: storyCategoryResolvers.deleteStoryCategory,
+		createStoryElement: storyElementResolvers.createStoryElement,
+		storyElementToStory: storyElementResolvers.storyElementToStory,
+		editStoryElement: storyElementResolvers.editStoryElement,
+		deleteStoryElement: storyElementResolvers.deleteStoryElement,
 		uploadFile: fileResolvers.uploadFile
 	}
 }
