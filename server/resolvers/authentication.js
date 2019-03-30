@@ -60,7 +60,7 @@ const signUp = async (root,args,context) => {
 			connect: { id: profile_photo.id }
 		}
 	}
-	const user = await context.db.mutation.createUser({data:{userParams}});
+	const user = await context.db.mutation.createUser({data:{...userParams}});
 	return {
 		userId: user.id,
 		token: createToken(user.id),
