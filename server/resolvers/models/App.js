@@ -1,4 +1,5 @@
 const fileHandling = require("../../modules/fileApi");
+const permissions = require("../permissions");
 
 const app = async (root,args,context,info) => {
 	return await context.db.query.app({
@@ -59,6 +60,7 @@ const apps = async (root,args,context,info) => {
 
 
 const createApp = async (root,args,context,info) => {
+	permissions.loginPermission(context,"ADMIN")
 	if (!args.name || !args.description || !args.platform || !args.logo.base64 ||
 		 !args.logo.mimetype || !args.appVersion || !args.appCategory) {
 		throw new Error("Please check that all of your arguments are not empty!")
