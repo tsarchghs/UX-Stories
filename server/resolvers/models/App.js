@@ -104,8 +104,48 @@ const createApp = async (root,args,context,info) => {
 	return app
 }
 
+const editApp = async (root,args,context,info) => {
+	permissions.loginPermission(context,"ADMIN")
+	if (!args.id){
+		throw new Error("id argument is required"); 
+	}
+	if (args.name || args.description || args.platform || args.company ||
+		(args.logo && args.logo.base64 && args.logo.mimetype) || 
+		 args.appCategory || (args.appVersions && args.appVersions.length)
+	){		
+		let data = {};
+		let nonrelations = ["name","description","platform","company"]
+		for (var x in nonrelations){
+			if (args[nonrelations[x]]){
+				data[nonrelations[x]] = args[nonrelations[x]];
+			}
+		}
+		if (args.logo && args.logo.base64 && args.logo.mimetype){
+			const logo = await fileHandling.processUpload(args.logo.base64,
+															args.logo.mimetype,
+															context);
+			data["logo"] = {connect:{id:logo.id}}
+		}
+		if (args.appCategory){
+			data["appCategory"] = {connect:{id:args.appCategory}}
+		}
+		if (args.appVersions && args.appVersions.length){
+			let links = {}
+			args.appVersions.map(x => {
+				links[x.type] = {id:x.appVersion
+			}});	
+			data["appVersions"] = links
+		}
+		let app = await context.db.mutation.updateApp({data,where:{id:args.id}});
+		return app
+	} else {
+		throw new Error("At least an argument besides id must be specified");
+	}
+}
+
 module.exports = {
 	app,
 	apps,
-	createApp
+	createApp,
+	editApp
 }
