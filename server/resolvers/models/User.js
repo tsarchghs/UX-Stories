@@ -41,7 +41,9 @@ const editProfile = async (parent,args,context,info) => {
 }
 
 const getLoggedInUser = async (parent,args,context,info) => {
-	permissions.loginPermission(context,"MEMBER");
+	if (!context.user){
+		throw new Error("Not logged in");
+	}
 	return await context.db.query.user({
 		where:{id:context.user.id}
 	},info);
