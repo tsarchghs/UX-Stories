@@ -4,8 +4,8 @@ class Loading extends React.Component {
 	render() {
 		return (
 	        <center style={this.props.style}>
-	            <img src="/assets/toolkit/images/logo.svg" alt /><br/>
-	            <img src="https://loading.io/spinners/rolling/lg.curve-bars-loading-indicator.gif" />
+	            {this.props.show_logo ? <div><img src="/assets/toolkit/images/logo.svg" alt /><br/></div> : ""}
+	            <img style={this.props.style} src="https://loading.io/spinners/rolling/lg.curve-bars-loading-indicator.gif" />
 	        </center>
 		);
 	}
