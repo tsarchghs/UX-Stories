@@ -4,7 +4,7 @@ const permissions = require("../permissions");
 const stories = async (root,args,context,info) => {
 	if (args.storiesFilterInput && 
 		!(
-			args.storiesFilterInput.app || args.storiesFilterInput.appCategory || typeof(args.storiesFilterInput.storyName_contains) === "string" ||
+			args.storiesFilterInput.first || args.storiesFilterInput.skip || args.storiesFilterInput.app || args.storiesFilterInput.appCategory || typeof(args.storiesFilterInput.storyName_contains) === "string" ||
 			(args.storiesFilterInput.storyCategories && args.storiesFilterInput.storyCategories.length) ||
 			(args.storiesFilterInput.appVersions && args.storiesFilterInput.appVersions.length) ||
 
@@ -67,6 +67,12 @@ const stories = async (root,args,context,info) => {
 						}
 					}
 				)))
+		}
+		if (args.storiesFilterInput.first){
+			filterBy["first"] = args.storiesFilterInput.first
+		}
+		if (args.storiesFilterInput.skip){
+			filterBy["skip"] = args.storiesFilterInput.skip
 		}
 	}
 	const storiesL = context.db.query.stories(filterBy,info);
