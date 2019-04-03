@@ -72,6 +72,29 @@
 		$(this).toggleClass('close');
 	});
 
+	$('.radio__container').change(function () {
+		$(this).toggleClass('checked');
+	});
+
+	$('.radio-t').change(function () {
+		$('.rde').removeClass('checked');
+		$(this).toggleClass('checked');
+	});
+
+	// $('.filter').click(function(){
+	//   $('.cfilter').removeClass("opened");
+	// 	$(this).toggleClass('opened');
+
+	// });
+
+	// $(document).click(function(e) {
+	// 	console.log($(e.target).parents(".filter-dropdown").length)
+	//     if (!$(e.target).hasClass('fbtn') && $(e.target).parents(".filter-dropdown").length === 0) {
+	// 			$('.filter').removeClass('opened');
+	//     }
+	// });
+
+
 	var position = 0;
 
 	$('.input__wo-border .fmt').each(function (index) {
@@ -138,6 +161,10 @@
 
 	var _foundation2 = __webpack_require__(15);
 
+	var _foundation3 = __webpack_require__(18);
+
+	var _foundation4 = __webpack_require__(19);
+
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 	_foundation.Foundation.addToJquery(_jquery2.default);
@@ -177,11 +204,9 @@
 	// import { Drilldown } from '../../vendor/foundation-sites/js/foundation.drilldown';
 	// Foundation.plugin(Drilldown, 'Drilldown');
 
-	// import { Dropdown } from '../../vendor/foundation-sites/js/foundation.dropdown';
-	// Foundation.plugin(Dropdown, 'Dropdown');
+	_foundation.Foundation.plugin(_foundation2.Dropdown, 'Dropdown');
 
-	// import { DropdownMenu } from '../../vendor/foundation-sites/js/foundation.dropdownMenu';
-	// Foundation.plugin(DropdownMenu, 'DropdownMenu');
+	_foundation.Foundation.plugin(_foundation3.DropdownMenu, 'DropdownMenu');
 
 	// import { Equalizer } from '../../vendor/foundation-sites/js/foundation.equalizer';
 	// Foundation.plugin(Equalizer, 'Equalizer');
@@ -204,7 +229,7 @@
 	// import { ResponsiveToggle } from '../../vendor/foundation-sites/js/foundation.responsiveToggle';
 	// Foundation.plugin(ResponsiveToggle, 'ResponsiveToggle');
 
-	_foundation.Foundation.plugin(_foundation2.Reveal, 'Reveal');
+	_foundation.Foundation.plugin(_foundation4.Reveal, 'Reveal');
 
 	// import { Slider } from '../../vendor/foundation-sites/js/foundation.slider';
 	// Foundation.plugin(Slider, 'Slider');
@@ -2117,6 +2142,1330 @@
 	Object.defineProperty(exports, "__esModule", {
 	  value: true
 	});
+	exports.Dropdown = undefined;
+
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+	var _get = function get(object, property, receiver) { if (object === null) object = Function.prototype; var desc = Object.getOwnPropertyDescriptor(object, property); if (desc === undefined) { var parent = Object.getPrototypeOf(object); if (parent === null) { return undefined; } else { return get(parent, property, receiver); } } else if ("value" in desc) { return desc.value; } else { var getter = desc.get; if (getter === undefined) { return undefined; } return getter.call(receiver); } };
+
+	var _jquery = __webpack_require__(2);
+
+	var _jquery2 = _interopRequireDefault(_jquery);
+
+	var _foundationUtil = __webpack_require__(9);
+
+	var _foundationUtil2 = __webpack_require__(5);
+
+	var _foundation = __webpack_require__(16);
+
+	var _foundationUtil3 = __webpack_require__(14);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+	/**
+	 * Dropdown module.
+	 * @module foundation.dropdown
+	 * @requires foundation.util.keyboard
+	 * @requires foundation.util.box
+	 * @requires foundation.util.triggers
+	 */
+	var Dropdown = function (_Positionable) {
+	  _inherits(Dropdown, _Positionable);
+
+	  function Dropdown() {
+	    _classCallCheck(this, Dropdown);
+
+	    return _possibleConstructorReturn(this, (Dropdown.__proto__ || Object.getPrototypeOf(Dropdown)).apply(this, arguments));
+	  }
+
+	  _createClass(Dropdown, [{
+	    key: '_setup',
+
+	    /**
+	     * Creates a new instance of a dropdown.
+	     * @class
+	     * @name Dropdown
+	     * @param {jQuery} element - jQuery object to make into a dropdown.
+	     *        Object should be of the dropdown panel, rather than its anchor.
+	     * @param {Object} options - Overrides to the default plugin settings.
+	     */
+	    value: function _setup(element, options) {
+	      this.$element = element;
+	      this.options = _jquery2.default.extend({}, Dropdown.defaults, this.$element.data(), options);
+	      this.className = 'Dropdown'; // ie9 back compat
+
+	      // Triggers init is idempotent, just need to make sure it is initialized
+	      _foundationUtil3.Triggers.init(_jquery2.default);
+
+	      this._init();
+
+	      _foundationUtil.Keyboard.register('Dropdown', {
+	        'ENTER': 'open',
+	        'SPACE': 'open',
+	        'ESCAPE': 'close'
+	      });
+	    }
+
+	    /**
+	     * Initializes the plugin by setting/checking options and attributes, adding helper variables, and saving the anchor.
+	     * @function
+	     * @private
+	     */
+
+	  }, {
+	    key: '_init',
+	    value: function _init() {
+	      var $id = this.$element.attr('id');
+
+	      this.$anchor = (0, _jquery2.default)('[data-toggle="' + $id + '"]').length ? (0, _jquery2.default)('[data-toggle="' + $id + '"]') : (0, _jquery2.default)('[data-open="' + $id + '"]');
+	      this.$anchor.attr({
+	        'aria-controls': $id,
+	        'data-is-focus': false,
+	        'data-yeti-box': $id,
+	        'aria-haspopup': true,
+	        'aria-expanded': false
+
+	      });
+
+	      if (this.options.parentClass) {
+	        this.$parent = this.$element.parents('.' + this.options.parentClass);
+	      } else {
+	        this.$parent = null;
+	      }
+
+	      this.$element.attr({
+	        'aria-hidden': 'true',
+	        'data-yeti-box': $id,
+	        'data-resize': $id,
+	        'aria-labelledby': this.$anchor[0].id || (0, _foundationUtil2.GetYoDigits)(6, 'dd-anchor')
+	      });
+	      _get(Dropdown.prototype.__proto__ || Object.getPrototypeOf(Dropdown.prototype), '_init', this).call(this);
+	      this._events();
+	    }
+	  }, {
+	    key: '_getDefaultPosition',
+	    value: function _getDefaultPosition() {
+	      // handle legacy classnames
+	      var position = this.$element[0].className.match(/(top|left|right|bottom)/g);
+	      if (position) {
+	        return position[0];
+	      } else {
+	        return 'bottom';
+	      }
+	    }
+	  }, {
+	    key: '_getDefaultAlignment',
+	    value: function _getDefaultAlignment() {
+	      // handle legacy float approach
+	      var horizontalPosition = /float-(\S+)/.exec(this.$anchor[0].className);
+	      if (horizontalPosition) {
+	        return horizontalPosition[1];
+	      }
+
+	      return _get(Dropdown.prototype.__proto__ || Object.getPrototypeOf(Dropdown.prototype), '_getDefaultAlignment', this).call(this);
+	    }
+
+	    /**
+	     * Sets the position and orientation of the dropdown pane, checks for collisions if allow-overlap is not true.
+	     * Recursively calls itself if a collision is detected, with a new position class.
+	     * @function
+	     * @private
+	     */
+
+	  }, {
+	    key: '_setPosition',
+	    value: function _setPosition() {
+	      _get(Dropdown.prototype.__proto__ || Object.getPrototypeOf(Dropdown.prototype), '_setPosition', this).call(this, this.$anchor, this.$element, this.$parent);
+	    }
+
+	    /**
+	     * Adds event listeners to the element utilizing the triggers utility library.
+	     * @function
+	     * @private
+	     */
+
+	  }, {
+	    key: '_events',
+	    value: function _events() {
+	      var _this = this;
+	      this.$element.on({
+	        'open.zf.trigger': this.open.bind(this),
+	        'close.zf.trigger': this.close.bind(this),
+	        'toggle.zf.trigger': this.toggle.bind(this),
+	        'resizeme.zf.trigger': this._setPosition.bind(this)
+	      });
+
+	      if (this.options.hover) {
+	        this.$anchor.off('mouseenter.zf.dropdown mouseleave.zf.dropdown').on('mouseenter.zf.dropdown', function () {
+	          var bodyData = (0, _jquery2.default)('body').data();
+	          if (typeof bodyData.whatinput === 'undefined' || bodyData.whatinput === 'mouse') {
+	            clearTimeout(_this.timeout);
+	            _this.timeout = setTimeout(function () {
+	              _this.open();
+	              _this.$anchor.data('hover', true);
+	            }, _this.options.hoverDelay);
+	          }
+	        }).on('mouseleave.zf.dropdown', function () {
+	          clearTimeout(_this.timeout);
+	          _this.timeout = setTimeout(function () {
+	            _this.close();
+	            _this.$anchor.data('hover', false);
+	          }, _this.options.hoverDelay);
+	        });
+	        if (this.options.hoverPane) {
+	          this.$element.off('mouseenter.zf.dropdown mouseleave.zf.dropdown').on('mouseenter.zf.dropdown', function () {
+	            clearTimeout(_this.timeout);
+	          }).on('mouseleave.zf.dropdown', function () {
+	            clearTimeout(_this.timeout);
+	            _this.timeout = setTimeout(function () {
+	              _this.close();
+	              _this.$anchor.data('hover', false);
+	            }, _this.options.hoverDelay);
+	          });
+	        }
+	      }
+	      this.$anchor.add(this.$element).on('keydown.zf.dropdown', function (e) {
+
+	        var $target = (0, _jquery2.default)(this),
+	            visibleFocusableElements = _foundationUtil.Keyboard.findFocusable(_this.$element);
+
+	        _foundationUtil.Keyboard.handleKey(e, 'Dropdown', {
+	          open: function open() {
+	            if ($target.is(_this.$anchor)) {
+	              _this.open();
+	              _this.$element.attr('tabindex', -1).focus();
+	              e.preventDefault();
+	            }
+	          },
+	          close: function close() {
+	            _this.close();
+	            _this.$anchor.focus();
+	          }
+	        });
+	      });
+	    }
+
+	    /**
+	     * Adds an event handler to the body to close any dropdowns on a click.
+	     * @function
+	     * @private
+	     */
+
+	  }, {
+	    key: '_addBodyHandler',
+	    value: function _addBodyHandler() {
+	      var $body = (0, _jquery2.default)(document.body).not(this.$element),
+	          _this = this;
+	      $body.off('click.zf.dropdown').on('click.zf.dropdown', function (e) {
+	        if (_this.$anchor.is(e.target) || _this.$anchor.find(e.target).length) {
+	          return;
+	        }
+	        if (_this.$element.find(e.target).length) {
+	          return;
+	        }
+	        _this.close();
+	        $body.off('click.zf.dropdown');
+	      });
+	    }
+
+	    /**
+	     * Opens the dropdown pane, and fires a bubbling event to close other dropdowns.
+	     * @function
+	     * @fires Dropdown#closeme
+	     * @fires Dropdown#show
+	     */
+
+	  }, {
+	    key: 'open',
+	    value: function open() {
+	      // var _this = this;
+	      /**
+	       * Fires to close other open dropdowns, typically when dropdown is opening
+	       * @event Dropdown#closeme
+	       */
+	      this.$element.trigger('closeme.zf.dropdown', this.$element.attr('id'));
+	      this.$anchor.addClass('hover').attr({ 'aria-expanded': true });
+	      // this.$element/*.show()*/;
+
+	      this.$element.addClass('is-opening');
+	      this._setPosition();
+	      this.$element.removeClass('is-opening').addClass('is-open').attr({ 'aria-hidden': false });
+
+	      if (this.options.autoFocus) {
+	        var $focusable = _foundationUtil.Keyboard.findFocusable(this.$element);
+	        if ($focusable.length) {
+	          $focusable.eq(0).focus();
+	        }
+	      }
+
+	      if (this.options.closeOnClick) {
+	        this._addBodyHandler();
+	      }
+
+	      if (this.options.trapFocus) {
+	        _foundationUtil.Keyboard.trapFocus(this.$element);
+	      }
+
+	      /**
+	       * Fires once the dropdown is visible.
+	       * @event Dropdown#show
+	       */
+	      this.$element.trigger('show.zf.dropdown', [this.$element]);
+	    }
+
+	    /**
+	     * Closes the open dropdown pane.
+	     * @function
+	     * @fires Dropdown#hide
+	     */
+
+	  }, {
+	    key: 'close',
+	    value: function close() {
+	      if (!this.$element.hasClass('is-open')) {
+	        return false;
+	      }
+	      this.$element.removeClass('is-open').attr({ 'aria-hidden': true });
+
+	      this.$anchor.removeClass('hover').attr('aria-expanded', false);
+
+	      /**
+	       * Fires once the dropdown is no longer visible.
+	       * @event Dropdown#hide
+	       */
+	      this.$element.trigger('hide.zf.dropdown', [this.$element]);
+
+	      if (this.options.trapFocus) {
+	        _foundationUtil.Keyboard.releaseFocus(this.$element);
+	      }
+	    }
+
+	    /**
+	     * Toggles the dropdown pane's visibility.
+	     * @function
+	     */
+
+	  }, {
+	    key: 'toggle',
+	    value: function toggle() {
+	      if (this.$element.hasClass('is-open')) {
+	        if (this.$anchor.data('hover')) return;
+	        this.close();
+	      } else {
+	        this.open();
+	      }
+	    }
+
+	    /**
+	     * Destroys the dropdown.
+	     * @function
+	     */
+
+	  }, {
+	    key: '_destroy',
+	    value: function _destroy() {
+	      this.$element.off('.zf.trigger').hide();
+	      this.$anchor.off('.zf.dropdown');
+	      (0, _jquery2.default)(document.body).off('click.zf.dropdown');
+	    }
+	  }]);
+
+	  return Dropdown;
+	}(_foundation.Positionable);
+
+	Dropdown.defaults = {
+	  /**
+	   * Class that designates bounding container of Dropdown (default: window)
+	   * @option
+	   * @type {?string}
+	   * @default null
+	   */
+	  parentClass: null,
+	  /**
+	   * Amount of time to delay opening a submenu on hover event.
+	   * @option
+	   * @type {number}
+	   * @default 250
+	   */
+	  hoverDelay: 250,
+	  /**
+	   * Allow submenus to open on hover events
+	   * @option
+	   * @type {boolean}
+	   * @default false
+	   */
+	  hover: false,
+	  /**
+	   * Don't close dropdown when hovering over dropdown pane
+	   * @option
+	   * @type {boolean}
+	   * @default false
+	   */
+	  hoverPane: false,
+	  /**
+	   * Number of pixels between the dropdown pane and the triggering element on open.
+	   * @option
+	   * @type {number}
+	   * @default 0
+	   */
+	  vOffset: 0,
+	  /**
+	   * Number of pixels between the dropdown pane and the triggering element on open.
+	   * @option
+	   * @type {number}
+	   * @default 0
+	   */
+	  hOffset: 0,
+	  /**
+	   * DEPRECATED: Class applied to adjust open position.
+	   * @option
+	   * @type {string}
+	   * @default ''
+	   */
+	  positionClass: '',
+
+	  /**
+	   * Position of dropdown. Can be left, right, bottom, top, or auto.
+	   * @option
+	   * @type {string}
+	   * @default 'auto'
+	   */
+	  position: 'auto',
+	  /**
+	   * Alignment of dropdown relative to anchor. Can be left, right, bottom, top, center, or auto.
+	   * @option
+	   * @type {string}
+	   * @default 'auto'
+	   */
+	  alignment: 'auto',
+	  /**
+	   * Allow overlap of container/window. If false, dropdown will first try to position as defined by data-position and data-alignment, but reposition if it would cause an overflow.
+	   * @option
+	   * @type {boolean}
+	   * @default false
+	   */
+	  allowOverlap: false,
+	  /**
+	   * Allow overlap of only the bottom of the container. This is the most common
+	   * behavior for dropdowns, allowing the dropdown to extend the bottom of the
+	   * screen but not otherwise influence or break out of the container.
+	   * @option
+	   * @type {boolean}
+	   * @default true
+	   */
+	  allowBottomOverlap: true,
+	  /**
+	   * Allow the plugin to trap focus to the dropdown pane if opened with keyboard commands.
+	   * @option
+	   * @type {boolean}
+	   * @default false
+	   */
+	  trapFocus: false,
+	  /**
+	   * Allow the plugin to set focus to the first focusable element within the pane, regardless of method of opening.
+	   * @option
+	   * @type {boolean}
+	   * @default false
+	   */
+	  autoFocus: false,
+	  /**
+	   * Allows a click on the body to close the dropdown.
+	   * @option
+	   * @type {boolean}
+	   * @default false
+	   */
+	  closeOnClick: false
+	};
+
+	exports.Dropdown = Dropdown;
+
+/***/ }),
+/* 16 */
+/***/ (function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	exports.Positionable = undefined;
+
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+	var _foundationUtil = __webpack_require__(7);
+
+	var _foundation = __webpack_require__(17);
+
+	var _foundationUtil2 = __webpack_require__(5);
+
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+	var POSITIONS = ['left', 'right', 'top', 'bottom'];
+	var VERTICAL_ALIGNMENTS = ['top', 'bottom', 'center'];
+	var HORIZONTAL_ALIGNMENTS = ['left', 'right', 'center'];
+
+	var ALIGNMENTS = {
+	  'left': VERTICAL_ALIGNMENTS,
+	  'right': VERTICAL_ALIGNMENTS,
+	  'top': HORIZONTAL_ALIGNMENTS,
+	  'bottom': HORIZONTAL_ALIGNMENTS
+	};
+
+	function nextItem(item, array) {
+	  var currentIdx = array.indexOf(item);
+	  if (currentIdx === array.length - 1) {
+	    return array[0];
+	  } else {
+	    return array[currentIdx + 1];
+	  }
+	}
+
+	var Positionable = function (_Plugin) {
+	  _inherits(Positionable, _Plugin);
+
+	  function Positionable() {
+	    _classCallCheck(this, Positionable);
+
+	    return _possibleConstructorReturn(this, (Positionable.__proto__ || Object.getPrototypeOf(Positionable)).apply(this, arguments));
+	  }
+
+	  _createClass(Positionable, [{
+	    key: '_init',
+
+	    /**
+	     * Abstract class encapsulating the tether-like explicit positioning logic
+	     * including repositioning based on overlap.
+	     * Expects classes to define defaults for vOffset, hOffset, position,
+	     * alignment, allowOverlap, and allowBottomOverlap. They can do this by
+	     * extending the defaults, or (for now recommended due to the way docs are
+	     * generated) by explicitly declaring them.
+	     *
+	     **/
+
+	    value: function _init() {
+	      this.triedPositions = {};
+	      this.position = this.options.position === 'auto' ? this._getDefaultPosition() : this.options.position;
+	      this.alignment = this.options.alignment === 'auto' ? this._getDefaultAlignment() : this.options.alignment;
+	    }
+	  }, {
+	    key: '_getDefaultPosition',
+	    value: function _getDefaultPosition() {
+	      return 'bottom';
+	    }
+	  }, {
+	    key: '_getDefaultAlignment',
+	    value: function _getDefaultAlignment() {
+	      switch (this.position) {
+	        case 'bottom':
+	        case 'top':
+	          return (0, _foundationUtil2.rtl)() ? 'right' : 'left';
+	        case 'left':
+	        case 'right':
+	          return 'bottom';
+	      }
+	    }
+
+	    /**
+	     * Adjusts the positionable possible positions by iterating through alignments
+	     * and positions.
+	     * @function
+	     * @private
+	     */
+
+	  }, {
+	    key: '_reposition',
+	    value: function _reposition() {
+	      if (this._alignmentsExhausted(this.position)) {
+	        this.position = nextItem(this.position, POSITIONS);
+	        this.alignment = ALIGNMENTS[this.position][0];
+	      } else {
+	        this._realign();
+	      }
+	    }
+
+	    /**
+	     * Adjusts the dropdown pane possible positions by iterating through alignments
+	     * on the current position.
+	     * @function
+	     * @private
+	     */
+
+	  }, {
+	    key: '_realign',
+	    value: function _realign() {
+	      this._addTriedPosition(this.position, this.alignment);
+	      this.alignment = nextItem(this.alignment, ALIGNMENTS[this.position]);
+	    }
+	  }, {
+	    key: '_addTriedPosition',
+	    value: function _addTriedPosition(position, alignment) {
+	      this.triedPositions[position] = this.triedPositions[position] || [];
+	      this.triedPositions[position].push(alignment);
+	    }
+	  }, {
+	    key: '_positionsExhausted',
+	    value: function _positionsExhausted() {
+	      var isExhausted = true;
+	      for (var i = 0; i < POSITIONS.length; i++) {
+	        isExhausted = isExhausted && this._alignmentsExhausted(POSITIONS[i]);
+	      }
+	      return isExhausted;
+	    }
+	  }, {
+	    key: '_alignmentsExhausted',
+	    value: function _alignmentsExhausted(position) {
+	      return this.triedPositions[position] && this.triedPositions[position].length == ALIGNMENTS[position].length;
+	    }
+
+	    // When we're trying to center, we don't want to apply offset that's going to
+	    // take us just off center, so wrap around to return 0 for the appropriate
+	    // offset in those alignments.  TODO: Figure out if we want to make this
+	    // configurable behavior... it feels more intuitive, especially for tooltips, but
+	    // it's possible someone might actually want to start from center and then nudge
+	    // slightly off.
+
+	  }, {
+	    key: '_getVOffset',
+	    value: function _getVOffset() {
+	      return this.options.vOffset;
+	    }
+	  }, {
+	    key: '_getHOffset',
+	    value: function _getHOffset() {
+	      return this.options.hOffset;
+	    }
+	  }, {
+	    key: '_setPosition',
+	    value: function _setPosition($anchor, $element, $parent) {
+	      if ($anchor.attr('aria-expanded') === 'false') {
+	        return false;
+	      }
+	      var $eleDims = _foundationUtil.Box.GetDimensions($element),
+	          $anchorDims = _foundationUtil.Box.GetDimensions($anchor);
+
+	      $element.offset(_foundationUtil.Box.GetExplicitOffsets($element, $anchor, this.position, this.alignment, this._getVOffset(), this._getHOffset()));
+
+	      if (!this.options.allowOverlap) {
+	        var overlaps = {};
+	        var minOverlap = 100000000;
+	        // default coordinates to how we start, in case we can't figure out better
+	        var minCoordinates = { position: this.position, alignment: this.alignment };
+	        while (!this._positionsExhausted()) {
+	          var overlap = _foundationUtil.Box.OverlapArea($element, $parent, false, false, this.options.allowBottomOverlap);
+	          if (overlap === 0) {
+	            return;
+	          }
+
+	          if (overlap < minOverlap) {
+	            minOverlap = overlap;
+	            minCoordinates = { position: this.position, alignment: this.alignment };
+	          }
+
+	          this._reposition();
+
+	          $element.offset(_foundationUtil.Box.GetExplicitOffsets($element, $anchor, this.position, this.alignment, this._getVOffset(), this._getHOffset()));
+	        }
+	        // If we get through the entire loop, there was no non-overlapping
+	        // position available. Pick the version with least overlap.
+	        this.position = minCoordinates.position;
+	        this.alignment = minCoordinates.alignment;
+	        $element.offset(_foundationUtil.Box.GetExplicitOffsets($element, $anchor, this.position, this.alignment, this._getVOffset(), this._getHOffset()));
+	      }
+	    }
+	  }]);
+
+	  return Positionable;
+	}(_foundation.Plugin);
+
+	Positionable.defaults = {
+	  /**
+	   * Position of positionable relative to anchor. Can be left, right, bottom, top, or auto.
+	   * @option
+	   * @type {string}
+	   * @default 'auto'
+	   */
+	  position: 'auto',
+	  /**
+	   * Alignment of positionable relative to anchor. Can be left, right, bottom, top, center, or auto.
+	   * @option
+	   * @type {string}
+	   * @default 'auto'
+	   */
+	  alignment: 'auto',
+	  /**
+	   * Allow overlap of container/window. If false, dropdown positionable first
+	   * try to position as defined by data-position and data-alignment, but
+	   * reposition if it would cause an overflow.
+	   * @option
+	   * @type {boolean}
+	   * @default false
+	   */
+	  allowOverlap: false,
+	  /**
+	   * Allow overlap of only the bottom of the container. This is the most common
+	   * behavior for dropdowns, allowing the dropdown to extend the bottom of the
+	   * screen but not otherwise influence or break out of the container.
+	   * @option
+	   * @type {boolean}
+	   * @default true
+	   */
+	  allowBottomOverlap: true,
+	  /**
+	   * Number of pixels the positionable should be separated vertically from anchor
+	   * @option
+	   * @type {number}
+	   * @default 0
+	   */
+	  vOffset: 0,
+	  /**
+	   * Number of pixels the positionable should be separated horizontally from anchor
+	   * @option
+	   * @type {number}
+	   * @default 0
+	   */
+	  hOffset: 0
+	};
+
+	exports.Positionable = Positionable;
+
+/***/ }),
+/* 17 */
+/***/ (function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	exports.Plugin = undefined;
+
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+	var _jquery = __webpack_require__(2);
+
+	var _jquery2 = _interopRequireDefault(_jquery);
+
+	var _foundationUtil = __webpack_require__(5);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+	// Abstract class for providing lifecycle hooks. Expect plugins to define AT LEAST
+	// {function} _setup (replaces previous constructor),
+	// {function} _destroy (replaces previous destroy)
+	var Plugin = function () {
+	  function Plugin(element, options) {
+	    _classCallCheck(this, Plugin);
+
+	    this._setup(element, options);
+	    var pluginName = getPluginName(this);
+	    this.uuid = (0, _foundationUtil.GetYoDigits)(6, pluginName);
+
+	    if (!this.$element.attr('data-' + pluginName)) {
+	      this.$element.attr('data-' + pluginName, this.uuid);
+	    }
+	    if (!this.$element.data('zfPlugin')) {
+	      this.$element.data('zfPlugin', this);
+	    }
+	    /**
+	     * Fires when the plugin has initialized.
+	     * @event Plugin#init
+	     */
+	    this.$element.trigger('init.zf.' + pluginName);
+	  }
+
+	  _createClass(Plugin, [{
+	    key: 'destroy',
+	    value: function destroy() {
+	      this._destroy();
+	      var pluginName = getPluginName(this);
+	      this.$element.removeAttr('data-' + pluginName).removeData('zfPlugin')
+	      /**
+	       * Fires when the plugin has been destroyed.
+	       * @event Plugin#destroyed
+	       */
+	      .trigger('destroyed.zf.' + pluginName);
+	      for (var prop in this) {
+	        this[prop] = null; //clean up script to prep for garbage collection.
+	      }
+	    }
+	  }]);
+
+	  return Plugin;
+	}();
+
+	// Convert PascalCase to kebab-case
+	// Thank you: http://stackoverflow.com/a/8955580
+
+
+	function hyphenate(str) {
+	  return str.replace(/([a-z])([A-Z])/g, '$1-$2').toLowerCase();
+	}
+
+	function getPluginName(obj) {
+	  if (typeof obj.constructor.name !== 'undefined') {
+	    return hyphenate(obj.constructor.name);
+	  } else {
+	    return hyphenate(obj.className);
+	  }
+	}
+
+	exports.Plugin = Plugin;
+
+/***/ }),
+/* 18 */
+/***/ (function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	exports.DropdownMenu = undefined;
+
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+	var _jquery = __webpack_require__(2);
+
+	var _jquery2 = _interopRequireDefault(_jquery);
+
+	var _foundationUtil = __webpack_require__(9);
+
+	var _foundationUtil2 = __webpack_require__(11);
+
+	var _foundationUtil3 = __webpack_require__(7);
+
+	var _foundationUtil4 = __webpack_require__(5);
+
+	var _foundation = __webpack_require__(17);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+	/**
+	 * DropdownMenu module.
+	 * @module foundation.dropdown-menu
+	 * @requires foundation.util.keyboard
+	 * @requires foundation.util.box
+	 * @requires foundation.util.nest
+	 */
+
+	var DropdownMenu = function (_Plugin) {
+	  _inherits(DropdownMenu, _Plugin);
+
+	  function DropdownMenu() {
+	    _classCallCheck(this, DropdownMenu);
+
+	    return _possibleConstructorReturn(this, (DropdownMenu.__proto__ || Object.getPrototypeOf(DropdownMenu)).apply(this, arguments));
+	  }
+
+	  _createClass(DropdownMenu, [{
+	    key: '_setup',
+
+	    /**
+	     * Creates a new instance of DropdownMenu.
+	     * @class
+	     * @name DropdownMenu
+	     * @fires DropdownMenu#init
+	     * @param {jQuery} element - jQuery object to make into a dropdown menu.
+	     * @param {Object} options - Overrides to the default plugin settings.
+	     */
+	    value: function _setup(element, options) {
+	      this.$element = element;
+	      this.options = _jquery2.default.extend({}, DropdownMenu.defaults, this.$element.data(), options);
+	      this.className = 'DropdownMenu'; // ie9 back compat
+
+	      _foundationUtil2.Nest.Feather(this.$element, 'dropdown');
+	      this._init();
+
+	      _foundationUtil.Keyboard.register('DropdownMenu', {
+	        'ENTER': 'open',
+	        'SPACE': 'open',
+	        'ARROW_RIGHT': 'next',
+	        'ARROW_UP': 'up',
+	        'ARROW_DOWN': 'down',
+	        'ARROW_LEFT': 'previous',
+	        'ESCAPE': 'close'
+	      });
+	    }
+
+	    /**
+	     * Initializes the plugin, and calls _prepareMenu
+	     * @private
+	     * @function
+	     */
+
+	  }, {
+	    key: '_init',
+	    value: function _init() {
+	      var subs = this.$element.find('li.is-dropdown-submenu-parent');
+	      this.$element.children('.is-dropdown-submenu-parent').children('.is-dropdown-submenu').addClass('first-sub');
+
+	      this.$menuItems = this.$element.find('[role="menuitem"]');
+	      this.$tabs = this.$element.children('[role="menuitem"]');
+	      this.$tabs.find('ul.is-dropdown-submenu').addClass(this.options.verticalClass);
+
+	      if (this.options.alignment === 'auto') {
+	        if (this.$element.hasClass(this.options.rightClass) || (0, _foundationUtil4.rtl)() || this.$element.parents('.top-bar-right').is('*')) {
+	          this.options.alignment = 'right';
+	          subs.addClass('opens-left');
+	        } else {
+	          this.options.alignment = 'left';
+	          subs.addClass('opens-right');
+	        }
+	      } else {
+	        if (this.options.alignment === 'right') {
+	          subs.addClass('opens-left');
+	        } else {
+	          subs.addClass('opens-right');
+	        }
+	      }
+	      this.changed = false;
+	      this._events();
+	    }
+	  }, {
+	    key: '_isVertical',
+	    value: function _isVertical() {
+	      return this.$tabs.css('display') === 'block' || this.$element.css('flex-direction') === 'column';
+	    }
+	  }, {
+	    key: '_isRtl',
+	    value: function _isRtl() {
+	      return this.$element.hasClass('align-right') || (0, _foundationUtil4.rtl)() && !this.$element.hasClass('align-left');
+	    }
+
+	    /**
+	     * Adds event listeners to elements within the menu
+	     * @private
+	     * @function
+	     */
+
+	  }, {
+	    key: '_events',
+	    value: function _events() {
+	      var _this = this,
+	          hasTouch = 'ontouchstart' in window || typeof window.ontouchstart !== 'undefined',
+	          parClass = 'is-dropdown-submenu-parent';
+
+	      // used for onClick and in the keyboard handlers
+	      var handleClickFn = function handleClickFn(e) {
+	        var $elem = (0, _jquery2.default)(e.target).parentsUntil('ul', '.' + parClass),
+	            hasSub = $elem.hasClass(parClass),
+	            hasClicked = $elem.attr('data-is-click') === 'true',
+	            $sub = $elem.children('.is-dropdown-submenu');
+
+	        if (hasSub) {
+	          if (hasClicked) {
+	            if (!_this.options.closeOnClick || !_this.options.clickOpen && !hasTouch || _this.options.forceFollow && hasTouch) {
+	              return;
+	            } else {
+	              e.stopImmediatePropagation();
+	              e.preventDefault();
+	              _this._hide($elem);
+	            }
+	          } else {
+	            e.preventDefault();
+	            e.stopImmediatePropagation();
+	            _this._show($sub);
+	            $elem.add($elem.parentsUntil(_this.$element, '.' + parClass)).attr('data-is-click', true);
+	          }
+	        }
+	      };
+
+	      if (this.options.clickOpen || hasTouch) {
+	        this.$menuItems.on('click.zf.dropdownmenu touchstart.zf.dropdownmenu', handleClickFn);
+	      }
+
+	      // Handle Leaf element Clicks
+	      if (_this.options.closeOnClickInside) {
+	        this.$menuItems.on('click.zf.dropdownmenu', function (e) {
+	          var $elem = (0, _jquery2.default)(this),
+	              hasSub = $elem.hasClass(parClass);
+	          if (!hasSub) {
+	            _this._hide();
+	          }
+	        });
+	      }
+
+	      if (!this.options.disableHover) {
+	        this.$menuItems.on('mouseenter.zf.dropdownmenu', function (e) {
+	          var $elem = (0, _jquery2.default)(this),
+	              hasSub = $elem.hasClass(parClass);
+
+	          if (hasSub) {
+	            clearTimeout($elem.data('_delay'));
+	            $elem.data('_delay', setTimeout(function () {
+	              _this._show($elem.children('.is-dropdown-submenu'));
+	            }, _this.options.hoverDelay));
+	          }
+	        }).on('mouseleave.zf.dropdownmenu', function (e) {
+	          var $elem = (0, _jquery2.default)(this),
+	              hasSub = $elem.hasClass(parClass);
+	          if (hasSub && _this.options.autoclose) {
+	            if ($elem.attr('data-is-click') === 'true' && _this.options.clickOpen) {
+	              return false;
+	            }
+
+	            clearTimeout($elem.data('_delay'));
+	            $elem.data('_delay', setTimeout(function () {
+	              _this._hide($elem);
+	            }, _this.options.closingTime));
+	          }
+	        });
+	      }
+	      this.$menuItems.on('keydown.zf.dropdownmenu', function (e) {
+	        var $element = (0, _jquery2.default)(e.target).parentsUntil('ul', '[role="menuitem"]'),
+	            isTab = _this.$tabs.index($element) > -1,
+	            $elements = isTab ? _this.$tabs : $element.siblings('li').add($element),
+	            $prevElement,
+	            $nextElement;
+
+	        $elements.each(function (i) {
+	          if ((0, _jquery2.default)(this).is($element)) {
+	            $prevElement = $elements.eq(i - 1);
+	            $nextElement = $elements.eq(i + 1);
+	            return;
+	          }
+	        });
+
+	        var nextSibling = function nextSibling() {
+	          if (!$element.is(':last-child')) {
+	            $nextElement.children('a:first').focus();
+	            e.preventDefault();
+	          }
+	        },
+	            prevSibling = function prevSibling() {
+	          $prevElement.children('a:first').focus();
+	          e.preventDefault();
+	        },
+	            openSub = function openSub() {
+	          var $sub = $element.children('ul.is-dropdown-submenu');
+	          if ($sub.length) {
+	            _this._show($sub);
+	            $element.find('li > a:first').focus();
+	            e.preventDefault();
+	          } else {
+	            return;
+	          }
+	        },
+	            closeSub = function closeSub() {
+	          //if ($element.is(':first-child')) {
+	          var close = $element.parent('ul').parent('li');
+	          close.children('a:first').focus();
+	          _this._hide(close);
+	          e.preventDefault();
+	          //}
+	        };
+	        var functions = {
+	          open: openSub,
+	          close: function close() {
+	            _this._hide(_this.$element);
+	            _this.$menuItems.eq(0).children('a').focus(); // focus to first element
+	            e.preventDefault();
+	          },
+	          handled: function handled() {
+	            e.stopImmediatePropagation();
+	          }
+	        };
+
+	        if (isTab) {
+	          if (_this._isVertical()) {
+	            // vertical menu
+	            if (_this._isRtl()) {
+	              // right aligned
+	              _jquery2.default.extend(functions, {
+	                down: nextSibling,
+	                up: prevSibling,
+	                next: closeSub,
+	                previous: openSub
+	              });
+	            } else {
+	              // left aligned
+	              _jquery2.default.extend(functions, {
+	                down: nextSibling,
+	                up: prevSibling,
+	                next: openSub,
+	                previous: closeSub
+	              });
+	            }
+	          } else {
+	            // horizontal menu
+	            if (_this._isRtl()) {
+	              // right aligned
+	              _jquery2.default.extend(functions, {
+	                next: prevSibling,
+	                previous: nextSibling,
+	                down: openSub,
+	                up: closeSub
+	              });
+	            } else {
+	              // left aligned
+	              _jquery2.default.extend(functions, {
+	                next: nextSibling,
+	                previous: prevSibling,
+	                down: openSub,
+	                up: closeSub
+	              });
+	            }
+	          }
+	        } else {
+	          // not tabs -> one sub
+	          if (_this._isRtl()) {
+	            // right aligned
+	            _jquery2.default.extend(functions, {
+	              next: closeSub,
+	              previous: openSub,
+	              down: nextSibling,
+	              up: prevSibling
+	            });
+	          } else {
+	            // left aligned
+	            _jquery2.default.extend(functions, {
+	              next: openSub,
+	              previous: closeSub,
+	              down: nextSibling,
+	              up: prevSibling
+	            });
+	          }
+	        }
+	        _foundationUtil.Keyboard.handleKey(e, 'DropdownMenu', functions);
+	      });
+	    }
+
+	    /**
+	     * Adds an event handler to the body to close any dropdowns on a click.
+	     * @function
+	     * @private
+	     */
+
+	  }, {
+	    key: '_addBodyHandler',
+	    value: function _addBodyHandler() {
+	      var $body = (0, _jquery2.default)(document.body),
+	          _this = this;
+	      $body.off('mouseup.zf.dropdownmenu touchend.zf.dropdownmenu').on('mouseup.zf.dropdownmenu touchend.zf.dropdownmenu', function (e) {
+	        var $link = _this.$element.find(e.target);
+	        if ($link.length) {
+	          return;
+	        }
+
+	        _this._hide();
+	        $body.off('mouseup.zf.dropdownmenu touchend.zf.dropdownmenu');
+	      });
+	    }
+
+	    /**
+	     * Opens a dropdown pane, and checks for collisions first.
+	     * @param {jQuery} $sub - ul element that is a submenu to show
+	     * @function
+	     * @private
+	     * @fires DropdownMenu#show
+	     */
+
+	  }, {
+	    key: '_show',
+	    value: function _show($sub) {
+	      var idx = this.$tabs.index(this.$tabs.filter(function (i, el) {
+	        return (0, _jquery2.default)(el).find($sub).length > 0;
+	      }));
+	      var $sibs = $sub.parent('li.is-dropdown-submenu-parent').siblings('li.is-dropdown-submenu-parent');
+	      this._hide($sibs, idx);
+	      $sub.css('visibility', 'hidden').addClass('js-dropdown-active').parent('li.is-dropdown-submenu-parent').addClass('is-active');
+	      var clear = _foundationUtil3.Box.ImNotTouchingYou($sub, null, true);
+	      if (!clear) {
+	        var oldClass = this.options.alignment === 'left' ? '-right' : '-left',
+	            $parentLi = $sub.parent('.is-dropdown-submenu-parent');
+	        $parentLi.removeClass('opens' + oldClass).addClass('opens-' + this.options.alignment);
+	        clear = _foundationUtil3.Box.ImNotTouchingYou($sub, null, true);
+	        if (!clear) {
+	          $parentLi.removeClass('opens-' + this.options.alignment).addClass('opens-inner');
+	        }
+	        this.changed = true;
+	      }
+	      $sub.css('visibility', '');
+	      if (this.options.closeOnClick) {
+	        this._addBodyHandler();
+	      }
+	      /**
+	       * Fires when the new dropdown pane is visible.
+	       * @event DropdownMenu#show
+	       */
+	      this.$element.trigger('show.zf.dropdownmenu', [$sub]);
+	    }
+
+	    /**
+	     * Hides a single, currently open dropdown pane, if passed a parameter, otherwise, hides everything.
+	     * @function
+	     * @param {jQuery} $elem - element with a submenu to hide
+	     * @param {Number} idx - index of the $tabs collection to hide
+	     * @private
+	     */
+
+	  }, {
+	    key: '_hide',
+	    value: function _hide($elem, idx) {
+	      var $toClose;
+	      if ($elem && $elem.length) {
+	        $toClose = $elem;
+	      } else if (idx !== undefined) {
+	        $toClose = this.$tabs.not(function (i, el) {
+	          return i === idx;
+	        });
+	      } else {
+	        $toClose = this.$element;
+	      }
+	      var somethingToClose = $toClose.hasClass('is-active') || $toClose.find('.is-active').length > 0;
+
+	      if (somethingToClose) {
+	        $toClose.find('li.is-active').add($toClose).attr({
+	          'data-is-click': false
+	        }).removeClass('is-active');
+
+	        $toClose.find('ul.js-dropdown-active').removeClass('js-dropdown-active');
+
+	        if (this.changed || $toClose.find('opens-inner').length) {
+	          var oldClass = this.options.alignment === 'left' ? 'right' : 'left';
+	          $toClose.find('li.is-dropdown-submenu-parent').add($toClose).removeClass('opens-inner opens-' + this.options.alignment).addClass('opens-' + oldClass);
+	          this.changed = false;
+	        }
+	        /**
+	         * Fires when the open menus are closed.
+	         * @event DropdownMenu#hide
+	         */
+	        this.$element.trigger('hide.zf.dropdownmenu', [$toClose]);
+	      }
+	    }
+
+	    /**
+	     * Destroys the plugin.
+	     * @function
+	     */
+
+	  }, {
+	    key: '_destroy',
+	    value: function _destroy() {
+	      this.$menuItems.off('.zf.dropdownmenu').removeAttr('data-is-click').removeClass('is-right-arrow is-left-arrow is-down-arrow opens-right opens-left opens-inner');
+	      (0, _jquery2.default)(document.body).off('.zf.dropdownmenu');
+	      _foundationUtil2.Nest.Burn(this.$element, 'dropdown');
+	    }
+	  }]);
+
+	  return DropdownMenu;
+	}(_foundation.Plugin);
+
+	/**
+	 * Default settings for plugin
+	 */
+
+
+	DropdownMenu.defaults = {
+	  /**
+	   * Disallows hover events from opening submenus
+	   * @option
+	   * @type {boolean}
+	   * @default false
+	   */
+	  disableHover: false,
+	  /**
+	   * Allow a submenu to automatically close on a mouseleave event, if not clicked open.
+	   * @option
+	   * @type {boolean}
+	   * @default true
+	   */
+	  autoclose: true,
+	  /**
+	   * Amount of time to delay opening a submenu on hover event.
+	   * @option
+	   * @type {number}
+	   * @default 50
+	   */
+	  hoverDelay: 50,
+	  /**
+	   * Allow a submenu to open/remain open on parent click event. Allows cursor to move away from menu.
+	   * @option
+	   * @type {boolean}
+	   * @default false
+	   */
+	  clickOpen: false,
+	  /**
+	   * Amount of time to delay closing a submenu on a mouseleave event.
+	   * @option
+	   * @type {number}
+	   * @default 500
+	   */
+
+	  closingTime: 500,
+	  /**
+	   * Position of the menu relative to what direction the submenus should open. Handled by JS. Can be `'auto'`, `'left'` or `'right'`.
+	   * @option
+	   * @type {string}
+	   * @default 'auto'
+	   */
+	  alignment: 'auto',
+	  /**
+	   * Allow clicks on the body to close any open submenus.
+	   * @option
+	   * @type {boolean}
+	   * @default true
+	   */
+	  closeOnClick: true,
+	  /**
+	   * Allow clicks on leaf anchor links to close any open submenus.
+	   * @option
+	   * @type {boolean}
+	   * @default true
+	   */
+	  closeOnClickInside: true,
+	  /**
+	   * Class applied to vertical oriented menus, Foundation default is `vertical`. Update this if using your own class.
+	   * @option
+	   * @type {string}
+	   * @default 'vertical'
+	   */
+	  verticalClass: 'vertical',
+	  /**
+	   * Class applied to right-side oriented menus, Foundation default is `align-right`. Update this if using your own class.
+	   * @option
+	   * @type {string}
+	   * @default 'align-right'
+	   */
+	  rightClass: 'align-right',
+	  /**
+	   * Boolean to force overide the clicking of links to perform default action, on second touch event for mobile.
+	   * @option
+	   * @type {boolean}
+	   * @default true
+	   */
+	  forceFollow: true
+	};
+
+	exports.DropdownMenu = DropdownMenu;
+
+/***/ }),
+/* 19 */
+/***/ (function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
 	exports.Reveal = undefined;
 
 	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
@@ -2131,7 +3480,7 @@
 
 	var _foundationUtil3 = __webpack_require__(10);
 
-	var _foundation = __webpack_require__(16);
+	var _foundation = __webpack_require__(17);
 
 	var _foundationUtil4 = __webpack_require__(14);
 
@@ -2756,91 +4105,6 @@
 	}
 
 	exports.Reveal = Reveal;
-
-/***/ }),
-/* 16 */
-/***/ (function(module, exports, __webpack_require__) {
-
-	'use strict';
-
-	Object.defineProperty(exports, "__esModule", {
-	  value: true
-	});
-	exports.Plugin = undefined;
-
-	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-
-	var _jquery = __webpack_require__(2);
-
-	var _jquery2 = _interopRequireDefault(_jquery);
-
-	var _foundationUtil = __webpack_require__(5);
-
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-	// Abstract class for providing lifecycle hooks. Expect plugins to define AT LEAST
-	// {function} _setup (replaces previous constructor),
-	// {function} _destroy (replaces previous destroy)
-	var Plugin = function () {
-	  function Plugin(element, options) {
-	    _classCallCheck(this, Plugin);
-
-	    this._setup(element, options);
-	    var pluginName = getPluginName(this);
-	    this.uuid = (0, _foundationUtil.GetYoDigits)(6, pluginName);
-
-	    if (!this.$element.attr('data-' + pluginName)) {
-	      this.$element.attr('data-' + pluginName, this.uuid);
-	    }
-	    if (!this.$element.data('zfPlugin')) {
-	      this.$element.data('zfPlugin', this);
-	    }
-	    /**
-	     * Fires when the plugin has initialized.
-	     * @event Plugin#init
-	     */
-	    this.$element.trigger('init.zf.' + pluginName);
-	  }
-
-	  _createClass(Plugin, [{
-	    key: 'destroy',
-	    value: function destroy() {
-	      this._destroy();
-	      var pluginName = getPluginName(this);
-	      this.$element.removeAttr('data-' + pluginName).removeData('zfPlugin')
-	      /**
-	       * Fires when the plugin has been destroyed.
-	       * @event Plugin#destroyed
-	       */
-	      .trigger('destroyed.zf.' + pluginName);
-	      for (var prop in this) {
-	        this[prop] = null; //clean up script to prep for garbage collection.
-	      }
-	    }
-	  }]);
-
-	  return Plugin;
-	}();
-
-	// Convert PascalCase to kebab-case
-	// Thank you: http://stackoverflow.com/a/8955580
-
-
-	function hyphenate(str) {
-	  return str.replace(/([a-z])([A-Z])/g, '$1-$2').toLowerCase();
-	}
-
-	function getPluginName(obj) {
-	  if (typeof obj.constructor.name !== 'undefined') {
-	    return hyphenate(obj.constructor.name);
-	  } else {
-	    return hyphenate(obj.className);
-	  }
-	}
-
-	exports.Plugin = Plugin;
 
 /***/ })
 /******/ ]);
