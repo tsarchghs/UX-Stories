@@ -3,13 +3,14 @@ import { BrowserRouter as Router, Route, Link, Redirect } from "react-router-dom
 import ApolloClient from "apollo-boost";
 import gql from "graphql-tag";
 import Profile from "./components/profile";
-import Home from "./components/home";
+import Stories from "./components/stories";
 import Login from "./components/login";
 import Loading from "./components/loading";
 import Cookies from "js-cookie";
 import Library from "./components/library";
 import Register from "./components/register";
 import SingleApp from "./components/singleApp";
+import Home from "./components/home";
 
 //Cookies.set("auth_token","");
 var client = new ApolloClient({
@@ -194,6 +195,7 @@ class App extends Component {
     render(){
         return (
             <Router>
+            <script src="http://localhost:3000/assets/toolkit/scripts/toolkit.js"></script>
                 {
 
                     this.state.user === undefined ?                       
@@ -204,12 +206,19 @@ class App extends Component {
                     :
                     (
                             <div>
-                                <Route path="/" exact component={() => {
+                                <Route path="/" exact component={() => <Home user={this.state.user} client={client}/>}/>
+                                <Route path="/stories" exact component={() => {
                                     console.log(this.state.user);
                                     return (
                                         this.state.user
-                                        ? <Home user={this.state.user} client={client} />
-                                        : <Redirect to="/login"/>
+                                        ? <div>
+                                            <Stories user={this.state.user} client={client} />
+                                            <script src="/assets/toolkit/scripts/jquery.min.js"></script>
+
+                                            <script src="/assets/toolkit/scripts/toolkit.js"></script>
+
+                                          </div>
+                                        : <Redirect to="/login?success=profile"/>
                                     )
 
                                 }} />
@@ -251,6 +260,11 @@ class App extends Component {
                             </div> 
                     )
                 }
+                                            <script src="/assets/toolkit/scripts/jquery.min.js"></script>
+
+                                            <script src="/assets/toolkit/scripts/toolkit.js"></script>
+
+
             </Router>
         );
     }
