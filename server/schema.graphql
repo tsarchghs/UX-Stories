@@ -76,7 +76,7 @@ type App {
   createdBy: User!
   appCategory: AppCategory!
   appVersions: [AppVersion!]!
-  stories: [Story!]!
+  stories(first:Int): [Story!]!
   name: String!
   description: String
   company: String!
@@ -108,7 +108,10 @@ input FileInput {
 }
 
 input AppFilterInput {
-  appCategory: String!
+  first: Int
+  skip: Int
+  appName_contains: String
+  appCategory: String
   storyCategories: [ID!]
   storyElements: [ID!]
 }
@@ -119,6 +122,8 @@ input LibraryFilterInput {
 }
 
 input StoriesFilterInput {
+  first: Int
+  skip: Int
   app: ID
   inLibrary: ID
   storyName_contains: String
@@ -149,7 +154,7 @@ type Query {
     password: String!
   ): AuthData!
   getLoggedInUser: User
-  app(id: ID!): App
+  app(id: ID!,stories_first: Int): App
   apps(appFilterInput: AppFilterInput): [App!]!
   appVersions: [AppVersion!]!
   appCategories: [AppCategory!]!
@@ -204,7 +209,7 @@ type Mutation {
     platform: Platform
     logo: FileInput
     appVersions: [AppVersionLinkInput!]
-    appCategory: String
+    appCategory: ID
     company: String
     ): App!
 
