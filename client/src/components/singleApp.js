@@ -4,6 +4,10 @@ import Loading from "./loading";
 import gql from "graphql-tag";
 import {getStories,getAppCategories,getStoryCategories,getStoryElements,getActiveFilters,insertActiveFilters} from "../helpers";
 import E404 from "./E404";
+import AppProfileLoading from "./appProfileLoading";
+import StoryThumbnailLoading from "./storyThumbnailLoading";
+import CategoriesLoading from "./categoriesLoading";
+import SingleAppLoading from "./singleAppLoading";
 
 class SingleApp extends React.Component {
   constructor(props){
@@ -18,10 +22,13 @@ class SingleApp extends React.Component {
         storyElements: {},
         appVersions:{}
       },
+      show_stories_skeleton: false,
       show404: false
     }
-    this.handleFilterClick.bind(this);
-    this.resetFilters.bind(this);
+    this.skip = 0
+    this.handleFilterClick = this.handleFilterClick.bind(this);
+    this.resetFilters = this.resetFilters.bind(this);
+    this.updateStories = this.updateStories.bind(this);
   }
 	async componentDidMount(){
     if (this.props.match.params.id[this.props.match.params.id.length-1] === "#"){
@@ -38,10 +45,11 @@ class SingleApp extends React.Component {
             logo {
               url
             }
-            appCategory { 
+            appCategory {
+              id 
               name
             }
-            stories {
+            stories(first:10) {
               id
               thumbnail {
                 url
@@ -55,6 +63,7 @@ class SingleApp extends React.Component {
         }
       `
     })
+    this.skip += 10;
     if (!app.data.app){
       this.setState({
         show404: true
@@ -67,16 +76,17 @@ class SingleApp extends React.Component {
       app: app.data.app,
       stories: app.data.app.stories,
       storyElements,
-      storyCategories
+      storyCategories,
+      reached_end: app.data.app.stories.length < 4
     })
   }
   async handleFilterClick(e,type) {
-    this.setState({
-      stories: undefined
-    })
+    this.skip = 0
     let id = e.target.id
     await this.setState(prevState => {
       let state = prevState
+      state.show_stories_skeleton = true
+      state.stories = undefined
       state["filterBy"][type][id] = !state["filterBy"][type][id]
       return state
     },this.updateStories)
@@ -84,7 +94,7 @@ class SingleApp extends React.Component {
   async updateStories(){
     if (this.state.stories){
       this.setState({
-        stories: undefined
+        show_stories_skeleton: true
       })
     }
     let filters = {"storyCategories":[],"appVersions":[],"storyElements":[]};
@@ -93,6 +103,8 @@ class SingleApp extends React.Component {
       query:gql`
         query {
           stories(storiesFilterInput:{
+              first: 10
+              skip: ${this.skip}
               app:"${this.state.app.id}"
               appVersions:${JSON.stringify(filters.appVersions)}
               storyCategories:${JSON.stringify(filters.storyCategories)}
@@ -106,27 +118,37 @@ class SingleApp extends React.Component {
         }
       `
     })
-    this.setState({
-      stories: data.data.stories
+    this.skip += 10
+     this.setState(prevState => {
+      let state = prevState
+      if (!state.stories){
+        state.stories = []
+      }
+      state.stories = state.stories.concat(data.data.stories)
+      console.log(state.stories,data.data.stories,data.data.stories.length);
+      state.show_stories_skeleton = false
+      state.reached_end = data.data.stories.length < 4
+      return state;
     })
   }
   resetFilters() {
-    this.setState({
-      filterBy: {
-        storyCategories: {},
-        storyElements: {},
-        appVersions:{}
-      }
+    this.skip = 0
+    this.setState(prevState => {
+      let state = prevState;
+      state.stories = undefined
+      state.show_stories_skeleton = true
+      state.filterBy.storyCategories = {}
+      state.filterBy.storyElements = {}
+      state.filterBy.appVersions = {}      
+      return state
     },this.updateStories);
   }
   unFilter(type,obj){
-    if (this.state.stories){
-      this.setState({
-        stories: undefined
-      })
-    }
+    this.skip = 0
     this.setState(prevState => {
       let state = prevState;
+      state.stories = undefined
+      state.show_stories_skeleton = true
       state.filterBy[type][obj] = false;
       return state;
     },this.updateStories);
@@ -143,7 +165,7 @@ class SingleApp extends React.Component {
 
           !this.state.app || this.state.show404 ? 
           (
-            this.state.show404 ? "" : <Loading/>
+            this.state.show404 ? "" : <SingleAppLoading/>
           )
 
           :
@@ -151,18 +173,18 @@ class SingleApp extends React.Component {
           (
             <div className="container">
           <div className="flex">
-            <div className="asided">
-              <div className="asided__image" style={{backgroundImage: `url("${this.state.app.logo.url}")`}} />
-              <h2 className="bold">{this.state.app.name}</h2>
-              <p className="light-gray">{this.state.app.description}</p>
-              <p className="bold">© Copyright {this.state.app.company}</p>
-              <span className="horisontal-seperator" />
-              <p className="light-gray">Category</p>
-              <h5 className="bold">{this.state.app.appCategory.name}</h5>
-              <span className="horisontal-seperator" />
-              <p className="light-gray">Current version</p>
-              <h5 className="bold">{this.state.app.appVersions[this.state.app.appVersions.length - 1].name}</h5>
-            </div>
+              <div className="asided">
+                <div className="asided__image" style={{backgroundImage: `url("${this.state.app.logo.url}")`}} />
+                <h2 className="bold">{this.state.app.name}</h2>
+                <p className="light-gray">{this.state.app.description}</p>
+                <p className="bold">© Copyright {this.state.app.company}</p>
+                <span className="horisontal-seperator" />
+                <p className="light-gray">Category</p>
+                <h5 className="bold">{this.state.app.appCategory.name}</h5>
+                <span className="horisontal-seperator" />
+                <p className="light-gray">Current version</p>
+                <h5 className="bold">{this.state.app.appVersions[this.state.app.appVersions.length - 1].name}</h5>
+              </div>
             <div>
               <div className="container">
                 <div className="secodary-header__content">
@@ -179,65 +201,6 @@ class SingleApp extends React.Component {
                 </div>
               </div>
             <div style={{position:"inline"}}>
-                <p>Stories:</p>
-                { 
-                  (!this.state.storyCategories || !this.state.storyElements) ? <Loading/> :
-                      (    
-                          this.state.storyCategories.map(storyCategory => {
-                            return (
-                              <div style={{position:"inline"}}>
-                                <input 
-                                  type="checkbox" 
-                                  id={storyCategory.id} 
-                                  name={storyCategory.name}
-                                  checked={this.state.filterBy["storyCategories"][storyCategory.id] !== undefined && this.state.filterBy["storyCategories"][storyCategory.id]}
-                                  onChange={(e) => this.handleFilterClick(e,"storyCategories")}
-                                />
-                                <label id={storyCategory.id+"_label"}  htmlFor="scales">{storyCategory.name}</label>
-                              </div>
-                            );
-                          })
-                      )
-                      .concat(<p>Elements:</p>)
-                      .concat(
-
-                          this.state.storyElements.map(storyElement => {
-                                                      return (
-                                                        <div style={{position:"inline"}}>
-                                                          <input 
-                                                            type="checkbox" 
-                                                            id={storyElement.id}
-                                                            checked={this.state.filterBy["storyElements"][storyElement.id] !== undefined && this.state.filterBy["storyElements"][storyElement.id]}
-                                                            onChange={(e) => this.handleFilterClick(e,"storyElements")}
-                                                            name={storyElement.name}
-                                                          />
-                                                          <label id={storyElement.id+"_label"}  htmlFor="scales">{storyElement.name}</label>
-                                                        </div>
-                                                      );
-                          })
-
-                      )
-                      .concat(<p>App Versions</p>)
-                      .concat(
-
-
-                          this.state.app.appVersions.map(version => {
-                                                      return (
-                                                        <div style={{position:"inline"}}>
-                                                          <input 
-                                                            type="checkbox" 
-                                                            id={version.id} 
-                                                            name={version.name}
-                                                            checked={this.state.filterBy["appVersions"][version.id] !== undefined && this.state.filterBy["appVersions"][version.id]}
-                                                            onChange={(e) => this.handleFilterClick(e,"appVersions")}
-                                                          />
-                                                          <label id={version.id+"_label"}  htmlFor="scales">{version.name}</label>
-                                                        </div>
-                                                      );
-                                        })
-                      )
-                }
-
               </div>
               <div className="results">
                 <div className="container">
@@ -267,12 +230,13 @@ class SingleApp extends React.Component {
                     }
                   </div>
                 </div>
-              </div>      <div className="cards">
+              </div>      
+              <div className="cards">
                 <div className="container">
                   <div className="cards__content">
                 {
 
-                  !this.state.stories ? <Loading/>
+                  !this.state.stories ? ""
 
                   :
 
@@ -285,11 +249,31 @@ class SingleApp extends React.Component {
                   )
 
                 }
-
+              {
+                this.state.show_stories_skeleton || !this.state.stories ? 
+                      <div className="cards">
+                        <div className="container">
+                          <div className="cards__content">
+                            <StoryThumbnailLoading/><StoryThumbnailLoading/><StoryThumbnailLoading/><StoryThumbnailLoading/>
+                            <StoryThumbnailLoading/><StoryThumbnailLoading/><StoryThumbnailLoading/><StoryThumbnailLoading/>
+                            <StoryThumbnailLoading/><StoryThumbnailLoading/>                          
+                          </div>
+                        </div>
+                      </div>
+                : ""
+              }
+              <center>
+                {
+                  this.state.reached_end
+                  ? <p>Reached the end</p>
+                  : <button onClick={this.updateStories}>Load more</button>
+                }
+              </center>
                   </div>
                 </div>
               </div>
-              </div></div></div>
+              </div></div>
+              </div>
           )
 
         }

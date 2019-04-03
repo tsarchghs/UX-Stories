@@ -1,272 +1,294 @@
 import React from "react";
-import Loading from "./loading";
-import gql from "graphql-tag";
 import Header from "./header";
+import AppLoading from "./appLoading";
+import gql from "graphql-tag";
 import { Link } from "react-router-dom";
-import {getStories,getAppCategories,getStoryCategories,getStoryElements,getActiveFilters,insertActiveFilters} from "../helpers";
 
 class Home extends React.Component {
-  constructor(props){
+  constructor(props) {
     super(props);
     this.state = {
-      stories: undefined,
-      appCategories: undefined,
-      storyCategories: undefined,
-      storyElements: undefined,
-      filterBy: {
-        appCategory: undefined,
-        storyCategories: {},
-        storyElements: {}
-      }
+      categories:undefined,
+      apps: undefined,
+      show_skeleton: true,
+      reached_end: false,
+      nothing_to_show: false
     }
-    this.search = this.search.bind(this);
-    this.resetFilters = this.resetFilters.bind(this);
+    this.skip = 0;
+    this.loadMore = this.loadMore.bind(this);
+    this.update = this.update.bind(this);
+    this.handleSearchKeyPress = this.handleSearchKeyPress.bind(this);
   }
-  async componentDidMount() {
-    let stories = await getStories(this.props.client);
-    let appCategories = await getAppCategories(this.props.client);
-    let storyCategories = await getStoryCategories(this.props.client);
-    let storyElements = await getStoryElements(this.props.client);
-
-    this.setState({
-      stories: stories,
-      appCategories: appCategories,
-      storyCategories: storyCategories,
-      storyElements: storyElements
-    })    
+	componentDidUpdate(){
+	   this.loadToolkit();
+	}
+  handleSearchKeyPress(e){
+    if (e.key === "Enter"){
+      this.update();
+    }
   }
-  async search(storyName_contains) {
+  async update(){ 
     this.setState({
-      stories: undefined
+      reached_end: false,
+      show_skeleton: true,
+      nothing_to_show: false
     })
-    let filters = {"storyCategories":[],"storyElements":[]};
-    filters = insertActiveFilters(filters,this.state);
-    let results = await this.props.client.query({
+    let appName_contains = document.getElementById("appName_contains").value;
+    let appsData = await this.props.client.query({
       query: gql`
         query {
-          stories(storiesFilterInput:{
-            storyName_contains:"${storyName_contains}"
-            ${this.state.filterBy.appCategory === undefined ? "" : `appCategory: "${this.state.filterBy.appCategory}"`}
-            storyCategories: ${JSON.stringify(filters.storyCategories)}
-            storyElements: ${JSON.stringify(filters.storyElements)}
-          }) {
+          apps(appFilterInput:{first:4,skip:${this.skip},appName_contains:"${appName_contains}"}) {
             id
-            thumbnail {
+            name
+            description
+            logo {
               url
             }
+            stories(first:3) {
+              thumbnail {
+                url
+              }
+            }
+            appCategory {
+              id
+              name
+            }
+            company
           }
         }
-        `
+      `
     })
-    let stories = results.data.stories;
-    this.setState({
-      stories: stories
-    })
-  }
-  async handleFilterClick(e,obj,type) {
-    this.setState((prevState) => {
-      let state = prevState;
-      if (type === "appCategory"){
-        state.filterBy.appCategory = obj.id
-      } else {
-        state = prevState.filterBy[type] = {...prevState.filterBy[type],[obj.id]:!prevState.filterBy[type][obj.id]}
-      }
-      return state
-    },() => this.search(document.getElementById("storyName_contains").value))
-  }
-  resetFilters(){
     this.setState(prevState => {
       let state = prevState;
-      state.filterBy.appCategory = undefined
-      state.filterBy.storyCategories = {}
-      state.filterBy.storyElements = {}
-      console.log(state);
-      return state;
-    },() => this.search(document.getElementById("storyName_contains").value))
-  }
-  unFilter(type,obj){
-    if (this.state.stories){
-      this.setState({
-        stories: undefined
-      })
-    }
-    this.setState(prevState => {
-      let state = prevState;
-      if (type === "appCategory"){
-        state.filterBy.appCategory = undefined
-        return state;
+      if (!state.apps){
+        state.apps = []  
       }
-      state.filterBy[type][obj] = false;
-      return state;
-    },() => this.search(document.getElementById("storyName_contains").value))
+      state.apps = state.apps.concat(appsData.data.apps)
+      state.reached_end = appsData.data.apps.length < 4
+      state.show_skeleton = false
+      state.nothing_to_show = appsData.data.apps.length === 0
+      return prevState
+    })
   }
-  render() {
-    console.log(this.state,122);
-    return (
-      <div>
-      <Header user={this.props.user} />
-        {
-          !this.state.appCategories || !this.state.storyCategories || !this.state.storyElements ?
-          (
-            <Loading style={{margin:280}}/>
-          )
-          :
-          
-          (
- <div>
-          <div className="secondary-header">
-            <div className="container">
-              <div className="secodary-header__content">
-                <div className="flex  ac">
-                  <h2 className="white">Browse Stories</h2>
-                  <span className="seperator" />
-                  <div className="search">
-                    <img src="/assets/toolkit/images/search-icon.svg" alt />
-                    <input id="storyName_contains" onChange={(e) => this.search(e.target.value)} type="text" placeholder="Search by story..." />
-                  </div>      </div>
-                <div className="flex">
-                  <div className="filter">
-                    <button className="button white">Filter with Categories<img src="/assets/toolkit/images/008-delete.svg" alt /></button>
-                  </div>        <div className="filter">
-                    <button className="button white">Filter with Stories<img src="/assets/toolkit/images/008-delete.svg" alt /></button>
-                  </div>        <div className="filter">
-                    <button className="button white">Filter with Elements<img src="/assets/toolkit/images/008-delete.svg" alt /></button>
-                  </div>      </div>
+	async componentDidMount(){
+		this.loadToolkit();
+    this.update()
+	}
+  async loadMore() {
+    this.skip += 4
+    this.update();
+  }
+	loadToolkit() {
+	      let script = document.createElement("script");
+	      script.src = "/assets/toolkit/scripts/toolkit.js"
+	      script.async = true;
+	      document.body.appendChild(script);
+	      console.log(123);	
+	}
+	render() {
+		return (
+			 <div>
+        <Header user={this.props.user}/>
+        <section style={{display:"none"}} className="home-hero">
+          <div className="home-hero__left">
+            <div className="home-hero__left--content">
+              <h1 className="gray bold">Find real problems solved for millions of people</h1>
+              <h5 className="light-gray">UXstories is hand picked collection of top apps on App Store that have the best practises of UX from login to purchasing a product and more.</h5>
+              <div className="home-hero__input">
+                <input className="input" type="text" placeholder="Enter your email" />
+                <button className="button">SIGN UP</button>
               </div>
             </div>
           </div>
-            <div>App Category
+          <div className="home-hero__img" />
+        </section>
+        <div className="secondary-header">
+          <div className="container">
+            <div className="secodary-header__content smaller">
+              <div className="flex  ac">
+                <h2 className="white">Browse Apps</h2>
+                <span className="seperator" />
+                <div className="search">
+                  <img src="/assets/toolkit/images/search-icon.svg" alt />
+                  <input 
+                    type="text" 
+                    placeholder="Search by app name..."
+                    onKeyPress={this.handleSearchKeyPress}
+                    id="appName_contains"
+                  />
+                </div>			</div>
+              <div className="flex">
+                <button className="button white fbtn" data-toggle="first">Filter with Categories<img src="/assets/toolkit/images/shape.svg" alt /></button>
+                <div className="filter" id="first" data-dropdown data-auto-focus="true">
+                  <div className="filter-dropdown">
+                    <div className="filter-dropdown__top">
+                      <h5 className="gray bold">Filter with stories</h5>
+                      <p className="pink">3 selected</p>
+                    </div>
+                    <div className="filter-dropdown__main">
+                      <label className="radio-t rde">
+                        <p className="gray bold">Entertaiment</p>
+                        <input className="ic" type="radio" name="radio-t" />
+                        <span className="checkmark" />
+                      </label>
+                      <label className="radio-t rde">
+                        <p className="gray bold">Red</p>
+                        <input className="ic" type="radio" name="radio-t" />
+                        <span className="checkmark" />
+                      </label>
+                      <label className="radio-t rde">
+                        <p className="gray bold">Blue</p>
+                        <input className="ic" type="radio" name="radio-t" />
+                        <span className="checkmark" />
+                      </label>		</div>
+                  </div>
+                </div>				<button className="button white fbtn" data-toggle="second">Filter with Stories<img src="/assets/toolkit/images/shape.svg" alt /></button>
+                <div className="filter" id="second" data-dropdown data-auto-focus="true">
+                  <div className="filter-dropdown">
+                    <div className="filter-dropdown__top">
+                      <h5 className="gray bold">Filter with stories</h5>
+                      <p className="pink">3 selected</p>
+                    </div>
+                    <div className="filter-dropdown__main">
+                      <label className="radio__container ">
+                        <p className="gray bold">Entertaiment</p>
+                        <input className="ic" type="checkbox" />
+                        <span className="checkmark" />
+                      </label>
+                      <label className="radio__container">
+                        <p className="gray bold">Red</p>
+                        <input className="ic" type="checkbox" />
+                        <span className="checkmark" />
+                      </label>
+                      <label className="radio__container">
+                        <p className="gray bold">Blue</p>
+                        <input className="ic" type="checkbox" />
+                        <span className="checkmark" />
+                      </label>		</div>
+                  </div>
+                </div>				<button className="button white fbtn" data-toggle="third">Filter with Elements<img src="/assets/toolkit/images/shape.svg" alt /></button>
+                <div className="filter" id="third" data-dropdown data-auto-focus="true">
+                  <div className="filter-dropdown">
+                    <div className="filter-dropdown__top">
+                      <h5 className="gray bold">Filter with stories</h5>
+                      <p className="pink">3 selected</p>
+                    </div>
+                    <div className="filter-dropdown__main">
+                      <label className="radio-t rde">
+                        <p className="gray bold">Entertaiment</p>
+                        <input className="ic" type="radio" name="radio-t" />
+                        <span className="checkmark" />
+                      </label>
+                      <label className="radio-t rde">
+                        <p className="gray bold">Red</p>
+                        <input className="ic" type="radio" name="radio-t" />
+                        <span className="checkmark" />
+                      </label>
+                      <label className="radio-t rde">
+                        <p className="gray bold">Blue</p>
+                        <input className="ic" type="radio" name="radio-t" />
+                        <span className="checkmark" />
+                      </label>				<label className="radio__container ">
+                        <p className="gray bold">Entertaiment</p>
+                        <input className="ic" type="checkbox" />
+                        <span className="checkmark" />
+                      </label>
+                      <label className="radio__container">
+                        <p className="gray bold">Red</p>
+                        <input className="ic" type="checkbox" />
+                        <span className="checkmark" />
+                      </label>
+                      <label className="radio__container">
+                        <p className="gray bold">Blue</p>
+                        <input className="ic" type="checkbox" />
+                        <span className="checkmark" />
+                      </label>		</div>
+                  </div>
+                </div>			</div>
+            </div>
+          </div>
+        </div>
+        <section className="apps">
+          <div className="apps__container">
+            <div className="apps__content">
             {
-              this.state.appCategories.map(appCategory => {
+              this.state.nothing_to_show
+              ? <center>Nothing to show, try different filters or query.</center>
+              : ""
+            }
+            {
+              !this.state.apps ? "" :
+              this.state.apps.map(app => {
                 return (
-                  <div>
-                    <input 
-                      type="radio" 
-                      id={appCategory.id} 
-                      name={appCategory.name}
-                      checked={this.state.filterBy.appCategory === appCategory.id}
-                      onClick={async (e) => await this.handleFilterClick(e,appCategory,"appCategory")}
-                    />
-                      <label id={appCategory.id+"_label"} htmlFor="huey">{appCategory.name}</label>
+                  <div className="app">
+                    <div className="apps__top">
+                      <Link to={`/app/${app.id}`}>
+                        <div className="apps__top-image" style={{backgroundImage: 'url("/assets/toolkit/images/netflix-logo.jpg")'}} />
+                      </Link>
+                      <div className="apps__top-info">
+                        <Link to={`/app/${app.id}`}>
+                          <h5 className="bold">{app.name}</h5>
+                        </Link>
+                        <p className="apps__small-title light-gray">{app.description}</p>
+                        <p>© Copyright <span className="bold">{app.company}</span></p>
+                      </div>
+                    </div>
+                    <div className="apps__main">
+                      <div className="apps__main-category">
+                        <div>
+                          <p className="apps__small-title light-gray">Category</p>
+                          <p>{app.appCategory.name}</p>
+                        </div>
+                      <Link to={`/app/${app.id}`}>
+                        <button className="button naked pink">View Stories</button>
+                      </Link>
+                      </div>
+                      <div className="apps__main-images">
+                      {
+                        app.stories.length ? ""
+                        : <center>No stories to show</center>
+                      }
+                      {
+                        app.stories.map(story => {
+                          return (
+                            <Link to={`/app/${app.id}`}>
+                              <div className="app__images">
+                                <img src={story.thumbnail.url} alt /> 
+                              </div>
+                            </Link>
+                          )
+                        })
+                      }
+                      </div>
+                    </div>
                   </div>
                 );
               })
             }
-          <hr/>
-            <div style={{position:"inline"}}>
-                <p>Stories:</p>
-                {
-                  this.state.storyCategories.map(storyCategory => {
-                    return (
-                      <div style={{position:"inline"}}>
-                        <input 
-                          type="checkbox" 
-                          id={storyCategory.id} 
-                          name={storyCategory.name}
-                          onClick={async (e) => await this.handleFilterClick(e,storyCategory,"storyCategories")}
-                          checked={this.state.filterBy.storyCategories[storyCategory.id]}
-                        />
-                        <label id={storyCategory.id+"_label"}  htmlFor="scales">{storyCategory.name}</label>
-                      </div>
-                    );
-                  })
-                }
-              </div>
-              <hr/>
-            <div style={{position:"inline"}}>
-                <p>Elements:</p>
-                  {
-                    this.state.storyElements.map(storyElement => {
-                      return (
-                        <div style={{position:"inline"}}>
-                          <input 
-                            type="checkbox" 
-                            id={storyElement.id} 
-                            name={storyElement.name}
-                            onClick={async (e) => await this.handleFilterClick(e,storyElement,"storyElements")}
-                            checked={this.state.filterBy.storyElements[storyElement.id]}
-                           />
-                          <label id={storyElement.id+"_label"}  htmlFor="scales">{storyElement.name}</label>
+                    {
+                      this.state.show_skeleton
+                      ? <div className="apps__content">
+                          <AppLoading/>
+                          <AppLoading/>
+                          <AppLoading/>
+                          <AppLoading/>
                         </div>
-                      )
-                    })
-                  }
-              </div>
-          <div>
-        </div>
-          <div className="results">
-            <div className="container">
-              <div className="results__content">
-                <p className="results__results bold">Showing {this.state.stories ? this.state.stories.length : 0} Results</p>
-                {
-                  this.state.filterBy.appCategory ? 
-                  (
-                        <div className="ux-label ">
-                          <p className="light-gray">{document.getElementById(this.state.filterBy.appCategory+"_label").innerHTML}</p>
-                          <span><a href="#"><img onClick={() => this.unFilter("appCategory")} src="/assets/toolkit/images/008-delete.svg" alt /></a></span>
-                        </div>  
-                  )
-                  :
-                  (
-                    ""
-                  )
-                }
-                {
-                  getActiveFilters(this.state,"storyCategories").map(storyCategory => {
-                      return (
-                        <div className="ux-label ">
-                          <p className="light-gray">{document.getElementById(storyCategory+"_label").innerHTML}</p>
-                          <span><a href="#"><img onClick={() => this.unFilter("storyCategories",storyCategory)} src="/assets/toolkit/images/008-delete.svg" alt /></a></span>
-                        </div>  
-                      );    
-                  })                
-                }
-              {
-                getActiveFilters(this.state,"storyElements").map(storyElement => {
-                    return (
-                      <div className="ux-label">
-                        <p className="light-gray">{document.getElementById(storyElement+"_label").innerHTML}</p>
-                        <span><a href="#"><img onClick={() => this.unFilter("storyElements",storyElement)} src="/assets/toolkit/images/008-delete.svg" alt /></a></span>
-                      </div>  
-                    );    
-                 })
-              }
-              {
-                !(this.state.filterBy.appCategory || getActiveFilters(this.state,"storyElements").concat(getActiveFilters(this.state,"storyCategories")).length) ?  "" :
-                  <p onClick={this.resetFilters} className="pink"><a href="#">Clear all filters</a></p>
-              }
-              </div>
-            </div>
-          </div><div className="cards">
-            <div className="container">
-              <div className="cards__content">
-              {
-                this.state.stories && !this.state.stories.length ? <center>{"Nothing to show"}</center> : ""
-              }
-              {
-                this.state.stories === undefined ?
-                (
-                  <Loading />
-                ) 
-
-                :
-                
-                (
-                  this.state.stories.map(story => 
-                      <a href="#" key={story.id}><img style={{borderRadius:30,width:300,height:600}} key={story.id} src={story.thumbnail.url} alt /></a>
-                  )
-                )
-              }
-              </div>
+                      : ""
+                    }
             </div>
           </div>
-        </div>
-      </div>
-          )
+        </section>
+        {
+          !this.state.reached_end
+          ? <center>
+              <button onClick={this.loadMore}>Load more</button>
+            </center>
+          : ""
         }
+        <br/>
       </div>
-    );
-  }
-};
+		);
+	}
+}
 
 export default Home;

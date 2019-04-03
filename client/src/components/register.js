@@ -32,7 +32,9 @@ class Register extends React.Component {
 	      	{this.props.show_message_register}
 	        <div className="login__container">
 	          <div className="login__content">
-	            <h4 className="pink bold header__back"><a href="#" className="flex ac"><img src="../../assets/toolkit/images/008-delete.svg" alt />Back</a></h4>
+	          	<Link to="/">
+	            	<h4 className="pink bold header__back"><a href="#" className="flex ac"><img src="../../assets/toolkit/images/008-delete.svg" alt />Back</a></h4>
+	            </Link>
 	            <div className="login__header mb50">
 	              <img src="../../assets/toolkit/images/logo.svg" alt />
 	              <p className="gray">The interesting thing is that everyone sitting on the couch with a bag of popcorn watching these shows are broke. </p>
@@ -40,8 +42,6 @@ class Register extends React.Component {
 	            <div className="login__hero">
 	              <div className="login__hero--left">
 	                <h1 className="bold text-center">Create your account</h1>
-	                
-	                	
 						{	
 							!this.state.jobs ? <Loading /> :                  
 							<div className="input__wo-border">
