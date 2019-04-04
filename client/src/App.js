@@ -13,6 +13,7 @@ import SingleApp from "./components/singleApp";
 import Home from "./components/home";
 import ForgetPassword from "./components/forgetPassword";
 import ResetPassword from "./components/resetPassword";
+import { getQueryParams } from "./helpers";
 
 //Cookies.set("auth_token","");
 var client = new ApolloClient({
@@ -27,7 +28,8 @@ class App extends Component {
         super(props);
         this.state = {
             user: undefined,
-            show_message: ""
+            show_message: "",
+            show_messages_register: []
         }
         this.login = this.login.bind(this);
         this.logout = this.logout.bind(this);
@@ -109,35 +111,69 @@ class App extends Component {
     }
     async register(e) {
         e.preventDefault();
-        const full_name = document.getElementById("r_full_name").value.split(" ");
+        this.setState({
+            show_messages_register: []
+        })
+        const a = JSON.parse(JSON.stringify(document.getElementById("r_full_name").value));
+        const full_name = a.split(" ");
+        console.log(document.getElementById("r_full_name"));
         const r_first_name = full_name[0];
-        const r_last_name = full_name.length === 3 ? full_name[2] : full_name[1];
+        const r_last_name = full_name[1];
         const r_email = document.getElementById("r_email").value;
         const r_password = document.getElementById("r_password").value;
         const r_job = document.getElementById("r_job").value;
-        const results = await client.mutate({
-            mutation: gql`
-                mutation {
-                    signUp(
-                        first_name:"${r_first_name}"
-                        last_name:"${r_last_name}"
-                        email:"${r_email}"
-                        password:"${r_password}"
-                        job:"${r_job}"
-                    ) { 
-                        token
-                    }
+        if (full_name.length !== 2 || !full_name[1]){
+            this.setState(prevState => {
+                let message = "Full name format must be like for example 'John Doe'"
+                let add_error = !prevState.show_messages_register.includes(message);
+                if (add_error){
+                    prevState.show_messages_register.push(message)
                 }
-            `
-        })
-        client = new ApolloClient({
-            uri: "http://localhost:4000/",
-            headers: {
-              "Authorization": `Bearer ${results.data.signUp.token}`
+                return prevState
+            })
+        } else {
+            try {
+                const results = await client.mutate({
+                    mutation: gql`
+                        mutation {
+                            signUp(
+                                first_name:"${r_first_name}"
+                                last_name:"${r_last_name}"
+                                email:"${r_email}"
+                                password:"${r_password}"
+                                job:"${r_job}"
+                            ) { 
+                                token
+                            }
+                        }
+                    `
+                })
+                client = new ApolloClient({
+                    uri: "http://localhost:4000/",
+                    headers: {
+                      "Authorization": `Bearer ${results.data.signUp.token}`
+                    }
+                })
+                Cookies.set("auth_token",results.data.signUp.token);
+                this.componentDidMount();
+            } catch (e){
+                let add;
+                if (e.message === "GraphQL error: Please check that all of your arguments are not empty!" 
+                    && !(r_first_name || r_last_name)){
+                    add = "Please check that all of your arguments are not empty!"
+                } else if (e.message === "GraphQL error: A unique constraint would be violated on User. Details: Field name = email"){
+                    add = "Email is already taken." 
+                }
+                this.setState(prevState => {
+                    let state = prevState
+                    let add_error = !state.show_messages_register.includes(add);
+                    if (add_error){
+                        state.show_messages_register.push(add)
+                    }
+                    return state
+                })
             }
-        })
-        Cookies.set("auth_token",results.data.signUp.token);
-        this.componentDidMount();
+        }
     }
     logout(e) {
         console.log(123);
@@ -202,7 +238,7 @@ class App extends Component {
 
                     this.state.user === undefined ?                       
                     (
-                            <Loading style={{margin:280}}/>
+                            <Loading style={{margin:140}}/>
                     )
 
                     :
@@ -213,14 +249,8 @@ class App extends Component {
                                     console.log(this.state.user);
                                     return (
                                         this.state.user
-                                        ? <div>
-                                            <Stories user={this.state.user} client={client} />
-                                            <script src="/assets/toolkit/scripts/jquery.min.js"></script>
-
-                                            <script src="/assets/toolkit/scripts/toolkit.js"></script>
-
-                                          </div>
-                                        : <Redirect to="/login?success=profile"/>
+                                        ? <Stories user={this.state.user} client={client} />
+                                        : <Redirect to="/login?success=stories"/>
                                     )
 
                                 }} />
@@ -228,15 +258,22 @@ class App extends Component {
                                     return (
                                         this.state.user 
                                         ? <Redirect to="/" /> 
-                                        : <Register client={client} register={this.register} show_message_register={""} />
+                                        : <Register 
+                                            client={client} 
+                                            register={this.register} 
+                                            show_messages_register={this.state.show_messages_register} 
+                                        />
                                     );
                                 }} />
                                 <Route path="/login" exact component={()  => {
-                                    return (
-                                        this.state.user 
-                                        ? <Redirect to="/" />
-                                        : <Login login={this.login} show_message={this.state.show_message} />
-                                    );
+                                    let params = getQueryParams(window.location.href);
+                                    if (this.state.user && params["success"]){
+                                        return <Redirect to={`${params["success"].replace(":","/")}`}/>
+                                    } else {
+                                        return this.state.user 
+                                            ? <Redirect to="/"/>
+                                            : <Login login={this.login} show_message={this.state.show_message} />
+                                    }
                                 }} />
                                 <Route path="/forget_password" exact component={() => {
                                         return (
