@@ -2,6 +2,7 @@ import React from "react";
 import { Link } from "react-router-dom";
 import Loading from "./loading";
 import gql from "graphql-tag";
+import Alert from "./alert";
 
 class Register extends React.Component {
 	constructor(props) {
@@ -26,9 +27,9 @@ class Register extends React.Component {
 		})
 	}
 	render() {
+		console.log(this.props.show_messages_register)
 		return (
 	      <form className="login" onSubmit={this.props.register}>
-	      	{this.props.show_message_register}
 	        <div className="login__container">
 	          <div className="login__content">
 	          	<Link to="/login">
@@ -41,6 +42,13 @@ class Register extends React.Component {
 	            <div className="login__hero">
 	              <div className="login__hero--left">
 	                <h1 className="bold text-center">Create your account</h1>
+	                {
+	                	this.props.show_messages_register.length ? this.props.show_messages_register.map(message => {
+	                		return (
+	                			<Alert red={true} message={message}/>
+	                		)
+	                	}) : ""
+	                }
 						{	
 							!this.state.jobs ? <Loading /> :                  
 							<div className="input__wo-border">
