@@ -1,5 +1,6 @@
 import React from "react";
 import { Link } from "react-router-dom";
+import Alert from "./alert";
 
 class Login extends React.Component {
 	render() {
@@ -17,7 +18,11 @@ class Login extends React.Component {
 			            <div className="login__hero">
 			              <div className="login__hero--left">
 			                <h1 className="bold text-center">Welcome back</h1>
-			                {this.props.show_message}
+			                {
+			                	this.props.show_message
+			                	? <Alert style={{height:"70"}} red={true} message={this.props.show_message}/>
+			                	: ""
+			                }
 			                <div className="input__wo-border">
 			                  <input className="input first fmt" id="email" type="email" placeholder="Email" />
 			                  <input className="input last fmt" id="password" type="password" placeholder="Password" />
