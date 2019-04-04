@@ -27,12 +27,11 @@ class Register extends React.Component {
 	}
 	render() {
 		return (
-		
 	      <form className="login" onSubmit={this.props.register}>
 	      	{this.props.show_message_register}
 	        <div className="login__container">
 	          <div className="login__content">
-	          	<Link to="/">
+	          	<Link to="/login">
 	            	<h4 className="pink bold header__back"><a href="#" className="flex ac"><img src="../../assets/toolkit/images/008-delete.svg" alt />Back</a></h4>
 	            </Link>
 	            <div className="login__header mb50">
