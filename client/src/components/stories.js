@@ -4,6 +4,7 @@ import gql from "graphql-tag";
 import Header from "./header";
 import { Link } from "react-router-dom";
 import {getStories,getAppCategories,getStoryCategories,getStoryElements,getActiveFilters,insertActiveFilters} from "../helpers";
+import uuidv1 from 'uuid/v1';
 
 class Stories extends React.Component {
   constructor(props){
@@ -17,7 +18,8 @@ class Stories extends React.Component {
         appCategory: undefined,
         storyCategories: {},
         storyElements: {}
-      }
+      },
+      searchId: undefined
     }
     this.search = this.search.bind(this);
     this.resetFilters = this.resetFilters.bind(this);
@@ -45,8 +47,10 @@ class Stories extends React.Component {
     })    
   }
   async search(storyName_contains) {
+    let searchId = uuidv1();
     this.setState({
-      stories: undefined
+      stories: undefined,
+      searchId: searchId
     })
     let filters = {"storyCategories":[],"storyElements":[]};
     filters = insertActiveFilters(filters,this.state);
@@ -67,10 +71,13 @@ class Stories extends React.Component {
         }
         `
     })
-    let stories = results.data.stories;
-    this.setState({
-      stories: stories
-    })
+    console.log(this.state.searchId,this.state.searchId === searchId,searchId);
+    if (this.state.searchId === undefined || (this.state.searchId === searchId)){
+      let stories = results.data.stories;
+      this.setState({
+        stories: stories
+      })
+    }
   }
   async handleFilterClick(e,obj,type) {
     this.setState((prevState) => {
