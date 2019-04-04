@@ -11,6 +11,8 @@ import Library from "./components/library";
 import Register from "./components/register";
 import SingleApp from "./components/singleApp";
 import Home from "./components/home";
+import ForgetPassword from "./components/forgetPassword";
+import ResetPassword from "./components/resetPassword";
 
 //Cookies.set("auth_token","");
 var client = new ApolloClient({
@@ -235,6 +237,23 @@ class App extends Component {
                                         ? <Redirect to="/" />
                                         : <Login login={this.login} show_message={this.state.show_message} />
                                     );
+                                }} />
+                                <Route path="/forget_password" exact component={() => {
+                                        return (
+                                            this.state.user
+                                            ? <Redirect to="/"/>
+                                            : <ForgetPassword client={client} />
+                                        )
+                                    }}/>
+                                <Route path="/reset/:token" exact component={(match) => {
+                                    console.log(321);
+                                    return (
+                                        <ResetPassword 
+                                            user={this.state.user} 
+                                            client={client}
+                                            match={match}
+                                        />
+                                    )
                                 }} />
                             <Route path="/profile" component={() => {
                                 return (
