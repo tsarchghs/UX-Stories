@@ -29,38 +29,55 @@ class ResetPassword extends React.Component {
 		})
 
 	}
-	async resetPassword(){
+	async resetPassword(e){
+		e.preventDefault();
 		let new_password = document.getElementById("new_password").value;
 		let repeat_new_password = document.getElementById("repeat_new_password").value;
 		if (!new_password){
 			this.setState({
-				success:false,
 				error_message: "Password can't be empty"
 			})
 			return;
 		}
 		if (!(new_password === repeat_new_password)){
+			console.log("dsads");
 			this.setState({
-				success:false,
 				error_message:"Password's do not match"
 			})
 			return;
 		}
 		let data = await this.props.client.mutate({
 			mutation: gql`
-			
+				mutation {
+					resetPassword(
+				    token:"${this.props.match.match.params.token}"
+				    new_password:"${new_password}"
+				    repeat_new_password:"${repeat_new_password}"
+				  ){
+					success
+				    error
+				  }
+				}
 			`
 		})
-		this.setState({
-			success: true
-		})
+		console.log(data);
+		if (!data.data.resetPassword.error){
+			this.setState({
+				success: true,
+				error_message: undefined
+			}, ()=> console.log(this.state));
+		} else {
+			this.setState({
+				error_message:data.data.resetPassword.error
+			})
+		}
 	}
 	render(){
 		return (
 	      <div className="login">
 	        <div className="login__container">
 	          <div className="login__content">
-	          <form onSubmit={this.sendEmail}>
+	          <form onSubmit={this.resetPassword}>
 		          	<Link to="/login">
 		            	<h4 className="pink bold header__back"><a href="#" className="flex ac"><img src="../../assets/toolkit/images/008-delete.svg" alt />Back</a></h4>
 		            </Link>
@@ -77,13 +94,35 @@ class ResetPassword extends React.Component {
 			                	this.state.valid 
 			                	? (
 									<div className="input__wo-border">
-					                  <input id="new_password" className="input first fmt" type="text" placeholder="New password" />
-					                  <input id="repeat_new_password" className="input first fmt" type="text" placeholder="Repeat new password" />
-					                  <p className="login__rm light-gray text-center">By clicking this button, you agree to our <a className="bold" href="#">Terms, Privacy Policy.</a></p>
-					                  <button className="button full">Reset password</button>
-						          		<Link to="/login">
-						                  <p className="sign-in light-gray text-center">Return to <a href="#">Sign in here</a></p>
-										</Link>
+									{
+			                			this.state.error_message 
+			                			? <div>
+			                				<Alert red={true} message={this.state.error_message}/>
+			                			  </div>
+			                			: ""
+			                		}
+			                		{
+			                			this.state.success
+			                			? <Alert message={"Password reset"}/> 
+			                			: ""
+			                		}
+			                		{
+			                			!this.state.success 
+						                ? <div>
+						                	<input id="new_password" className="input first fmt" type="text" placeholder="New password" />
+						                  	<input id="repeat_new_password" className="input first fmt" type="text" placeholder="Repeat new password" />	
+							                  <p className="login__rm light-gray text-center">By clicking this button, you agree to our <a className="bold" href="#">Terms, Privacy Policy.</a></p>
+							                  <button type="submit" className="button full">Reset password</button>
+								          		<Link to="/login">
+								                  <p className="sign-in light-gray text-center">Return to <a href="#">Sign in here</a></p>
+												</Link>
+			                			  </div>
+			                			: <div>
+			                				<Link to="/login">
+			                					<button type="submit" className="button full">Back to login</button>
+			                				</Link>
+			                			  </div>
+			                		}
 					                </div>
 			                	)
 			                	: <Alert red={true} message={"Link invalid or expired"}/>
