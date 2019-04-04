@@ -24,7 +24,9 @@ class Home extends React.Component {
 	}
   handleSearchKeyPress(e){
     if (e.key === "Enter"){
-      this.update();
+      this.setState({
+        apps:undefined
+      },this.update);
     }
   }
   async update(){ 
