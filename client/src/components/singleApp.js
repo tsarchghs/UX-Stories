@@ -243,12 +243,15 @@ class SingleApp extends React.Component {
                   (
                     this.state.stories.map(story => {
                       return (
-                        <a href="#"><img src={story.thumbnail.url} alt /></a>
+                        <a href="#"><img style={{borderRadius: '25px'}} src={story.thumbnail.url} alt /></a>
                       );
                     })
                   )
 
                 }
+                  </div>
+                </div>
+              </div>
               {
                 this.state.show_stories_skeleton || !this.state.stories ? 
                       <div className="cards">
@@ -269,9 +272,6 @@ class SingleApp extends React.Component {
                   : <button onClick={this.updateStories}>Load more</button>
                 }
               </center>
-                  </div>
-                </div>
-              </div>
               </div></div>
               </div>
           )
