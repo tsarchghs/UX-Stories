@@ -21,7 +21,9 @@ class Login extends React.Component {
 			                <div className="input__wo-border">
 			                  <input className="input first fmt" id="email" type="email" placeholder="Email" />
 			                  <input className="input last fmt" id="password" type="password" placeholder="Password" />
-			                  <p className="login__rm light-gray text-right"><a href="#">Forgot your password</a></p>
+			                  <Link to="/forget_password">
+			                  	<p className="login__rm light-gray text-right"><a href="#">Forgot your password</a></p>
+			                  </Link>
 			                  <button className="button full" type="submit">Log in</button>
 			                </div>
 			              </div>
