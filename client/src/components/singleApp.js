@@ -77,7 +77,7 @@ class SingleApp extends React.Component {
       stories: app.data.app.stories,
       storyElements,
       storyCategories,
-      reached_end: app.data.app.stories.length < 4
+      reached_end: app.data.app.stories.length < 10
     })
   }
   async handleFilterClick(e,type) {
@@ -127,7 +127,7 @@ class SingleApp extends React.Component {
       state.stories = state.stories.concat(data.data.stories)
       console.log(state.stories,data.data.stories,data.data.stories.length);
       state.show_stories_skeleton = false
-      state.reached_end = data.data.stories.length < 4
+      state.reached_end = data.data.stories.length < 10
       return state;
     })
   }
