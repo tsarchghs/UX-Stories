@@ -14,6 +14,15 @@ enum LinkType {
   disconnect  
 }
 
+type BasicInfo {
+  success: Boolean!
+  error: String
+}
+
+type TokenValidation {
+  valid: Boolean!
+}
+
 type AuthData {
   userId: ID!
   token: String!
@@ -183,6 +192,20 @@ type Mutation {
     job: ID!
     profile_photo: FileInput
   ): AuthData!
+
+  verifyForgotPassword(
+    token: String!
+  ): TokenValidation!
+
+  resetPassword(
+    token: String!
+    new_password: String!
+    repeat_new_password: String!
+  ): BasicInfo!
+
+  forgetPassword(
+    email: String!
+  ): BasicInfo!
 
   editProfile(
     full_name: String
