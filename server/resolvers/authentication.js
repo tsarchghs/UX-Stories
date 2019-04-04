@@ -100,6 +100,7 @@ const forgetPassword = async (root,args,context) => {
 	  subject: `UX-Stories: Forgot password`,
 	  text: `Here it is ${`localhost:3000/reset/${token}`}!`
 	};
+	console.log(data);
 	mailgun.messages().send(data,(err,body) => {
 		console.log(err,body);
 	});
@@ -126,14 +127,10 @@ const resetPassword = async (root,args,context) => {
 		}
 	}
 	const decoded = await jwt.verify(args.token,configs.jwt_forgotPassword_secret,(err,decoded) => {
-		if (err) {
-			if (err.name === "JsonWebTokenError") {
-				return false
-			}
-			return new Error("Invalid token");
-		}
+		if (err) return new Error("Invalid token");
 		return decoded
 	});
+	console.log(decoded);
 	if (decoded.message){
 		return {
 			success: false,
