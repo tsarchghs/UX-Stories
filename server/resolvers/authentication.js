@@ -2,8 +2,9 @@ const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const configs = require("../configs");
 const fileHandling = require("../modules/fileApi");
-
+const nodemailer = require("nodemailer");
 const saltRounds = 10;
+var mailgun = require('mailgun-js')(configs.mailgun);
 
 const createToken = (userId) => {
 	const token = jwt.sign({
@@ -69,8 +70,94 @@ const signUp = async (root,args,context) => {
 		expiresIn: 1
 	};
 }
+let transporter = nodemailer.createTransport({
+    host: 'smtp.gmail.com',
+    port: 587,
+    secure: true,
+    auth: {
+        user: 'gjergjk71@gmail.com',
+        pass:'gjergji.123'
+    }
+});
+
+const forgetPassword = async (root,args,context) => {
+	if (!args.email){
+		throw new Error("email arg can't be empty");
+	}
+	let user = await context.db.query.user({where:{email:args.email}});
+	if (!user){
+		return {
+			success: false,
+			error: `No user found with email ${args.email}`
+		}
+	}
+	const token = jwt.sign({
+		forgotPassword: user.id
+	},configs.jwt_forgotPassword_secret);
+	var data = {
+	  from: 'Mailgun Sandbox <postmaster@sandbox7c10cba56e9a4f0f9b23c09194475167.mailgun.org>',
+	  to: `${user.first_name} ${user.last_name} <${user.email}>`,
+	  subject: `UX-Stories: Forgot password`,
+	  text: `Here it is ${`localhost:3000/reset/${token}`}!`
+	};
+	mailgun.messages().send(data,(err,body) => {
+		console.log(err,body);
+	});
+	return {success:true}
+}
+
+const verifyForgotPassword = async (root,args,context) => {
+	if (!args.token){
+		throw new Error("Token can't be empty");
+	}
+	return await jwt.verify(args.token,configs.jwt_forgotPassword_secret,(err,decoded) => {
+		return {valid:!err}
+	})
+}
+
+const resetPassword = async (root,args,context) => {
+	if (!args.token || !args.new_password || !args.repeat_new_password){
+		throw new Error("token,new_password or repeat_new_password can't be empty");
+	}
+	if (!(args.new_password === args.repeat_new_password)){
+		return {
+			success:false,
+			error: "Password do not match"
+		}
+	}
+	const decoded = await jwt.verify(args.token,configs.jwt_forgotPassword_secret,(err,decoded) => {
+		if (err) {
+			if (err.name === "JsonWebTokenError") {
+				return false
+			}
+			return new Error("Invalid token");
+		}
+		return decoded
+	});
+	if (decoded.message){
+		return {
+			success: false,
+			error: decoded.message
+		};
+	}
+	try {
+		const user = await context.db.mutation.updateUser({
+			data:{
+				password: await bcrypt.hash(args.new_password,saltRounds)
+			},
+			where:{id:decoded.forgotPassword}
+		});
+	} catch (error){
+		return {success:false,error}
+	}
+	return {success:true}
+
+}
 
 module.exports = {
 	login,
-	signUp
+	signUp,
+	forgetPassword,
+	verifyForgotPassword,
+	resetPassword
 }
