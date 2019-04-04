@@ -11,7 +11,8 @@ const app = async (root,args,context,info) => {
 
 const apps = async (root,args,context,info) => {
 	if (args.appFilterInput && 
-		!(args.appFilterInput.id || args.appFilterInput.appCategory ||
+		!(args.appFilterInput.stories_first || args.appFilterInput.appName_contains !== undefined || args.appFilterInput.appName_contains || 
+			args.appFilterInput.first || args.appFilterInput.skip || args.appFilterInput.id || args.appFilterInput.appCategory ||
 			(
 				args.appFilterInput.storyCategories &&
 				args.appFilterInput.storyCategories.length
@@ -23,9 +24,11 @@ const apps = async (root,args,context,info) => {
 			)
 		)
 	){
-		throw new Error("You must specifiy either one of id,appCategory/storyCategory or storyElements arguments when passing appFilterInput.");
+		throw new Error("You must specifiy either one of id,first,stories_first,appCategory/storyCategory or storyElements arguments when passing appFilterInput.");
 	}
-	const filterBy = {where:{}}
+	const filterBy = {where:{
+
+	}}
 	if (args.appFilterInput && args.appFilterInput.id){
 		filterBy["where"]["id"] = args.appFilterInput.id
 	}
@@ -33,7 +36,7 @@ const apps = async (root,args,context,info) => {
 		filterBy["where"]["appCategory"] = {name:args.appFilterInput.appCategory}
 	}
 	if (args.appFilterInput && args.appFilterInput.storyCategories && args.appFilterInput.storyCategories.length) {
-		filterBy["where"]["stories_every"] = {
+		filterBy["where"]["stories_some"] = {
 			AND: args.appFilterInput.storyCategories.map(storyCategory => (
 					{
 						storyCategories_some:{
@@ -52,6 +55,15 @@ const apps = async (root,args,context,info) => {
 						}
 					}
 				))
+		}
+	}
+	if (args.appFilterInput && (args.appFilterInput.appName_contains !== undefined)){
+		filterBy["where"]["name_contains"] = args.appFilterInput.appName_contains
+	}
+	var direct = ["first","skip"];
+	for (var x in direct){
+		if (args.appFilterInput && args.appFilterInput[direct[x]]){
+			filterBy[direct[x]] = args.appFilterInput[direct[x]]
 		}
 	}
 	const apps = await context.db.query.apps(filterBy,info);
@@ -143,9 +155,17 @@ const editApp = async (root,args,context,info) => {
 	}
 }
 
+const stories = async (parent,args,context,info) => {
+	let where = {
+		app: { id: parent.id }
+	}
+	return await context.db.query.stories({where,first:args.first,skip:args.skip},info)
+}
+ 
 module.exports = {
 	app,
 	apps,
 	createApp,
-	editApp
+	editApp,
+	stories
 }
