@@ -27,6 +27,9 @@ module.exports = {
 	},
 	Mutation: {
 		signUp: authResolvers.signUp,
+		verifyForgotPassword: authResolvers.verifyForgotPassword,
+		resetPassword: authResolvers.resetPassword,
+		forgetPassword: authResolvers.forgetPassword,
 		editProfile: userResolvers.editProfile,
 		createApp: appResolvers.createApp,
 		editApp: appResolvers.editApp,
@@ -56,5 +59,8 @@ module.exports = {
 		editJob: jobResolvers.editJob,
 		deleteJob: jobResolvers.deleteJob,
 		uploadFile: fileResolvers.uploadFile
+	},
+	App: {
+		stories: appResolvers.stories
 	}
 }
