@@ -12,7 +12,7 @@ const app = async (root,args,context,info) => {
 const apps = async (root,args,context,info) => {
 	if (args.appFilterInput && 
 		!(args.appFilterInput.stories_first || args.appFilterInput.appName_contains !== undefined || args.appFilterInput.appName_contains || 
-			args.appFilterInput.first || args.appFilterInput.skip || args.appFilterInput.id || args.appFilterInput.appCategory ||
+			args.appFilterInput.first || args.appFilterInput.skip || args.appFilterInput.id ||
 			(
 				args.appFilterInput.storyCategories &&
 				args.appFilterInput.storyCategories.length
@@ -33,7 +33,9 @@ const apps = async (root,args,context,info) => {
 		filterBy["where"]["id"] = args.appFilterInput.id
 	}
 	if (args.appFilterInput && args.appFilterInput.appCategory) {
-		filterBy["where"]["appCategory"] = {name:args.appFilterInput.appCategory}
+		if (!(args.appFilterInput.appCategory === "all")){
+			filterBy["where"]["appCategory"] = {name:args.appFilterInput.appCategory}
+		}
 	}
 	if (args.appFilterInput && args.appFilterInput.storyCategories && args.appFilterInput.storyCategories.length) {
 		filterBy["where"]["stories_some"] = {
