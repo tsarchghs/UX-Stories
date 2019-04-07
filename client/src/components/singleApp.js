@@ -2,12 +2,15 @@ import React from "react";
 import Header from "./header";
 import Loading from "./loading";
 import gql from "graphql-tag";
-import {getStories,getAppCategories,getStoryCategories,getStoryElements,getActiveFilters,insertActiveFilters} from "../helpers";
+import {getStories,getAppVersions,getAppCategories,getStoryCategories,getStoryElements,getActiveFilters,insertActiveFilters,loadToolkit} from "../helpers";
 import E404 from "./E404";
 import AppProfileLoading from "./appProfileLoading";
 import StoryThumbnailLoading from "./storyThumbnailLoading";
 import CategoriesLoading from "./categoriesLoading";
 import SingleAppLoading from "./singleAppLoading";
+import { debounce } from "lodash";
+import DropdownLoading from "./dropdownLoading";
+import { Link } from "react-router-dom";
 
 class SingleApp extends React.Component {
   constructor(props){
@@ -17,6 +20,7 @@ class SingleApp extends React.Component {
       stories: undefined,
       storyCategories: undefined,
       storyElements:undefined,
+      appVersions:undefined,
       filterBy: {
         storyCategories: {},
         storyElements: {},
@@ -28,7 +32,12 @@ class SingleApp extends React.Component {
     this.skip = 0
     this.handleFilterClick = this.handleFilterClick.bind(this);
     this.resetFilters = this.resetFilters.bind(this);
-    this.updateStories = this.updateStories.bind(this);
+    this.updateStories = debounce(this.updateStories.bind(this),500)
+  }
+  async componentDidUpdate(){
+    if (!(!this.state.storyCategories || !this.state.storyElements || !this.state.appVersions)) {
+      loadToolkit()
+    }
   }
 	async componentDidMount(){
     if (this.props.match.params.id[this.props.match.params.id.length-1] === "#"){
@@ -43,15 +52,17 @@ class SingleApp extends React.Component {
             description
             company
             logo {
+              id
               url
             }
             appCategory {
-              id 
+              id  
               name
             }
             stories(first:10) {
               id
               thumbnail {
+                id
                 url
               }
             }
@@ -72,10 +83,12 @@ class SingleApp extends React.Component {
     }
     let storyElements = await getStoryElements(this.props.client);
     let storyCategories = await getStoryCategories(this.props.client);
+    let appVersions = await getAppVersions(this.props.client);
     this.setState({
       app: app.data.app,
       stories: app.data.app.stories,
       storyElements,
+      appVersions,
       storyCategories,
       reached_end: app.data.app.stories.length < 10
     })
@@ -112,6 +125,7 @@ class SingleApp extends React.Component {
           }) {
             id
             thumbnail {
+              id
               url
             }
           }
@@ -125,7 +139,6 @@ class SingleApp extends React.Component {
         state.stories = []
       }
       state.stories = state.stories.concat(data.data.stories)
-      console.log(state.stories,data.data.stories,data.data.stories.length);
       state.show_stories_skeleton = false
       state.reached_end = data.data.stories.length < 10
       return state;
@@ -189,14 +202,114 @@ class SingleApp extends React.Component {
               <div className="container">
                 <div className="secodary-header__content">
                   <div className="colored">
-                    <div className="flex ac">
-                      <div className="filter">
-                        <button className="button white">Filter with stories<img src="/assets/toolkit/images/008-delete.svg" alt /></button>
-                      </div>        <div className="filter">
-                        <button className="button white">Filter with elements<img src="/assets/toolkit/images/008-delete.svg" alt /></button>
-                      </div>        <div className="filter">
-                        <button className="button white">Version of apps<img src="/assets/toolkit/images/008-delete.svg" alt /></button>
-                      </div>      </div>
+
+      <div className="flex">
+        <button className="button white fbtn" data-toggle="first">Filter with Categories<img src="/assets/toolkit/images/shape.svg" alt /></button>
+        <div className="filter" id="first" data-dropdown data-auto-focus="true">
+
+            {
+              !this.state.storyCategories ? <DropdownLoading/>
+              : <div>
+                      <div className="filter-dropdown">
+                        <div className="filter-dropdown__top">
+                          <h5 className="gray bold">Filter by stories</h5>
+                          <p className="pink">3 selected</p>
+                        </div>
+                    {
+                    this.state.storyCategories.map(storyCategory => {
+                        return (
+                          <div className="filter-dropdown__main">
+                            <label className="radio__container">
+                              <p id={storyCategory.id+"_label"} className="gray bold">{storyCategory.name}</p>
+                              <input 
+                                id={storyCategory.id} 
+                                className="ic" 
+                                type="checkbox" 
+                                onClick={(e) => this.handleFilterClick(e,"storyCategories")}
+                              />
+                              <span className="checkmark" />
+                            </label>
+                          </div>
+                        );
+                    })
+                  }
+                  </div>
+                </div> 
+            }
+
+        </div>
+        <button className="button white fbtn" data-toggle="second">Filter with Stories<img src="/assets/toolkit/images/shape.svg" alt /></button>
+        <div className="filter" id="second" data-dropdown data-auto-focus="true">
+            {
+              !this.state.storyElements ? <DropdownLoading/>
+              : <div>
+                      <div className="filter-dropdown">
+                        <div className="filter-dropdown__top">
+                          <h5 className="gray bold">Filter by stories</h5>
+                          <p className="pink">3 selected</p>
+                        </div>
+                    {
+                    this.state.storyElements.map(storyElement => {
+                        return (
+                          <div className="filter-dropdown__main">
+                            <label className="radio__container">
+                              <p id={storyElement.id+"_label"} className="gray bold">{storyElement.name}</p>
+                              <input 
+                                id={storyElement.id} 
+                                className="ic" 
+                                type="checkbox" 
+                                onClick={(e) => this.handleFilterClick(e,"storyElements")}
+                              />
+                              <span className="checkmark" />
+                            </label>
+                          </div>
+                        );
+                    })
+                  }
+                  </div>
+                </div> 
+            }
+        </div>
+
+        <button className="button white fbtn" data-toggle="third">Filter by versions<img src="/assets/toolkit/images/shape.svg" alt /></button>
+        <div className="filter" id="third" data-dropdown data-auto-focus="true">
+          
+        {
+          !this.state.appVersions ? <DropdownLoading/>
+          : <div>
+                  <div className="filter-dropdown">
+                    <div className="filter-dropdown__top">
+                      <h5 className="gray bold">Filter by versions</h5>
+                      <p className="pink">3 selected</p>
+                    </div>
+                {
+                this.state.appVersions.map(appVersion => {
+                    return (
+                      <div className="filter-dropdown__main">
+                        <label className="radio__container">
+                          <p id={appVersion.id+"_label"} className="gray bold">{appVersion.name}</p>
+                          <input 
+                            id={appVersion.id} 
+                            className="ic" 
+                            type="checkbox" 
+                            onClick={(e) => this.handleFilterClick(e,"appVersions")}
+                          />
+                          <span className="checkmark" />
+                        </label>
+                      </div>
+                    );
+                })
+              }
+              </div>
+            </div> 
+        }
+
+
+
+        </div>
+      </div>
+
+
                   </div>
                 </div>
               </div>
@@ -243,7 +356,9 @@ class SingleApp extends React.Component {
                   (
                     this.state.stories.map(story => {
                       return (
-                        <a href="#"><img style={{borderRadius: '25px'}} src={story.thumbnail.url} alt /></a>
+                        <Link to={`/story/${story.id}?from=app`}>
+                          <img style={{borderRadius: '25px'}} src={story.thumbnail.url}/>
+                        </Link>
                       );
                     })
                   )
