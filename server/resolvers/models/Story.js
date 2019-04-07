@@ -1,6 +1,10 @@
 const fileHandling = require("../../modules/fileApi");
 const permissions = require("../permissions");
 
+const story = async (root,args,context,info) => {
+	return await context.db.query.story({where:{id:args.id}},info);
+}
+
 const stories = async (root,args,context,info) => {
 	if (args.storiesFilterInput && 
 		!(
@@ -33,9 +37,11 @@ const stories = async (root,args,context,info) => {
 			}]
 		}
 		if (args.storiesFilterInput.appCategory){
-			filterBy["where"]["app"] = {
-				"appCategory": {
-					id: args.storiesFilterInput.appCategory
+			if (!(args.storiesFilterInput.appCategory === "all")){
+				filterBy["where"]["app"] = {
+					"appCategory": {
+						id: args.storiesFilterInput.appCategory
+					}
 				}
 			}
 		}
@@ -248,5 +254,6 @@ module.exports = {
 	createStory,
 	storyToLibrary,
 	storyToApp,
-	editStory
+	editStory,
+	story
 }
