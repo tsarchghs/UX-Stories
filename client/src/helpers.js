@@ -27,8 +27,21 @@ const getAppCategories = async (client) => {
 	        }
 	      `
 	    })
-	console.log(results.data.appCategories,111);
 	return results.data.appCategories;
+}
+
+const getAppVersions = async (client) => {
+  const results = await client.query({
+    query: gql`
+      query {
+        appVersions{
+          id
+          name
+        }
+      }
+    `
+  })
+  return results.data.appVersions;
 }
 
 const getStoryCategories = async (client) => {
@@ -80,7 +93,7 @@ const insertActiveFilters = (filters,state) => {
     return filters;
 }
 
-var getQueryParams = function (url) {
+const getQueryParams = function (url) {
   var params = {};
   var parser = document.createElement('a');
   parser.href = url;
@@ -93,6 +106,13 @@ var getQueryParams = function (url) {
   return params;
 };
 
+const loadToolkit = () => {
+        let script = document.createElement("script");
+        script.src = "/assets/toolkit/scripts/toolkit.js"
+        script.async = true;
+        document.body.appendChild(script);
+  }
+
 export {
 	getStories,
 	getAppCategories,
@@ -100,5 +120,7 @@ export {
 	getStoryElements,
   getActiveFilters,
   insertActiveFilters,
-  getQueryParams
+  getQueryParams,
+  loadToolkit,
+  getAppVersions
 }
