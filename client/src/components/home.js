@@ -3,51 +3,78 @@ import Header from "./header";
 import AppLoading from "./appLoading";
 import gql from "graphql-tag";
 import { Link } from "react-router-dom";
+import { debounce } from "lodash";
+import {getAppCategories,getActiveFilters,insertActiveFilters,loadToolkit} from "../helpers";
+import DropdownLoading from "./dropdownLoading";
 
 class Home extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      categories:undefined,
+      appCategories:undefined,
       apps: undefined,
       show_skeleton: true,
       reached_end: false,
-      nothing_to_show: false
+      nothing_to_show: false,
+      filterBy: {
+        appCategory: undefined
+      }
     }
     this.skip = 0;
     this.loadMore = this.loadMore.bind(this);
-    this.update = this.update.bind(this);
-    this.handleSearchKeyPress = this.handleSearchKeyPress.bind(this);
+    this.update = debounce(this.update.bind(this),500);
+    this.callAllCategoriesFilterOnce = false
   }
 	componentDidUpdate(){
-	   this.loadToolkit();
+	   loadToolkit();
+
 	}
-  handleSearchKeyPress(e){
-    if (e.key === "Enter"){
-      this.setState({
-        apps:undefined
-      },this.update);
+  filterCategory(appCategory) {
+    if (appCategory.name === "all" && !this.callAllCategoriesFilterOnce){
+      return;
+    }
+    if (!this.state.filterBy.appCategory || !(this.state.filterBy.appCategory.id === appCategory.id)){
+      this.setState(prevState => {
+        let state = prevState;
+        state.filterBy.appCategory = appCategory.name
+      },() => this.update(null,true));
     }
   }
-  async update(){ 
-    this.setState({
+  async update(e,resetApps){
+    let values = {
       reached_end: false,
       show_skeleton: true,
       nothing_to_show: false
-    })
-    let appName_contains = document.getElementById("appName_contains").value;
+    }
+    if (resetApps){
+      this.skip = 0
+      values["apps"] = undefined
+    }
+    this.setState(values)
+    // quick hack to prevent error when user switches forth and back while update is being executed :'(
+    // lesson learned. use refs next time
+    let appName_contains = document.getElementById("appName_contains") ? document.getElementById("appName_contains").value : ""
     let appsData = await this.props.client.query({
       query: gql`
         query {
-          apps(appFilterInput:{first:4,skip:${this.skip},appName_contains:"${appName_contains}"}) {
+          apps(appFilterInput:
+              {
+                first:4,
+                skip:${this.skip},
+                appName_contains:"${appName_contains}"
+                ${this.state.filterBy.appCategory ? `appCategory: "${this.state.filterBy.appCategory}"` : ""}
+              }) {
             id
             name
             description
             logo {
+              id
               url
             }
             stories(first:3) {
+              id
               thumbnail {
+                id
                 url
               }
             }
@@ -74,7 +101,11 @@ class Home extends React.Component {
   }
 	async componentDidMount(){
 		this.loadToolkit();
-    this.update()
+    this.update();
+    let appCategories = await getAppCategories(this.props.client).then();
+    this.setState({
+      appCategories
+    },document.getElementById("allCategoriesFilter").click());
 	}
   async loadMore() {
     this.skip += 4
@@ -115,103 +146,57 @@ class Home extends React.Component {
                   <input 
                     type="text" 
                     placeholder="Search by app name..."
-                    onKeyPress={this.handleSearchKeyPress}
+                    onChange={(e) => this.update(e,true)}
                     id="appName_contains"
                   />
-                </div>			</div>
+                </div>			
+              </div>
               <div className="flex">
                 <button className="button white fbtn" data-toggle="first">Filter with Categories<img src="/assets/toolkit/images/shape.svg" alt /></button>
                 <div className="filter" id="first" data-dropdown data-auto-focus="true">
                   <div className="filter-dropdown">
-                    <div className="filter-dropdown__top">
-                      <h5 className="gray bold">Filter with stories</h5>
-                      <p className="pink">3 selected</p>
+                  <label className="radio-t rde">
+                    <label className="gray bold">All</label>
+                    <input 
+                      className="ic" 
+                      type="radio" 
+                      name="categoryFilter"
+                      onClick={() => this.filterCategory({id:"all",name:"all"})}
+                    />
+                    <span id="allCategoriesFilter" className="checkmark"/>
+                  </label>
+                  {
+                    !this.state.appCategories 
+                    ? <DropdownLoading/>
+                    : <div>
+                      {
+                        this.state.appCategories.map(appCategory => {
+                          return (
+
+                            <label className="radio-t rde">
+                              <label id={appCategory.id+"_label"} className="gray bold">{appCategory.name}</label>
+                              <input 
+                                className="ic" 
+                                type="radio" 
+                                name={"categoryFilter"}
+                                onClick={() => this.filterCategory(appCategory)}
+                              />
+                              <span className="checkmark"/>
+                            </label>
+                          );
+                        })
+                      } 
                     </div>
-                    <div className="filter-dropdown__main">
-                      <label className="radio-t rde">
-                        <p className="gray bold">Entertaiment</p>
-                        <input className="ic" type="radio" name="radio-t" />
-                        <span className="checkmark" />
-                      </label>
-                      <label className="radio-t rde">
-                        <p className="gray bold">Red</p>
-                        <input className="ic" type="radio" name="radio-t" />
-                        <span className="checkmark" />
-                      </label>
-                      <label className="radio-t rde">
-                        <p className="gray bold">Blue</p>
-                        <input className="ic" type="radio" name="radio-t" />
-                        <span className="checkmark" />
-                      </label>		</div>
+                  }
                   </div>
-                </div>				<button className="button white fbtn" data-toggle="second">Filter with Stories<img src="/assets/toolkit/images/shape.svg" alt /></button>
-                <div className="filter" id="second" data-dropdown data-auto-focus="true">
-                  <div className="filter-dropdown">
-                    <div className="filter-dropdown__top">
-                      <h5 className="gray bold">Filter with stories</h5>
-                      <p className="pink">3 selected</p>
-                    </div>
-                    <div className="filter-dropdown__main">
-                      <label className="radio__container ">
-                        <p className="gray bold">Entertaiment</p>
-                        <input className="ic" type="checkbox" />
-                        <span className="checkmark" />
-                      </label>
-                      <label className="radio__container">
-                        <p className="gray bold">Red</p>
-                        <input className="ic" type="checkbox" />
-                        <span className="checkmark" />
-                      </label>
-                      <label className="radio__container">
-                        <p className="gray bold">Blue</p>
-                        <input className="ic" type="checkbox" />
-                        <span className="checkmark" />
-                      </label>		</div>
-                  </div>
-                </div>				<button className="button white fbtn" data-toggle="third">Filter with Elements<img src="/assets/toolkit/images/shape.svg" alt /></button>
-                <div className="filter" id="third" data-dropdown data-auto-focus="true">
-                  <div className="filter-dropdown">
-                    <div className="filter-dropdown__top">
-                      <h5 className="gray bold">Filter with stories</h5>
-                      <p className="pink">3 selected</p>
-                    </div>
-                    <div className="filter-dropdown__main">
-                      <label className="radio-t rde">
-                        <p className="gray bold">Entertaiment</p>
-                        <input className="ic" type="radio" name="radio-t" />
-                        <span className="checkmark" />
-                      </label>
-                      <label className="radio-t rde">
-                        <p className="gray bold">Red</p>
-                        <input className="ic" type="radio" name="radio-t" />
-                        <span className="checkmark" />
-                      </label>
-                      <label className="radio-t rde">
-                        <p className="gray bold">Blue</p>
-                        <input className="ic" type="radio" name="radio-t" />
-                        <span className="checkmark" />
-                      </label>				<label className="radio__container ">
-                        <p className="gray bold">Entertaiment</p>
-                        <input className="ic" type="checkbox" />
-                        <span className="checkmark" />
-                      </label>
-                      <label className="radio__container">
-                        <p className="gray bold">Red</p>
-                        <input className="ic" type="checkbox" />
-                        <span className="checkmark" />
-                      </label>
-                      <label className="radio__container">
-                        <p className="gray bold">Blue</p>
-                        <input className="ic" type="checkbox" />
-                        <span className="checkmark" />
-                      </label>		</div>
-                  </div>
-                </div>			</div>
+                </div>				
+               </div>
             </div>
           </div>
         </div>
         <section className="apps">
           <div className="apps__container">
+                {/*<p className="results__results bold">Showing {this.state.apps ? this.state.apps.length : 0} Results</p>*/}
             <div className="apps__content">
             {
               this.state.nothing_to_show
