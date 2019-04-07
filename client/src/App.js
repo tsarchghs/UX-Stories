@@ -13,6 +13,7 @@ import SingleApp from "./components/singleApp";
 import Home from "./components/home";
 import ForgetPassword from "./components/forgetPassword";
 import ResetPassword from "./components/resetPassword";
+import SingleStory from "./components/singleStory";
 import { getQueryParams } from "./helpers";
 
 //Cookies.set("auth_token","");
@@ -246,7 +247,6 @@ class App extends Component {
                             <div>
                                 <Route path="/" exact component={() => <Home user={this.state.user} client={client}/>}/>
                                 <Route path="/stories" exact component={() => {
-                                    console.log(this.state.user);
                                     return (
                                         this.state.user
                                         ? <Stories user={this.state.user} client={client} />
@@ -283,7 +283,6 @@ class App extends Component {
                                         )
                                     }}/>
                                 <Route path="/reset/:token" exact component={(match) => {
-                                    console.log(321);
                                     return (
                                         <ResetPassword 
                                             user={this.state.user} 
@@ -291,6 +290,15 @@ class App extends Component {
                                             match={match}
                                         />
                                     )
+                                }} />
+                                <Route path="/story/:id" exact component={match => {
+                                    return (
+                                        <SingleStory 
+                                            user={this.state.user}
+                                            client={client}
+                                            match={match}
+                                        />
+                                    );
                                 }} />
                             <Route path="/profile" component={() => {
                                 return (
