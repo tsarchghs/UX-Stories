@@ -167,6 +167,9 @@ type Query {
   apps(appFilterInput: AppFilterInput): [App!]!
   appVersions: [AppVersion!]!
   appCategories: [AppCategory!]!
+  story(
+    id: ID!
+  ): Story
   stories(
     storiesFilterInput: StoriesFilterInput  
   ): [Story!]!
