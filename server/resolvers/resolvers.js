@@ -18,6 +18,7 @@ module.exports = {
 		apps: appResolvers.apps,
 		appCategories: appCategoryResolvers.appCategories,
 		appVersions: appVersionResolvers.appVersions,
+		story: storyResolvers.story,
 		stories: storyResolvers.stories,
 		storyCategories: storyCategoryResolvers.storyCategories,
 		storyElements: storyElementResolvers.storyElements,
