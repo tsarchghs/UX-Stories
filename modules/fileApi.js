@@ -1,6 +1,6 @@
 const uuid = require("uuid");
-const aws = require("aws-sdk");
 const fs = require("fs");
+const configs = require("../configs");
 
 const get_extension = (encoded) => {
 	if (encoded[0] == "/"){
@@ -32,7 +32,7 @@ const processUpload = async (upload,mimetype,context,save_encoding=false) => {
 		filename: filename, 
 		mimetype: mimetype,
 		encoding: encoding,
-		url: "http://uxstories.herokuapp.com/static" + path
+		url: `${configs}/static` + path
 	}
 	const file = context.db.mutation.createFile({
 		data
