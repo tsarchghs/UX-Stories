@@ -210,7 +210,7 @@ class Home extends React.Component {
                   <div className="app">
                     <div className="apps__top">
                       <Link to={`/app/${app.id}`}>
-                        <div className="apps__top-image" style={{backgroundImage: 'url("/assets/toolkit/images/netflix-logo.jpg")'}} />
+                        <div className="apps__top-image" style={{backgroundImage: `url(${app.logo.url})`}} />
                       </Link>
                       <div className="apps__top-info">
                         <Link to={`/app/${app.id}`}>
