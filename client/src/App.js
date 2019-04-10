@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
 import { BrowserRouter as Router, Route, Link, Redirect } from "react-router-dom";
 import ApolloClient from "apollo-boost";
-import gql from "graphql-tag";
 import Profile from "./components/profile";
 import Stories from "./components/stories";
 import Login from "./components/login";
@@ -16,16 +15,25 @@ import ResetPassword from "./components/resetPassword";
 import SingleStory from "./components/singleStory";
 import { getQueryParams, loadToolkit } from "./helpers";
 import Apps from "./components/admin/apps";
+import { ApolloProvider } from "react-apollo";
+import { Query } from "react-apollo";
+import gql from "graphql-tag";
 
 const URI = "http://localhost:4000";
 
-//Cookies.set("auth_token","");
-var client = new ApolloClient({
-    uri: URI,
-    headers: {
-      "Authorization": `Bearer ${Cookies.get("auth_token")}`
-    }
-})
+// Cookies.set("token","");
+
+const client = new ApolloClient({
+  uri: URI,
+  request: async (operation) => {
+    const token = Cookies.get("token");
+    operation.setContext({
+      headers: {
+        authorization: `Bearer ${token}`
+      }
+    })
+  }
+});
 
 class App extends Component {
     constructor(props){
@@ -44,46 +52,43 @@ class App extends Component {
         loadToolkit();
     }
     async componentDidMount() {
-        console.log(this.state.user);
-        try {
-            var data = await client.query({
-                    query: gql`
-                        query {
-                            getLoggedInUser{
-                            first_name
-                            last_name
-                            email
-                            job {
-                                id
-                                name
-                            }
-                            profile_photo {
-                              url
-                            }
-                            libraries {
-                                id
-                                name
-                            }
-                          }
-                        }
-                    `
-                });
-        } catch (e) {
-            if (e.message === "GraphQL error: Not logged in"){
-                this.setState({
-                    user: null
-                })
-            }
-        }
-        if (data){
-            let user = data.data.getLoggedInUser;
-            user.logout = this.logout;
-            this.setState({
-                user:user
-            })
-        }
-        console.log(this.state.user,data);
-
+        // try {
+        //     var data = await client.query({
+        //             query: gql`
+        //                 query {
+        //                     getLoggedInUser{
+        //                     first_name
+        //                     last_name
+        //                     email
+        //                     job {
+        //                         id
+        //                         name
+        //                     }
+        //                     profile_photo {
+        //                       url
+        //                     }
+        //                     libraries {
+        //                         id
+        //                         name
+        //                     }
+        //                   }
+        //                 }
+        //             `
+        //         });
+        // } catch (e) {
+        //     if (e.message === "GraphQL error: Not logged in"){
+        //         this.setState({
+        //             user: null
+        //         })
+        //     }
+        // }
+        // if (data){
+        //     let user = data.data.getLoggedInUser;
+        //     user.logout = this.logout;
+        //     this.setState({
+        //         user:user
+        //     })
+        // }
     }
     async login(e) {
         e.preventDefault();
@@ -111,12 +116,6 @@ class App extends Component {
         }
         if (data) {
             Cookies.set("auth_token",data.data.login.token);
-            client = new ApolloClient({
-                uri: URI,
-                headers: {
-                  "Authorization": `Bearer ${data.data.login.token}`
-                }
-            })
             this.componentDidMount();
         }
     }
@@ -193,11 +192,7 @@ class App extends Component {
             user: null,
             show_message:""
         })
-        var client = new ApolloClient({
-            uri: URI
-        })
-
-        Cookies.set("auth_token","");
+        Cookies.set("token","");
     }
     async updateProfile() {
         let full_name = document.getElementById("p_full_name").value;
@@ -244,109 +239,132 @@ class App extends Component {
     render(){
         return (
             <Router>
-            <script src={`${URI}/assets/toolkit/scripts/toolkit.js`}></script>
-                {
-
-                    this.state.user === undefined ?                       
-                    (
-                            <Loading style={{margin:140}}/>
-                    )
-
-                    :
-                    (
-                            <div>
-                                <Route path="/" exact component={() => <Home user={this.state.user} client={client}/>}/>
-                                <Route path="/stories" exact component={() => {
-                                    return (
-                                        this.state.user
-                                        ? <Stories user={this.state.user} client={client} />
-                                        : <Redirect to="/login?success=stories"/>
-                                    )
-
-                                }} />
-                                <Route path="/register" exact component={() => {
-                                    return (
-                                        this.state.user 
-                                        ? <Redirect to="/" /> 
-                                        : <Register 
-                                            client={client} 
-                                            register={this.register} 
-                                            show_messages_register={this.state.show_messages_register} 
-                                        />
-                                    );
-                                }} />
-                                <Route path="/login" exact component={()  => {
-                                    let params = getQueryParams(window.location.href);
-                                    if (this.state.user && params["success"]){
-                                        return <Redirect to={`${params["success"].replace(":","/")}`}/>
-                                    } else {
-                                        return this.state.user 
-                                            ? <Redirect to="/"/>
-                                            : <Login login={this.login} show_message={this.state.show_message} />
-                                    }
-                                }} />
-                                <Route path="/forget_password" exact component={() => {
+            <ApolloProvider client={client}>
+                <script src={`${URI}/assets/toolkit/scripts/toolkit.js`}></script>
+                    <Query 
+                        query={gql`
+                                query {
+                                    getLoggedInUser{
+                                        first_name
+                                        last_name
+                                        email
+                                        job {
+                                            id
+                                            name
+                                        }
+                                        profile_photo {
+                                          url
+                                        }   
+                                        libraries {
+                                            id
+                                            name
+                                        }
+                                      }
+                                }
+                        `}>
+                        {({loading,error,data,refetch}) => {
+                            console.log(data);
+                            console.log(`Bearer ${Cookies.get("token")}`);
+                            console.log(12321);
+                            if (error) return <p>{error.message}</p>
+                            if (loading) return <Loading style={{margin:140}}/>
+                            var user = data.getLoggedInUser
+                            return (
+                                <div>
+                                    <Route path="/" exact component={() => <Home user={user}/>}/>
+                                    <Route path="/stories" exact component={() => {
                                         return (
-                                            this.state.user
-                                            ? <Redirect to="/"/>
-                                            : <ForgetPassword client={client} />
+                                            user
+                                            ? <Stories user={user} />
+                                            : <Redirect to="/login?success=stories"/>
                                         )
-                                    }}/>
-                                <Route path="/reset/:token" exact component={(match) => {
+
+                                    }} />
+                                    <Route path="/register" exact component={() => {
+                                        return (
+                                            user 
+                                            ? <Redirect to="/" /> 
+                                            : <Register 
+                                                
+                                                register={this.register} 
+                                                show_messages_register={this.state.show_messages_register} 
+                                            />
+                                        );
+                                    }} />
+                                    <Route path="/login" exact component={()  => {
+                                        let params = getQueryParams(window.location.href);
+                                        if (user && params["success"]){
+                                            return <Redirect to={`${params["success"].replace(":","/")}`}/>
+                                        } else {
+                                            return user 
+                                                ? <Redirect to="/"/>
+                                                : <Login refetchApp={refetch}/>
+                                        }
+                                    }} />
+                                    <Route path="/forget_password" exact component={() => {
+                                            return (
+                                                user
+                                                ? <Redirect to="/"/>
+                                                : <ForgetPassword />
+                                            )
+                                        }}/>
+                                    <Route path="/reset/:token" exact component={(match) => {
+                                        return (
+                                            <ResetPassword 
+                                                user={user} 
+                                               
+                                                match={match}
+                                            />
+                                        )
+                                    }} />
+                                    <Route path="/story/:id" exact component={match => {
+                                        return (
+                                            <SingleStory 
+                                                user={user}
+                                               
+                                                match={match}
+                                            />
+                                        );
+                                    }} />
+                                <Route path="/profile" component={() => {
                                     return (
-                                        <ResetPassword 
-                                            user={this.state.user} 
-                                            client={client}
-                                            match={match}
-                                        />
-                                    )
-                                }} />
-                                <Route path="/story/:id" exact component={match => {
-                                    return (
-                                        <SingleStory 
-                                            user={this.state.user}
-                                            client={client}
-                                            match={match}
-                                        />
+                                        user
+                                        ? <Profile updateProfile={this.updateProfile} user={user} />
+                                        : <Redirect to="/login?success=profile"/>
                                     );
                                 }} />
-                            <Route path="/profile" component={() => {
-                                return (
-                                    this.state.user
-                                    ? <Profile updateProfile={this.updateProfile} user={this.state.user} client={client} />
-                                    : <Redirect to="/login?success=profile"/>
-                                );
-                            }} />
-                            <Route path="/library/:id" component={({match}) => {
-                                return (
-                                    this.state.user
-                                    ? <Library user={this.state.user} client={client} match={match}/>
-                                    : <Redirect to={`/login?success=library:${match.params.id}`}/>
-                                )
-                            }} />
-                            <Route path="/app/:id" component={({match}) => {
-                                return (
-                                    this.state.user 
-                                    ? <SingleApp user={this.state.user} client={client} match={match}/>
-                                    : <Redirect to={`/login?success=app:${match.params.id}`}/>
-                                );
-                            }} />
+                                <Route path="/library/:id" component={({match}) => {
+                                    return (
+                                        user
+                                        ? <Library user={user} match={match}/>
+                                        : <Redirect to={`/login?success=library:${match.params.id}`}/>
+                                    )
+                                }} />
+                                <Route path="/app/:id" component={({match}) => {
+                                    return (
+                                        user 
+                                        ? <SingleApp user={user} match={match}/>
+                                        : <Redirect to={`/login?success=app:${match.params.id}`}/>
+                                    );
+                                }} />
 
-                            <Route path="/admin/apps/" component={() => {
-                                console.log(this.state);
-                                return (
-                                    this.state.user && this.state.user.role === "ADMIN"
-                                    ? <Apps user={this.state.user} client={client}/>
-                                    : <Redirect to={`/login?success=admin:apps`}/>
-                                );
-                            }} />
+                                <Route path="/admin/apps/" component={() => {
+                                    console.log(this.state);
+                                    return (
+                                        user && user.role === "ADMIN"
+                                        ? <Apps user={user}/>
+                                        : <Redirect to={`/login?success=admin:apps`}/>
+                                    );
+                                }} />
 
-                            </div> 
-                    )
-                }
-            <script src="/assets/toolkit/scripts/jquery.min.js"></script>
+                                </div> 
+                            )
+                        }}
+                    </Query>
+                <script src="/assets/toolkit/scripts/jquery.min.js"></script>
 
-            <script src="/assets/toolkit/scripts/toolkit.js"></script>
+                <script src="/assets/toolkit/scripts/toolkit.js"></script>
+            </ApolloProvider>
             </Router>
         );
     }
