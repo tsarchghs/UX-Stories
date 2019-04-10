@@ -45,7 +45,6 @@ class App extends Component {
         }
         this.login = this.login.bind(this);
         this.logout = this.logout.bind(this);
-        this.register = this.register.bind(this);
         this.updateProfile = this.updateProfile.bind(this);
     }
     componentDidUpdate(){
@@ -119,72 +118,6 @@ class App extends Component {
             this.componentDidMount();
         }
     }
-    async register(e) {
-        e.preventDefault();
-        this.setState({
-            show_messages_register: []
-        })
-        const a = JSON.parse(JSON.stringify(document.getElementById("r_full_name").value));
-        const full_name = a.split(" ");
-        console.log(document.getElementById("r_full_name"));
-        const r_first_name = full_name[0];
-        const r_last_name = full_name[1];
-        const r_email = document.getElementById("r_email").value;
-        const r_password = document.getElementById("r_password").value;
-        const r_job = document.getElementById("r_job").value;
-        if (full_name.length !== 2 || !full_name[1]){
-            this.setState(prevState => {
-                let message = "Full name format must be like for example 'John Doe'"
-                let add_error = !prevState.show_messages_register.includes(message);
-                if (add_error){
-                    prevState.show_messages_register.push(message)
-                }
-                return prevState
-            })
-        } else {
-            try {
-                const results = await client.mutate({
-                    mutation: gql`
-                        mutation {
-                            signUp(
-                                first_name:"${r_first_name}"
-                                last_name:"${r_last_name}"
-                                email:"${r_email}"
-                                password:"${r_password}"
-                                job:"${r_job}"
-                            ) { 
-                                token
-                            }
-                        }
-                    `
-                })
-                client = new ApolloClient({
-                    uri: URI,
-                    headers: {
-                      "Authorization": `Bearer ${results.data.signUp.token}`
-                    }
-                })
-                Cookies.set("auth_token",results.data.signUp.token);
-                this.componentDidMount();
-            } catch (e){
-                let add;
-                if (e.message === "GraphQL error: Please check that all of your arguments are not empty!" 
-                    && !(r_first_name || r_last_name)){
-                    add = "Please check that all of your arguments are not empty!"
-                } else if (e.message === "GraphQL error: A unique constraint would be violated on User. Details: Field name = email"){
-                    add = "Email is already taken." 
-                }
-                this.setState(prevState => {
-                    let state = prevState
-                    let add_error = !state.show_messages_register.includes(add);
-                    if (add_error){
-                        state.show_messages_register.push(add)
-                    }
-                    return state
-                })
-            }
-        }
-    }
     logout(e) {
         console.log(123);
         e.preventDefault();
@@ -217,8 +150,7 @@ class App extends Component {
                             `
                         }
                     ) {
-                            first_name
-                            last_name
+                            full_name
                             email
                             job {
                                 id
@@ -245,8 +177,7 @@ class App extends Component {
                         query={gql`
                                 query {
                                     getLoggedInUser{
-                                        first_name
-                                        last_name
+                                        full_name
                                         email
                                         job {
                                             id
@@ -284,11 +215,7 @@ class App extends Component {
                                         return (
                                             user 
                                             ? <Redirect to="/" /> 
-                                            : <Register 
-                                                
-                                                register={this.register} 
-                                                show_messages_register={this.state.show_messages_register} 
-                                            />
+                                            : <Register refetchApp={refetch}/>
                                         );
                                     }} />
                                     <Route path="/login" exact component={()  => {

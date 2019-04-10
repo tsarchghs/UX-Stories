@@ -29,8 +29,8 @@ class LibraryHeader extends React.Component {
 						            	</Link>
 						            
 						            <div className="profile-nav__img--info">
-						              <p className="bold">{this.props.user.first_name} {this.props.user.last_name}</p>
-						              <p className="light-gray">{this.props.user.first_name}</p>
+						              <p className="bold">{this.props.user.full_name}</p>
+						              <p className="light-gray">{this.props.user.full_name}</p>
 						              <Link to="/profile">
 						              	<button className="button">Edit profile</button>
 						              </Link>
