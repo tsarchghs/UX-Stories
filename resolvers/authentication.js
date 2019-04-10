@@ -35,7 +35,7 @@ const login = async (root,args,context) => {
 const signUp = async (root,args,context) => {
 	var hasLogo; 
 	var profile_photo;
-	if (!args.email || !args.first_name || !args.last_name || !args.password || !args.job){
+	if (!args.email || !args.full_name || !args.password || !args.job){
 		throw new Error("Please check that all of your arguments are not empty!")
 	}
 	if (args.profile_photo && !(args.profile_photo.base64 && args.profile_photo.mimetype)) {
@@ -50,8 +50,7 @@ const signUp = async (root,args,context) => {
 	const hashed_password = await bcrypt.hash(args.password,saltRounds);
 	var userParams = {
 		email: args.email,
-		first_name: args.first_name,
-		last_name: args.last_name,
+		full_name: args.full_name,
 		password: hashed_password,
 		role: "MEMBER",
 		job: {
@@ -96,9 +95,9 @@ const forgetPassword = async (root,args,context) => {
 	},configs.jwt_forgotPassword_secret);
 	var data = {
 	  from: 'Mailgun Sandbox <postmaster@sandbox7c10cba56e9a4f0f9b23c09194475167.mailgun.org>',
-	  to: `${user.first_name} ${user.last_name} <${user.email}>`,
+	  to: `${user.full_name} <${user.email}>`,
 	  subject: `UX-Stories: Forgot password`,
-	  text: `Here it is ${`localhost:3000/reset/${token}`}!`
+	  text: `Here it is ${`${configs.URI}/reset/${token}`}!`
 	};
 	console.log(data);
 	mailgun.messages().send(data,(err,body) => {

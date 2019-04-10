@@ -17,17 +17,10 @@ const editProfile = async (parent,args,context,info) => {
 		throw new Error("At least one argument must be specified");
 	}
 	let data = {}
-	if (args.full_name){
-		let full_name = args.full_name.split(" ")
-		data["first_name"] = full_name[0]
-		data["last_name"] = full_name[1]
-	}
-	if (args.email) {
-		data["email"] = args.email
-	}
-	if (args.job) {
-		data["job"] = {connect:{id:args.job}}
-	}
+	if (args.full_name) data["first_name"] = args.full_name;
+	if (args.email) data["email"] = args.email
+	if (args.job) data["job"] = {connect:{id:args.job}}
+		
 	if (args.password) {
 		data["password"] = await bcrypt.hash(args.password,saltRounds);
 	}
