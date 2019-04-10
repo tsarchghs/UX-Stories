@@ -2,7 +2,9 @@ import React from "react";
 import SingleStoryAppLoading from "./singleStoryAppLoading";
 import gql from "graphql-tag";
 import { Link } from "react-router-dom";
-import { getQueryParams } from "../helpers";
+import { getQueryParams,getActiveFilters,loadToolkit } from "../helpers";
+import DropdownLoading from "./dropdownLoading";
+import Loading from "./loading";
 
 class SingleStory extends React.Component {
 	constructor(props){
@@ -10,15 +12,22 @@ class SingleStory extends React.Component {
 		this.state = {
 			app: props.app ? props.app : undefined,
 			storyCategories: undefined,
-			storyElements: undefined 
+			storyElements: undefined,
+			selectedLibraries: [],
+			savingStory: false
 		}
 		this.story_id = undefined;
+		this.selectLibrary = this.selectLibrary.bind(this);
+		this.saveToLibraries = this.saveToLibraries.bind(this);
 		let param_id = props.match.match.params.id
 		if (param_id[param_id.length - 1] === "#"){
 			this.story_id = param_id.slice(0,param_id.length-1);
 		} else {
 			this.story_id = param_id
 		}
+	}
+	async componentDidUpdate(){
+		loadToolkit();
 	}
 	async componentDidMount(){
 		if (!this.state.app){
@@ -64,7 +73,50 @@ class SingleStory extends React.Component {
 				video: data.data.story.video.file
 			},() => console.log(this.state))
 			console.log(data);
+			console.log(this.props.user);
 		}
+	}
+	selectLibrary(e){
+		let library_id = e.target.value;
+		this.setState(prevState => {
+			let state = prevState
+			if (state.selectedLibraries.includes(library_id)){
+				state.selectedLibraries = state.selectedLibraries.filter(item => item !== library_id)
+			} else {
+				state.selectedLibraries.push(library_id);
+			}
+			console.log(state);
+			return state;
+		})
+	}
+	async saveToLibraries(e){
+		e.preventDefault()
+		this.setState({
+			savingStory: true
+		})
+		let promises = []
+		this.state.selectedLibraries.map(library => {
+			let promise = this.props.client.mutate({
+				mutation: gql`
+					mutation {
+						editLibrary(id:"${library}",
+					  stories:[
+					    {
+					      type:connect
+					      story:"${this.story_id}"
+					    }
+					  ]) {
+					    id
+					  }
+					}
+				`
+			})
+			promises.push(promise);
+		})
+		await Promise.all(promises)
+		this.setState({
+			savingStory: false
+		})
 	}
 	render(){
 		let params = getQueryParams(window.location.href);
@@ -172,8 +224,39 @@ class SingleStory extends React.Component {
 		                </div>
 		                <hr />
 		                <div className="inside-stories__card--save">
-		                  <p className="bold">Save to libraries</p>
-		                  <button className="button">Select library</button>
+		                  <a href="#" onClick={this.saveToLibraries}><p className="bold">Save to libraries</p></a>
+		                  <button data-toggle="second" className="button">Select library</button>
+					        <div className="filter" id="second" data-dropdown data-auto-focus="true">
+						        {
+						          !this.props.user.libraries ? <DropdownLoading/>
+						          : <div className="filter-dropdown">
+						              <div className="filter-dropdown__top">
+						                <h5 className="gray bold">Save to libraries</h5>
+						                <p className="pink">{this.state.selectedLibraries.length} selected</p>
+						              </div>
+						              <div className="filter-dropdown__main">                
+						              {
+						              	this.state.savingStory ? <Loading/>
+						              	: this.props.user.libraries.map(library => {
+						                      return (
+						                        <label className="radio__container">
+						                          <label id={library.id+"_label"} className="gray bold">{library.name}</label>
+						                          <input 
+						                            className="ic" 
+						                            type="checkbox" 
+						                            name={library.name}
+						                            value={library.id}
+						                            onClick={this.selectLibrary}
+						                          />
+						                          <span className="checkmark"/>
+						                        </label>
+						                      );
+						                    })
+						                  }  
+						              </div>
+						          </div>
+						        }
+					        </div>
 		                </div>
 		              </div>
 		              <div className="inside-stories__card small">

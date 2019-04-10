@@ -31,6 +31,7 @@ class Home extends React.Component {
 	}
   filterCategory(appCategory) {
     if (appCategory.name === "all" && !this.callAllCategoriesFilterOnce){
+      this.callAllCategoriesFilterOnce = true
       return;
     }
     if (!this.state.filterBy.appCategory || !(this.state.filterBy.appCategory.id === appCategory.id)){
@@ -108,6 +109,9 @@ class Home extends React.Component {
     },document.getElementById("allCategoriesFilter").click());
 	}
   async loadMore() {
+    this.setState({
+      show_skeleton:true
+    })
     this.skip += 4
     this.update();
   }

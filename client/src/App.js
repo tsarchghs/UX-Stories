@@ -14,11 +14,14 @@ import Home from "./components/home";
 import ForgetPassword from "./components/forgetPassword";
 import ResetPassword from "./components/resetPassword";
 import SingleStory from "./components/singleStory";
-import { getQueryParams } from "./helpers";
+import { getQueryParams, loadToolkit } from "./helpers";
+import Apps from "./components/admin/apps";
+
+const URI = "http://localhost:4000";
 
 //Cookies.set("auth_token","");
 var client = new ApolloClient({
-    uri: "http://uxstories.herokuapp.com/",
+    uri: URI,
     headers: {
       "Authorization": `Bearer ${Cookies.get("auth_token")}`
     }
@@ -37,6 +40,9 @@ class App extends Component {
         this.register = this.register.bind(this);
         this.updateProfile = this.updateProfile.bind(this);
     }
+    componentDidUpdate(){
+        loadToolkit();
+    }
     async componentDidMount() {
         console.log(this.state.user);
         try {
@@ -53,6 +59,10 @@ class App extends Component {
                             }
                             profile_photo {
                               url
+                            }
+                            libraries {
+                                id
+                                name
                             }
                           }
                         }
@@ -102,7 +112,7 @@ class App extends Component {
         if (data) {
             Cookies.set("auth_token",data.data.login.token);
             client = new ApolloClient({
-                uri: "http://localhost:4000/",
+                uri: URI,
                 headers: {
                   "Authorization": `Bearer ${data.data.login.token}`
                 }
@@ -150,7 +160,7 @@ class App extends Component {
                     `
                 })
                 client = new ApolloClient({
-                    uri: "http://localhost:4000/",
+                    uri: URI,
                     headers: {
                       "Authorization": `Bearer ${results.data.signUp.token}`
                     }
@@ -184,7 +194,7 @@ class App extends Component {
             show_message:""
         })
         var client = new ApolloClient({
-            uri: "http://localhost:4000/"
+            uri: URI
         })
 
         Cookies.set("auth_token","");
@@ -234,7 +244,7 @@ class App extends Component {
     render(){
         return (
             <Router>
-            <script src="http://localhost:3000/assets/toolkit/scripts/toolkit.js"></script>
+            <script src={`${URI}/assets/toolkit/scripts/toolkit.js`}></script>
                 {
 
                     this.state.user === undefined ?                       
@@ -321,14 +331,22 @@ class App extends Component {
                                     : <Redirect to={`/login?success=app:${match.params.id}`}/>
                                 );
                             }} />
+
+                            <Route path="/admin/apps/" component={() => {
+                                console.log(this.state);
+                                return (
+                                    this.state.user && this.state.user.role === "ADMIN"
+                                    ? <Apps user={this.state.user} client={client}/>
+                                    : <Redirect to={`/login?success=admin:apps`}/>
+                                );
+                            }} />
+
                             </div> 
                     )
                 }
-                                            <script src="/assets/toolkit/scripts/jquery.min.js"></script>
+            <script src="/assets/toolkit/scripts/jquery.min.js"></script>
 
-                                            <script src="/assets/toolkit/scripts/toolkit.js"></script>
-
-
+            <script src="/assets/toolkit/scripts/toolkit.js"></script>
             </Router>
         );
     }

@@ -2,8 +2,9 @@ import React from "react";
 import Loading from "./loading";
 import LibraryHeader from "./libraryHeader";
 import gql from "graphql-tag";
-import {getStoryCategories,getStoryElements,getActiveFilters,insertActiveFilters} from "../helpers";
+import {getStoryCategories,getStoryElements,getActiveFilters,insertActiveFilters,loadToolkit} from "../helpers";
 import E404 from "./E404";
+import DropdownLoading from "./dropdownLoading";
 
 class Library extends React.Component {
 	constructor(props){
@@ -13,8 +14,8 @@ class Library extends React.Component {
 		    storyCategories: undefined,
 		    storyElements: undefined,
 		    filterBy: {
-		        storyCategories: {},
-		        storyElements: {}
+		        storyCategories: [],
+		        storyElements: []
 	      	},
 	      	show404: false
 		}
@@ -30,7 +31,11 @@ class Library extends React.Component {
 			return state;
 		})
 	}
+	async componentDidUpdate(){
+		loadToolkit();
+	}
 	async componentDidMount() {
+		loadToolkit();
 		try {
 			var results = await this.props.client.query({
 				query: gql`
@@ -43,6 +48,7 @@ class Library extends React.Component {
 						stories {
 						  id
 						  thumbnail {
+						  	id
 							url
 						  }
 						}
@@ -147,54 +153,75 @@ class Library extends React.Component {
 								  </div>
 								  <div className="flex ac">
 									<a href="#"><img src="../../assets/toolkit/images/edit.svg" alt /></a>
-									<div className="filter">
-									  <button className="button white">Filter with Categories<img src="/assets/toolkit/images/008-delete.svg" alt /></button>
-									</div>              <div className="filter">
-									  <button className="button white">Filter with Stories<img src="/assets/toolkit/images/008-delete.svg" alt /></button>
-									</div>          
+		
+		<button className="button white fbtn" data-toggle="first" aria-controls="first" data-is-focus="false" data-yeti-box="first" aria-haspopup="true" aria-expanded="false">Filter with Categories<img src="/assets/toolkit/images/shape.svg" alt /></button>        
+        <div className="filter" id="first" data-dropdown data-auto-focus="true">
+        {
+          !(this.state.storyCategories && this.state.storyCategories.constructor === Array) ? <DropdownLoading/>
+          : <div className="filter-dropdown">
+              <div className="filter-dropdown__top">
+                <h5 className="gray bold">Filter with stories</h5>
+                <p className="pink">{getActiveFilters(this.state,"storyCategories").length} selected</p>
+              </div>
+              <div className="filter-dropdown__main">                {
+                    this.state.storyCategories.map(storyCategory => {
+                      return (
+                        <label className="radio__container">
+                          <label id={storyCategory.id+"_label"} className="gray bold">{storyCategory.name}</label>
+                          <input 
+                            className="ic" 
+                            type="checkbox" 
+                            name={1}
+                            value={1}
+                            onClick={async (e) => await this.handleFilterClick(e,storyCategory,"storyCategories")}
+                          />
+                          <span className="checkmark"/>
+                        </label>
+                      );
+                    })
+                  }  
+              </div>
+          </div>
+        }     
+        </div>
+        <button className="button white fbtn" data-toggle="third">Filter with Elements<img src="../../assets/toolkit/images/shape.svg" alt /></button>
+        <div className="filter" id="third" data-dropdown data-auto-focus="true">
+
+          {
+            !(this.state.storyElements && this.state.storyElements.constructor === Array) ? <DropdownLoading/>
+            : <div className="filter-dropdown">
+                <div className="filter-dropdown__top">
+                  <h5 className="gray bold">Filter with stories</h5>
+                  <p className="pink">{getActiveFilters(this.state,"storyElements").length} selected</p>
+                </div>
+                <div className="filter-dropdown__main">
+                    {
+                      this.state.storyElements.map(storyElement => {
+                        return (
+                          <label className="radio__container">
+                            <label id={storyElement.id+"_label"} className="gray bold">{storyElement.name}</label>
+                            <input 
+                              className="ic" 
+                              type="checkbox" 
+                              name={1}
+                              value={1}
+                              onClick={async (e) => await this.handleFilterClick(e,storyElement,"storyElements")}
+                            />
+                            <span className="checkmark"/>
+                          </label>
+                        );
+                      })
+                    }  
+                </div>
+              </div>
+          }
+
+        </div>  
 								</div>
 								</div>
 							  </div>
 							</div>
-				            <div style={{position:"inline"}}>
-				                <p>Stories:</p>
-				                {
-				                  this.state.storyCategories.map(storyCategory => {
-				                    return (
-				                      <div style={{position:"inline"}}>
-				                        <input 
-				                          type="checkbox" 
-				                          id={storyCategory.id} 
-				                          name={storyCategory.name}
-				                          onChange={async (e) => await this.handleFilterClick(e,storyCategory,"storyCategories")}
-				                          checked={this.state.filterBy.storyCategories[storyCategory.id] !== undefined && this.state.filterBy.storyCategories[storyCategory.id]}
-				                        />
-				                        <label id={storyCategory.id+"_label"} htmlFor="scales">{storyCategory.name}</label>
-				                      </div>
-				                    );
-				                  })
-				                }
-				              </div>
-				              <hr/>
-				            <div style={{position:"inline"}}>
-				                <p>Elements:</p>
-				                  {
-				                    this.state.storyElements.map(storyElement => {
-				                      return (
-				                        <div style={{position:"inline"}}>
-				                          <input 
-				                            type="checkbox" 
-				                            id={storyElement.id} 
-				                            name={storyElement.name}
-				                            onChange={async (e) => await this.handleFilterClick(e,storyElement,"storyElements")}
-				                            checked={this.state.filterBy.storyElements[storyElement.id] !== undefined && this.state.filterBy.storyElements[storyElement.id]}
-				                           />
-				                          <label id={storyElement.id+"_label"} htmlFor="scales">{storyElement.name}</label>
-				                        </div>
-				                      )
-				                    })
-				                  }
-				              </div>
+
 				          <div className="results">
 					            <div className="container">
 					              <div className="results__content">

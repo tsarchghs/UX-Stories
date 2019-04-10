@@ -213,7 +213,7 @@ class SingleApp extends React.Component {
                       <div className="filter-dropdown">
                         <div className="filter-dropdown__top">
                           <h5 className="gray bold">Filter by stories</h5>
-                          <p className="pink">3 selected</p>
+                          <p className="pink">{getActiveFilters(this.state,"storyCategories").length} selected</p>
                         </div>
                     {
                     this.state.storyCategories.map(storyCategory => {
@@ -246,7 +246,7 @@ class SingleApp extends React.Component {
                       <div className="filter-dropdown">
                         <div className="filter-dropdown__top">
                           <h5 className="gray bold">Filter by stories</h5>
-                          <p className="pink">3 selected</p>
+                          <p className="pink">{getActiveFilters(this.state,"storyElements").length} selected</p>
                         </div>
                     {
                     this.state.storyElements.map(storyElement => {
@@ -280,7 +280,7 @@ class SingleApp extends React.Component {
                   <div className="filter-dropdown">
                     <div className="filter-dropdown__top">
                       <h5 className="gray bold">Filter by versions</h5>
-                      <p className="pink">3 selected</p>
+                      <p className="pink">{getActiveFilters(this.state,"appVersions").length} selected</p>
                     </div>
                 {
                 this.state.appVersions.map(appVersion => {
