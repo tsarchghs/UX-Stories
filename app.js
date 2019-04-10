@@ -53,6 +53,12 @@ const server = new graphqlServer({
 // the __dirname is the current directory from where the script is running
 server.express.use('/static', static(path.join(__dirname, 'public')))
 
+app.use(express.static(path.join(__dirname, 'client/build')));
+
+app.get('*', (req, res) => {
+	res.sendfile(path.join(__dirname = 'client/build/index.html'));
+})
+
 server.express.set("view engine","ejs");
 
 server.express.use(bodyParser.urlencoded({limit:"1000mb",extended:true}))
