@@ -52,10 +52,10 @@ const server = new graphqlServer({
 
 // the __dirname is the current directory from where the script is running
 server.express.use('/static', static(path.join(__dirname, 'public')))
-server.express.use(static(path.join(__dirname, '../client/build')));
+server.express.use(static(path.join(__dirname, './client/build')));
 
 server.express.get('/*', function (req, res) {
-  res.sendFile(path.join(__dirname, '../client/build', 'index.html'));
+  res.sendFile(path.join(__dirname, './client/build', 'index.html'));
 });
 
 
