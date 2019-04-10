@@ -15,7 +15,7 @@ const createToken = (userId) => {
 
 const login = async (root,args,context) => {
 	if (!args.email || !args.password){
-		throw new Error("Please check that all of your arguments are not empty!")
+		throw new Error("Invalid credentials")
 	}
 	const user = await context.db.query.user({where:{email:args.email}});
 	if (!user){

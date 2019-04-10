@@ -12,7 +12,6 @@ const jobResolvers = require("./models/Job");
 
 module.exports = {
 	Query: {
-		login: authResolvers.login,
 		getLoggedInUser: userResolvers.getLoggedInUser,
 		app: appResolvers.app,
 		apps: appResolvers.apps,
@@ -27,6 +26,7 @@ module.exports = {
 		jobs: jobResolvers.jobs
 	},
 	Mutation: {
+		login: authResolvers.login,
 		signUp: authResolvers.signUp,
 		verifyForgotPassword: authResolvers.verifyForgotPassword,
 		resetPassword: authResolvers.resetPassword,

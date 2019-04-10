@@ -158,10 +158,6 @@ input StoryElementLinkType {
 }
 
 type Query {
-  login(
-    email: String!
-    password: String!
-  ): AuthData!
   getLoggedInUser: User
   app(id: ID!,stories_first: Int): App
   apps(appFilterInput: AppFilterInput): [App!]!
@@ -187,6 +183,10 @@ type Query {
 }
 
 type Mutation {
+  login(
+    email: String!
+    password: String!
+  ): AuthData!
   signUp(
     first_name: String!
     last_name: String!
