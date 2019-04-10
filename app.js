@@ -53,10 +53,10 @@ const server = new graphqlServer({
 // the __dirname is the current directory from where the script is running
 server.express.use('/static', static(path.join(__dirname, 'public')))
 
-server.express.use('/build',static(path.join(__dirname, 'client/build')));
+server.express.use(static('/client/build'));
 
 server.express.get('*', (req, res) => {
-	res.sendfile('/build/index.html');
+	res.sendfile('index.html');
 })
 
 server.express.set("view engine","ejs");
