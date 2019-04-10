@@ -32,7 +32,7 @@ const processUpload = async (upload,mimetype,context,save_encoding=false) => {
 		filename: filename, 
 		mimetype: mimetype,
 		encoding: encoding,
-		url: "http://localhost:4000/static" + path
+		url: "http://uxstories.herokuapp.com/static" + path
 	}
 	const file = context.db.mutation.createFile({
 		data

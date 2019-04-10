@@ -132,7 +132,7 @@ class Stories extends React.Component {
       <div>
       <Header user={this.props.user} />
         <div>
-        <script src="http://localhost:3000/assets/toolkit/scripts/toolkit.js"></script>
+        <script src="http://uxstories.herokuapp.com//assets/toolkit/scripts/toolkit.js"></script>
           <div className="secondary-header">
             <div className="container">
               <div className="secodary-header__content">

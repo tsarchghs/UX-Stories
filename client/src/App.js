@@ -18,7 +18,7 @@ import { getQueryParams } from "./helpers";
 
 //Cookies.set("auth_token","");
 var client = new ApolloClient({
-    uri: "http://localhost:4000/",
+    uri: "http://uxstories.herokuapp.com/",
     headers: {
       "Authorization": `Bearer ${Cookies.get("auth_token")}`
     }

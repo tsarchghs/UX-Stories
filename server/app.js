@@ -10,8 +10,6 @@ const dashboard_route = require("./routes/admin/dashboard");
 const auth_route = require("./routes/admin/auth");
 const expressStatic = require("express").static;
 const configs = require("./configs");
-// const passport = require("passport");
-// require("./strategies/jwtStrategy")(passport);
 
 const prismaDb = new Prisma({
 	typeDefs:prismaTypeDefs,
@@ -20,6 +18,7 @@ const prismaDb = new Prisma({
 })
 
 const server = new graphqlServer({
+	endpoint: "/graphql",
 	typeDefs: "./schema.graphql", 
 	resolvers,
 	context: async (req) => {
@@ -51,15 +50,20 @@ const server = new graphqlServer({
 	}
 });
 
+// the __dirname is the current directory from where the script is running
+server.express.use('/static', static(path.join(__dirname, 'public')))
+server.express.use(static(path.join(__dirname, '../client/build')));
+
+server.express.get('/*', function (req, res) {
+  res.sendFile(path.join(__dirname, '../client/build', 'index.html'));
+});
+
+
 server.express.set("view engine","ejs");
-// server.express.use(passport.initialize());
-// server.express.use(passport.session());
+
 server.express.use(bodyParser.urlencoded({limit:"1000mb",extended:true}))
 server.express.use(bodyParser.json({limit:"1000mb"}))
 
-// server.express.use("/admin/dashboard",dashboard_route(passport));
-// server.express.use("/admin/auth",auth_route);
 
-server.use('/static', static(path.join(__dirname, 'public')))
 
 server.start(() => console.log("Running on port 4000"));
