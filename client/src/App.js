@@ -21,8 +21,6 @@ import gql from "graphql-tag";
 
 const URI = "http://localhost:4000";
 
-// Cookies.set("token","");
-
 const client = new ApolloClient({
   uri: URI,
   request: async (operation) => {
@@ -43,89 +41,10 @@ class App extends Component {
             show_message: "",
             show_messages_register: []
         }
-        this.login = this.login.bind(this);
-        this.logout = this.logout.bind(this);
         this.updateProfile = this.updateProfile.bind(this);
     }
     componentDidUpdate(){
         loadToolkit();
-    }
-    async componentDidMount() {
-        // try {
-        //     var data = await client.query({
-        //             query: gql`
-        //                 query {
-        //                     getLoggedInUser{
-        //                     first_name
-        //                     last_name
-        //                     email
-        //                     job {
-        //                         id
-        //                         name
-        //                     }
-        //                     profile_photo {
-        //                       url
-        //                     }
-        //                     libraries {
-        //                         id
-        //                         name
-        //                     }
-        //                   }
-        //                 }
-        //             `
-        //         });
-        // } catch (e) {
-        //     if (e.message === "GraphQL error: Not logged in"){
-        //         this.setState({
-        //             user: null
-        //         })
-        //     }
-        // }
-        // if (data){
-        //     let user = data.data.getLoggedInUser;
-        //     user.logout = this.logout;
-        //     this.setState({
-        //         user:user
-        //     })
-        // }
-    }
-    async login(e) {
-        e.preventDefault();
-        const email = document.getElementById("email").value;
-        const password = document.getElementById("password").value;
-        try {
-            var data = await client.query({
-                query: gql`
-                    query {
-                        login(
-                            email: "${email}",
-                            password: "${password}"
-                        ) {
-                            token
-                        }
-                    }
-                `
-            })
-        } catch (e) {
-            if (e.message === "GraphQL error: Invalid credentials") {
-                this.setState({
-                    show_message:"Invalid credentials"
-                });
-            }
-        }
-        if (data) {
-            Cookies.set("auth_token",data.data.login.token);
-            this.componentDidMount();
-        }
-    }
-    logout(e) {
-        console.log(123);
-        e.preventDefault();
-        this.setState({
-            user: null,
-            show_message:""
-        })
-        Cookies.set("token","");
     }
     async updateProfile() {
         let full_name = document.getElementById("p_full_name").value;
@@ -194,19 +113,16 @@ class App extends Component {
                                 }
                         `}>
                         {({loading,error,data,refetch}) => {
-                            console.log(data);
-                            console.log(`Bearer ${Cookies.get("token")}`);
-                            console.log(12321);
                             if (error) return <p>{error.message}</p>
                             if (loading) return <Loading style={{margin:140}}/>
                             var user = data.getLoggedInUser
                             return (
                                 <div>
-                                    <Route path="/" exact component={() => <Home user={user}/>}/>
+                                    <Route path="/" exact component={() => <Home client={client} user={user}/>}/>
                                     <Route path="/stories" exact component={() => {
                                         return (
                                             user
-                                            ? <Stories user={user} />
+                                            ? <Stories user={user} client={client} />
                                             : <Redirect to="/login?success=stories"/>
                                         )
 
