@@ -6,6 +6,7 @@ import { Link } from "react-router-dom";
 import { debounce } from "lodash";
 import {getAppCategories,getActiveFilters,insertActiveFilters,loadToolkit} from "../helpers";
 import DropdownLoading from "./dropdownLoading";
+import AppCategoriesDropdown from "./appCategoriesDropdown";
 
 class Home extends React.Component {
   constructor(props) {
@@ -25,11 +26,15 @@ class Home extends React.Component {
     this.update = debounce(this.update.bind(this),500);
     this.callAllCategoriesFilterOnce = false
   }
-	componentDidUpdate(){
-	   loadToolkit();
-
-	}
+  componentDidUpdate(){
+    loadToolkit()
+    if (!this.callAllCategoriesFilterOnce){
+      document.getElementById("allCategoriesFilter").click();
+      this.callAllCategoriesFilterOnce = true
+    }
+  }
   filterCategory(appCategory) {
+    console.log(appCategory);
     if (appCategory.name === "all" && !this.callAllCategoriesFilterOnce){
       this.callAllCategoriesFilterOnce = true
       return;
@@ -103,10 +108,6 @@ class Home extends React.Component {
 	async componentDidMount(){
 		this.loadToolkit();
     this.update();
-    let appCategories = await getAppCategories(this.props.client).then();
-    this.setState({
-      appCategories
-    },document.getElementById("allCategoriesFilter").click());
 	}
   async loadMore() {
     this.setState({
@@ -157,43 +158,12 @@ class Home extends React.Component {
               </div>
               <div className="flex">
                 <button className="button white fbtn" data-toggle="first">Filter with Categories<img src="/assets/toolkit/images/shape.svg" alt /></button>
-                <div className="filter" id="first" data-dropdown data-auto-focus="true">
-                  <div className="filter-dropdown">
-                  <label className="radio-t rde">
-                    <label className="gray bold">All</label>
-                    <input 
-                      className="ic" 
-                      type="radio" 
-                      name="categoryFilter"
-                      onClick={() => this.filterCategory({id:"all",name:"all"})}
-                    />
-                    <span id="allCategoriesFilter" className="checkmark"/>
-                  </label>
-                  {
-                    !this.state.appCategories 
-                    ? <DropdownLoading/>
-                    : <div>
-                      {
-                        this.state.appCategories.map(appCategory => {
-                          return (
-
-                            <label className="radio-t rde">
-                              <label id={appCategory.id+"_label"} className="gray bold">{appCategory.name}</label>
-                              <input 
-                                className="ic" 
-                                type="radio" 
-                                name={"categoryFilter"}
-                                onClick={() => this.filterCategory(appCategory)}
-                              />
-                              <span className="checkmark"/>
-                            </label>
-                          );
-                        })
-                      } 
-                    </div>
-                  }
-                  </div>
-                </div>				
+              <AppCategoriesDropdown 
+                id="first" 
+                filterBy={this.state.filterBy}
+                handleAllFilterClick={() => this.filterCategory({id:"all",name:"all"})}
+                handleFilterClick={(e,appCategory) => this.filterCategory(appCategory)} 
+              />			
                </div>
             </div>
           </div>
