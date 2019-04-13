@@ -13,16 +13,19 @@ const jobResolvers = require("./models/Job");
 module.exports = {
 	Query: {
 		getLoggedInUser: userResolvers.getLoggedInUser,
+		countApps: appResolvers.countApps,
 		app: appResolvers.app,
 		apps: appResolvers.apps,
 		appCategories: appCategoryResolvers.appCategories,
 		appVersions: appVersionResolvers.appVersions,
 		story: storyResolvers.story,
+		countStories: storyResolvers.countStories,
 		stories: storyResolvers.stories,
 		storyCategories: storyCategoryResolvers.storyCategories,
 		storyElements: storyElementResolvers.storyElements,
 		library: libraryResolvers.library,
 		libraries: libraryResolvers.libraries,
+		countUsers: userResolvers.countUsers,
 		jobs: jobResolvers.jobs
 	},
 	Mutation: {
