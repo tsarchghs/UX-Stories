@@ -37,16 +37,12 @@ class _Stories extends React.Component {
   }
   componentDidUpdate(){
     loadToolkit()
-    if (document.getElementById("allCategoriesFilter") && !this.once){
-      document.getElementById("allCategoriesFilter").click()
-      this.once = true
-    }
   }
   async componentDidMount() {
     loadToolkit()
-    this.search("");
+    this.search("",true);
   }
-  async search(storyName_contains) {
+  async search(storyName_contains,first) {
     let searchId = uuidv1();
     this.setState({
       stories: undefined,
@@ -79,9 +75,15 @@ class _Stories extends React.Component {
         stories: stories
       })
     }
+    if (first){
+      if (document.getElementById("allCategoriesFilter") && !this.once){
+        this.once = true
+        document.getElementById("allCategoriesFilter").click()
+      }
+    }
   }
   async handleFilterClick(e,obj,type) {
-    if (this.allCategoriesFilterClickOnce){
+    if (!this.allCategoriesFilterClickOnce){
       this.allCategoriesFilterClickOnce = true;
       return;
     }
