@@ -1,8 +1,33 @@
 import React from "react";
 import Header from "./header";
 import LeftSidebar from "./leftSidebar";
+import { Query } from "react-apollo";
+import gql from "graphql-tag";
+import { debounce } from "lodash";
 
 class Stories extends React.Component {
+	constructor(props) {
+		super(props)
+		this.state = {
+			first:5,
+			storyName_contains: undefined
+		}
+		this.search = debounce(this.search.bind(this))
+		this.searchField = undefined;
+		this.loadmore = this.loadmore.bind(this);
+	}
+	search(){
+		this.setState({
+			storyName_contains: this.searchField.value
+		})
+	}
+	loadmore(){
+		this.setState(prevState => {
+			let state = prevState;
+			state.first += 5
+			return state;
+		})
+	}
 	render(){
 		return (
 				<div>
@@ -10,9 +35,6 @@ class Stories extends React.Component {
 	               <LeftSidebar/>
 			        <div className="dashboard-wrapper">
 			          <div className="container-fluid dashboard-content">
-			            {/* ============================================================== */}
-			            {/* pageheader */}
-			            {/* ============================================================== */}
 			            <div className="row">
 			              <div className="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
 			                <div className="page-header">
@@ -30,12 +52,9 @@ class Stories extends React.Component {
 			                </div>
 			              </div>
 			            </div>
-			            {/* ============================================================== */}
-			            {/* end pageheader */}
-			            {/* ============================================================== */}
 			            <div className="page-header">
 			              <div className="input-group col-xl-3 col-lg-12 col-md-12 col-sm-12 col-12">
-			                <input type="text" className="form-control" placeholder="Search by story name" />
+			                <input onChange={this.search} ref={node => this.searchField = node} type="text" className="form-control" placeholder="Search by story name" />
 			                <div className="input-group-append">
 			                  <button type="submit" className="btn btn-primary">Search</button>
 			                </div>
@@ -52,85 +71,72 @@ class Stories extends React.Component {
 			                      <thead>
 			                        <tr>
 			                          <th scope="col">#</th>
-			                          <th scope="col">Name</th>
-			                          <th scope="col">Category</th>
+			                          <th scope="col">App Name</th>
+			                          <th scope="col">Story Categories</th>
 			                          <th scope="col"> </th>
 			                        </tr>
 			                      </thead>
 			                      <tbody>
-			                        <tr>
-			                          <th scope="row">1</th>
-			                          <td>Facebook app</td>
-			                          <td>Social Networking</td>
-			                          <td><div className="dd-nodrag btn-group ml-auto">
-			                              <button className="btn btn-sm btn-outline-light">Edit</button>
-			                              <button className="btn btn-sm btn-outline-light">
-			                                <i className="far fa-trash-alt" />
-			                              </button>
-			                            </div></td>
-			                        </tr>
-			                        <tr>
-			                          <th scope="row">2</th>
-			                          <td>iNZDR</td>
-			                          <td>Social Networking</td>
-			                          <td><div className="dd-nodrag btn-group ml-auto">
-			                              <button className="btn btn-sm btn-outline-light">Edit</button>
-			                              <button className="btn btn-sm btn-outline-light">
-			                                <i className="far fa-trash-alt" />
-			                              </button>
-			                            </div></td>
-			                        </tr>
-			                        <tr>
-			                          <th scope="row">3</th>
-			                          <td>Quora</td>
-			                          <td>News</td>
-			                          <td><div className="dd-nodrag btn-group ml-auto">
-			                              <button className="btn btn-sm btn-outline-light">Edit</button>
-			                              <button className="btn btn-sm btn-outline-light">
-			                                <i className="far fa-trash-alt" />
-			                              </button>
-			                            </div></td>
-			                        </tr>
-			                        <tr>
-			                          <th scope="row">4</th>
-			                          <td>Slack</td>
-			                          <td>Work tool</td>
-			                          <td><div className="dd-nodrag btn-group ml-auto">
-			                              <button className="btn btn-sm btn-outline-light">Edit</button>
-			                              <button className="btn btn-sm btn-outline-light">
-			                                <i className="far fa-trash-alt" />
-			                              </button>
-			                            </div></td>
-			                        </tr>
-			                        <tr>
-			                          <th scope="row">5</th>
-			                          <td>AliExpress</td>
-			                          <td>Shopping</td>
-			                          <td><div className="dd-nodrag btn-group ml-auto">
-			                              <button className="btn btn-sm btn-outline-light">Edit</button>
-			                              <button className="btn btn-sm btn-outline-light">
-			                                <i className="far fa-trash-alt" />
-			                              </button>
-			                            </div></td>
-			                        </tr>
-			                        <tr>
-			                          <th scope="row">6</th>
-			                          <td>Busulla</td>
-			                          <td>Education</td>
-			                          <td><div className="dd-nodrag btn-group ml-auto">
-			                              <button className="btn btn-sm btn-outline-light">Edit</button>
-			                              <button className="btn btn-sm btn-outline-light">
-			                                <i className="far fa-trash-alt" />
-			                              </button>
-			                            </div></td>
-			                        </tr>
+			                      	<Query
+			                      		query={gql`
+			                      			query Stories($storiesFilterInput: StoriesFilterInput){
+			                      				stories(
+			                      					storiesFilterInput: $storiesFilterInput
+			                      				){
+			                      					id
+			                      					app {
+			                      						id
+			                      						appCategory {
+			                      							id
+			                      							name
+			                      						}
+			                      					}
+			                      					storyCategories {
+			                      						id
+			                      						name
+			                      					}
+			                      				}
+			                      			}
+			                      		`}
+			                      		variables={{
+			                      			storiesFilterInput:{
+			                      				first:this.state.first,
+			                      				storyName_contains: this.state.storyName_contains
+			                      			}
+			                      		}}
+			                      	>
+			                      		{ ({loading,error,data}) => {
+			                      			if (loading) return <p>Loading</p>
+			                      			if (error) return <p>{error.message}</p>
+			                      			let stories = data.stories;
+			                      			return stories.map(story => {
+			                      				return (
+							                        <tr>
+							                          <th scope="row">{story.id}</th>
+							                          <td>{story.app.appCategory.name}</td>
+							                          <td>{story.storyCategories.map(storyCategory => storyCategory.name).join("/")}</td>
+							                          <td><div className="dd-nodrag btn-group ml-auto">
+							                              <button className="btn btn-sm btn-outline-light">Edit</button>
+							                              <button className="btn btn-sm btn-outline-light">
+							                                <i className="far fa-trash-alt" />
+							                              </button>
+							                            </div></td>
+							                        </tr>
+			                      				)
+			                      			})
+			                      		}}
+			                      	</Query>
 			                      </tbody>
 			                    </table>
 			                  </div>
+	                          {
+	                            false ? ""
+	                            :  <center>
+	                                <h4 onClick={this.loadmore}>Load more</h4>
+	                              </center>
+	                          }
 			                </div>
-			              </div>
-			              {/* ============================================================== */}
-			            </div>
+			              </div>			            </div>
 			          </div>
 			        </div>
 			      </div>
