@@ -43,51 +43,9 @@ class App extends Component {
             show_message: "",
             show_messages_register: []
         }
-        this.updateProfile = this.updateProfile.bind(this);
     }
     componentDidUpdate(){
         loadToolkit();
-    }
-    async updateProfile() {
-        let full_name = document.getElementById("p_full_name").value;
-        let job = document.getElementById("p_job").value;
-        let email = document.getElementById("p_email").value;
-        let password = document.getElementById("p_password").value;
-        let base64 = document.getElementById("profile_image").src.replace(/^data:([A-Za-z-+/]+);base64,/, '');
-        var profile_image = document.getElementById("profile_image")
-        let data = await client.mutate({
-            mutation: gql`
-                mutation {
-                    editProfile(
-                        full_name: "${full_name}"
-                        job: "${job}"
-                        email: "${email}"
-                        ${
-                            !profile_image.changed ? "" : `
-                            profile_photo: {
-                                mimetype: "image/png"
-                                base64: "${base64}"
-                            }
-                            `
-                        }
-                    ) {
-                            full_name
-                            email
-                            job {
-                                id
-                                name
-                            }
-                            profile_photo {
-                              url
-                            }
-                    }
-                }
-            `
-        })
-        this.setState({
-            user: data.data.editProfile
-        })
-        document.getElementById("closeEditProfile").click();
     }
     render(){
         return (
@@ -171,21 +129,21 @@ class App extends Component {
                                             />
                                         );
                                     }} />
-                                <Route path="/profile" component={() => {
+                                <Route path="/profile" exact component={() => {
                                     return (
                                         user
-                                        ? <Profile refetchApp={refetch} updateProfile={this.updateProfile} user={user} />
+                                        ? <Profile refetchApp={refetch} user={user} />
                                         : <Redirect to="/login?success=profile"/>
                                     );
                                 }} />
-                                <Route path="/library/:id" component={({match}) => {
+                                <Route path="/library/:id" exact component={({match}) => {
                                     return (
                                         user
                                         ? <Library user={user} match={match}/>
                                         : <Redirect to={`/login?success=library:${match.params.id}`}/>
                                     )
                                 }} />
-                                <Route path="/app/:id" component={({match}) => {
+                                <Route path="/app/:id" exact component={({match}) => {
                                     return (
                                         user 
                                         ? <SingleApp user={user} match={match}/>
@@ -193,8 +151,7 @@ class App extends Component {
                                     );
                                 }} />
 
-                                <Route path="/admin/apps/" component={() => {
-                                    console.log(this.state);
+                                <Route path="/admin/apps" exact component={() => {
                                     return (
                                         user && user.role === "ADMIN"
                                         ? <Apps user={user}/>
