@@ -113,6 +113,13 @@ const loadToolkit = () => {
         document.body.appendChild(script);
   }
 
+const loadJs = (path) => {
+    let script = document.createElement("script");
+    script.src = path
+    script.async = true;
+    document.body.appendChild(script)
+}
+
 export {
 	getStories,
 	getAppCategories,
@@ -122,5 +129,6 @@ export {
   insertActiveFilters,
   getQueryParams,
   loadToolkit,
+  loadJs,
   getAppVersions
 }

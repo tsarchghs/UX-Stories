@@ -1,9 +1,33 @@
 import React from "react";
 import Header from "./header";
 import LeftSidebar from "./leftSidebar";
-
+import { Query } from "react-apollo";
+import gql from "graphql-tag";
+import { debounce } from "lodash";
 
 class Users extends React.Component {
+	constructor(props) {
+		super(props)
+		this.state = {
+			first:5,
+			full_name_contains: undefined
+		}
+		this.search = debounce(this.search.bind(this))
+		this.searchField = undefined;
+		this.loadmore = this.loadmore.bind(this);
+	}
+	search(){
+		this.setState({
+			full_name_contains: this.searchField.value
+		})
+	}
+	loadmore(){
+		this.setState(prevState => {
+			let state = prevState;
+			state.first += 5
+			return state;
+		})
+	}
 	render(){
 		return (
 			<div>
@@ -36,7 +60,7 @@ class Users extends React.Component {
 		          {/* ============================================================== */}
 		          <div className="page-header">
 		            <div className="input-group col-xl-3 col-lg-12 col-md-12 col-sm-12 col-12">
-		              <input type="text" className="form-control" placeholder="Search users" />
+		              <input ref={node => this.searchField = node} onChange={this.search} type="text" className="form-control" placeholder="Search users" />
 		              <div className="input-group-append">
 		                <button type="submit" className="btn btn-primary">Search</button>
 		              </div>
@@ -51,81 +75,60 @@ class Users extends React.Component {
 		                    <thead>
 		                      <tr>
 		                        <th scope="col">#</th>
-		                        <th scope="col">Name</th>
-		                        <th scope="col">Category</th>
+		                        <th scope="col">Full_name</th>
+		                        <th scope="col">Email</th>
 		                        <th scope="col"> </th>
 		                      </tr>
 		                    </thead>
 		                    <tbody>
-		                      <tr>
-		                        <th scope="row">1</th>
-		                        <td>Facebook app</td>
-		                        <td>Social Networking</td>
-		                        <td><div className="dd-nodrag btn-group ml-auto">
-		                            <button className="btn btn-sm btn-outline-light">Edit</button>
-		                            <button className="btn btn-sm btn-outline-light">
-		                              <i className="far fa-trash-alt" />
-		                            </button>
-		                          </div></td>
-		                      </tr>
-		                      <tr>
-		                        <th scope="row">2</th>
-		                        <td>iNZDR</td>
-		                        <td>Social Networking</td>
-		                        <td><div className="dd-nodrag btn-group ml-auto">
-		                            <button className="btn btn-sm btn-outline-light">Edit</button>
-		                            <button className="btn btn-sm btn-outline-light">
-		                              <i className="far fa-trash-alt" />
-		                            </button>
-		                          </div></td>
-		                      </tr>
-		                      <tr>
-		                        <th scope="row">3</th>
-		                        <td>Quora</td>
-		                        <td>News</td>
-		                        <td><div className="dd-nodrag btn-group ml-auto">
-		                            <button className="btn btn-sm btn-outline-light">Edit</button>
-		                            <button className="btn btn-sm btn-outline-light">
-		                              <i className="far fa-trash-alt" />
-		                            </button>
-		                          </div></td>
-		                      </tr>
-		                      <tr>
-		                        <th scope="row">4</th>
-		                        <td>Slack</td>
-		                        <td>Work tool</td>
-		                        <td><div className="dd-nodrag btn-group ml-auto">
-		                            <button className="btn btn-sm btn-outline-light">Edit</button>
-		                            <button className="btn btn-sm btn-outline-light">
-		                              <i className="far fa-trash-alt" />
-		                            </button>
-		                          </div></td>
-		                      </tr>
-		                      <tr>
-		                        <th scope="row">5</th>
-		                        <td>AliExpress</td>
-		                        <td>Shopping</td>
-		                        <td><div className="dd-nodrag btn-group ml-auto">
-		                            <button className="btn btn-sm btn-outline-light">Edit</button>
-		                            <button className="btn btn-sm btn-outline-light">
-		                              <i className="far fa-trash-alt" />
-		                            </button>
-		                          </div></td>
-		                      </tr>
-		                      <tr>
-		                        <th scope="row">6</th>
-		                        <td>Busulla</td>
-		                        <td>Education</td>
-		                        <td><div className="dd-nodrag btn-group ml-auto">
-		                            <button className="btn btn-sm btn-outline-light">Edit</button>
-		                            <button className="btn btn-sm btn-outline-light">
-		                              <i className="far fa-trash-alt" />
-		                            </button>
-		                          </div></td>
-		                      </tr>
+		                    	<Query
+		                    		query={gql`
+		                    			query Users($userFilterInput: UserFilterInput){
+		                    				users(
+		                    					userFilterInput: $userFilterInput
+		                    				) {
+		                    					id
+		                    					full_name
+		                    					email
+		                    				}
+		                    			}
+		                    		`}
+		                    		variables={{userFilterInput:{
+		                    			first:this.state.first,
+		                    			full_name_contains:this.state.full_name_contains
+		                    		}}}
+		                    	>
+		                    		{ ({loading,error,data}) => {
+		                    			if (loading) return <h2>Loading</h2>
+		                    			if (error) return <p>{error.message}</p>
+		                    			let users = data.users;
+		                    			return users.map(user => {
+		                    				return (
+						                      <tr>
+						                        <th scope="row">{user.id}</th>
+						                        <td>{user.full_name}</td>
+						                        <td>{user.email}</td>
+						                        <td><div className="dd-nodrag btn-group ml-auto">
+						                            <button className="btn btn-sm btn-outline-light">Edit</button>
+						                            <button className="btn btn-sm btn-outline-light">
+						                              <i className="far fa-trash-alt" />
+						                            </button>
+						                          </div></td>
+						                      </tr>
+		                    				);
+		                    			})
+
+		                    		}}
+		                    	</Query>
 		                    </tbody>
 		                  </table>
 		                </div>
+	                          {
+	                            false ? ""
+	                            :  <center>
+	                                <h4 onClick={this.loadmore}>Load more</h4>
+	                              </center>
+	                          }
 		              </div>
 		            </div>
 		            {/* ============================================================== */}
