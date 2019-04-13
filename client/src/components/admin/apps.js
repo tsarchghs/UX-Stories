@@ -104,7 +104,7 @@ class Apps extends React.Component {
                                   { ({loading,error,data,refetch}) => {
                                       if (loading) return <center><h4>Loading</h4></center>
                                       if (error) return <h3>{error.message}</h3>
-                                      let apps = data ? data.apps : []
+                                      let apps = data.apps
                                       return apps.map(app => {
                                         return (
                                           <tr>
