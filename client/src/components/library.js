@@ -2,8 +2,14 @@ import React from "react";
 import Loading from "./loading";
 import LibraryHeader from "./libraryHeader";
 import gql from "graphql-tag";
-import {getStoryCategories,getStoryElements,getActiveFilters,insertActiveFilters} from "../helpers";
+import {getStoryCategories,getStoryElements,getActiveFilters,insertActiveFilters,loadToolkit} from "../helpers";
 import E404 from "./E404";
+import DropdownLoading from "./dropdownLoading";
+import { withApollo } from "react-apollo";
+import StoryCategoriesDropdown from "./storyCategoriesDropdown";
+import StoryElementsDropdown from "./storyCategoriesDropdown";
+import StoryCategoriesActiveFitlers from "./storyCategoriesActiveFitlers";
+import StoryElementsActiveFilters from "./storyElementsActiveFilters";
 
 class Library extends React.Component {
 	constructor(props){
@@ -13,8 +19,8 @@ class Library extends React.Component {
 		    storyCategories: undefined,
 		    storyElements: undefined,
 		    filterBy: {
-		        storyCategories: {},
-		        storyElements: {}
+		        storyCategories: [],
+		        storyElements: []
 	      	},
 	      	show404: false
 		}
@@ -30,7 +36,11 @@ class Library extends React.Component {
 			return state;
 		})
 	}
+	async componentDidUpdate(){
+		loadToolkit();
+	}
 	async componentDidMount() {
+		loadToolkit();
 		try {
 			var results = await this.props.client.query({
 				query: gql`
@@ -43,6 +53,7 @@ class Library extends React.Component {
 						stories {
 						  id
 						  thumbnail {
+						  	id
 							url
 						  }
 						}
@@ -55,13 +66,7 @@ class Library extends React.Component {
 					show404: true
 				})
 				return;
-			}
-		    let storyCategories = await getStoryCategories(this.props.client);
-		    let storyElements = await getStoryElements(this.props.client);
-		    this.setState({
-		    	storyCategories,
-		    	storyElements
-		    })
+			}	
 		} catch (e) {
 			console.log(e);
 		}
@@ -132,7 +137,7 @@ class Library extends React.Component {
 
 				}
 				{
-						this.state.show404 || (this.state.library === undefined || !this.state.storyCategories || !this.state.storyElements) ?
+						this.state.show404 || (this.state.library === undefined) ?
 						(
 							this.state.show404 ? "" : <Loading/>
 						)
@@ -147,78 +152,38 @@ class Library extends React.Component {
 								  </div>
 								  <div className="flex ac">
 									<a href="#"><img src="../../assets/toolkit/images/edit.svg" alt /></a>
-									<div className="filter">
-									  <button className="button white">Filter with Categories<img src="/assets/toolkit/images/008-delete.svg" alt /></button>
-									</div>              <div className="filter">
-									  <button className="button white">Filter with Stories<img src="/assets/toolkit/images/008-delete.svg" alt /></button>
-									</div>          
+		        
+							        <button className="button white fbtn" data-toggle="second">Filter with Stories<img src="../../assets/toolkit/images/shape.svg" alt /></button>
+							        <StoryCategoriesDropdown 
+							          id="second"
+							          state={this.state}
+							          handleFilterClick={(e,storyCategory) => this.handleFilterClick(e,storyCategory,"storyCategories")}
+							        />
+
+							        <button className="button white fbtn" data-toggle="third">Filter with Elements<img src="../../assets/toolkit/images/shape.svg" alt /></button>
+							        <StoryElementsDropdown
+							          id="third"
+							          state={this.state}
+							          handleFilterClick={(e,storyElement) => this.handleFilterClick(e,storyElement,"storyElements")}
+							        />
+
 								</div>
 								</div>
 							  </div>
 							</div>
-				            <div style={{position:"inline"}}>
-				                <p>Stories:</p>
-				                {
-				                  this.state.storyCategories.map(storyCategory => {
-				                    return (
-				                      <div style={{position:"inline"}}>
-				                        <input 
-				                          type="checkbox" 
-				                          id={storyCategory.id} 
-				                          name={storyCategory.name}
-				                          onChange={async (e) => await this.handleFilterClick(e,storyCategory,"storyCategories")}
-				                          checked={this.state.filterBy.storyCategories[storyCategory.id] !== undefined && this.state.filterBy.storyCategories[storyCategory.id]}
-				                        />
-				                        <label id={storyCategory.id+"_label"} htmlFor="scales">{storyCategory.name}</label>
-				                      </div>
-				                    );
-				                  })
-				                }
-				              </div>
-				              <hr/>
-				            <div style={{position:"inline"}}>
-				                <p>Elements:</p>
-				                  {
-				                    this.state.storyElements.map(storyElement => {
-				                      return (
-				                        <div style={{position:"inline"}}>
-				                          <input 
-				                            type="checkbox" 
-				                            id={storyElement.id} 
-				                            name={storyElement.name}
-				                            onChange={async (e) => await this.handleFilterClick(e,storyElement,"storyElements")}
-				                            checked={this.state.filterBy.storyElements[storyElement.id] !== undefined && this.state.filterBy.storyElements[storyElement.id]}
-				                           />
-				                          <label id={storyElement.id+"_label"} htmlFor="scales">{storyElement.name}</label>
-				                        </div>
-				                      )
-				                    })
-				                  }
-				              </div>
+
 				          <div className="results">
 					            <div className="container">
 					              <div className="results__content">
 					                	<p className="results__results bold">Showing {this.state.library.stories ? this.state.library.stories.length : 0} Results</p>
-					                	{
-							                getActiveFilters(this.state,"storyCategories").map(storyCategory => {
-							                    return (
-							                      <div className="ux-label ">
-							                        <p className="light-gray">{document.getElementById(storyCategory+"_label").innerHTML}</p>
-							                        <span><a href="#"><img onClick={() => this.unFilter("storyCategories",storyCategory)} src="/assets/toolkit/images/008-delete.svg" alt /></a></span>
-							                      </div>  
-							                    );    
-							                 })
-						              }
-				                	{
-						                getActiveFilters(this.state,"storyElements").map(storyElement => {
-						                    return (
-						                      <div className="ux-label ">
-						                        <p className="light-gray">{document.getElementById(storyElement+"_label").innerHTML}</p>
-						                        <span><a href="#"><img onClick={() => this.unFilter("storyElements",storyElement)} src="/assets/toolkit/images/008-delete.svg" alt /></a></span>
-						                      </div>  
-						                    );    
-						                 })
-					              }
+					                	<StoryCategoriesActiveFitlers 
+					                		state={this.state}
+					                		unFilter={(e,storyCategory) => this.unFilter("storyCategories",storyCategory)}
+					                	/>
+						                <StoryElementsActiveFilters 
+						                	state={this.state}
+						                	unFilter={(e,storyElement) => this.unFilter("storyElements",storyElement)}
+						                />
 					              {
 					              	!getActiveFilters(this.state,"storyElements").concat(getActiveFilters(this.state,"storyCategories")).length ?  "" :
 					                	<p onClick={this.resetFilters} className="pink"><a href="#">Clear all filters</a></p>
@@ -258,4 +223,4 @@ class Library extends React.Component {
 	)}
 }
 
-export default Library;
+export default withApollo(Library);

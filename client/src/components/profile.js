@@ -3,6 +3,10 @@ import LibraryCard from "./libraryCard";
 import gql from "graphql-tag";
 import Loading from "./loading";
 import Header from "./header";
+import { withApollo, Query,ApolloProvider } from "react-apollo";
+import EditProfileModal from "./editProfileModal";
+import ReactDOM from 'react-dom';
+import CreateLibraryModal from "./createLibraryModal";
 
 const handleUploadPhotoInput = element => {
   var file = element.files[0];
@@ -27,97 +31,48 @@ class Profile extends React.Component {
     this.state = {
       libraries: undefined,
       profile_photo: this.props.user && this.props.user.profile_photo ? this.props.user.profile_photo.url : undefined,
-      jobs: undefined
+      jobs: undefined,
+      editProfile_open: false
     }
+    this.refetchLibraries = undefined;
+    this.updateButton = undefined;
+    this.editProfile = undefined;
   }
   async componentDidMount() {
-    let uploadPhotoInput = document.getElementById("uploadPhotoInput")
-    document.getElementById("uploadPhotoInput").onchange = () => handleUploadPhotoInput(document.getElementById("uploadPhotoInput"));
-    document.getElementById("uploadPhotoButton").onclick = () => document.getElementById("uploadPhotoInput").click()
-    document.getElementById("edit_profile").onsubmit = async (e) => {
-      e.preventDefault();
-      document.getElementById("edit_profile").style = "display:none;"
-      document.getElementById("loadingProfile").style = "display:block;"
-
-      this.props.updateProfile();
-    }
-    const jobs = this.props.client.query({
-      query: gql`
-        query {
-          jobs {
-            id
-            name
-          }
-        }
-      `
-    }).then(data => {
-      this.setState({
-        jobs: data.data.jobs
-      })
-      document.getElementById("p_job").innerHTML = this.state.jobs.map(job => {
-        return `<option id=${job.name} value=${job.id} 
-        ${
-          job.id === this.props.user.job.id ? "selected" : ""
-        }        
-        >${job.name}</option>`
-      })
-      document.getElementById("p_full_name").value = `${this.props.user.first_name} ${this.props.user.last_name}` 
-      document.getElementById("profile_image").src = this.state.profile_photo ? this.state.profile_photo : "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQOo9ftjYQCU8HW1YByx0oAQdegRxO51mQN0tKKenGRnDZb-_D6"
-      document.getElementById("p_email").value = this.props.user.email
-      document.getElementById("edit_profile").style = "display:block;"
-      document.getElementById("loadingProfile").style = "display:none;"
-    })
-    const result = await this.props.client.query({
-        query: gql`
-          query {
-            libraries {
-              id
-              name
-              stories {
-                thumbnail {
-                  url
-                }
+      ReactDOM.render(
+        <ApolloProvider client={this.props.client}>
+          <CreateLibraryModal
+            id="exampleModal2"
+            refetchLibraries={this.props.refetchApp}
+            closeAndUpdate={() => {
+              if (document.querySelector('body > div:nth-child(11)')){
+                document.querySelector('body > div:nth-child(11)').click();
               }
-            }
-          }
-        `
-    })
-    console.log(result);
-    this.setState({
-      libraries: result.data.libraries
-    })
-    document.getElementById("createLibraryButton").onclick = async () => {
-      document.getElementById("inside_exampleModal2").style = "display:none;"
-      document.getElementById("exampleModal2_loading").style = "display:block;"
-      let libraryName = document.getElementById("libraryName").value;
-      let data = await this.props.client.mutate({
-        mutation: gql`
-          mutation {
-            createLibrary(
-              name:"${libraryName}"
-            ) 
-            {
-              id
-              name
-              stories {
-                thumbnail {
-                  url
-                }
-              }
-            }            
-          }
-        `
-      })
-      this.setState(prevState => ({
-        libraries: prevState.libraries.concat(data.data.createLibrary)
-      }));
-      document.getElementsByClassName("reveal-overlay")[0].click()
-      document.getElementById("inside_exampleModal2").style = "display:block;"
-      document.getElementById("exampleModal2_loading").style = "display:none;"
-      document.getElementById("libraryName").value = ""
-    }
+              this.refetchLibraries();
+            }}
+          />
+        </ApolloProvider>,
+        document.getElementById("createLibraryModal")
+        )
+      ReactDOM.render(
+        <ApolloProvider client={this.props.client}>
+          <EditProfileModal
+            id="editProfile"
+            user={this.props.user}
+            refetchApp={this.props.refetchApp}
+            closeAndUpdate={() => {
+              if (document.querySelector('body > div:nth-child(12)')){
+               document.querySelector('body > div:nth-child(12)').click()
+              } 
+              this.updateButton.click();
+            }}
+          />
+        </ApolloProvider>,
+        document.getElementById("editProfileModal")
+    )
   }
   render() {
+    console.log(this.props.user);
     return (
       <div>
       <Header user={this.props.user} />
@@ -138,10 +93,20 @@ class Profile extends React.Component {
                                   maxHeight:100
                                 }} />
                                 <div className="flex fd-column jc-se">
-                                  <h2>{this.props.user.first_name} {this.props.user.last_name}</h2>
+                                  <h2>{this.props.user.full_name}</h2>
                                   <p className="light-gray">{this.props.user.job.name}</p>
                                 </div>
-                              </div>  <button data-open="editProfile" className="button">Edit Profile</button>
+                              </div>  
+                              <button 
+                                style={{display:"none"}}
+                                ref={node => this.updateButton = node} 
+                                onClick={() => this.props.refetchApp()} 
+                                className="button">Save</button>
+
+                              <button 
+                                ref={node => this.editProfile = node}
+                                data-open="editProfile"
+                                className="button">Edit Profile</button>
                     </div>
                     ) :
                     ( 
@@ -154,34 +119,40 @@ class Profile extends React.Component {
               }
             <div className="libraries">
               <h3 className="text-center">Libraries</h3>
-              <div className="libraries__content">
-              {
-                this.state.libraries === undefined ? 
-                (
-                  ""
-                ) 
-                :
-                (
-                    <div data-open="exampleModal2" className="libraries-card create">
-                      <img src="../../assets/toolkit/images/007-plus.svg" />
-                      <p className="pink bold">Create new library</p>
-                    </div>
-                )
-              }
-                {
-                  this.state.libraries === undefined ?
-                  (
-                    <Loading />
-                  )
-                  :
-                  (
-                    this.state.libraries.map(library => {
-                        return <LibraryCard key={library.id} library={library} />
-                    })
-
-                  )
-                }
-              </div>
+                <Query 
+                  query={gql`
+                    query {
+                        libraries {
+                          id
+                          name
+                          stories {
+                            thumbnail {
+                              url
+                            }
+                          }
+                        }
+                      }
+                  `}>
+                  { ({loading,error,data,refetch}) => {
+                    this.refetchLibraries = refetch;
+                    if (loading) return <Loading />
+                    if (error) return <p>{error.message}</p>
+                    let libraries = data.libraries;
+                    return (
+                        <div className="libraries__content">
+                          <div data-open="exampleModal2" className="libraries-card create">
+                            <img src="../../assets/toolkit/images/007-plus.svg" />
+                            <p className="pink bold">Create new library</p>
+                          </div>
+                          {
+                            libraries.map(library => {
+                                return <LibraryCard key={library.id} library={library} />
+                            })
+                          }
+                        </div>
+                      );
+                  }}
+                </Query>
             </div>
           </div>
         </div>
@@ -190,4 +161,4 @@ class Profile extends React.Component {
   }
 };
 
-export default Profile;
+export default withApollo(Profile);

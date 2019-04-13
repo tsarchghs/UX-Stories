@@ -51,8 +51,7 @@ type User {
   id: ID!
   email: String!
   password: String!
-  first_name: String!
-  last_name: String!
+  full_name: String!
   job: Job!
   role: AccountType!
   profile_photo: File
@@ -130,6 +129,12 @@ input LibraryFilterInput {
    storyElements: [String!]
 }
 
+
+input StoryLinkType {
+  story: ID!
+  type: LinkType!
+}
+
 input StoriesFilterInput {
   first: Int
   skip: Int
@@ -158,10 +163,6 @@ input StoryElementLinkType {
 }
 
 type Query {
-  login(
-    email: String!
-    password: String!
-  ): AuthData!
   getLoggedInUser: User
   app(id: ID!,stories_first: Int): App
   apps(appFilterInput: AppFilterInput): [App!]!
@@ -187,9 +188,12 @@ type Query {
 }
 
 type Mutation {
+  login(
+    email: String!
+    password: String!
+  ): AuthData!
   signUp(
-    first_name: String!
-    last_name: String!
+    full_name: String!
     email: String!
     password: String!
     job: ID!
@@ -285,9 +289,11 @@ type Mutation {
     name: String!
   ): Library!
 
+
   editLibrary(
     id: ID!
-    name: String!
+    name: String
+    stories: [StoryLinkType!]
   ): Library!
 
   createStory(

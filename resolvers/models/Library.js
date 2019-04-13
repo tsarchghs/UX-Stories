@@ -88,18 +88,28 @@ const createLibrary = async (root,args,context,info) => {
 	},info)
 	return library
 }
-
 const editLibrary = async (root,args,context,info) => {
 	permissions.loginPermission(context,"MEMBER")
-	if (!args.id || !args.name) {
+	if (!args.id) {
 		throw new Error("Please check that all of your arguments are not empty!")
 	}
 	await permissions.libraryPermission(context,args.id)
+
+	let data = {}
+	if (args.name) data["name"] = args.name
+	let links = []
+	if (args.stories){
+		args.stories.map(story => {
+			if (links[story.type] === undefined) links[story.type] = []
+			links[story.type].push({id:story.story});
+		})
+		console.log(links);
+		data["stories"] = links
+	}
+
 	const library = await context.db.mutation.updateLibrary({
 		where: { id: args.id},
-		data:{
-			name: args.name
-		}
+		data:data
 	},info)
 	return library
 }

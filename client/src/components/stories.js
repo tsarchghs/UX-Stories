@@ -7,8 +7,14 @@ import {getStories,getAppCategories,getStoryCategories,getStoryElements,getActiv
 import uuidv1 from 'uuid/v1';
 import { debounce } from "lodash";
 import DropdownLoading from "./dropdownLoading";
+import { withApollo } from "react-apollo";
+import AppCategoriesDropdown from "./appCategoriesDropdown";
+import StoryCategoriesDropdown from "./storyCategoriesDropdown";
+import StoryElementsDropdown from "./storyElementsDropdown";
+import StoryCategoriesActiveFitlers from "./storyCategoriesActiveFitlers";
+import StoryElementsActiveFilters from "./storyElementsActiveFilters";
 
-class Stories extends React.Component {
+class _Stories extends React.Component {
   constructor(props){
     super(props);
     this.state = {
@@ -27,6 +33,7 @@ class Stories extends React.Component {
     this.resetFilters = this.resetFilters.bind(this);
     this.once = false
     this.allCategoriesFilterClickOnce = false
+    this.searchNode = undefined
   }
   componentDidUpdate(){
     loadToolkit()
@@ -34,19 +41,10 @@ class Stories extends React.Component {
       document.getElementById("allCategoriesFilter").click()
       this.once = true
     }
-
-  }
-  async load(type,func){
-    let items = await func(this.props.client);
-    this.setState({
-      [type]: items
-    })
   }
   async componentDidMount() {
     loadToolkit()
-    this.load("appCategories",getAppCategories);
-    this.load("storyCategories",getStoryCategories);
-    this.load("storyElements",getStoryElements);
+    this.search("");
   }
   async search(storyName_contains) {
     let searchId = uuidv1();
@@ -98,7 +96,7 @@ class Stories extends React.Component {
       return state
     },() => {
       console.log(this.state);
-      this.search(document.getElementById("storyName_contains").value)})
+      this.search(this.searchNode.value)})
   }
   resetFilters(){
     this.setState(prevState => {
@@ -108,7 +106,7 @@ class Stories extends React.Component {
       state.filterBy.storyElements = []
       console.log(state);
       return state;
-    },() => this.search(document.getElementById("storyName_contains").value))
+    },() => this.search(this.searchNode.value))
   }
   unFilter(type,obj){
     if (this.state.stories){
@@ -124,7 +122,7 @@ class Stories extends React.Component {
       }
       state.filterBy[type][obj] = false;
       return state;
-    },() => this.search(document.getElementById("storyName_contains").value))
+    },() => this.search(this.searchNode.value))
   }
   render() {
     console.log(this.state,122);
@@ -141,7 +139,7 @@ class Stories extends React.Component {
                   <span className="seperator" />
                   <div className="search">
                     <img src="/assets/toolkit/images/search-icon.svg" alt />
-                    <input id="storyName_contains" onChange={(e) => this.search(e.target.value)} type="text" placeholder="Search by story..." />
+                    <input ref={node => this.searchNode = node} onChange={(e) => this.search(e.target.value)} type="text" placeholder="Search by story..." />
                   </div>      </div>
                 <div className="flex">
                   { //<div className="filter">
@@ -152,120 +150,28 @@ class Stories extends React.Component {
                                           //   <button className="button white">Filter with Elements<img src="/assets/toolkit/images/008-delete.svg" alt /></button>
                                           // </div>
                                         }
-<button className="button white fbtn" data-toggle="first" aria-controls="first" data-is-focus="false" data-yeti-box="first" aria-haspopup="true" aria-expanded="false">Filter with Categories<img src="/assets/toolkit/images/shape.svg" alt /></button>        
-        <div className="filter" id="first" data-dropdown data-auto-focus="true">
-          
-          {
-            !(this.state.appCategories && this.state.appCategories.constructor === Array) ? <DropdownLoading/>
-            : <div className="filter-dropdown">
-                <div className="filter-dropdown__top">
-                  <h5 className="gray bold">Filter with categories</h5>
-                  <p className="pink">{this.state.filterBy.appCategory && (this.state.filterBy.appCategory !== "all") ? 1 : 0} selected</p>
-                </div>
-                <div className="filter-dropdown__main">
+        <button className="button white fbtn" data-toggle="first" aria-controls="first" data-is-focus="false" data-yeti-box="first" aria-haspopup="true" aria-expanded="false">Filter with Categories<img src="/assets/toolkit/images/shape.svg" alt /></button>        
+        <AppCategoriesDropdown 
+          id="first" 
+          filterBy={this.state.filterBy}
+          handleAllFilterClick={(e) => this.handleFilterClick(e,{id:"all",name:"all"},"appCategory")}
+          handleFilterClick={(e,appCategory) => this.handleFilterClick(e,appCategory,"appCategory")} 
+        />
 
-                      <label className="radio-t rde">
-                        <label id={"all"+"_label"} className="gray bold">all</label>
-                        <input 
-                          className="ic" 
-                          type="radio" 
-                          name={1}
-                          value={1}
-                          onClick={async (e) => await this.handleFilterClick(e,{id:"all",name:"all"},"appCategory")}
-                        />
-                        <span id="allCategoriesFilter" className="checkmark"/>
-                      </label>
-                      {
-                        !this.state.appCategories
-                      }
-                {
-                  this.state.appCategories.map(appCategory => {
-                    return (
-
-                      <label className="radio-t rde">
-                        <label id={appCategory.id+"_label"} className="gray bold">{appCategory.name}</label>
-                        <input 
-                          className="ic" 
-                          type="radio" 
-                          name={1}
-                          value={1}
-                          onClick={async (e) => await this.handleFilterClick(e,appCategory,"appCategory")}
-                        />
-                        <span className="checkmark"/>
-                      </label>
-                    );
-                  })
-                } 
-                </div>
-              </div>
-          }
-
-        </div>        
         <button className="button white fbtn" data-toggle="second">Filter with Stories<img src="../../assets/toolkit/images/shape.svg" alt /></button>
-        <div className="filter" id="second" data-dropdown data-auto-focus="true">
-
-        {
-          !(this.state.storyCategories && this.state.storyCategories.constructor === Array) ? <DropdownLoading/>
-          : <div className="filter-dropdown">
-              <div className="filter-dropdown__top">
-                <h5 className="gray bold">Filter with stories</h5>
-                <p className="pink">{getActiveFilters(this.state,"storyCategories").length} selected</p>
-              </div>
-              <div className="filter-dropdown__main">                {
-                    this.state.storyCategories.map(storyCategory => {
-                      return (
-                        <label className="radio__container">
-                          <label id={storyCategory.id+"_label"} className="gray bold">{storyCategory.name}</label>
-                          <input 
-                            className="ic" 
-                            type="checkbox" 
-                            name={1}
-                            value={1}
-                            onClick={async (e) => await this.handleFilterClick(e,storyCategory,"storyCategories")}
-                          />
-                          <span className="checkmark"/>
-                        </label>
-                      );
-                    })
-                  }  
-              </div>
-          </div>
-        }
-        </div>
+        <StoryCategoriesDropdown 
+          id="second"
+          state={this.state}
+          handleFilterClick={(e,storyCategory) => this.handleFilterClick(e,storyCategory,"storyCategories")}
+        />
 
         <button className="button white fbtn" data-toggle="third">Filter with Elements<img src="../../assets/toolkit/images/shape.svg" alt /></button>
-        <div className="filter" id="third" data-dropdown data-auto-focus="true">
+        <StoryElementsDropdown
+          id="third"
+          state={this.state}
+          handleFilterClick={(e,storyElement) => this.handleFilterClick(e,storyElement,"storyElements")}
+        />
 
-          {
-            !(this.state.storyElements && this.state.storyElements.constructor === Array) ? <DropdownLoading/>
-            : <div className="filter-dropdown">
-                <div className="filter-dropdown__top">
-                  <h5 className="gray bold">Filter with stories</h5>
-                  <p className="pink">{getActiveFilters(this.state,"storyElements").length} selected</p>
-                </div>
-                <div className="filter-dropdown__main">
-                    {
-                      this.state.storyElements.map(storyElement => {
-                        return (
-                          <label className="radio__container">
-                            <label id={storyElement.id+"_label"} className="gray bold">{storyElement.name}</label>
-                            <input 
-                              className="ic" 
-                              type="checkbox" 
-                              name={1}
-                              value={1}
-                              onClick={async (e) => await this.handleFilterClick(e,storyElement,"storyElements")}
-                            />
-                            <span className="checkmark"/>
-                          </label>
-                        );
-                      })
-                    }  
-                </div>
-              </div>
-          }
-
-        </div>            
                 </div>
               </div>
             </div>
@@ -290,26 +196,14 @@ class Stories extends React.Component {
                     ""
                   )
                 }
-                {
-                  getActiveFilters(this.state,"storyCategories").map(storyCategory => {
-                      return (
-                        <div className="ux-label ">
-                          <p className="light-gray">{document.getElementById(storyCategory+"_label").innerHTML}</p>
-                          <span><a href="#"><img onClick={() => this.unFilter("storyCategories",storyCategory)} src="/assets/toolkit/images/008-delete.svg" alt /></a></span>
-                        </div>  
-                      );    
-                  })                
-                }
-              {
-                getActiveFilters(this.state,"storyElements").map(storyElement => {
-                    return (
-                      <div className="ux-label">
-                        <p className="light-gray">{document.getElementById(storyElement+"_label").innerHTML}</p>
-                        <span><a href="#"><img onClick={() => this.unFilter("storyElements",storyElement)} src="/assets/toolkit/images/008-delete.svg" alt /></a></span>
-                      </div>  
-                    );    
-                 })
-              }
+                  <StoryCategoriesActiveFitlers 
+                    state={this.state}
+                    unFilter={(e,storyCategory) => this.unFilter("storyCategories",storyCategory)}
+                  />
+                  <StoryElementsActiveFilters 
+                    state={this.state}
+                    unFilter={(e,storyElement) => this.unFilter("storyElements",storyElement)}
+                  />
               {
                 !((this.state.filterBy.appCategory && this.state.filterBy.appCategory !== "all") || getActiveFilters(this.state,"storyElements").concat(getActiveFilters(this.state,"storyCategories")).length) ?  "" :
                   <p onClick={this.resetFilters} className="pink"><a href="#">Clear all filters</a></p>
@@ -362,4 +256,4 @@ class Stories extends React.Component {
   }
 };
 
-export default Stories;
+export default withApollo(_Stories);

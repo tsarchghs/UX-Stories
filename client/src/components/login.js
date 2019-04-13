@@ -1,12 +1,47 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import Alert from "./alert";
+import { Mutation } from "react-apollo";
+import gql from "graphql-tag";
+import Cookies from "js-cookie";
 
 class Login extends React.Component {
+	constructor(props){
+		super(props);
+		this.email = undefined;
+		this.password = undefined;
+	}
 	render() {
 		return (
-			<form className="login" onSubmit={this.props.login}>
-			        <div className="login__container">
+			<Mutation 
+				mutation={gql`
+					mutation Login($email: String!, $password: String!){
+						login(email: $email, password: $password) {
+							token
+						}
+					}
+			`}>
+			{ (login,{loading,error,data}) => {
+				let errors = []
+				if (error){
+					if (error.message === "GraphQL error: Invalid credentials"){
+						errors.push("Invalid credentials");
+					}
+				}
+				if (data && data.login.token){
+					console.log(data.login.token)
+					Cookies.set("token",data.login.token)
+					this.props.refetchApp();
+				}
+				return (
+					<form className="login" onSubmit={(e) => {
+						e.preventDefault();
+						login({variables:{
+							email: this.email.value,
+							password: this.password.value
+						}});
+					}}>
+				        <div className="login__container">
 			          <div className="login__content">
 			          	<Link to="/">
 			            	<h4 className="pink bold header__back"><a href="#" className="flex ac"><img src="/assets/toolkit/images/008-delete.svg" alt />Back</a></h4>
@@ -18,14 +53,12 @@ class Login extends React.Component {
 			            <div className="login__hero">
 			              <div className="login__hero--left">
 			                <h1 className="bold text-center">Welcome back</h1>
-			                {
-			                	this.props.show_message
-			                	? <Alert style={{height:"70"}} red={true} message={this.props.show_message}/>
-			                	: ""
-			                }
+							{
+								errors.map(error => <Alert style={{height:"70"}} red={true} message={error}/>)
+							}
 			                <div className="input__wo-border">
-			                  <input className="input first fmt" id="email" type="email" placeholder="Email" />
-			                  <input className="input last fmt" id="password" type="password" placeholder="Password" />
+			                  <input ref={node => this.email = node} className="input first fmt" id="email" type="email" placeholder="Email" />
+			                  <input ref={node => this.password = node} className="input last fmt" id="password" type="password" placeholder="Password" />
 			                  <Link to="/forget_password">
 			                  	<p className="login__rm light-gray text-right"><a href="#">Forgot your password</a></p>
 			                  </Link>
@@ -41,6 +74,9 @@ class Login extends React.Component {
 			          </div>
 			        </div>
 			      </form>
+				)
+			}}
+			</Mutation>
 		);
 	}
 }

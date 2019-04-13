@@ -6,8 +6,10 @@ import { Link } from "react-router-dom";
 import { debounce } from "lodash";
 import {getAppCategories,getActiveFilters,insertActiveFilters,loadToolkit} from "../helpers";
 import DropdownLoading from "./dropdownLoading";
+import AppCategoriesDropdown from "./appCategoriesDropdown";
+import { withApollo } from "react-apollo";
 
-class Home extends React.Component {
+class _Home extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -25,12 +27,17 @@ class Home extends React.Component {
     this.update = debounce(this.update.bind(this),500);
     this.callAllCategoriesFilterOnce = false
   }
-	componentDidUpdate(){
-	   loadToolkit();
-
-	}
+  componentDidUpdate(){
+    loadToolkit()
+    if (!this.callAllCategoriesFilterOnce && document.getElementById("allCategoriesFilter")){
+      document.getElementById("allCategoriesFilter").click();
+      this.callAllCategoriesFilterOnce = true
+    }
+  }
   filterCategory(appCategory) {
+    console.log(appCategory);
     if (appCategory.name === "all" && !this.callAllCategoriesFilterOnce){
+      this.callAllCategoriesFilterOnce = true
       return;
     }
     if (!this.state.filterBy.appCategory || !(this.state.filterBy.appCategory.id === appCategory.id)){
@@ -102,12 +109,11 @@ class Home extends React.Component {
 	async componentDidMount(){
 		this.loadToolkit();
     this.update();
-    let appCategories = await getAppCategories(this.props.client).then();
-    this.setState({
-      appCategories
-    },document.getElementById("allCategoriesFilter").click());
 	}
   async loadMore() {
+    this.setState({
+      show_skeleton:true
+    })
     this.skip += 4
     this.update();
   }
@@ -153,43 +159,12 @@ class Home extends React.Component {
               </div>
               <div className="flex">
                 <button className="button white fbtn" data-toggle="first">Filter with Categories<img src="/assets/toolkit/images/shape.svg" alt /></button>
-                <div className="filter" id="first" data-dropdown data-auto-focus="true">
-                  <div className="filter-dropdown">
-                  <label className="radio-t rde">
-                    <label className="gray bold">All</label>
-                    <input 
-                      className="ic" 
-                      type="radio" 
-                      name="categoryFilter"
-                      onClick={() => this.filterCategory({id:"all",name:"all"})}
-                    />
-                    <span id="allCategoriesFilter" className="checkmark"/>
-                  </label>
-                  {
-                    !this.state.appCategories 
-                    ? <DropdownLoading/>
-                    : <div>
-                      {
-                        this.state.appCategories.map(appCategory => {
-                          return (
-
-                            <label className="radio-t rde">
-                              <label id={appCategory.id+"_label"} className="gray bold">{appCategory.name}</label>
-                              <input 
-                                className="ic" 
-                                type="radio" 
-                                name={"categoryFilter"}
-                                onClick={() => this.filterCategory(appCategory)}
-                              />
-                              <span className="checkmark"/>
-                            </label>
-                          );
-                        })
-                      } 
-                    </div>
-                  }
-                  </div>
-                </div>				
+              <AppCategoriesDropdown 
+                id="first" 
+                filterBy={this.state.filterBy}
+                handleAllFilterClick={() => this.filterCategory({id:"all",name:"all"})}
+                handleFilterClick={(e,appCategory) => this.filterCategory(appCategory)} 
+              />			
                </div>
             </div>
           </div>
@@ -210,7 +185,7 @@ class Home extends React.Component {
                   <div className="app">
                     <div className="apps__top">
                       <Link to={`/app/${app.id}`}>
-                        <div className="apps__top-image" style={{backgroundImage: 'url("/assets/toolkit/images/netflix-logo.jpg")'}} />
+                        <div className="apps__top-image" style={{backgroundImage: `url(${app.logo.url})`}} />
                       </Link>
                       <div className="apps__top-info">
                         <Link to={`/app/${app.id}`}>
@@ -278,4 +253,4 @@ class Home extends React.Component {
 	}
 }
 
-export default Home;
+export default withApollo(_Home);
