@@ -1,6 +1,15 @@
 const fileHandling = require("../../modules/fileApi");
 const permissions = require("../permissions");
 
+const countStories = async (root,args,context) => {
+	let data = await context.db.query.storiesConnection({},`
+			{
+				aggregate { count }
+			}
+		`)
+	return data.aggregate.count;
+} 
+
 const story = async (root,args,context,info) => {
 	return await context.db.query.story({where:{id:args.id}},info);
 }
@@ -250,6 +259,7 @@ const storyToApp = async (root,args,context,info) => {
 }
 
 module.exports = {
+	countStories,
 	stories,
 	createStory,
 	storyToLibrary,
