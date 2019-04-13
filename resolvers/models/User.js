@@ -17,7 +17,7 @@ const editProfile = async (parent,args,context,info) => {
 		throw new Error("At least one argument must be specified");
 	}
 	let data = {}
-	if (args.full_name) data["first_name"] = args.full_name;
+	if (args.full_name) data["full_name"] = args.full_name;
 	if (args.email) data["email"] = args.email
 	if (args.job) data["job"] = {connect:{id:args.job}}
 		

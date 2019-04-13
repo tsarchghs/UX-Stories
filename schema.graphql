@@ -129,6 +129,12 @@ input LibraryFilterInput {
    storyElements: [String!]
 }
 
+
+input StoryLinkType {
+  story: ID!
+  type: LinkType!
+}
+
 input StoriesFilterInput {
   first: Int
   skip: Int
@@ -283,9 +289,11 @@ type Mutation {
     name: String!
   ): Library!
 
+
   editLibrary(
     id: ID!
-    name: String!
+    name: String
+    stories: [StoryLinkType!]
   ): Library!
 
   createStory(
