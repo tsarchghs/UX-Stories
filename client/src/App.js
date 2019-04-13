@@ -1,5 +1,10 @@
 import React, { Component } from 'react';
 import { BrowserRouter as Router, Route, Link, Redirect } from "react-router-dom";
+import { ApolloProvider } from "react-apollo";
+import { Query } from "react-apollo";
+import gql from "graphql-tag";
+import { InMemoryCache } from 'apollo-cache-inmemory';
+import { getQueryParams, loadToolkit } from "./helpers";
 import ApolloClient from "apollo-boost";
 import Profile from "./components/profile";
 import Stories from "./components/stories";
@@ -13,12 +18,14 @@ import Home from "./components/home";
 import ForgetPassword from "./components/forgetPassword";
 import ResetPassword from "./components/resetPassword";
 import SingleStory from "./components/singleStory";
-import { getQueryParams, loadToolkit } from "./helpers";
+import Users from "./components/admin/users";
 import Apps from "./components/admin/apps";
-import { ApolloProvider } from "react-apollo";
-import { Query } from "react-apollo";
-import gql from "graphql-tag";
-import { InMemoryCache } from 'apollo-cache-inmemory';
+import AdminStories from "./components/admin/stories";
+import CreateApp from "./components/admin/createApp";
+import CreateAppCategories from "./components/admin/createAppCategories";
+import StoryCategories from "./components/admin/storyCategories";
+import StoryElements from "./components/admin/storyElements";
+import AppCategories from "./components/admin/appCategories";
 
 const URI = "http://localhost:4000";
 
@@ -58,6 +65,7 @@ class App extends Component {
                                     getLoggedInUser{
                                         full_name
                                         email
+                                        role
                                         job {
                                             id
                                             name
@@ -114,8 +122,7 @@ class App extends Component {
                                     <Route path="/reset/:token" exact component={(match) => {
                                         return (
                                             <ResetPassword 
-                                                user={user} 
-                                               
+                                                user={user}
                                                 match={match}
                                             />
                                         )
@@ -123,8 +130,7 @@ class App extends Component {
                                     <Route path="/story/:id" exact component={match => {
                                         return (
                                             <SingleStory 
-                                                user={user}
-                                               
+                                                user={user}     
                                                 match={match}
                                             />
                                         );
@@ -151,13 +157,80 @@ class App extends Component {
                                     );
                                 }} />
 
-                                <Route path="/admin/apps" exact component={() => {
+                                <Route path="/admin" component={() => {
                                     return (
-                                        user && user.role === "ADMIN"
-                                        ? <Apps user={user}/>
-                                        : <Redirect to={`/login?success=admin:apps`}/>
-                                    );
-                                }} />
+                                        <div>
+                                            <link rel="stylesheet" href="../assets/admin/assets/vendor/bootstrap/css/bootstrap.min.css"/>
+                                            <link href="../assets/admin/assets/vendor/fonts/circular-std/style.css" rel="stylesheet"/>
+                                            <link rel="stylesheet" href="../assets/admin/assets/libs/css/style.css"/>
+                                            <link rel="stylesheet" href="../assets/admin/assets/vendor/fonts/fontawesome/css/fontawesome-all.css"/>
+
+                                            <Route path="/admin/apps" exact component={() => {
+                                                return (
+                                                    user && user.role === "ADMIN"
+                                                    ? <Apps user={user}/>
+                                                    : <Redirect to={`/login?success=admin:apps`}/>
+                                                );
+                                            }} />
+
+                                            <Route path="/admin/create_app" exact component={() => {
+                                                return (
+                                                    user && user.role === "ADMIN"
+                                                    ? <CreateApp user={user}/>
+                                                    : <Redirect to={`/login?success=admin:create_app`}/>
+                                                );
+                                            }} />
+
+                                            <Route path="/admin/create_app_categories" exact component={() => {
+                                                return (
+                                                    user && user.role === "ADMIN"
+                                                    ? <CreateAppCategories user={user}/>
+                                                    : <Redirect to={`/login?success=admin:create_app_categories`}/>
+                                                );
+                                            }} />
+
+                                            <Route path="/admin/stories" exact component={() => {
+                                                return (
+                                                    user && user.role === "ADMIN"
+                                                    ? <AdminStories user={user}/>
+                                                    : <Redirect to={`/login?success=admin:stories`}/>
+                                                );
+                                            }} />
+                                            
+                                            <Route path="/admin/story_categories" exact component={() => {
+                                                return (
+                                                    user && user.role === "ADMIN"
+                                                    ? <StoryCategories user={user}/>
+                                                    : <Redirect to={`/login?success=admin:story_categories`}/>
+                                                );
+                                            }} />
+                                            
+                                            <Route path="/admin/story_elements" exact component={() => {
+                                                return (
+                                                    user && user.role === "ADMIN"
+                                                    ? <StoryElements user={user}/>
+                                                    : <Redirect to={`/login?success=admin:story_elements`}/>
+                                                );
+                                            }} />
+                                            
+                                            <Route path="/admin/users" exact component={() => {
+                                                return (
+                                                    user && user.role === "ADMIN"
+                                                    ? <Users user={user}/>
+                                                    : <Redirect to={`/login?success=admin:users`}/>
+                                                );
+                                            }} />
+
+                                            <Route path="/admin/app_categories" exact component={() => {
+                                                return (
+                                                    user && user.role === "ADMIN"
+                                                    ? <AppCategories user={user}/>
+                                                    : <Redirect to={`/login?success=admin:app_categories`}/>
+                                                );
+                                            }} />
+                                        </div>
+                                    )
+                                }}/>
 
                                 </div> 
                             )
