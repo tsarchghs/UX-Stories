@@ -106,7 +106,7 @@ class EditProfileModal extends React.Component {
 								          		<div>
 										          <div className="modal__content">
 										            <div className="modal__upload">
-										              <img id="profile_image" className="modal__img" src="https://scontent.fprn1-1.fna.fbcdn.net/v/t1.0-1/p160x160/35988964_1041356179350456_5301902918050381824_n.jpg?_nc_cat=105&_nc_ht=scontent.fprn1-1.fna&oh=2142e132de1a494501a3fc90d51e365c&oe=5D4FB1D7" />
+										              <img id="profile_image" className="modal__img" src={`${this.props.user.profile_photo ? this.props.user.profile_photo.url : "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQOo9ftjYQCU8HW1YByx0oAQdegRxO51mQN0tKKenGRnDZb-_D6"}`} />
 										              <input 
 										              	ref={node => this.uploadPhotoInput = node} 
 										              	type="file" 
