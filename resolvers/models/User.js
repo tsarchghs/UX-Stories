@@ -13,6 +13,20 @@ const countUsers = async (parent,args,context) => {
 	return data.aggregate.count;
 }
 
+const users = async (parent,args,context,info) => {
+	// permissions.loginPermission(context,"ADMIN");
+	let filterBy = {}
+	if (args.userFilterInput){
+		if (args.userFilterInput.full_name_contains){
+			filterBy["where"] = {full_name_contains:args.userFilterInput.full_name_contains}
+		}
+		if (args.userFilterInput.first) filterBy["first"] = args.userFilterInput.first
+		if (args.userFilterInput.first) filterBy["skip"] = args.userFilterInput.skip
+	}
+	let data = await context.db.query.users(filterBy,info)
+	return data;
+}
+
 const editProfile = async (parent,args,context,info) => {
 	permissions.loginPermission(context,"MEMBER");
 	console.log(args);
@@ -52,6 +66,7 @@ const getLoggedInUser = async (parent,args,context,info) => {
 }
 
 module.exports = {
+	users,
 	getLoggedInUser,
 	editProfile,
 	countUsers

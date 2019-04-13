@@ -162,6 +162,12 @@ input StoryElementLinkType {
   type: LinkType!
 }
 
+input UserFilterInput {
+  first: Int
+  skip: Int
+  full_name_contains: String
+}
+
 type Query {
   getLoggedInUser: User
   app(id: ID!,stories_first: Int): App
@@ -185,7 +191,7 @@ type Query {
   ): [Library!]!
 
   jobs: [Job!]!
-
+  users(userFilterInput: UserFilterInput): [User!]!
   countApps: Int!
   countStories: Int!
   countUsers: Int!

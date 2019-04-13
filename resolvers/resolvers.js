@@ -26,7 +26,8 @@ module.exports = {
 		library: libraryResolvers.library,
 		libraries: libraryResolvers.libraries,
 		countUsers: userResolvers.countUsers,
-		jobs: jobResolvers.jobs
+		jobs: jobResolvers.jobs,
+		users: userResolvers.users
 	},
 	Mutation: {
 		login: authResolvers.login,
