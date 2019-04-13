@@ -1,6 +1,15 @@
 const fileHandling = require("../../modules/fileApi");
 const permissions = require("../permissions");
 
+const countApps = async (root,args,context) => {
+	let data = await context.db.query.appsConnection({},`
+			{
+				aggregate { count }
+			}
+		`)
+	return data.aggregate.count
+}
+
 const app = async (root,args,context,info) => {
 	return await context.db.query.app({
 		where: {
@@ -165,6 +174,7 @@ const stories = async (parent,args,context,info) => {
 }
  
 module.exports = {
+	countApps,
 	app,
 	apps,
 	createApp,
