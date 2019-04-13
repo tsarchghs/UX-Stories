@@ -85,6 +85,12 @@ class App extends Component {
                             if (error) return <p>{error.message}</p>
                             if (loading) return <Loading style={{margin:140}}/>
                             var user = data.getLoggedInUser
+                            if (user && !user.logout){
+                                user.logout = () => {
+                                    Cookies.set("token","");
+                                    refetch();
+                                }
+                            }
                             return (
                                 <div>
                                     <Route path="/" exact component={() => <Home user={user}/>}/>
