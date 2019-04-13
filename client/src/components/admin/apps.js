@@ -1,10 +1,36 @@
 import React from "react";
 import Header from "./header";
 import LeftSidebar from "./leftSidebar";
+import { Query } from "react-apollo";
+import gql from "graphql-tag";
+import { debounce } from "lodash";
 
 class Apps extends React.Component {
-    render(){
-        return (
+  constructor(props){
+    super(props);
+    this.state = {
+      first:10,
+      appName_search: undefined,
+      hasNextPage: undefined
+    }
+    this.appName_search = undefined;
+    this.search = debounce(this.search.bind(this))
+    this.loadmore = this.loadmore.bind(this);
+  }
+  search() {
+    this.setState({
+      appName_search: this.appName_search.value
+    })
+  }
+  loadmore(){
+    this.setState(prevState => {
+      let state = prevState
+      state.first += 10
+      return state
+    })
+  }
+  render(){
+      return (
           <div className="dashboard-main-wrapper">
                <Header/>
                <LeftSidebar/>
@@ -35,9 +61,9 @@ class Apps extends React.Component {
                     {/* ============================================================== */}
                     <div className="page-header">
                       <div className="input-group col-xl-3 col-lg-12 col-md-12 col-sm-12 col-12">
-                        <input type="text" className="form-control" placeholder="Search by app name" />
+                        <input onChange={this.search} ref={node => this.appName_search = node} type="text" className="form-control" placeholder="Search by app name" />
                         <div className="input-group-append">
-                          <button type="submit" className="btn btn-primary">Search</button>
+                          <button onClick={this.search} type="submit" className="btn btn-primary">Search</button>
                         </div>
                       </div>
                     </div>
@@ -49,84 +75,63 @@ class Apps extends React.Component {
                           </div>
                           <div className="card-body">
                             <table className="table">
-                              <thead>
+                              <tbody>
                                 <tr>
                                   <th scope="col">#</th>
                                   <th scope="col">Name</th>
                                   <th scope="col">Category</th>
                                   <th scope="col"> </th>
                                 </tr>
-                              </thead>
-                              <tbody>
-                                <tr>
-                                  <th scope="row">1</th>
-                                  <td>Facebook app</td>
-                                  <td>Social Networking</td>
-                                  <td><div className="dd-nodrag btn-group ml-auto">
-                                      <button className="btn btn-sm btn-outline-light">Edit</button>
-                                      <button className="btn btn-sm btn-outline-light">
-                                        <i className="far fa-trash-alt" />
-                                      </button>
-                                    </div></td>
-                                </tr>
-                                <tr>
-                                  <th scope="row">2</th>
-                                  <td>iNZDR</td>
-                                  <td>Social Networking</td>
-                                  <td><div className="dd-nodrag btn-group ml-auto">
-                                      <button className="btn btn-sm btn-outline-light">Edit</button>
-                                      <button className="btn btn-sm btn-outline-light">
-                                        <i className="far fa-trash-alt" />
-                                      </button>
-                                    </div></td>
-                                </tr>
-                                <tr>
-                                  <th scope="row">3</th>
-                                  <td>Quora</td>
-                                  <td>News</td>
-                                  <td><div className="dd-nodrag btn-group ml-auto">
-                                      <button className="btn btn-sm btn-outline-light">Edit</button>
-                                      <button className="btn btn-sm btn-outline-light">
-                                        <i className="far fa-trash-alt" />
-                                      </button>
-                                    </div></td>
-                                </tr>
-                                <tr>
-                                  <th scope="row">4</th>
-                                  <td>Slack</td>
-                                  <td>Work tool</td>
-                                  <td><div className="dd-nodrag btn-group ml-auto">
-                                      <button className="btn btn-sm btn-outline-light">Edit</button>
-                                      <button className="btn btn-sm btn-outline-light">
-                                        <i className="far fa-trash-alt" />
-                                      </button>
-                                    </div></td>
-                                </tr>
-                                <tr>
-                                  <th scope="row">5</th>
-                                  <td>AliExpress</td>
-                                  <td>Shopping</td>
-                                  <td><div className="dd-nodrag btn-group ml-auto">
-                                      <button className="btn btn-sm btn-outline-light">Edit</button>
-                                      <button className="btn btn-sm btn-outline-light">
-                                        <i className="far fa-trash-alt" />
-                                      </button>
-                                    </div></td>
-                                </tr>
-                                <tr>
-                                  <th scope="row">6</th>
-                                  <td>Busulla</td>
-                                  <td>Education</td>
-                                  <td><div className="dd-nodrag btn-group ml-auto">
-                                      <button className="btn btn-sm btn-outline-light">Edit</button>
-                                      <button className="btn btn-sm btn-outline-light">
-                                        <i className="far fa-trash-alt" />
-                                      </button>
-                                    </div></td>
-                                </tr>
+                                <Query
+                                  query={gql`
+                                    query Apps($appFilterInput: AppFilterInput){
+                                      apps(
+                                        appFilterInput: $appFilterInput
+                                      ) {
+                                        id
+                                        name
+                                        appCategory {
+                                          id
+                                          name
+                                        }
+                                      }
+                                    }
+                                `} variables={{appFilterInput:{
+                                           first:this.state.first,
+                                           appName_contains:this.state.appName_search ? this.state.appName_search : ""
+                                         }}
+                                       }>
+                                  { ({loading,error,data,refetch}) => {
+                                      if (loading) return <center><h4>Loading</h4></center>
+                                      if (error) return <h3>{error.message}</h3>
+                                      let apps = data ? data.apps : []
+                                      return apps.map(app => {
+                                        return (
+                                          <tr>
+                                            <th scope="row">{app.id}</th>
+                                            <td>{app.name}</td>
+                                            <td>{app.appCategory.name}</td>
+                                            <td><div className="dd-nodrag btn-group ml-auto">
+                                                <button className="btn btn-sm btn-outline-light">Edit</button>
+                                                <button className="btn btn-sm btn-outline-light">
+                                                  <i className="far fa-trash-alt" />
+                                                </button>
+                                              </div></td>
+                                          </tr>
+                                        )
+                                      })
+                                  }}
+
+                                </Query>
                               </tbody>
                             </table>
                           </div>
+                          {
+                            false ? ""
+                            :  <center>
+                                <h4 onClick={this.loadmore}>Load more</h4>
+                              </center>
+                          }
                         </div>
                       </div>
                       {/* ============================================================== */}
