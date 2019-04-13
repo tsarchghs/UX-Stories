@@ -7,12 +7,14 @@ import {getStories,getAppCategories,getStoryCategories,getStoryElements,getActiv
 import uuidv1 from 'uuid/v1';
 import { debounce } from "lodash";
 import DropdownLoading from "./dropdownLoading";
-import { Query, Mutation } from "react-apollo";
+import { withApollo } from "react-apollo";
 import AppCategoriesDropdown from "./appCategoriesDropdown";
 import StoryCategoriesDropdown from "./storyCategoriesDropdown";
-import StoryElementsDropdown from "./storyCategoriesDropdown";
+import StoryElementsDropdown from "./storyElementsDropdown";
+import StoryCategoriesActiveFitlers from "./storyCategoriesActiveFitlers";
+import StoryElementsActiveFilters from "./storyElementsActiveFilters";
 
-class Stories extends React.Component {
+class _Stories extends React.Component {
   constructor(props){
     super(props);
     this.state = {
@@ -31,6 +33,7 @@ class Stories extends React.Component {
     this.resetFilters = this.resetFilters.bind(this);
     this.once = false
     this.allCategoriesFilterClickOnce = false
+    this.searchNode = undefined
   }
   componentDidUpdate(){
     loadToolkit()
@@ -38,19 +41,10 @@ class Stories extends React.Component {
       document.getElementById("allCategoriesFilter").click()
       this.once = true
     }
-
-  }
-  async load(type,func){
-    let items = await func(this.props.client);
-    this.setState({
-      [type]: items
-    })
   }
   async componentDidMount() {
     loadToolkit()
-    this.load("appCategories",getAppCategories);
-    this.load("storyCategories",getStoryCategories);
-    this.load("storyElements",getStoryElements);
+    this.search("");
   }
   async search(storyName_contains) {
     let searchId = uuidv1();
@@ -102,7 +96,7 @@ class Stories extends React.Component {
       return state
     },() => {
       console.log(this.state);
-      this.search(document.getElementById("storyName_contains").value)})
+      this.search(this.searchNode.value)})
   }
   resetFilters(){
     this.setState(prevState => {
@@ -112,7 +106,7 @@ class Stories extends React.Component {
       state.filterBy.storyElements = []
       console.log(state);
       return state;
-    },() => this.search(document.getElementById("storyName_contains").value))
+    },() => this.search(this.searchNode.value))
   }
   unFilter(type,obj){
     if (this.state.stories){
@@ -128,7 +122,7 @@ class Stories extends React.Component {
       }
       state.filterBy[type][obj] = false;
       return state;
-    },() => this.search(document.getElementById("storyName_contains").value))
+    },() => this.search(this.searchNode.value))
   }
   render() {
     console.log(this.state,122);
@@ -145,7 +139,7 @@ class Stories extends React.Component {
                   <span className="seperator" />
                   <div className="search">
                     <img src="/assets/toolkit/images/search-icon.svg" alt />
-                    <input id="storyName_contains" onChange={(e) => this.search(e.target.value)} type="text" placeholder="Search by story..." />
+                    <input ref={node => this.searchNode = node} onChange={(e) => this.search(e.target.value)} type="text" placeholder="Search by story..." />
                   </div>      </div>
                 <div className="flex">
                   { //<div className="filter">
@@ -202,26 +196,14 @@ class Stories extends React.Component {
                     ""
                   )
                 }
-                {
-                  getActiveFilters(this.state,"storyCategories").map(storyCategory => {
-                      return (
-                        <div className="ux-label ">
-                          <p className="light-gray">{document.getElementById(storyCategory+"_label").innerHTML}</p>
-                          <span><a href="#"><img onClick={() => this.unFilter("storyCategories",storyCategory)} src="/assets/toolkit/images/008-delete.svg" alt /></a></span>
-                        </div>  
-                      );    
-                  })                
-                }
-              {
-                getActiveFilters(this.state,"storyElements").map(storyElement => {
-                    return (
-                      <div className="ux-label">
-                        <p className="light-gray">{document.getElementById(storyElement+"_label").innerHTML}</p>
-                        <span><a href="#"><img onClick={() => this.unFilter("storyElements",storyElement)} src="/assets/toolkit/images/008-delete.svg" alt /></a></span>
-                      </div>  
-                    );    
-                 })
-              }
+                  <StoryCategoriesActiveFitlers 
+                    state={this.state}
+                    unFilter={(e,storyCategory) => this.unFilter("storyCategories",storyCategory)}
+                  />
+                  <StoryElementsActiveFilters 
+                    state={this.state}
+                    unFilter={(e,storyElement) => this.unFilter("storyElements",storyElement)}
+                  />
               {
                 !((this.state.filterBy.appCategory && this.state.filterBy.appCategory !== "all") || getActiveFilters(this.state,"storyElements").concat(getActiveFilters(this.state,"storyCategories")).length) ?  "" :
                   <p onClick={this.resetFilters} className="pink"><a href="#">Clear all filters</a></p>
@@ -274,4 +256,4 @@ class Stories extends React.Component {
   }
 };
 
-export default Stories;
+export default withApollo(_Stories);

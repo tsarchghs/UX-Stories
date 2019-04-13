@@ -5,6 +5,11 @@ import gql from "graphql-tag";
 import {getStoryCategories,getStoryElements,getActiveFilters,insertActiveFilters,loadToolkit} from "../helpers";
 import E404 from "./E404";
 import DropdownLoading from "./dropdownLoading";
+import { withApollo } from "react-apollo";
+import StoryCategoriesDropdown from "./storyCategoriesDropdown";
+import StoryElementsDropdown from "./storyCategoriesDropdown";
+import StoryCategoriesActiveFitlers from "./storyCategoriesActiveFitlers";
+import StoryElementsActiveFilters from "./storyElementsActiveFilters";
 
 class Library extends React.Component {
 	constructor(props){
@@ -61,13 +66,7 @@ class Library extends React.Component {
 					show404: true
 				})
 				return;
-			}
-		    let storyCategories = await getStoryCategories(this.props.client);
-		    let storyElements = await getStoryElements(this.props.client);
-		    this.setState({
-		    	storyCategories,
-		    	storyElements
-		    })
+			}	
 		} catch (e) {
 			console.log(e);
 		}
@@ -138,7 +137,7 @@ class Library extends React.Component {
 
 				}
 				{
-						this.state.show404 || (this.state.library === undefined || !this.state.storyCategories || !this.state.storyElements) ?
+						this.state.show404 || (this.state.library === undefined) ?
 						(
 							this.state.show404 ? "" : <Loading/>
 						)
@@ -153,70 +152,21 @@ class Library extends React.Component {
 								  </div>
 								  <div className="flex ac">
 									<a href="#"><img src="../../assets/toolkit/images/edit.svg" alt /></a>
-		
-		<button className="button white fbtn" data-toggle="first" aria-controls="first" data-is-focus="false" data-yeti-box="first" aria-haspopup="true" aria-expanded="false">Filter with Categories<img src="/assets/toolkit/images/shape.svg" alt /></button>        
-        <div className="filter" id="first" data-dropdown data-auto-focus="true">
-        {
-          !(this.state.storyCategories && this.state.storyCategories.constructor === Array) ? <DropdownLoading/>
-          : <div className="filter-dropdown">
-              <div className="filter-dropdown__top">
-                <h5 className="gray bold">Filter with stories</h5>
-                <p className="pink">{getActiveFilters(this.state,"storyCategories").length} selected</p>
-              </div>
-              <div className="filter-dropdown__main">                {
-                    this.state.storyCategories.map(storyCategory => {
-                      return (
-                        <label className="radio__container">
-                          <label id={storyCategory.id+"_label"} className="gray bold">{storyCategory.name}</label>
-                          <input 
-                            className="ic" 
-                            type="checkbox" 
-                            name={1}
-                            value={1}
-                            onClick={async (e) => await this.handleFilterClick(e,storyCategory,"storyCategories")}
-                          />
-                          <span className="checkmark"/>
-                        </label>
-                      );
-                    })
-                  }  
-              </div>
-          </div>
-        }     
-        </div>
-        <button className="button white fbtn" data-toggle="third">Filter with Elements<img src="../../assets/toolkit/images/shape.svg" alt /></button>
-        <div className="filter" id="third" data-dropdown data-auto-focus="true">
+		        
+							        <button className="button white fbtn" data-toggle="second">Filter with Stories<img src="../../assets/toolkit/images/shape.svg" alt /></button>
+							        <StoryCategoriesDropdown 
+							          id="second"
+							          state={this.state}
+							          handleFilterClick={(e,storyCategory) => this.handleFilterClick(e,storyCategory,"storyCategories")}
+							        />
 
-          {
-            !(this.state.storyElements && this.state.storyElements.constructor === Array) ? <DropdownLoading/>
-            : <div className="filter-dropdown">
-                <div className="filter-dropdown__top">
-                  <h5 className="gray bold">Filter with stories</h5>
-                  <p className="pink">{getActiveFilters(this.state,"storyElements").length} selected</p>
-                </div>
-                <div className="filter-dropdown__main">
-                    {
-                      this.state.storyElements.map(storyElement => {
-                        return (
-                          <label className="radio__container">
-                            <label id={storyElement.id+"_label"} className="gray bold">{storyElement.name}</label>
-                            <input 
-                              className="ic" 
-                              type="checkbox" 
-                              name={1}
-                              value={1}
-                              onClick={async (e) => await this.handleFilterClick(e,storyElement,"storyElements")}
-                            />
-                            <span className="checkmark"/>
-                          </label>
-                        );
-                      })
-                    }  
-                </div>
-              </div>
-          }
+							        <button className="button white fbtn" data-toggle="third">Filter with Elements<img src="../../assets/toolkit/images/shape.svg" alt /></button>
+							        <StoryElementsDropdown
+							          id="third"
+							          state={this.state}
+							          handleFilterClick={(e,storyElement) => this.handleFilterClick(e,storyElement,"storyElements")}
+							        />
 
-        </div>  
 								</div>
 								</div>
 							  </div>
@@ -226,26 +176,14 @@ class Library extends React.Component {
 					            <div className="container">
 					              <div className="results__content">
 					                	<p className="results__results bold">Showing {this.state.library.stories ? this.state.library.stories.length : 0} Results</p>
-					                	{
-							                getActiveFilters(this.state,"storyCategories").map(storyCategory => {
-							                    return (
-							                      <div className="ux-label ">
-							                        <p className="light-gray">{document.getElementById(storyCategory+"_label").innerHTML}</p>
-							                        <span><a href="#"><img onClick={() => this.unFilter("storyCategories",storyCategory)} src="/assets/toolkit/images/008-delete.svg" alt /></a></span>
-							                      </div>  
-							                    );    
-							                 })
-						              }
-				                	{
-						                getActiveFilters(this.state,"storyElements").map(storyElement => {
-						                    return (
-						                      <div className="ux-label ">
-						                        <p className="light-gray">{document.getElementById(storyElement+"_label").innerHTML}</p>
-						                        <span><a href="#"><img onClick={() => this.unFilter("storyElements",storyElement)} src="/assets/toolkit/images/008-delete.svg" alt /></a></span>
-						                      </div>  
-						                    );    
-						                 })
-					              }
+					                	<StoryCategoriesActiveFitlers 
+					                		state={this.state}
+					                		unFilter={(e,storyCategory) => this.unFilter("storyCategories",storyCategory)}
+					                	/>
+						                <StoryElementsActiveFilters 
+						                	state={this.state}
+						                	unFilter={(e,storyElement) => this.unFilter("storyElements",storyElement)}
+						                />
 					              {
 					              	!getActiveFilters(this.state,"storyElements").concat(getActiveFilters(this.state,"storyCategories")).length ?  "" :
 					                	<p onClick={this.resetFilters} className="pink"><a href="#">Clear all filters</a></p>
@@ -285,4 +223,4 @@ class Library extends React.Component {
 	)}
 }
 
-export default Library;
+export default withApollo(Library);

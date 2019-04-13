@@ -3,6 +3,7 @@ import LibraryCard from "./libraryCard";
 import gql from "graphql-tag";
 import Loading from "./loading";
 import Header from "./header";
+import { withApollo } from "react-apollo";
 
 const handleUploadPhotoInput = element => {
   var file = element.files[0];
@@ -190,4 +191,4 @@ class Profile extends React.Component {
   }
 };
 
-export default Profile;
+export default withApollo(Profile);

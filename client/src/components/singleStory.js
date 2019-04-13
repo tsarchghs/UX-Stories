@@ -5,6 +5,7 @@ import { Link } from "react-router-dom";
 import { getQueryParams,getActiveFilters,loadToolkit } from "../helpers";
 import DropdownLoading from "./dropdownLoading";
 import Loading from "./loading";
+import { withApollo } from "react-apollo";
 
 class SingleStory extends React.Component {
 	constructor(props){
@@ -276,4 +277,4 @@ class SingleStory extends React.Component {
 	}
 }
 
-export default SingleStory;
+export default withApollo(SingleStory);

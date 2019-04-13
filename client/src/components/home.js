@@ -7,8 +7,9 @@ import { debounce } from "lodash";
 import {getAppCategories,getActiveFilters,insertActiveFilters,loadToolkit} from "../helpers";
 import DropdownLoading from "./dropdownLoading";
 import AppCategoriesDropdown from "./appCategoriesDropdown";
+import { withApollo } from "react-apollo";
 
-class Home extends React.Component {
+class _Home extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -28,7 +29,7 @@ class Home extends React.Component {
   }
   componentDidUpdate(){
     loadToolkit()
-    if (!this.callAllCategoriesFilterOnce){
+    if (!this.callAllCategoriesFilterOnce && document.getElementById("allCategoriesFilter")){
       document.getElementById("allCategoriesFilter").click();
       this.callAllCategoriesFilterOnce = true
     }
@@ -252,4 +253,4 @@ class Home extends React.Component {
 	}
 }
 
-export default Home;
+export default withApollo(_Home);

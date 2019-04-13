@@ -18,11 +18,13 @@ import Apps from "./components/admin/apps";
 import { ApolloProvider } from "react-apollo";
 import { Query } from "react-apollo";
 import gql from "graphql-tag";
+import { InMemoryCache } from 'apollo-cache-inmemory';
 
 const URI = "http://localhost:4000";
 
 const client = new ApolloClient({
   uri: URI,
+  cache: new InMemoryCache(),
   request: async (operation) => {
     const token = Cookies.get("token");
     operation.setContext({
@@ -118,7 +120,7 @@ class App extends Component {
                             var user = data.getLoggedInUser
                             return (
                                 <div>
-                                    <Route path="/" exact component={() => <Home client={client} user={user}/>}/>
+                                    <Route path="/" exact component={() => <Home user={user}/>}/>
                                     <Route path="/stories" exact component={() => {
                                         return (
                                             user

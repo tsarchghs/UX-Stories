@@ -24,7 +24,7 @@ class StoryElementsDropdown extends React.Component {
 	                return (
 	                    <div className="filter-dropdown">
 	                      <div className="filter-dropdown__top">
-	                        <h5 className="gray bold">Filter with stories</h5>
+	                        <h5 className="gray bold">Filter with elemens</h5>
 	                        <p className="pink">{getActiveFilters(this.props.state,"storyElements").length} selected</p>
 	                      </div>
 	                      <div className="filter-dropdown__main">                
