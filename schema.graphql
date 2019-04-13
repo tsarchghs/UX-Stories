@@ -185,6 +185,10 @@ type Query {
   ): [Library!]!
 
   jobs: [Job!]!
+
+  countApps: Int!
+  countStories: Int!
+  countUsers: Int!
 }
 
 type Mutation {
