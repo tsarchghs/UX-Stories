@@ -34,7 +34,8 @@ class StoryCategoriesDropdown extends React.Component {
 	                                  <label id={storyCategory.id+"_label"} className="gray bold">{storyCategory.name}</label>
 	                                  <input 
 	                                    className="ic" 
-	                                    type="checkbox" 
+	                                    type="checkbox"
+	                                    id={storyCategory.id}
 	                                    name={1}
 	                                    value={1}
 	                                    onClick={(e) => this.props.handleFilterClick(e,storyCategory)}

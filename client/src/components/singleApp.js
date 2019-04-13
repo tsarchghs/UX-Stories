@@ -6,12 +6,14 @@ import {getStories,getAppVersions,getAppCategories,getStoryCategories,getStoryEl
 import E404 from "./E404";
 import AppProfileLoading from "./appProfileLoading";
 import StoryThumbnailLoading from "./storyThumbnailLoading";
-import CategoriesLoading from "./categoriesLoading";
 import SingleAppLoading from "./singleAppLoading";
 import { debounce } from "lodash";
 import DropdownLoading from "./dropdownLoading";
 import { Link } from "react-router-dom";
 import { withApollo } from "react-apollo";
+import StoryCategoriesDropdown from "./storyCategoriesDropdown";
+import StoryElementsDropdown from "./storyElementsDropdown";
+import StoryElementsActiveFilters from "./storyElementsActiveFilters";
 
 class _SingleApp extends React.Component {
   constructor(props){
@@ -19,9 +21,6 @@ class _SingleApp extends React.Component {
     this.state = {
       app: undefined,
       stories: undefined,
-      storyCategories: undefined,
-      storyElements:undefined,
-      appVersions:undefined,
       filterBy: {
         storyCategories: {},
         storyElements: {},
@@ -36,9 +35,7 @@ class _SingleApp extends React.Component {
     this.updateStories = debounce(this.updateStories.bind(this),500)
   }
   async componentDidUpdate(){
-    if (!(!this.state.storyCategories || !this.state.storyElements || !this.state.appVersions)) {
-      loadToolkit()
-    }
+    loadToolkit()
   }
 	async componentDidMount(){
     if (this.props.match.params.id[this.props.match.params.id.length-1] === "#"){
@@ -82,25 +79,21 @@ class _SingleApp extends React.Component {
       })
       return;
     }
-    let storyElements = await getStoryElements(this.props.client);
-    let storyCategories = await getStoryCategories(this.props.client);
-    let appVersions = await getAppVersions(this.props.client);
     this.setState({
       app: app.data.app,
       stories: app.data.app.stories,
-      storyElements,
-      appVersions,
-      storyCategories,
       reached_end: app.data.app.stories.length < 10
     })
   }
   async handleFilterClick(e,type) {
+    console.log(e.target,type);
     this.skip = 0
     let id = e.target.id
     await this.setState(prevState => {
       let state = prevState
       state.show_stories_skeleton = true
       state.stories = undefined
+      console.log(state["filterBy"],type);
       state["filterBy"][type][id] = !state["filterBy"][type][id]
       return state
     },this.updateStories)
@@ -206,71 +199,19 @@ class _SingleApp extends React.Component {
 
       <div className="flex">
         <button className="button white fbtn" data-toggle="first">Filter with Categories<img src="/assets/toolkit/images/shape.svg" alt /></button>
-        <div className="filter" id="first" data-dropdown data-auto-focus="true">
+        <StoryCategoriesDropdown 
+          id="first"
+          state={this.state}
+          handleFilterClick={(e,storyCategory) => this.handleFilterClick(e,"storyCategories")}
+        />
 
-            {
-              !this.state.storyCategories ? <DropdownLoading/>
-              : <div>
-                      <div className="filter-dropdown">
-                        <div className="filter-dropdown__top">
-                          <h5 className="gray bold">Filter by stories</h5>
-                          <p className="pink">{getActiveFilters(this.state,"storyCategories").length} selected</p>
-                        </div>
-                    {
-                    this.state.storyCategories.map(storyCategory => {
-                        return (
-                          <div className="filter-dropdown__main">
-                            <label className="radio__container">
-                              <p id={storyCategory.id+"_label"} className="gray bold">{storyCategory.name}</p>
-                              <input 
-                                id={storyCategory.id} 
-                                className="ic" 
-                                type="checkbox" 
-                                onClick={(e) => this.handleFilterClick(e,"storyCategories")}
-                              />
-                              <span className="checkmark" />
-                            </label>
-                          </div>
-                        );
-                    })
-                  }
-                  </div>
-                </div> 
-            }
+        <button className="button white fbtn" data-toggle="second">Filter with Stories<img src="../../assets/toolkit/images/shape.svg" alt /></button>
+        <StoryElementsDropdown
+          id="second"
+          state={this.state}
+          handleFilterClick={(e,storyElement) => this.handleFilterClick(e,"storyElements")}
+        />
 
-        </div>
-        <button className="button white fbtn" data-toggle="second">Filter with Stories<img src="/assets/toolkit/images/shape.svg" alt /></button>
-        <div className="filter" id="second" data-dropdown data-auto-focus="true">
-            {
-              !this.state.storyElements ? <DropdownLoading/>
-              : <div>
-                      <div className="filter-dropdown">
-                        <div className="filter-dropdown__top">
-                          <h5 className="gray bold">Filter by stories</h5>
-                          <p className="pink">{getActiveFilters(this.state,"storyElements").length} selected</p>
-                        </div>
-                    {
-                    this.state.storyElements.map(storyElement => {
-                        return (
-                          <div className="filter-dropdown__main">
-                            <label className="radio__container">
-                              <p id={storyElement.id+"_label"} className="gray bold">{storyElement.name}</p>
-                              <input 
-                                id={storyElement.id} 
-                                className="ic" 
-                                type="checkbox" 
-                                onClick={(e) => this.handleFilterClick(e,"storyElements")}
-                              />
-                              <span className="checkmark" />
-                            </label>
-                          </div>
-                        );
-                    })
-                  }
-                  </div>
-                </div> 
-            }
-        </div>
 
         <button className="button white fbtn" data-toggle="third">Filter by versions<img src="/assets/toolkit/images/shape.svg" alt /></button>
         <div className="filter" id="third" data-dropdown data-auto-focus="true">

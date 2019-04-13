@@ -36,6 +36,7 @@ class StoryElementsDropdown extends React.Component {
 	                                  <input 
 	                                    className="ic" 
 	                                    type="checkbox" 
+	                                    id={storyElement.id}
 	                                    name={1}
 	                                    value={1}
 	                                    onClick={(e) => this.props.handleFilterClick(e,storyElement)}
