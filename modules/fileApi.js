@@ -32,7 +32,7 @@ const processUpload = async (upload,mimetype,context,save_encoding=false) => {
 		filename: filename, 
 		mimetype: mimetype,
 		encoding: encoding,
-		url: `${configs}/static` + path
+		url: `${configs.URI}/static` + path
 	}
 	const file = context.db.mutation.createFile({
 		data
