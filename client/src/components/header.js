@@ -7,7 +7,6 @@ class Header extends React.Component {
 		loadToolkit();
 	}
 	render() {
-		console.log(this.props.user);
 		let location = window.location.href.split("/");
 		let pathname = location[location.length-1]
 		return (

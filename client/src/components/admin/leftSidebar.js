@@ -1,12 +1,15 @@
 import React from "react";
+import { Link } from "react-router-dom";
 
 class LeftSidebar extends React.Component {
 	render(){
+		let location = window.location.href.split("/");
+		let path = location[location.length-1] // after /admin/
 		return (
 			<div className="nav-left-sidebar sidebar-dark">
               <div className="menu-list">
                 <nav className="navbar navbar-expand-lg navbar-light">
-                  <a className="d-xl-none d-lg-none" href="#">Dashboard</a>
+                  <a className="d-xl-none d-lg-none">Dashboard</a>
                   <button className="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav">
                     <span className="navbar-toggler-icon" />
                   </button>
@@ -16,28 +19,44 @@ class LeftSidebar extends React.Component {
                         Menu
                       </li>
                       <li className="nav-item ">
-                        <a className="nav-link" href="dashboard.html" aria-expanded="false" data-target="#submenu-2"><i className="fas fa-desktop" />Dashboard</a>
+                      	<Link to="/admin/dashboard">
+                        	<a className={`nav-link ${`light-gray ${path === "dashboard" || path === "#" ? "active" : ""}`}`} aria-expanded="false" data-target="#submenu-2"><i className="fas fa-desktop" />Dashboard</a>
+                      	</Link>
                       </li>
                       <li className="nav-item ">
-                        <a className="nav-link active" href="apps.html" aria-expanded="false" data-target="#submenu-1"><i className=" fas fa-mobile-alt" />Apps</a>
+                      	<Link to="/admin/apps">
+                        	<a className={`nav-link ${`light-gray ${path === "apps" || path === "#" ? "active" : ""}`}`} aria-expanded="false" data-target="#submenu-1"><i className=" fas fa-mobile-alt" />Apps</a>
+                      	</Link>
                       </li>
                       <li className="nav-item ">
-                        <a className="nav-link" href="Stories.html" aria-expanded="false" data-target="#submenu-1"><i className="fas fa-video" />Stories</a>
+                      	<Link to="/admin/stories">	
+                        	<a className={`nav-link ${`light-gray ${path === "stories" || path === "#" ? "active" : ""}`}`} aria-expanded="false" data-target="#submenu-1"><i className="fas fa-video" />Stories</a>
+                      	</Link>
                       </li>
                       <li className="nav-item ">
-                        <a className="nav-link" href="users.html" aria-expanded="false" data-target="#submenu-1"><i className="far fa-user-circle" />Users</a>
+                      	<Link to="/admin/users">
+                        	<a className={`nav-link ${`light-gray ${path === "users" || path === "#" ? "active" : ""}`}`} aria-expanded="false" data-target="#submenu-1"><i className="far fa-user-circle" />Users</a>
+                      	</Link>
                       </li>
                       <li className="nav-item ">
-                        <a className="nav-link" href="pro-users.html" aria-expanded="false" data-target="#submenu-1"><i className="fas fa-credit-card" />PRO Users</a>
+                      	<Link to="/admin/pro_users">
+                        	<a className={`nav-link ${`light-gray ${path === "pro_users" || path === "#" ? "active" : ""}`}`} aria-expanded="false" data-target="#submenu-1"><i className="fas fa-credit-card" />PRO Users</a>
+                      	</Link>
                       </li>
                       <li className="nav-item ">
-                        <a className="nav-link" href="app-categories.html" aria-expanded="false" data-target="#submenu-1"><i className="fas fa-list" />App Categories</a>
+                      	<Link to="/admin/app_categories">
+                        	<a className={`nav-link ${`light-gray ${path === "app_categories" || path === "#" ? "active" : ""}`}`} aria-expanded="false" data-target="#submenu-1"><i className="fas fa-list" />App Categories</a>
+                      	</Link>
                       </li>
                       <li className="nav-item ">
-                        <a className="nav-link" href="stories-categories.html" aria-expanded="false" data-target="#submenu-1"><i className="fas fa-server" />Stories Categories</a>
+                      	<Link to="/admin/story_categories">
+                        	<a className={`nav-link ${`light-gray ${path === "story_categories" || path === "#" ? "active" : ""}`}`} aria-expanded="false" data-target="#submenu-1"><i className="fas fa-server" />Stories Categories</a>
+                      	</Link>
                       </li>
                       <li className="nav-item ">
-                        <a className="nav-link" href="stories-elements.html" aria-expanded="false" data-target="#submenu-1"><i className="fas fa-th" />Stories Elements</a>
+                      	<Link to="/admin/story_elements">
+                        	<a className={`nav-link ${`light-gray ${path === "story_elements" || path === "#" ? "active" : ""}`}`} aria-expanded="false" data-target="#submenu-1"><i className="fas fa-th" />Stories Elements</a>
+                      	</Link>
                       </li>
                     </ul>
                   </div>
