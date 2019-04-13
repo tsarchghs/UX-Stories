@@ -18,6 +18,7 @@ import Home from "./components/home";
 import ForgetPassword from "./components/forgetPassword";
 import ResetPassword from "./components/resetPassword";
 import SingleStory from "./components/singleStory";
+import Dashboard from "./components/admin/dashboard";
 import Users from "./components/admin/users";
 import Apps from "./components/admin/apps";
 import AdminStories from "./components/admin/stories";
@@ -228,6 +229,15 @@ class App extends Component {
                                                     : <Redirect to={`/login?success=admin:app_categories`}/>
                                                 );
                                             }} />
+                                            
+                                            <Route path="/admin/dashboard" exact component={() => {
+                                                return (
+                                                    user && user.role === "ADMIN"
+                                                    ? <Dashboard user={user}/>
+                                                    : <Redirect to={`/login?success=admin:dashboard`}/>
+                                                );
+                                            }} />
+
                                         </div>
                                     )
                                 }}/>
