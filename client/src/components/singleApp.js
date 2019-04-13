@@ -14,6 +14,7 @@ import { withApollo } from "react-apollo";
 import StoryCategoriesDropdown from "./storyCategoriesDropdown";
 import StoryElementsDropdown from "./storyElementsDropdown";
 import StoryElementsActiveFilters from "./storyElementsActiveFilters";
+import AppVersionsDropdown from "./appVersionsDropdown";
 
 class _SingleApp extends React.Component {
   constructor(props){
@@ -212,44 +213,14 @@ class _SingleApp extends React.Component {
           handleFilterClick={(e,storyElement) => this.handleFilterClick(e,"storyElements")}
         />
 
-
         <button className="button white fbtn" data-toggle="third">Filter by versions<img src="/assets/toolkit/images/shape.svg" alt /></button>
-        <div className="filter" id="third" data-dropdown data-auto-focus="true">
-          
-        {
-          !this.state.appVersions ? <DropdownLoading/>
-          : <div>
-                  <div className="filter-dropdown">
-                    <div className="filter-dropdown__top">
-                      <h5 className="gray bold">Filter by versions</h5>
-                      <p className="pink">{getActiveFilters(this.state,"appVersions").length} selected</p>
-                    </div>
-                {
-                this.state.appVersions.map(appVersion => {
-                    return (
-                      <div className="filter-dropdown__main">
-                        <label className="radio__container">
-                          <p id={appVersion.id+"_label"} className="gray bold">{appVersion.name}</p>
-                          <input 
-                            id={appVersion.id} 
-                            className="ic" 
-                            type="checkbox" 
-                            onClick={(e) => this.handleFilterClick(e,"appVersions")}
-                          />
-                          <span className="checkmark" />
-                        </label>
-                      </div>
-                    );
-                })
-              }
-              </div>
-            </div> 
-        }
-
-
-
+        <AppVersionsDropdown
+          id="third"
+          state={this.state}
+          handleFilterClick={(e,storyElement) => this.handleFilterClick(e,"appVersions")}
+        />  
         </div>
-      </div>
+
 
 
                   </div>
