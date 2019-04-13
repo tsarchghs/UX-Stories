@@ -4,6 +4,15 @@ const bcrypt = require("bcrypt");
 
 const saltRounds = 10;
 
+const countUsers = async (parent,args,context) => {
+	let data = await context.db.query.usersConnection({},`
+			{
+				aggregate { count }
+			}
+		`)
+	return data.aggregate.count;
+}
+
 const editProfile = async (parent,args,context,info) => {
 	permissions.loginPermission(context,"MEMBER");
 	console.log(args);
@@ -44,5 +53,6 @@ const getLoggedInUser = async (parent,args,context,info) => {
 
 module.exports = {
 	getLoggedInUser,
-	editProfile
+	editProfile,
+	countUsers
 }
