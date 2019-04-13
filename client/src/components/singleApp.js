@@ -11,8 +11,9 @@ import SingleAppLoading from "./singleAppLoading";
 import { debounce } from "lodash";
 import DropdownLoading from "./dropdownLoading";
 import { Link } from "react-router-dom";
+import { withApollo } from "react-apollo";
 
-class SingleApp extends React.Component {
+class _SingleApp extends React.Component {
   constructor(props){
     super(props);
     this.state = {
@@ -398,4 +399,4 @@ class SingleApp extends React.Component {
 	}
 }
 
-export default SingleApp;
+export default withApollo(_SingleApp);

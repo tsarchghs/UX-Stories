@@ -47,7 +47,7 @@ class Header extends React.Component {
 						            
 						            <div className="profile-nav__img--info">
 						              <p className="bold">{this.props.user.full_name}</p>
-						              <p className="light-gray">{this.props.user.full_name}</p>
+						              <p className="light-gray">{this.props.user.email}</p>
 						              <Link to="/profile">
 						              	<button className="button">Edit profile</button>
 						              </Link>

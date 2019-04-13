@@ -174,7 +174,7 @@ class App extends Component {
                                 <Route path="/profile" component={() => {
                                     return (
                                         user
-                                        ? <Profile updateProfile={this.updateProfile} user={user} />
+                                        ? <Profile refetchApp={refetch} updateProfile={this.updateProfile} user={user} />
                                         : <Redirect to="/login?success=profile"/>
                                     );
                                 }} />

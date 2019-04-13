@@ -62,7 +62,7 @@ class Profile extends React.Component {
         }        
         >${job.name}</option>`
       })
-      document.getElementById("p_full_name").value = `${this.props.user.first_name} ${this.props.user.last_name}` 
+      document.getElementById("p_full_name").value = `${this.props.user.full_name}` 
       document.getElementById("profile_image").src = this.state.profile_photo ? this.state.profile_photo : "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQOo9ftjYQCU8HW1YByx0oAQdegRxO51mQN0tKKenGRnDZb-_D6"
       document.getElementById("p_email").value = this.props.user.email
       document.getElementById("edit_profile").style = "display:block;"
@@ -139,10 +139,12 @@ class Profile extends React.Component {
                                   maxHeight:100
                                 }} />
                                 <div className="flex fd-column jc-se">
-                                  <h2>{this.props.user.first_name} {this.props.user.last_name}</h2>
+                                  <h2>{this.props.user.full_name}</h2>
                                   <p className="light-gray">{this.props.user.job.name}</p>
                                 </div>
-                              </div>  <button data-open="editProfile" className="button">Edit Profile</button>
+                              </div>
+                              <button onClick={() => this.props.refetchApp()} className="button">Update</button>  
+                              <button data-open="editProfile" className="button">Edit Profile</button>
                     </div>
                     ) :
                     ( 
