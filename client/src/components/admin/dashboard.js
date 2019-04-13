@@ -1,6 +1,8 @@
 import React from "react";
 import Header from "./header";
 import LeftSidebar from "./leftSidebar";
+import { Query } from "react-apollo";
+import gql from "graphql-tag";
 
 class Dashboard extends React.Component {
 	render(){
@@ -28,7 +30,20 @@ class Dashboard extends React.Component {
 		                      <div className="card-body">
 		                        <div className="d-inline-block">
 		                          <h5 className="text-muted">Total Apps</h5>
-		                          <h2 className="mb-0"> 134</h2>
+		                          <Query 
+		                          	query={gql`
+										query {
+											countApps
+										}
+		                          `}>
+		                          	{ ({loading,error,data}) => {
+		                          		if (loading) return <p>-</p>
+		                          		if (error) return <p>{error.message}</p>
+		                          		return (
+		                          			<h2 className="mb-0">{data.countApps}</h2>
+		                          		)
+		                          	}}
+		                          </Query>
 		                        </div>
 		                        <div className="float-right icon-circle-medium  icon-box-lg  bg-info-light mt-1">
 		                          <i className="fas fa-mobile-alt fa-fw fa-sm text-info" />
@@ -47,7 +62,20 @@ class Dashboard extends React.Component {
 		                      <div className="card-body">
 		                        <div className="d-inline-block">
 		                          <h5 className="text-muted">Total Stories</h5>
-		                          <h2 className="mb-0"> 24,763</h2>
+		                          <Query 
+		                          	query={gql`
+										query {
+											countStories
+										}
+		                          `}>
+		                          	{ ({loading,error,data}) => {
+		                          		if (loading) return <p>-</p>
+		                          		if (error) return <p>{error.message}</p>
+		                          		return (
+		                          			<h2 className="mb-0">{data.countStories}</h2>
+		                          		)
+		                          	}}
+		                          </Query>
 		                        </div>
 		                        <div className="float-right icon-circle-medium  icon-box-lg  bg-primary-light mt-1">
 		                          <i className="fas fa-video fa-fw fa-sm text-primary" />
@@ -66,8 +94,20 @@ class Dashboard extends React.Component {
 		                      <div className="card-body">
 		                        <div className="d-inline-block">
 		                          <h5 className="text-muted">All Users</h5>
-		                          <h2 className="mb-0">103</h2>
-		                        </div>
+		                          <Query 
+		                          	query={gql`
+										query {
+											countUsers
+										}
+		                          `}>
+		                          	{ ({loading,error,data}) => {
+		                          		if (loading) return <p>-</p>
+		                          		if (error) return <p>{error.message}</p>
+		                          		return (
+		                          			<h2 className="mb-0">{data.countUsers}</h2>
+		                          		)
+		                          	}}
+		                          </Query>		                        </div>
 		                        <div className="float-right icon-circle-medium  icon-box-lg  bg-secondary-light mt-1">
 		                          <i className="fa fa-user fa-fw fa-sm text-secondary" />
 		                        </div>
