@@ -21,7 +21,7 @@ const app = async (root,args,context,info) => {
 const apps = async (root,args,context,info) => {
 	if (args.appFilterInput && 
 		!(args.appFilterInput.stories_first || args.appFilterInput.appName_contains !== undefined || args.appFilterInput.appName_contains || 
-			args.appFilterInput.first || args.appFilterInput.skip || args.appFilterInput.id ||
+			args.appFilterInput.first || args.appFilterInput.orderBy || args.appFilterInput.skip || args.appFilterInput.id ||
 			(
 				args.appFilterInput.storyCategories &&
 				args.appFilterInput.storyCategories.length
@@ -33,11 +33,14 @@ const apps = async (root,args,context,info) => {
 			)
 		)
 	){
-		throw new Error("You must specifiy either one of id,first,stories_first,appCategory/storyCategory or storyElements arguments when passing appFilterInput.");
+		throw new Error("You must specifiy either one of id,first,orderBy,stories_first,appCategory/storyCategory or storyElements arguments when passing appFilterInput.");
 	}
 	const filterBy = {where:{
 
 	}}
+	if (args.appFilterInput && args.appFilterInput.orderBy){
+		filterBy["orderBy"] = args.appFilterInput.orderBy;
+	}
 	if (args.appFilterInput && args.appFilterInput.id){
 		filterBy["where"]["id"] = args.appFilterInput.id
 	}
@@ -95,6 +98,17 @@ const createApp = async (root,args,context,info) => {
 	const logo = await fileHandling.processUpload(args.logo.base64,
 													args.logo.mimetype,
 													context);
+	const appVersion = await context.db.query.appVersions({where:{name:args.appVersion}});
+	let appVersionLinkType = undefined;
+	let appVersionObj = undefined
+	if (appVersion.length) {
+		appVersionLinkType = "connect";
+		appVersionObj = { id: appVersion[0].id }
+	} else {
+		appVersionLinkType = "create";
+		appVersionObj = { name: args.appVersion }
+	}
+
 	const createBy = context.user
 	const app = await context.db.mutation.createApp({
 		data: {
@@ -107,13 +121,11 @@ const createApp = async (root,args,context,info) => {
 			description: args.description,
 			company: args.company,
 			appVersions: {
-				create: {
-					name: args.appVersion
-				}
+				[appVersionLinkType]: appVersionObj
 			},
 			appCategory: {
 				connect: {
-					id: appCategory.id
+					name: args.appCategory
 				}
 			},
 			logo: {
