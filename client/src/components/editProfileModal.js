@@ -2,22 +2,7 @@ import React from "react";
 import ReactDOM from "react-dom";
 import { Query, Mutation } from "react-apollo";
 import gql from "graphql-tag";
-
-const handleUploadPhotoInput = element => {
-  var file = element.files[0];
-  var reader = new FileReader();
-  reader.onloadend = function() {
-    element.base64 = reader.result
-    console.log(reader.result);
-    document.getElementById("profile_image").src = reader.result
-    document.getElementById("profile_image").changed = true;
-  }
-  try {
-    reader.readAsDataURL(file);
-  } catch(e) {
-    console.log("Failed to get dataurl");
-  }
-}
+import { handleUploadPhotoInput } from "../helpers";
 
 class EditProfileModal extends React.Component {
 	constructor(props) {
