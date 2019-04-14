@@ -6,11 +6,11 @@ class Header extends React.Component {
     return (
         <div className="dashboard-header">
           <nav className="navbar navbar-expand-lg bg-white fixed-top">
-            <a className="navbar-brand" href="../index.html" src="../assets/images/Logo-ux.svg"><img src="../assets/images/Logo-ux.svg" /></a>
+            <a className="navbar-brand" href="../index.html" src="/assets/toolkit/images/logo.svg"><img src="/assets/toolkit/images/logo.svg" /></a>
             <div className="collapse navbar-collapse" id="navbarSupportedContent">
               <ul className="navbar-nav ml-auto navbar-right-top">
                 <li className="nav-item dropdown nav-user">
-                  <a className="nav-link nav-user-img" href="#" id="navbarDropdownMenuLink2" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><img src="../assets/images/avatar-1.jpg" alt className="user-avatar-md rounded-circle" /></a>
+                  <a className="nav-link nav-user-img" href="#" id="navbarDropdownMenuLink2" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><img src={`${this.props.user && this.props.user.profile_photo ? this.props.user.profile_photo.url : "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQOo9ftjYQCU8HW1YByx0oAQdegRxO51mQN0tKKenGRnDZb-_D6"}`} alt className="user-avatar-md rounded-circle" /></a>
                   <div className="dropdown-menu dropdown-menu-right nav-user-dropdown" aria-labelledby="navbarDropdownMenuLink2">
                     <div className="nav-user-info">
                       <h5 className="mb-0 text-white nav-user-name">
