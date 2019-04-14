@@ -8,23 +8,6 @@ import EditProfileModal from "./editProfileModal";
 import ReactDOM from 'react-dom';
 import CreateLibraryModal from "./createLibraryModal";
 
-const handleUploadPhotoInput = element => {
-  var file = element.files[0];
-  var reader = new FileReader();
-  reader.onloadend = function() {
-    element.base64 = reader.result
-    console.log(reader.result);
-    document.getElementById("profile_image").src = reader.result
-    document.getElementById("profile_image").changed = true;
-  }
-  try {
-    reader.readAsDataURL(file);
-  } catch(e) {
-    console.log("Failed to get dataurl");
-  }
-}
-
-
 class Profile extends React.Component {
   constructor(props) {
     super(props);
