@@ -612,6 +612,7 @@ input AppVersionWhereInput {
 
 input AppVersionWhereUniqueInput {
   id: ID
+  name: String
 }
 
 input AppWhereInput {

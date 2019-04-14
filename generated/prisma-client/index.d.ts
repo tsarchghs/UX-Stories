@@ -2124,6 +2124,7 @@ export interface StoryElementUpsertWithWhereUniqueNestedInput {
 
 export type AppVersionWhereUniqueInput = AtLeastOne<{
   id: ID_Input;
+  name?: String;
 }>;
 
 export interface StoryElementScalarWhereInput {
