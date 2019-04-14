@@ -15,16 +15,19 @@ type File {
   mimetype: String!
   encoding: String!
   url: String! @unique  
+  createdAt: DateTime!
 }
 
 type Video {
   id: ID! @unique
   file: File!
+  createdAt: DateTime!
 }
 
 type Job {
   id: ID! @unique
   name: String! @unique
+  createdAt: DateTime!
 }
 
 type User {
@@ -37,26 +40,31 @@ type User {
   profile_photo: File
   apps: [App!]!
   libraries: [Library!]!
+  createdAt: DateTime!
 }
 
 type AppVersion {
   id: ID! @unique
-  name: String! 
+  name: String! @unique
+  createdAt: DateTime!
 }
 
 type AppCategory {
   id: ID! @unique
   name: String! @unique
+  createdAt: DateTime!
 }
 
 type StoryCategory {
   id: ID! @unique
   name: String! @unique
+  createdAt: DateTime!
 }
 
 type StoryElement {
   id: ID! @unique
   name: String! @unique
+  createdAt: DateTime!
 }
 
 type App {
@@ -70,6 +78,7 @@ type App {
   company: String!
   logo: File!
   platform: Platform!
+  createdAt: DateTime!
 }
 
 type Story {
@@ -82,6 +91,7 @@ type Story {
   libraries: [Library!]!
   video: Video!
   thumbnail: File!
+  createdAt: DateTime!
 }
 
 type Library {
@@ -89,4 +99,5 @@ type Library {
   createdBy: User!
   stories: [Story!]!
   name: String!
+  createdAt: DateTime!
 }

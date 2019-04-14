@@ -4,6 +4,11 @@ enum Platform {
   ANDROID
 }
 
+enum ORDER_BY {
+  createdAt_ASC
+  createdAt_DESC
+}
+
 enum AccountType {
   MEMBER
   ADMIN
@@ -122,6 +127,7 @@ input AppFilterInput {
   appCategory: String
   storyCategories: [ID!]
   storyElements: [ID!]
+  orderBy: ORDER_BY!
 }
 
 input LibraryFilterInput {
