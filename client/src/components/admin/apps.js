@@ -4,6 +4,7 @@ import LeftSidebar from "./leftSidebar";
 import { Query } from "react-apollo";
 import gql from "graphql-tag";
 import { debounce } from "lodash";
+import { Link } from "react-router-dom";
 
 class Apps extends React.Component {
   constructor(props){
@@ -11,7 +12,7 @@ class Apps extends React.Component {
     this.state = {
       first:10,
       appName_search: undefined,
-      hasNextPage: undefined
+      hasNextPage: undefined,
     }
     this.appName_search = undefined;
     this.search = debounce(this.search.bind(this))
@@ -70,7 +71,10 @@ class Apps extends React.Component {
                     <div className="row">
                       <div className="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
                         <div className="card">
-                          <div style={{marginTop: '20px', marginRight: '20px'}}><a href="create-app.html" className="btn btn-primary float-right">Add new app</a>
+                          <div style={{marginTop: '20px', marginRight: '20px'}}>
+                          <Link to="create_app">
+                            <p className="btn btn-primary float-right">Add new app</p>
+                          </Link>
                             <h5 className="card-header">List of all apps</h5>
                           </div>
                           <div className="card-body">
@@ -98,7 +102,8 @@ class Apps extends React.Component {
                                     }
                                 `} variables={{appFilterInput:{
                                            first:this.state.first,
-                                           appName_contains:this.state.appName_search ? this.state.appName_search : ""
+                                           appName_contains:this.state.appName_search ? this.state.appName_search : "",
+                                           orderBy: "createdAt_DESC"
                                          }}
                                        }>
                                   { ({loading,error,data,refetch}) => {
