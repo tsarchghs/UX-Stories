@@ -120,8 +120,26 @@ const loadJs = (path) => {
     document.body.appendChild(script)
 }
 
+const handleUploadPhotoInput = (element,isProfile=true) => {
+  var file = element.files[0];
+  var reader = new FileReader();
+  reader.onloadend = function() {
+    element.base64 = reader.result
+    console.log(reader.result);
+    if (isProfile){ // shitty solution but things evolve
+      document.getElementById("profile_image").src = reader.result
+      document.getElementById("profile_image").changed = true;
+    }
+  }
+  try {
+    reader.readAsDataURL(file);
+  } catch(e) {
+    console.log("Failed to get dataurl");
+  }
+}
 export {
 	getStories,
+  handleUploadPhotoInput,
 	getAppCategories,
 	getStoryCategories,
 	getStoryElements,
