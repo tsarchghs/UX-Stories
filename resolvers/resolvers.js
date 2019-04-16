@@ -9,6 +9,7 @@ const fileResolvers = require("./models/File");
 const libraryResolvers = require("./models/Library");
 const storyResolvers = require("./models/Story");
 const jobResolvers = require("./models/Job");
+const generalResolvers = require("./general");
 
 module.exports = {
 	Query: {
@@ -27,7 +28,8 @@ module.exports = {
 		libraries: libraryResolvers.libraries,
 		countUsers: userResolvers.countUsers,
 		jobs: jobResolvers.jobs,
-		users: userResolvers.users
+		users: userResolvers.users,
+		getObjectConnection: generalResolvers.getObjectConnection
 	},
 	Mutation: {
 		login: authResolvers.login,

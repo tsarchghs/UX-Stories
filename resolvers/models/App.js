@@ -110,31 +110,32 @@ const createApp = async (root,args,context,info) => {
 	}
 
 	const createBy = context.user
+	let data =  {
+		createdBy: {
+			connect: {
+				id: createBy.id
+			}
+		},
+		name: args.name,
+		description: args.description,
+		company: args.company,
+		appVersions: {
+			[appVersionLinkType]: appVersionObj
+		},
+		appCategory: {
+			connect: {
+				name: args.appCategory
+			}
+		},
+		logo: {
+			connect: {
+				id: logo.id
+			}
+		},
+		platform: args.platform
+	}
 	const app = await context.db.mutation.createApp({
-		data: {
-			createdBy: {
-				connect: {
-					id: createBy.id
-				}
-			},
-			name: args.name,
-			description: args.description,
-			company: args.company,
-			appVersions: {
-				[appVersionLinkType]: appVersionObj
-			},
-			appCategory: {
-				connect: {
-					name: args.appCategory
-				}
-			},
-			logo: {
-				connect: {
-					id: logo.id
-				}
-			},
-			platform: args.platform
-		}
+		data
 	},info);
 	return app
 }
