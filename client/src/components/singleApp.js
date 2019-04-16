@@ -162,6 +162,12 @@ class _SingleApp extends React.Component {
     },this.updateStories);
   }
 	render(){
+    if (this.state.app){
+      var len = this.state.app.appVersions.length;
+      var current_version;
+      if (!len) current_version = "None";
+      else current_version = this.state.app.appVersions[len-1].name 
+    }
 		return (
       <div>
         <div className="header back__header">
@@ -191,7 +197,7 @@ class _SingleApp extends React.Component {
                 <h5 className="bold">{this.state.app.appCategory.name}</h5>
                 <span className="horisontal-seperator" />
                 <p className="light-gray">Current version</p>
-                <h5 className="bold">{this.state.app.appVersions[this.state.app.appVersions.length - 1].name}</h5>
+                <h5 className="bold">{current_version}</h5>
               </div>
             <div>
               <div className="container">
