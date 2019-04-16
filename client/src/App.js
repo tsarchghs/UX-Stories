@@ -23,7 +23,7 @@ import Users from "./components/admin/users";
 import Apps from "./components/admin/apps";
 import AdminStories from "./components/admin/stories";
 import CreateApp from "./components/admin/createApp";
-import CreateAppCategories from "./components/admin/createAppCategories";
+import CreateAppCategory from "./components/admin/createAppCategory";
 import StoryCategories from "./components/admin/storyCategories";
 import StoryElements from "./components/admin/storyElements";
 import AppCategories from "./components/admin/appCategories";
@@ -169,10 +169,10 @@ class App extends Component {
                                 <Route path="/admin" component={() => {
                                     return (
                                         <div>
-                                            <link rel="stylesheet" href="../assets/admin/assets/vendor/bootstrap/css/bootstrap.min.css"/>
-                                            <link href="../assets/admin/assets/vendor/fonts/circular-std/style.css" rel="stylesheet"/>
-                                            <link rel="stylesheet" href="../assets/admin/assets/libs/css/style.css"/>
-                                            <link rel="stylesheet" href="../assets/admin/assets/vendor/fonts/fontawesome/css/fontawesome-all.css"/>
+                                            <link rel="stylesheet" href="/assets/admin/assets/vendor/bootstrap/css/bootstrap.min.css"/>
+                                            <link href="/assets/admin/assets/vendor/fonts/circular-std/style.css" rel="stylesheet"/>
+                                            <link rel="stylesheet" href="/assets/admin/assets/libs/css/style.css"/>
+                                            <link rel="stylesheet" href="/assets/admin/assets/vendor/fonts/fontawesome/css/fontawesome-all.css"/>
 
                                             <Route path="/admin/apps" exact component={() => {
                                                 return (
@@ -190,11 +190,11 @@ class App extends Component {
                                                 );
                                             }} />
 
-                                            <Route path="/admin/create_app_categories" exact component={() => {
+                                            <Route path="/admin/create_app_category" exact component={() => {
                                                 return (
                                                     user && user.role === "ADMIN"
-                                                    ? <CreateAppCategories user={user}/>
-                                                    : <Redirect to={`/login?success=admin:create_app_categories`}/>
+                                                    ? <CreateAppCategory user={user}/>
+                                                    : <Redirect to={`/login?success=admin:create_app_category`}/>
                                                 );
                                             }} />
 
