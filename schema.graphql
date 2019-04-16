@@ -127,7 +127,7 @@ input AppFilterInput {
   appCategory: String
   storyCategories: [ID!]
   storyElements: [ID!]
-  orderBy: ORDER_BY!
+  orderBy: ORDER_BY
 }
 
 input LibraryFilterInput {
@@ -174,12 +174,47 @@ input UserFilterInput {
   full_name_contains: String
 }
 
+type Aggregate {
+  count: Int!
+} 
+type PageInfo {
+  hasNextPage: Boolean!
+  hasPreviousPage: Boolean!
+}
+
+type ObjectConnection {
+  pageInfo: PageInfo!
+  nodes: JSON_OBJECT!
+  aggregate: Aggregate!
+}
+
+enum CONNECTION_TYPE {
+  usersConnection
+  appCategoriesConnection
+  storyCategoriesConnection
+  storyElementsConnection
+}
+
+input Dict {
+  key: String
+  value_str: String
+  value_int: Int
+}
+
 type Query {
   getLoggedInUser: User
   app(id: ID!,stories_first: Int): App
   apps(appFilterInput: AppFilterInput): [App!]!
   appVersions: [AppVersion!]!
   appCategories: [AppCategory!]!
+
+  getObjectConnection(
+    connection_type: CONNECTION_TYPE!
+    fields: [String!]!
+    filterBy: [Dict!]
+    where: [Dict!]
+  ): ObjectConnection! 
+
   story(
     id: ID!
   ): Story
@@ -239,6 +274,7 @@ type Mutation {
   ): User!
 
   createApp(
+    id: ID
     name: String!
     description: String!
     platform: Platform!
