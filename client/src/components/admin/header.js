@@ -9,6 +9,9 @@ class Header extends React.Component {
             <a className="navbar-brand" href="../index.html" src="/assets/toolkit/images/logo.svg"><img src="/assets/toolkit/images/logo.svg" /></a>
             <div className="collapse navbar-collapse" id="navbarSupportedContent">
               <ul className="navbar-nav ml-auto navbar-right-top">
+                <Link to="/">
+                  <p style={{marginTop:12}} className="btn btn-primary float-right">Visit as user</p>
+                </Link>
                 <li className="nav-item dropdown nav-user">
                   <a className="nav-link nav-user-img" href="#" id="navbarDropdownMenuLink2" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><img src={`${this.props.user && this.props.user.profile_photo ? this.props.user.profile_photo.url : "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQOo9ftjYQCU8HW1YByx0oAQdegRxO51mQN0tKKenGRnDZb-_D6"}`} alt className="user-avatar-md rounded-circle" /></a>
                   <div className="dropdown-menu dropdown-menu-right nav-user-dropdown" aria-labelledby="navbarDropdownMenuLink2">
