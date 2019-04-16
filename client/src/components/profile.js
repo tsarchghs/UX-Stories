@@ -28,9 +28,7 @@ class Profile extends React.Component {
             id="exampleModal2"
             refetchLibraries={this.props.refetchApp}
             closeAndUpdate={() => {
-              if (document.querySelector('body > div:nth-child(11)')){
-                document.querySelector('body > div:nth-child(11)').click();
-              }
+              document.querySelector('#exampleModal2').parentElement.click()
               this.refetchLibraries();
             }}
           />
