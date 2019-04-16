@@ -1,7 +1,7 @@
 const permissions = require("./permissions");
 
 const getObjectConnection = async (parent,args,context,info) => {
-	permissions.loginPermissions(context,"ADMIN")
+	permissions.loginPermission(context,"ADMIN")
 	let filterBy = {where:{}}
 	for (var x in args.filterBy){
 		obj = args.filterBy[x];
