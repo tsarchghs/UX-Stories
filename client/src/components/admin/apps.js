@@ -36,19 +36,12 @@ class Apps extends React.Component {
     }
     this.appName_search = undefined;
     this.search = debounce(this.search.bind(this))
-    this.loadmore = this.loadmore.bind(this);
     this.fetchMore = undefined;
   }
   search() {
     this.setState({
-      appName_search: this.appName_search.value
-    })
-  }
-  loadmore(){
-    this.setState(prevState => {
-      let state = prevState
-      state.first += 10
-      return state
+      appName_search: this.appName_search.value,
+      fetchMoreResult: true
     })
   }
   render(){
@@ -135,6 +128,7 @@ class Apps extends React.Component {
                                                   },() => console.log(this.state.fetchMoreResult))
                                                   return prev;
                                                 }
+                                                console.log(prev);
                                                 return Object.assign({},prev,{
                                                   apps: [...prev.apps, ...fetchMoreResult.apps]
                                                 })
