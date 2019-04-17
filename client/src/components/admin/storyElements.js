@@ -1,8 +1,6 @@
 import React from "react";
 import Header from "./header";
 import LeftSidebar from "./leftSidebar";
-import { Link } from "react-router-dom";
-import Table from "./general/Table";
 import AdminListPage from "./general/AdminListPage";
 
 class StoryElements extends React.Component {
@@ -12,7 +10,8 @@ class StoryElements extends React.Component {
 				<Header/>
 				<LeftSidebar/>
 				<AdminListPage 
-					typename="story elements" 
+					typename="story element"
+					typename_plural="story elements" 
 					connection_type="storyElementsConnection"
 					fields={["id","name"]}
 					first={5}

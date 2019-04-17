@@ -1,9 +1,6 @@
 import React from "react";
 import Header from "./header";
 import LeftSidebar from "./leftSidebar";
-import { Query } from "react-apollo";
-import gql from "graphql-tag";
-import { debounce } from "lodash";
 import AdminListPage from "./general/AdminListPage";
 
 class Users extends React.Component {
@@ -16,6 +13,8 @@ class Users extends React.Component {
 					typename="users"
 					connection_type="usersConnection"
 					fields={["id","full_name","email"]}
+					search_by="full_name_contains"
+					search_by_show="full name"
 					first={5}
 				/>
 		   </div>
