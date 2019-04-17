@@ -28,7 +28,7 @@ import StoryCategories from "./components/admin/storyCategories";
 import StoryElements from "./components/admin/storyElements";
 import AppCategories from "./components/admin/appCategories";
 
-const URI = "http://uxstories.herokuapp.com";
+const URI = "http://localhost:4000";
 
 const client = new ApolloClient({
   uri: URI,
@@ -169,11 +169,6 @@ class App extends Component {
                                 <Route path="/admin" component={() => {
                                     return (
                                         <div>
-                                            <link rel="stylesheet" href="/assets/admin/assets/vendor/bootstrap/css/bootstrap.min.css"/>
-                                            <link href="/assets/admin/assets/vendor/fonts/circular-std/style.css" rel="stylesheet"/>
-                                            <link rel="stylesheet" href="/assets/admin/assets/libs/css/style.css"/>
-                                            <link rel="stylesheet" href="/assets/admin/assets/vendor/fonts/fontawesome/css/fontawesome-all.css"/>
-
                                             <Route path="/admin/apps" exact component={() => {
                                                 return (
                                                     user && user.role === "ADMIN"
