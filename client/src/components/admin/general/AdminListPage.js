@@ -17,7 +17,7 @@ class AdminListPage extends React.Component {
 			],
 			where: []
 		}
-		this.update = debounce(this.update.bind(this));
+		this.update = debounce(this.update.bind(this),150);
 		this.index_name_contains = undefined;
 		this.search = undefined;
 	}
@@ -25,7 +25,7 @@ class AdminListPage extends React.Component {
 		this.setState(prevState => {
 			let state = prevState;
 			if (this.index_name_contains === undefined){
-				this.index_name_contains = state.where.push({key:"name_contains",value_str:this.search.value}) - 1
+				this.index_name_contains = state.where.push({key:`${this.props.search_by ? this.props.search_by : "name_contains"}`,value_str:this.search.value}) - 1
 			} else {
 				state.where[this.index_name_contains].value_str = this.search.value;
 			}
@@ -48,9 +48,9 @@ class AdminListPage extends React.Component {
 		          </div>
 		          <div className="page-header">
 		            <div className="input-group col-xl-3 col-lg-12 col-md-12 col-sm-12 col-12">
-		              <input ref={node => this.search = node} onChange={this.update} type="text" className="form-control" placeholder="Search by name" />
+		              <input ref={node => this.search = node} onChange={this.update} type="text" className="form-control" placeholder={`Search by ${this.props.search_by_show ? this.props.search_by_show : "name" }`} />
 		              <div className="input-group-append">
-		                <button type="submit" className="btn btn-primary">Search</button>
+		           	     <button type="submit" className="btn btn-primary">Search</button>
 		              </div>
 		            </div>
 		          </div>
@@ -59,9 +59,9 @@ class AdminListPage extends React.Component {
 		              <div className="card">
 		                <div style={{marginTop: '20px', marginRight: '20px'}}>
 		                <Link to="/admin/create_app_category/">
-		                	<p className="btn btn-primary float-right">Add new app-category</p>
+		                	<p className="btn btn-primary float-right">Add new {this.props.typename}</p>
 		                </Link>  
-		                  <h5 className="card-header">List of all {this.props.typename}</h5>
+		                  <h5 className="card-header">List of all {this.props.typename_plural}</h5>
 		                </div>
 						<Table 
 		                	connection_type={this.props.connection_type}

@@ -40,6 +40,8 @@ class Table extends React.Component {
 				    }
 				 }
         	`}
+        	notifyOnNetworkStatusChange={true}
+        	fetchPolicy="no-cache"
         	variables={{
         		connection_type: this.props.connection_type,
         		fields: this.props.fields,
@@ -47,7 +49,7 @@ class Table extends React.Component {
         		where: this.props.where
         	}}
         >
-        	{ ({loading,error,data,fetchMore,refetch}) => {
+        	{ ({loading,error,data,fetchMore,refetch,networkStatus}) => {
         		if (!this.refetch) {
         			this.refetch = debounce(refetch,250);
         		}
@@ -74,9 +76,11 @@ class Table extends React.Component {
             			}
         			})
         		}
-        		if (loading) return <h4>loading</h4>
+        		if (loading && networkStatus !== 3) return <h4>loading</h4>
+        			console.log(networkStatus );
         		if (error) return <p>{error.message}</p>
         		let objects = Object.keys(data).length ? JSON.parse(data.getObjectConnection.nodes.repr) : []
+        		console.log(objects);
                 return (
                 	<div className="card-body">
 	                  <table className="table">
@@ -114,9 +118,12 @@ class Table extends React.Component {
 	                    	})
 	                    }
 	                    </tbody>
+	                    {
+	                    	!objects.length && !loading && !(networkStatus === 3) ? <center><p>Nothing to show</p></center> : null
+	                    }
 	                  </table>
 	                    {
-	                    	objects.length && !data.getObjectConnection.pageInfo.hasNextPage ? null
+	                    	!(networkStatus === 3) && !loading && Object.keys(data).length && !data.getObjectConnection.pageInfo.hasNextPage ? null
 	                    	:  <center><p onClick={onLoadMore} style={{marginTop:3}} className="btn btn-primary">Load more</p></center>
 
 	                    }
