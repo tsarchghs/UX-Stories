@@ -60,6 +60,21 @@ class _Stories extends React.Component {
             storyElements: ${JSON.stringify(filters.storyElements)}
           }) {
             id
+            app {
+              id
+              appCategory {
+                id
+                name
+              }
+            }
+            storyCategories { 
+              id
+              name
+            }
+            storyElements {
+              id
+              name
+            }
             thumbnail {
               id
               url
@@ -239,6 +254,17 @@ class _Stories extends React.Component {
                   (
                     this.state.stories.map(story =>
                       <Link to={`/story/${story.id}?from=stories`}>
+                        <p>appCategory: {story.app.appCategory.name}</p>
+                        {
+                          story.storyCategories.map(storyCategory => {
+                            return <p>StoryCategory: {storyCategory.name}</p>
+                          })
+                        }
+                        {
+                          story.storyElements.map(storyElement => {
+                            return <p>StoryElement: {storyElement.name}</p>
+                          })
+                        }
                         <img src={story.thumbnail.url} key={story.id} style={{borderRadius:30,width:250,height:550,marginRight:25,marginBottom:10}}/>
                       </Link> 
                     )

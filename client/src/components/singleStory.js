@@ -136,7 +136,7 @@ class SingleStory extends React.Component {
 		          	!this.state.app ? <SingleStoryAppLoading/>
 		          	: 
 		          		<div className="apps__top">
-				              <div className="apps__top-image" style={{backgroundImage: 'url("/assets/toolkit/images/netflix-logo.jpg")'}} />
+				              <div className="apps__top-image" style={{backgroundImage: `url("${this.state.app.logo.url}")`}} />
 				              <div className="apps__top-info">
 				                <h5 className="bold">{this.state.app.name}</h5>
 				                <p className="apps__small-title light-gray">{this.state.app.description}</p>

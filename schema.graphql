@@ -182,6 +182,10 @@ type PageInfo {
   hasPreviousPage: Boolean!
 }
 
+type JSON_OBJECT {
+  repr: String!
+}
+
 type ObjectConnection {
   pageInfo: PageInfo!
   nodes: JSON_OBJECT!
