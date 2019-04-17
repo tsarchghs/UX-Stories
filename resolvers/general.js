@@ -1,6 +1,6 @@
 const permissions = require("./permissions");
 
-const getObjectConnection = async (parent,args,context,info) => {
+const getObjectConnection = async (parent,args,context) => {
 	permissions.loginPermission(context,"ADMIN")
 	let filterBy = {where:{}}
 	for (var x in args.filterBy){
@@ -11,6 +11,7 @@ const getObjectConnection = async (parent,args,context,info) => {
 		obj = args.where[x];
 		filterBy["where"][obj.key] = obj.value_str !== undefined ? obj.value_str : obj.value_int 
 	}
+	console.log(args.filterBy,args.where)
 	let data = await context.db.query[args.connection_type](filterBy,`
 	    {
 	    	edges {
@@ -31,6 +32,18 @@ const getObjectConnection = async (parent,args,context,info) => {
 	return data;
 }
 
+const deleteObject = async (parent,args,context) => {
+	let data = await context.db.mutation[args.delete_type]({
+		where:{id:args.id}},`
+			{
+				${args.fields ? args.fields.join() : "id"}
+			}
+		`
+	)
+	return { repr: JSON.stringify(data) }
+}
+
 module.exports = {
-	getObjectConnection
+	getObjectConnection,
+	deleteObject
 }

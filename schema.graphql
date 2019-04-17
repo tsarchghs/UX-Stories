@@ -200,6 +200,15 @@ enum CONNECTION_TYPE {
   storyElementsConnection
 }
 
+enum DELETE_TYPE {
+  deleteUser
+  deleteApp
+  deleteAppCategory 
+  deletStory
+  deleteStoryCategory
+  deleteStoryElement
+}
+
 input Dict {
   key: String
   value_str: String
@@ -244,6 +253,12 @@ type Query {
 }
 
 type Mutation {
+  deleteObject(
+    delete_type: DELETE_TYPE!
+    fields: [String!]
+    id: ID!
+  ): JSON_OBJECT!
+
   login(
     email: String!
     password: String!
