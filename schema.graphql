@@ -194,6 +194,7 @@ type ObjectConnection {
 
 enum CONNECTION_TYPE {
   usersConnection
+  appsConnection
   appCategoriesConnection
   storyCategoriesConnection
   storyElementsConnection
