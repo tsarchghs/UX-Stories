@@ -12,7 +12,13 @@ class Users extends React.Component {
 				<AdminListPage
 					typename="users"
 					connection_type="usersConnection"
-					fields={["id","full_name","email"]}
+					fields={[
+						"id","full_name","email",
+						{
+							type:"libraries { id name }",
+							show:"libraries"
+						},"role"
+					]}
 					search_by="full_name_contains"
 					search_by_show="full name"
 					first={5}
