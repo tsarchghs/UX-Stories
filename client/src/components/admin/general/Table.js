@@ -44,7 +44,7 @@ class Table extends React.Component {
         	fetchPolicy="no-cache"
         	variables={{
         		connection_type: this.props.connection_type,
-        		fields: this.props.fields,
+        		fields: this.props.fields.map(field => field.type ? field.type : field),
         		filterBy: this.props.filterBy,
         		where: this.props.where
         	}}
@@ -63,7 +63,7 @@ class Table extends React.Component {
         			let results = fetchMore({
         				variables: {
 			        		connection_type: this.props.connection_type,
-			        		fields: this.props.fields,
+			        		fields: this.props.fields.map(field => field.type ? field.type : field),
 			        		filterBy: this.props.filterBy.concat([skipBy]),
 			        		where: this.props.where
         				},
@@ -88,6 +88,9 @@ class Table extends React.Component {
 	                      <tr>
 							{
 	                        	this.props.fields.map(field => {
+	                        		if (typeof(field) === "object"){
+	                        			return <th scope="col">{field.show}</th>
+	                        		}
 	                        		return <th scope="col">{field === "id" ? "#" : field}</th>
 	                        	})
 	                        }
@@ -103,6 +106,24 @@ class Table extends React.Component {
 			                      	Object.keys(object).map(key => {
 			                      		if (key === "id"){
 			                      			return  <th scope="row">{object[key]}</th>
+			                      		}
+			                      		if (typeof(object[key]) === "object"){
+			                      			return object[key].length !== undefined ?
+			                      					<th>
+					                      				<select className="form-control" id="input-select">
+					                      					{
+					                      						Object.keys(object[key]).length ? "" 
+					                      						: <option>None</option>
+					                      					}
+															{
+								                      			Object.keys(object[key]).map(child => {
+								                      				return <option>{object[key][child].name}</option>
+								                      			})
+															}
+					                      				</select>
+					                      			</th>
+				                      			:
+				                      				<th scope="row">{object[key].name}</th>
 			                      		}
 			                      		return <td>{object[key]}</td>
 			                      	})
