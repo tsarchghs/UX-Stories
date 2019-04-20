@@ -44,7 +44,6 @@ class _Table extends React.Component {
 		<Query 
         	query={getObjectConnectionQuery}
         	notifyOnNetworkStatusChange={true}
-        	fetchPolicy="no-cache"
         	variables={{
         		connection_type: this.props.connection_type,
         		fields: this.props.fields.map(field => field.type ? field.type : field),
@@ -128,7 +127,7 @@ class _Table extends React.Component {
 	                    {
 	                    	objects.map(object => {
 	                    		return (
-			                      <tr ref={node => this.refs = Object.assign({[object.id]:node},this.refs)}>
+			                      <tr id={object.id} ref={node => this.refs = Object.assign({[object.id]:node},this.refs)}>
 			                      {
 			                      	Object.keys(object).map(key => {
 			                      		if (key === "id"){
@@ -187,7 +186,8 @@ class _Table extends React.Component {
 					                              				}
 					                              			})
 					                              			this.deleted++;
-				                              				this.refs[object.id].innerHTML = ""
+				                              				// this.refs[object.id].innerHTML = ""
+				                              				document.getElementById(object.id).innerHTML = "";	
 				                              			} catch(e) {
 				                              				console.log(e);
 				                              			}
