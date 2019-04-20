@@ -151,6 +151,7 @@ input StoriesFilterInput {
   storyCategories: [ID!]
   storyElements: [ID!]
   appVersions: [ID!]
+  orderBy: ORDER_BY
 }
 
 input AppVersionLinkInput {
@@ -204,8 +205,8 @@ enum CONNECTION_TYPE {
 enum DELETE_TYPE {
   deleteUser
   deleteApp
+  deleteStory
   deleteAppCategory 
-  deletStory
   deleteStoryCategory
   deleteStoryElement
 }
