@@ -4,6 +4,7 @@ import gql from "graphql-tag";
 import { Link } from "react-router-dom";
 import { debounce } from "lodash";
 import Table from "./Table";
+import uuidv1 from 'uuid/v1';
 
 class AdminListPage extends React.Component {
 	constructor(props){
@@ -13,25 +14,34 @@ class AdminListPage extends React.Component {
 				{
 					key: "first",
 					value_int: this.props.first
-				}
+				},
+				{
+					key: "orderBy",
+					value_str: "createdAt_DESC"
+				}			
 			],
-			where: []
+			where: [
+				{
+					key: this.props.search_by,
+					value_str: ""
+				}
+			]
 		}
 		this.update = debounce(this.update.bind(this),150);
-		this.index_name_contains = undefined;
+		this.setRefetch = this.setRefetch.bind(this);
 		this.search = undefined;
+		this.refetch = undefined;
 	}
 	update(e) {
 		this.setState(prevState => {
 			let state = prevState;
-			if (this.index_name_contains === undefined){
-				this.index_name_contains = state.where.push({key:`${this.props.search_by ? this.props.search_by : "name_contains"}`,value_str:this.search.value}) - 1
-			} else {
-				state.where[this.index_name_contains].value_str = this.search.value;
-			}
-			console.log(state);
+			state.where[0].value_str = this.search.value;
 			return state;
-		})
+		},this.refetch);
+	}
+	setRefetch(refetch){
+		console.log(this.refetch);
+		this.refetch = refetch;
 	}
 	render(){
 		return (
@@ -68,6 +78,9 @@ class AdminListPage extends React.Component {
 		                	fields={this.props.fields}
 		                	filterBy={this.state.filterBy}
 		                	where={this.state.where}
+		                	delete_type={this.props.delete_type}
+		                	first={this.props.first}
+		                	setRefetch={this.setRefetch}
 		                />
 		              </div>
 		            </div>
