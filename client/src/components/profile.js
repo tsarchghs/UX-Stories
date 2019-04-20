@@ -7,6 +7,7 @@ import { withApollo, Query,ApolloProvider } from "react-apollo";
 import EditProfileModal from "./editProfileModal";
 import ReactDOM from 'react-dom';
 import CreateLibraryModal from "./createLibraryModal";
+import {loadToolkit} from "../helpers";
 
 class Profile extends React.Component {
   constructor(props) {
@@ -21,7 +22,11 @@ class Profile extends React.Component {
     this.updateButton = undefined;
     this.editProfile = undefined;
   }
+  componentDidUpdate(){
+    loadToolkit();
+  }
   async componentDidMount() {
+      loadToolkit();
       ReactDOM.render(
         <ApolloProvider client={this.props.client}>
           <CreateLibraryModal
@@ -42,9 +47,7 @@ class Profile extends React.Component {
             user={this.props.user}
             refetchApp={this.props.refetchApp}
             closeAndUpdate={() => {
-              if (document.querySelector('body > div:nth-child(12)')){
-               document.querySelector('body > div:nth-child(12)').click()
-              } 
+              document.querySelector('#editProfile').parentElement.click()
               this.updateButton.click();
             }}
           />
