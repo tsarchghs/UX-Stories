@@ -43,7 +43,9 @@ class _Table extends React.Component {
 		return (
 		<Query 
         	query={getObjectConnectionQuery}
-        	notifyOnNetworkStatusChange={true}
+        	notifyOnNetworkStatusChange={false} // me kon false ska nevoj ekstra kod
+        									   // per pagination mi shfaq trejat veq kur tvin pa loading kopmlet
+        	fetchPolicy="no-cache" // mos me lon qita spo bohet si refresh diqka faqja mas eventit tpar qfardo koft
         	variables={{
         		connection_type: this.props.connection_type,
         		fields: this.props.fields.map(field => field.type ? field.type : field),
@@ -51,7 +53,7 @@ class _Table extends React.Component {
         		where: this.props.where
         	}}
         >
-        	{ ({loading,error,data,fetchMore,refetch,networkStatus}) => {
+        	{ ({loading,error,data,fetchMore,refetch,networkStatus}) => {	
         		console.log(networkStatus,loading,data,555);
         		if (!this.refetch) {
         			this.refetch = refetch;
