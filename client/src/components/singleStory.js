@@ -261,14 +261,16 @@ class SingleStory extends React.Component {
 		                </div>
 		              </div>
 		              <div className="inside-stories__card small">
-		                <p className="bold">Sponsored</p>
-		                <div className="inside-stories__card--sponsored">
-		                  <div className="sponsored-card">
-		                    <img src="/assets/toolkit/images/hdhd.svg" alt />
-		                  </div>
-		                  <p className="light-gray bold">Plan your team’s availabilty and we will estimate when work starts. Also manage projects with stories.</p>
-		                </div>
-		              </div>
+		                <a target="_blank" href="http://www.hudhud.io">
+			                <p className="bold">Sponsored</p>
+			                <div className="inside-stories__card--sponsored">
+			                  <div className="sponsored-card">
+			                    <img src="/assets/toolkit/images/hdhd.svg" alt />
+			                  </div>
+			                  <p className="light-gray bold">Plan your team’s availabilty and we will estimate when work starts. Also manage projects with stories.</p>
+			                </div>
+			           </a>
+			         </div>
 		            </div>
 		          </div>
 		        </div>
