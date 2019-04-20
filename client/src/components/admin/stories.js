@@ -13,6 +13,8 @@ class Stories extends React.Component {
 		          typename="story"
 		          typename_plural="stories"
 		          connection_type="storiesConnection"
+		          search_by="id_contains"
+		          delete_type="deleteStory"
 		          fields={[
 		                "id",
 		                { 

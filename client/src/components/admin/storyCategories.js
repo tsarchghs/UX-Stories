@@ -13,6 +13,8 @@ class StoryCategories extends React.Component {
 					typename="story category" 
 					typename_plural="story categories"
 					connection_type="storyCategoriesConnection"
+					search_by="name_contains"
+					delete_type="deleteStoryCategory"
 					fields={["id","name"]}
 					first={5}
 				/>

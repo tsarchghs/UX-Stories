@@ -13,6 +13,8 @@ class StoryElements extends React.Component {
 					typename="story element"
 					typename_plural="story elements" 
 					connection_type="storyElementsConnection"
+					delete_type="deleteStoryElement"
+					search_by="name_contains"
 					fields={["id","name"]}
 					first={5}
 				/>

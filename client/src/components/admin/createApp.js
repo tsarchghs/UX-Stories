@@ -121,7 +121,7 @@ class _CreateApp extends React.Component {
 					                      			let app = data.createApp;
 					                      			let variables = {
 					                      				appFilterInput:{
-					                      					first:10,
+					                      					first:5,
 					                      					orderBy: "createdAt_DESC",
 					                      					appName_contains: ""
 					                      				}

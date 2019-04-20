@@ -13,6 +13,8 @@ class Apps extends React.Component {
           typename="app"
           typename_plural="apps"
           connection_type="appsConnection"
+          delete_type="deleteApp"
+          search_by="name_contains"
           fields={[
                 "id","name",
                 "description","platform",

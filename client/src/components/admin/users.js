@@ -12,6 +12,7 @@ class Users extends React.Component {
 				<AdminListPage
 					typename="users"
 					connection_type="usersConnection"
+					delete_type="deleteUser"
 					fields={[
 						"id","full_name","email",
 						{
