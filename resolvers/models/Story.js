@@ -89,6 +89,7 @@ const stories = async (root,args,context,info) => {
 		if (args.storiesFilterInput.skip){
 			filterBy["skip"] = args.storiesFilterInput.skip
 		}
+		if (args.storiesFilterInput.orderBy) filterBy["orderBy"] = args.storiesFilterInput.orderBy 
 	}
 	const storiesL = context.db.query.stories(filterBy,info);
 	return storiesL;
