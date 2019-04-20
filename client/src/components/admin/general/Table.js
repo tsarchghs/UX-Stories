@@ -37,12 +37,14 @@ class _Table extends React.Component {
 		this.last_skip_value = undefined;
 		this.deleted = 0;
 		this.refetch = undefined
+		this.passOnSearch = false;
 	}
 	render(){
 		return (
 		<Query 
         	query={getObjectConnectionQuery}
         	notifyOnNetworkStatusChange={true}
+        	fetchPolicy="no-cache"
         	variables={{
         		connection_type: this.props.connection_type,
         		fields: this.props.fields.map(field => field.type ? field.type : field),
@@ -51,11 +53,32 @@ class _Table extends React.Component {
         	}}
         >
         	{ ({loading,error,data,fetchMore,refetch,networkStatus}) => {
-        		console.log(networkStatus,555);
-
+        		console.log(networkStatus,loading,data,555);
         		if (!this.refetch) {
         			this.refetch = refetch;
-        			this.props.setRefetch(this.refetch);
+        		}
+        		if (!this.passOnSearch){
+	        		let onSearch = (val) => {
+	        			let variables= {
+			        		connection_type: this.props.connection_type,
+			        		fields: this.props.fields.map(field => field.type ? field.type : field),
+			        		filterBy: this.props.filterBy.concat([this.skipBy]),
+			        		where: this.props.where
+	    				};
+	    				let getContainsItem = undefined;
+	    				variables.where.map(item => item.key.indexOf("_contains") ? (getContainsItem = item) : null);
+	    				getContainsItem.value_str = val
+	    				console.log(variables);
+	        			let results = fetchMore({
+	        				variables,
+	        				updateQuery: (prev, { fetchMoreResult }) => {
+	        					return fetchMoreResult
+	        				}
+	        			})
+	        		}
+	        		let debounced = debounce(onSearch,250)
+        			this.props.setOnSearch(debounced);
+        			this.passOnSearch = true;
         		}
         		let onLoadMore = () => {
         			let objects = JSON.parse(data.getObjectConnection.nodes.repr);
@@ -73,11 +96,6 @@ class _Table extends React.Component {
         			let results = fetchMore({
         				variables,
             			updateQuery: (prev, { fetchMoreResult }) => {
-            				// this.props.client.writeQuery({
-            				// 	query: getObjectConnectionQuery,
-            				// 	variables,
-            				// 	data: fetchMoreResult
-            				// })
             				let fetchMoreResultNodes = JSON.parse(fetchMoreResult.getObjectConnection.nodes.repr);
             				let prevNodes = JSON.parse(prev.getObjectConnection.nodes.repr)
             				let combined_nodes = prevNodes.concat(fetchMoreResultNodes);
@@ -86,13 +104,13 @@ class _Table extends React.Component {
             			}
         			})
         		}
-        		if (networkStatus ===4) return <h4>loading</h4>
+        		if (networkStatus < 7) return <h4>loading</h4>
         		if (error) return <p>{error.message}</p>
         		let objects = Object.keys(data).length ? JSON.parse(data.getObjectConnection.nodes.repr) : []
         		console.log(objects,networkStatus);
                 return (
                 	<div className="card-body">
-	                  <table className="table">
+                  <table className="table">
 	                    <thead>
 	                      <tr>
 							{
@@ -170,33 +188,6 @@ class _Table extends React.Component {
 					                              			})
 					                              			this.deleted++;
 				                              				this.refs[object.id].innerHTML = ""
-				                 //              				let skipBy = {
-										        			// 	key: "skip",
-										        			// 	value_int: this.last_skip_value ? this.last_skip_value : 0
-										        			// };
-				                 //              				let variables = {
-												        	// 	connection_type: this.props.connection_type,
-												        	// 	fields: this.props.fields.map(field => field.type ? field.type : field),
-												        	// 	filterBy: this.props.filterBy.concat([skipBy]),
-												        	// 	where: this.props.where
-												        	// } 
-				                 //              				let objects_cache = this.props.client.readQuery({
-				                 //              					query: getObjectConnectionQuery,
-				                 //              					variables
-				                 //              				})
-				                 //              				console.log(objects_cache)
-				                 //              				let updated_objects_cache = objects_cache;
-				                 //              				let nodes = JSON.parse(updated_objects_cache.getObjectConnection.nodes.repr);
-				                 //              				let updated_nodes = []
-				                 //              				nodes.map(node => node.id !== object.id ? updated_nodes.push(node) : null);
-				                 //              				updated_objects_cache.getObjectConnection.nodes.repr = JSON.stringify(updated_nodes);
-				                 //              				this.props.client.writeQuery({
-				                 //              					query: getObjectConnectionQuery,
-				                 //              					variables,
-				                 //              					data: updated_objects_cache
-				                 //              				})
-				                 //              				console.log(updated_objects_cache)
-					                //               			console.log(refetch);
 				                              			} catch(e) {
 				                              				console.log(e);
 				                              			}

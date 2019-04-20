@@ -25,10 +25,11 @@ class AdminListPage extends React.Component {
 					key: this.props.search_by,
 					value_str: ""
 				}
-			]
+			],
+			onSearch: undefined
 		}
 		this.update = debounce(this.update.bind(this),150);
-		this.setRefetch = this.setRefetch.bind(this);
+		this.setOnSearch = this.setOnSearch.bind(this);
 		this.search = undefined;
 		this.refetch = undefined;
 	}
@@ -37,11 +38,10 @@ class AdminListPage extends React.Component {
 			let state = prevState;
 			state.where[0].value_str = this.search.value;
 			return state;
-		},this.refetch);
+		});
 	}
-	setRefetch(refetch){
-		console.log(this.refetch);
-		this.refetch = refetch;
+	setOnSearch(onSearch){
+		this.setState({onSearch})
 	}
 	render(){
 		return (
@@ -58,7 +58,7 @@ class AdminListPage extends React.Component {
 		          </div>
 		          <div className="page-header">
 		            <div className="input-group col-xl-3 col-lg-12 col-md-12 col-sm-12 col-12">
-		              <input ref={node => this.search = node} onChange={this.update} type="text" className="form-control" placeholder={`Search by ${this.props.search_by_show ? this.props.search_by_show : "name" }`} />
+		              <input ref={node => this.search = node} onChange={(e) => this.state.onSearch(e.target.value)} type="text" className="form-control" placeholder={`Search by ${this.props.search_by_show ? this.props.search_by_show : "name" }`} />
 		              <div className="input-group-append">
 		           	     <button type="submit" className="btn btn-primary">Search</button>
 		              </div>
@@ -80,7 +80,7 @@ class AdminListPage extends React.Component {
 		                	where={this.state.where}
 		                	delete_type={this.props.delete_type}
 		                	first={this.props.first}
-		                	setRefetch={this.setRefetch}
+		                	setOnSearch={this.setOnSearch}
 		                />
 		              </div>
 		            </div>
