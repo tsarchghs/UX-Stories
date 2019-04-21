@@ -32,6 +32,18 @@ const getObjectConnection = async (parent,args,context) => {
 	return data;
 }
 
+const createObject = async (parent,args,context) => {
+	permissions.loginPermission(context,"ADMIN")
+	valid_json = args.data.repr.replace(/'/g, '"')
+	let data = JSON.parse(valid_json);
+	let obj = await context.db.mutation[args.mutation_type]({data},`
+		{
+			${args.fields ? args.fields.join() : "id"}
+		}
+	`);
+	return { repr: JSON.stringify(obj) }
+}
+
 const deleteObject = async (parent,args,context) => {
 	let data = await context.db.mutation[args.delete_type]({
 		where:{id:args.id}},`
@@ -45,5 +57,6 @@ const deleteObject = async (parent,args,context) => {
 
 module.exports = {
 	getObjectConnection,
-	deleteObject
+	deleteObject,
+	createObject
 }

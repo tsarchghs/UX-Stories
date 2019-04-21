@@ -217,6 +217,20 @@ input Dict {
   value_int: Int
 }
 
+input JSON_OBJECT_Input {
+  repr: String!
+}
+
+enum MUTATION_TYPE {
+  createUser
+  createApp
+  createAppCategory
+  createAppVersion
+  createStory
+  createStoryCategory
+  createStoryElement
+}
+
 type Query {
   getLoggedInUser: User
   app(id: ID!,stories_first: Int): App
@@ -253,8 +267,13 @@ type Query {
   countStories: Int!
   countUsers: Int!
 }
-
 type Mutation {
+  createObject(
+    data: JSON_OBJECT_Input!
+    fields: [String!]
+    mutation_type: MUTATION_TYPE!
+  ): JSON_OBJECT!
+
   deleteObject(
     delete_type: DELETE_TYPE!
     fields: [String!]
