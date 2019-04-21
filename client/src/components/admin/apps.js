@@ -4,6 +4,15 @@ import LeftSidebar from "./leftSidebar";
 import AdminListPage from "./general/AdminListPage";
 
 class Apps extends React.Component {
+  componentDidMount(){
+    console.log("MOUNTED")
+  }
+  componentWillUpdate(){
+    console.log("UPDATED");
+  }
+  componentWillMount(){
+    console.log("UNMOUNTED");
+  }
   render(){
     return (
       <div>

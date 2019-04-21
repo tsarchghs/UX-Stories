@@ -45,7 +45,7 @@ class _Table extends React.Component {
         	query={getObjectConnectionQuery}
         	notifyOnNetworkStatusChange={false} // me kon false ska nevoj ekstra kod
         									   // per pagination mi shfaq trejat veq kur tvin pa loading kopmlet
-        	fetchPolicy="no-cache" // mos me lon qita spo bohet si refresh diqka faqja mas eventit tpar qfardo koft
+        	// fetchPolicy="no-cache" // uncommenting refreshes page after searching once // (??) mos me lon qita spo bohet si refresh diqka faqja mas eventit tpar qfardo koft
         	variables={{
         		connection_type: this.props.connection_type,
         		fields: this.props.fields.map(field => field.type ? field.type : field),
