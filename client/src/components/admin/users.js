@@ -10,14 +10,16 @@ class Users extends React.Component {
 				<Header/>
 				<LeftSidebar/>
 				<AdminListPage
-					typename="users"
+					typename="user"
+					typename_plural="users"
 					connection_type="usersConnection"
 					delete_type="deleteUser"
 					fields={[
 						"id","full_name","email",
 						{
-							type:"libraries { id name }",
-							show:"libraries"
+							fetch:"libraries { id name }",
+							show:"libraries",
+							hideCreate: true
 						},"role"
 					]}
 					search_by="full_name_contains"

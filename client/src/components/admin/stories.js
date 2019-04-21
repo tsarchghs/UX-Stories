@@ -2,6 +2,7 @@ import React from "react";
 import Header from "./header";
 import LeftSidebar from "./leftSidebar";
 import AdminListPage from "./general/AdminListPage";
+import gql from "graphql-tag";
 
 class Stories extends React.Component {
 	render(){
@@ -18,20 +19,28 @@ class Stories extends React.Component {
 		          fields={[
 		                "id",
 		                { 
-		                  type:"app { id name }",
+		                  fetch:"app { id name }",
 		                  show:"app",
+		                  queryName: "apps",
+		                  query: gql`query { apps { id name } }`
 		              	},
 		                { 
-		                  type:"appVersions { id name }",
-		                  show:"app versions"
+		                  fetch:"appVersions { id name }",
+		                  show:"app versions",
+		                  queryName: "appVersions",
+		                  query: gql`query { appVersions { id name } }`
 		                },
 						{ 
-		                  type:"storyCategories { id name }",
-		                  show:"story categories"
+		                  fetch:"storyCategories { id name }",
+		                  show:"story categories",
+		                  queryName: "storyCategories",
+		                  query: gql`query { storyCategories { id name } }`
 		                },
 		                {
-		                	type:"storyElements { id name }",
-		                	show:"story elements"
+		                	fetch:"storyElements { id name }",
+		                	show:"story elements",
+			                queryName: "storyElements",
+			                query: gql`query { storyElements { id name } }`
 		                }
 		              ]}
 		          first={5}
