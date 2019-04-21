@@ -40,6 +40,8 @@ class _Table extends React.Component {
 		this.passOnSearch = false;
 	}
 	render(){
+		let showFields = []
+		this.props.fields.map(field => !field.hideTable ? showFields.push(field) : null);
 		return (
 		<Query 
         	query={getObjectConnectionQuery}
@@ -48,7 +50,7 @@ class _Table extends React.Component {
         	// fetchPolicy="no-cache" // uncommenting refreshes page after searching once // (??) mos me lon qita spo bohet si refresh diqka faqja mas eventit tpar qfardo koft
         	variables={{
         		connection_type: this.props.connection_type,
-        		fields: this.props.fields.map(field => field.type ? field.type : field),
+        		fields: showFields.map(field => field.fetch ? field.fetch : field),
         		filterBy: this.props.filterBy.concat([this.skipBy]),
         		where: this.props.where
         	}}
@@ -62,7 +64,7 @@ class _Table extends React.Component {
 	        		let onSearch = (val) => {
 	        			let variables= {
 			        		connection_type: this.props.connection_type,
-			        		fields: this.props.fields.map(field => field.type ? field.type : field),
+			        		fields: showFields.map(field => field.fetch ? field.fetch : field),
 			        		filterBy: this.props.filterBy.concat([this.skipBy]),
 			        		where: this.props.where
 	    				};
@@ -76,6 +78,7 @@ class _Table extends React.Component {
 	        					return fetchMoreResult
 	        				}
 	        			})
+	        			console.log(this.props.client.store.cache.data)
 	        		}
 	        		let debounced = debounce(onSearch,250)
         			this.props.setOnSearch(debounced);
@@ -90,7 +93,7 @@ class _Table extends React.Component {
         			this.last_skip_value = skipBy.value_int;
         			let variables= {
 		        		connection_type: this.props.connection_type,
-		        		fields: this.props.fields.map(field => field.type ? field.type : field),
+		        		fields: showFields.map(field => field.fetch ? field.fetch : field),
 		        		filterBy: this.props.filterBy.concat([skipBy]),
 		        		where: this.props.where
     				}
@@ -115,7 +118,8 @@ class _Table extends React.Component {
 	                    <thead>
 	                      <tr>
 							{
-	                        	this.props.fields.map(field => {
+	                        	showFields.map(field => {
+	                        		if (field.hideTable) return;
 	                        		if (typeof(field) === "object"){
 	                        			return <th scope="col">{field.show}</th>
 	                        		}
@@ -135,7 +139,7 @@ class _Table extends React.Component {
 			                      		if (key === "id"){
 			                      			return  <th scope="row">{object[key]}</th>
 			                      		}
-			                      		if (typeof(object[key]) === "object"){
+			                      		if (typeof(object[key]) === "object" && !object[key].enum){
 			                      			return object[key].length !== undefined ?
 			                      					<th>
 					                      				<select className="form-control" id="input-select">
