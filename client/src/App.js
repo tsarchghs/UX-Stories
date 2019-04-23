@@ -32,9 +32,8 @@ const URI = "http://localhost:4000/";
 
 const client = new ApolloClient({
   uri: URI,
-  cache: new InMemoryCache({
-    dataIdFromObject: object => object.key
-  }),
+  connectToDevTools: true,
+  cache: new InMemoryCache(),
   request: async (operation) => {
     const token = Cookies.get("token");
     operation.setContext({
