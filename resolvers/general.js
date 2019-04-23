@@ -1,4 +1,5 @@
 const permissions = require("./permissions");
+const uuid = require("uuid");
 
 const getObjectConnection = async (parent,args,context) => {
 	permissions.loginPermission(context,"ADMIN")
@@ -29,19 +30,20 @@ const getObjectConnection = async (parent,args,context) => {
 		}
 	`);
 	data.nodes = { repr : JSON.stringify(data.edges.map(edge => edge.node)) };
-	return data;
+	return { id: uuid(), ...data };
 }
 
 const createObject = async (parent,args,context) => {
 	permissions.loginPermission(context,"ADMIN")
 	valid_json = args.data.repr.replace(/'/g, '"')
+	console.log(valid_json);
 	let data = JSON.parse(valid_json);
 	let obj = await context.db.mutation[args.mutation_type]({data},`
 		{
 			${args.fields ? args.fields.join() : "id"}
 		}
 	`);
-	return { repr: JSON.stringify(obj) }
+	return { id: obj.id, repr: JSON.stringify(obj) }
 }
 
 const deleteObject = async (parent,args,context) => {
