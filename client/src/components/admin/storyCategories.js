@@ -15,7 +15,15 @@ class StoryCategories extends React.Component {
 					connection_type="storyCategoriesConnection"
 					search_by="name_contains"
 					delete_type="deleteStoryCategory"
-					fields={["id","name"]}
+					fields={["id",						
+						{
+							type: "name",
+							fetch: "name",
+							show: "Name",
+							primitive: "true",
+							queryName:"name"
+						}
+					]}
 					first={5}
 				/>
 		   </div>

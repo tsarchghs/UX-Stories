@@ -28,21 +28,43 @@ class Apps extends React.Component {
           fields={[
                 {
                   type: "id",
-                  fetch: "id"
+                  fetch: "id",
+                  show: "#"
                 },
                 {
                   type:"file",
                   show:"logo",
+                  queryName:"file",
                   hideTable: true
                 },
-                "name",
-                "description","platform",
+                {
+                  type: "name",
+                  show: "name",
+                  queryName: "name",
+                  primitive: true,
+                  fetch: "name"
+                },
+                {
+                  type: "description",
+                  show: "description",
+                  primitive: true,
+                  queryName: "description",
+                  fetch: "description",
+                },
+                {
+                  type: "platform",
+                  show: "platform",
+                  primitive: true,
+                  queryName: "platform",
+                  fetch: "platform",
+                  options: ["IOS","ANDROID"]
+                },
                 {
                   type: "company",
                   show: "company",
-                  enum: true,
+                  primitive: true,
+                  queryName: "company",
                   fetch: "company",
-                  options: ["IOS","ANDROID"]  
                 },
                 { 
                   type: "appVersion",

@@ -15,12 +15,41 @@ class Users extends React.Component {
 					connection_type="usersConnection"
 					delete_type="deleteUser"
 					fields={[
-						"id","full_name","email",
+						{
+							type: "id",
+							fetch: "id",
+							queryName: "id",
+							show: "#",
+							primitive: true
+						},
+						{
+							type: "full_name",
+							fetch: "full_name",
+							show: "Full Name",
+							queryName: "full_name",
+							primitive: true
+						},
+						{
+							type: "email",
+							fetch: "email",
+							show:"Email",
+							queryName: "email",
+							primitive: true
+						},
 						{
 							fetch:"libraries { id name }",
 							show:"libraries",
+							queryName: "libraries",
 							hideCreate: true
-						},"role"
+						},
+						{
+							type: "role",
+							fetch: "role",
+							show: "Role",
+							primitive: true,
+							queryName: "role",
+							options: ["MEMBER","ADMIN"]
+						}
 					]}
 					search_by="full_name_contains"
 					search_by_show="full name"

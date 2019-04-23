@@ -15,7 +15,15 @@ class AppCategories extends React.Component {
 					search_by="name_contains"
 					connection_type="appCategoriesConnection"
 					delete_type="deleteAppCategory"
-					fields={["id","name"]}
+					fields={["id",						
+						{
+							type: "name",
+							fetch: "name",
+							show: "Name",
+							primitive: "true",
+							queryName:"name"
+						}
+					]}
 					first={5}
 				/>
 		   </div>
