@@ -2,8 +2,10 @@ import React from "react";
 import { Link } from "react-router-dom";
 import Alert from "./alert";
 import gql from "graphql-tag";
+import { withApollo } from "react-apollo";
 
-class ForgetPassword extends React.Component {
+
+class _ForgetPassword extends React.Component {
 	constructor(props){
 		super(props);
 		this.state = {
@@ -76,4 +78,4 @@ class ForgetPassword extends React.Component {
 	}
 }
 
-export default ForgetPassword;
+export default withApollo(_ForgetPassword);

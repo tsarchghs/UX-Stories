@@ -2,10 +2,11 @@ import React from "react";
 import gql from "graphql-tag";
 import { Link } from "react-router-dom";
 import Alert from "./alert";
+import { withApollo } from "react-apollo";
 
 //localhost:3000/reset/eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJmb3Jnb3RQYXNzd29yZCI6ImNqdHZzaWlkcWV5dzMwYjYwY3c4bndjbTIiLCJpYXQiOjE1NTQzNjg2Mzd9.4ymRHBkFCbh47WgPtkI-PvSi71e7-yT3jwx5KfdV2K4
 //localhost:3000/reset/eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJmb3Jnb3RQYXNzd29yZCI6ImNqdHZzaWlkcWV5dzMwYjYwY3c4bndjbTIiLCJpYXQiOjE1NTQzNjk0MjJ9.A4XrjIZpg_Px2W-WrfPNfJctKASqUxw1ULtl20WmMRk
-class ResetPassword extends React.Component {
+class _ResetPassword extends React.Component {
 	constructor(props){
 		super(props);
 		this.state = {
@@ -139,4 +140,4 @@ class ResetPassword extends React.Component {
 	}
 }
 
-export default ResetPassword;
+export default withApollo(_ResetPassword);
