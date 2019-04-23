@@ -16,6 +16,7 @@ const getObjectConnectionQuery = gql`
 		filterBy: $filterBy
 		where: $where
     ) {
+      id
       pageInfo{
         hasNextPage
       }
@@ -55,7 +56,7 @@ class _Table extends React.Component {
         		where: this.props.where
         	}}
         >
-        	{ ({loading,error,data,fetchMore,refetch,networkStatus}) => {	
+        	{ ({loading,error,data,fetchMore,refetch,networkStatus,updateQuery}) => {	
         		console.log(networkStatus,loading,data,555);
         		if (!this.refetch) {
         			this.refetch = refetch;
@@ -71,10 +72,33 @@ class _Table extends React.Component {
 	    				let getContainsItem = undefined;
 	    				variables.where.map(item => item.key.indexOf("_contains") ? (getContainsItem = item) : null);
 	    				getContainsItem.value_str = val
-	    				console.log(variables);
+	        			if (!val){
+	        				refetch(variables); // :'(
+	        				return;
+	        			}
+	    				try {
+	    						console.log(variables);
+	    						let objs = this.props.client.readQuery({
+	    							query: getObjectConnectionQuery,
+	    							variables
+	    						})
+	    						console.log(1);
+	    						updateQuery((prev, options) => {
+	    							return objs
+	    						})
+	    						return;
+	    				} catch (e){
+	    					console.log(e);
+	    				}
 	        			let results = fetchMore({
 	        				variables,
 	        				updateQuery: (prev, { fetchMoreResult }) => {
+	        					console.log(fetchMoreResult,1000)
+	        					this.props.client.writeQuery({
+	        						query: getObjectConnectionQuery,
+	        						variables,
+	        						data: fetchMoreResult
+	        					})
 	        					return fetchMoreResult
 	        				}
 	        			})
@@ -108,7 +132,7 @@ class _Table extends React.Component {
             			}
         			})
         		}
-        		if (networkStatus < 7) return <h4>loading</h4>
+        		if (loading && networkStatus !== 3) return <h4>loading</h4>
         		if (error) return <p>{error.message}</p>
         		let objects = Object.keys(data).length ? JSON.parse(data.getObjectConnection.nodes.repr) : []
         		console.log(objects,networkStatus);
@@ -139,7 +163,7 @@ class _Table extends React.Component {
 			                      		if (key === "id"){
 			                      			return  <th scope="row">{object[key]}</th>
 			                      		}
-			                      		if (typeof(object[key]) === "object" && !object[key].enum){
+			                      		if (typeof(object[key]) === "object" && !object[key].primitive){
 			                      			return object[key].length !== undefined ?
 			                      					<th>
 					                      				<select className="form-control" id="input-select">
