@@ -3,6 +3,7 @@ import { Query, Mutation, withApollo } from "react-apollo";
 import { Redirect } from "react-router-dom";
 import Loading from "../../loading"
 import gql from "graphql-tag";
+import { handleUploadPhotoInput } from "../../../helpers";
 
 const CreateObjectMutation = gql`
 	mutation DeleteJob(
@@ -21,13 +22,17 @@ const CreateObjectMutation = gql`
 `
 
 class CreateObject extends React.Component {
+	constructor(props){
+		super(props);
+		this.refs = {}
+	}
 	render(){
 		return (
 			<div className="row">
 		              <div className="offset-xl-2 col-xl-8 col-lg-12 col-md-12 col-sm-12 col-12">
 		                <Mutation 
 		                	mutation={CreateObjectMutation}>
-		               		{ (createAppCategory,{loading,error,data}) => {
+		               		{ (createObject,{loading,error,data}) => {
 		               			console.log(data,4);
 		               			if (data) {
 		               				return <Redirect to={this.props.location.pathname}/>
@@ -37,9 +42,16 @@ class CreateObject extends React.Component {
 		               			return (
 					                <form onSubmit={async (e) => {
 					                	e.preventDefault();
-					                	let variables = { name: this.name.value }
-					                	let data = await createAppCategory({variables})
-					                	console.log(data);
+					                	let variables = Object.keys(this.refs).map(ref_key => {
+					                		let node = this.refs[ref_key];
+					                		if (node.base64){
+					                			return { [ref_key]: node.base64 }
+					                		}
+					                		return { [ref_key]: node.value }
+					                	})
+					                	console.log(variables);
+					                	// let data = await createObject({variables})
+					                	// console.log(data);
 					                }}>
 						                <div className="row">
 						                  <div className="col-md-8">
@@ -60,21 +72,29 @@ class CreateObject extends React.Component {
 									                              <label htmlFor="firstName">Upload {field.show}</label>
 									                              <div style={{marginTop: '10px'}}>
 									                                <input 
-									                                	onChange={() => console.log("logo")} 
-									                                	ref={node => this.logoRef = node}
+									                                	onChange={() => handleUploadPhotoInput(this.refs[field.queryName],false)} 
+									                                	ref={node => {
+									                                		this.refs = Object.assign({},this.refs,{ [field.queryName]: node })}
+									                                	}
 									                                	type="file" name="pic" accept="image/*" />
 									                              </div>
 									                            </div>
 						                      				);
 						                      			}
-						                      			if (field.enum){
+						                      			if (field.primitive && !field.options){
+						                      				return <div>
+											                        <label htmlFor="firstName">{field.show}</label>
+											                        <input ref={node => this.refs = Object.assign({},this.refs,{ [field.queryName]: node })} type="text" className="form-control" id="firstName" placeholder required />
+								                      			</div>
+						                      			}
+						                      			if (field.options){
 						                      				return (
 				                      							<div>
 				                      								<label htmlFor="firstName">{field.show}</label>
-					                      							<select className="form-control" id="input-select">
+					                      							<select ref={node => this.refs = Object.assign({},this.refs,{ [field.queryName]: node })} className="form-control" id="input-select">
 					                      								{
 					                      									field.options.map(option => {
-					                      										return <option>{option}</option>
+					                      										return <option value={option.name}>{option}</option>
 					                      									})
 					                      								}
 					                      							</select>
@@ -99,17 +119,20 @@ class CreateObject extends React.Component {
 						                      						if (error) return <p>{error.message}</p>
 						                      						console.log(data,field);
 						                      						let objects = data[field.queryName]
+						                      						console.log(field)
 						                      						return (
 						                      							<div>
 						                      								<label htmlFor="firstName">{field.show}</label>
-							                      							<select className="form-control" id="input-select">
+							                      							<select ref={node => this.refs = Object.assign({},this.refs,{ [field.queryName]: node })}
+								                      								className="form-control" id="input-select"
+								                      							>
 										                      					{
 										                      						objects.length ? "" 
 										                      						: <option>None</option>
 										                      					}
 																				{
 													                      			objects.map(obj => {
-													                      				return <option>{obj.name}</option>
+													                      				return <option value={obj.name}>{obj.name}</option>
 													                      			})
 																				}
 							                      							</select>
@@ -123,7 +146,7 @@ class CreateObject extends React.Component {
 						                      		return (
 						                      			<div>
 									                        <label htmlFor="firstName">{show}</label>
-									                        <input ref={node => this.name = node} type="text" className="form-control" id="firstName" placeholder required />
+									                        <input ref={node => this.refs = Object.assign({},this.refs,{ [field.queryName]: node })} type="text" className="form-control" id="firstName" placeholder required />
 						                      			</div>
 						                      		);
 						                      	})
