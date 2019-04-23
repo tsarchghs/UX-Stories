@@ -188,6 +188,7 @@ type JSON_OBJECT {
 }
 
 type ObjectConnection {
+  id: ID!
   pageInfo: PageInfo!
   nodes: JSON_OBJECT!
   aggregate: Aggregate!
