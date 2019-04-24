@@ -109,6 +109,7 @@ class AdminListPage extends React.Component {
 		                		typename={this.props.typename}
 		                		location={this.props.location}
 		                		typename={this.props.typename}
+		                		mutation_type={this.props.mutation_type}
 		                	/>
 		                	: <Table 
 			                	connection_type={this.props.connection_type}

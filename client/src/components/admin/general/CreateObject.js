@@ -4,17 +4,20 @@ import { Redirect } from "react-router-dom";
 import Loading from "../../loading"
 import gql from "graphql-tag";
 import { handleUploadPhotoInput } from "../../../helpers";
+import $ from "jquery";
 
 const CreateObjectMutation = gql`
-	mutation DeleteJob(
-		$delete_type: DELETE_TYPE!
+	mutation CreateObject(
+		$data: JSON_OBJECT_Input!
 		$fields: [String!]
-		$id: ID!
+		$mutation_type: MUTATION_TYPE!
+		$fields_info: JSON_OBJECT_Input!
 	) {
-		deleteJob(
-			delete_type: $delete_type
+		createObject(
+			data: $data
 			fields: $fields
-			id: $id
+			mutation_type: $mutation_type
+			fields_info: $fields_info
 		) {
 			repr
 		}
@@ -42,16 +45,28 @@ class CreateObject extends React.Component {
 		               			return (
 					                <form onSubmit={async (e) => {
 					                	e.preventDefault();
-					                	let variables = Object.keys(this.refs).map(ref_key => {
+					                	let data = Object.keys(this.refs).map(ref_key => {
 					                		let node = this.refs[ref_key];
-					                		if (node.base64){
-					                			return { [ref_key]: node.base64 }
+					                		if (node.multiple){
+					                			let values = $(node).val();
+					                			return JSON.stringify({ [ref_key]: values})
 					                		}
-					                		return { [ref_key]: node.value }
+					                		if (node.base64){
+					                			return JSON.stringify({ [ref_key]: node.base64 })
+					                		}
+					                		return JSON.stringify({ [ref_key]: node.value })
 					                	})
-					                	console.log(variables);
-					                	// let data = await createObject({variables})
-					                	// console.log(data);
+					                	console.log(data);
+					                	let repr = JSON.stringify(data);
+					                	console.log(1);
+					                	let res = await createObject({
+					                		variables: {
+					                			data: { repr },
+					                			mutation_type: this.props.mutation_type,
+					                			fields_info: { repr: JSON.stringify(this.props.fields) }
+					                		}
+					                	})
+					                	console.log(res);
 					                }}>
 						                <div className="row">
 						                  <div className="col-md-8">
@@ -66,7 +81,7 @@ class CreateObject extends React.Component {
 						                      		console.log(field,typeof(field))
 						                      		let show = typeof(field) === "object" ? field.type : field
 						                      		if (typeof(field) === "object"){
-						                      			if (field.type === "file"){
+						                      			if (field.type === "file" || field.type === "video"){
 						                      				return (
 						                      					<div>
 									                              <label htmlFor="firstName">Upload {field.show}</label>
@@ -82,19 +97,20 @@ class CreateObject extends React.Component {
 						                      				);
 						                      			}
 						                      			if (field.primitive && !field.options){
+						                      				console.log(field.type,55);
 						                      				return <div>
 											                        <label htmlFor="firstName">{field.show}</label>
-											                        <input ref={node => this.refs = Object.assign({},this.refs,{ [field.queryName]: node })} type="text" className="form-control" id="firstName" placeholder required />
+											                        <input type={"password"} ref={node => this.refs = Object.assign({},this.refs,{ [field.queryName]: node })} type="text" className="form-control" id="firstName" placeholder required />
 								                      			</div>
 						                      			}
 						                      			if (field.options){
 						                      				return (
 				                      							<div>
 				                      								<label htmlFor="firstName">{field.show}</label>
-					                      							<select ref={node => this.refs = Object.assign({},this.refs,{ [field.queryName]: node })} className="form-control" id="input-select">
+					                      							<select multiple={field.hasMany} ref={node => this.refs = Object.assign({},this.refs,{ [field.queryName]: node })} className="form-control" id="input-select">
 					                      								{
 					                      									field.options.map(option => {
-					                      										return <option value={option.name}>{option}</option>
+					                      										return <option id={option.id} value={option.id}>{option}</option>
 					                      									})
 					                      								}
 					                      							</select>
@@ -106,11 +122,12 @@ class CreateObject extends React.Component {
 						                      					query={field.query}
 						                      				>
 						                      					{ ({loading,data,error}) => {
+						                      						console.log(field.query)
 						                      						if (loading){
 						                      							return (
 						                      								<div>
 						                      									<label htmlFor="firstName">{field.show}</label>
-						                      									<select className="form-control" id="input-select">
+						                      									<select multiple={field.hasMany} className="form-control" id="input-select">
 						                      										<option>loading {field.show_plural}</option>
 						                      									</select>
 						                      								</div>
@@ -118,21 +135,21 @@ class CreateObject extends React.Component {
 						                      						}
 						                      						if (error) return <p>{error.message}</p>
 						                      						console.log(data,field);
-						                      						let objects = data[field.queryName]
-						                      						console.log(field)
+						                      						let objects = data ? data[field.queryName] : []
+						                      						console.log(objects)
 						                      						return (
 						                      							<div>
 						                      								<label htmlFor="firstName">{field.show}</label>
-							                      							<select ref={node => this.refs = Object.assign({},this.refs,{ [field.queryName]: node })}
+							                      							<select multiple={field.hasMany} ref={node => this.refs = Object.assign({},this.refs,{ [field.queryName]: node })}
 								                      								className="form-control" id="input-select"
 								                      							>
 										                      					{
-										                      						objects.length ? "" 
-										                      						: <option>None</option>
+										                      						objects && objects.length ? "" 
+										                      						: <option value={undefined}>None</option>
 										                      					}
 																				{
 													                      			objects.map(obj => {
-													                      				return <option value={obj.name}>{obj.name}</option>
+													                      				return <option id={obj.id} value={obj.id}>{obj.name}</option>
 													                      			})
 																				}
 							                      							</select>
