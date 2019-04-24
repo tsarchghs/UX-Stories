@@ -273,6 +273,7 @@ type Mutation {
     data: JSON_OBJECT_Input!
     fields: [String!]
     mutation_type: MUTATION_TYPE!
+    fields_info: JSON_OBJECT_Input!
   ): JSON_OBJECT!
 
   deleteObject(
