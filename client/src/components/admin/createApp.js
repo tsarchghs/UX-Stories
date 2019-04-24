@@ -7,6 +7,7 @@ import { handleUploadPhotoInput } from "../../helpers";
 import Loading from "../loading";
 import { Link, Redirect } from "react-router-dom";
 import { withApollo } from "react-apollo";
+import $ from "jquery";
 
 class _CreateApp extends React.Component {
 	constructor(props){
@@ -207,7 +208,7 @@ class _CreateApp extends React.Component {
 							                            <div className="col-md-12 mb-12" style={{marginBottom: '20px'}}>
 							                              <div className="form-group">
 							                                <label htmlFor="input-select">Category of app</label>
-							                                <select ref={node => this.appCategoryRef = node} className="form-control" id="input-select">
+							                                <select multiple ref={node => this.appCategoryRef = node} className="form-control" id="input-select">
 							                                  {
 							                                  	appCategories.map(appCategory => {
 							                                  		return (

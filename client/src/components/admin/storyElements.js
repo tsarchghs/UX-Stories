@@ -14,6 +14,7 @@ class StoryElements extends React.Component {
 					typename_plural="story elements" 
 					connection_type="storyElementsConnection"
 					delete_type="deleteStoryElement"
+					mutation_type="createStoryElement"
 					search_by="name_contains"
 					fields={[
 						"id",

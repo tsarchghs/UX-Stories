@@ -15,6 +15,7 @@ class StoryCategories extends React.Component {
 					connection_type="storyCategoriesConnection"
 					search_by="name_contains"
 					delete_type="deleteStoryCategory"
+					mutation_type="createStoryCategory"
 					fields={["id",						
 						{
 							type: "name",

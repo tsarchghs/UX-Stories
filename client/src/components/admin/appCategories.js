@@ -15,6 +15,7 @@ class AppCategories extends React.Component {
 					search_by="name_contains"
 					connection_type="appCategoriesConnection"
 					delete_type="deleteAppCategory"
+					mutation_type="createAppCategory"
 					fields={["id",						
 						{
 							type: "name",

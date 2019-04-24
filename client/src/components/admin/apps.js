@@ -24,17 +24,20 @@ class Apps extends React.Component {
           typename_plural="apps"
           connection_type="appsConnection"
           delete_type="deleteApp"
+          mutation_type="createApp"
           search_by="name_contains"
           fields={[
                 {
                   type: "id",
                   fetch: "id",
-                  show: "#"
+                  show: "#",
+                  primitive: true
                 },
                 {
                   type:"file",
                   show:"logo",
-                  queryName:"file",
+                  queryName:"logo",
+                  create_queryName:"logo",
                   hideTable: true
                 },
                 {
@@ -73,14 +76,24 @@ class Apps extends React.Component {
                   fetch: "appVersions { id name }",
                   show: "app version",
                   show_plural: "app versions",
+                  hasMany: true,
+                  hasManyCreate: true
                 },
                 { 
                   type: "appCategory",
                   queryName: "appCategories",
+                  create_queryName: "appCategory",
                   query: gql`query { appCategories { id name }}`,
                   fetch: "appCategory { id name }",
                   show: "app category",
                   show_plural: "app categories"
+                },
+                { 
+                  type: "createdBy",
+                  queryName: "createdBy",
+                  fetch: "createdBy { id full_name }",
+                  hideTable: true,
+                  hideCreate: true
                 }
               ]}
           first={5}
