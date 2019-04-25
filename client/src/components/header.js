@@ -31,15 +31,22 @@ class Header extends React.Component {
 						}
 						{
 							this.props.user
-							? <div className="profile-nav__img--content">
-						        <a href="#" className="profile-nav__img" 
-						        	style={{
-						        		backgroundImage: `url("${this.props.user && this.props.user.profile_photo ? this.props.user.profile_photo.url : "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQOo9ftjYQCU8HW1YByx0oAQdegRxO51mQN0tKKenGRnDZb-_D6"}")`}} />
+							? <div ref={node => this.profile_img = node} className="profile-nav__img--content">
+						        <div onClick={e => {
+						        	if (this.profile_img.className.indexOf("opened") === -1){
+						        		this.profile_img.classList.add("opened");
+						        	} else {
+						        		this.profile_img.classList.remove("opened");
+						        	}
+						        }} style={{
+						        	cursor:"pointer",
+						        	backgroundImage: `url("${this.props.user && this.props.user.profile_photo ? this.props.user.profile_photo.url : "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQOo9ftjYQCU8HW1YByx0oAQdegRxO51mQN0tKKenGRnDZb-_D6"}")`}} className="profile-nav__img">
+								</div>
 						        
 						        <div className="profile-nav__dropdown">
 						          <div className="profile-dropdown__img">
 						              <Link to="/profile">
-							            <div href="#" className="profile-nav__img" 
+							            <div className="profile-nav__img" 
 							            	style={{
 							        		backgroundImage: `url("${this.props.user && this.props.user.profile_photo ? this.props.user.profile_photo.url : "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQOo9ftjYQCU8HW1YByx0oAQdegRxO51mQN0tKKenGRnDZb-_D6"}")`}} />
 						            	</Link>

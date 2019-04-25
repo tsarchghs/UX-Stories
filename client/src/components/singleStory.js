@@ -6,6 +6,7 @@ import { getQueryParams,getActiveFilters,loadToolkit } from "../helpers";
 import DropdownLoading from "./dropdownLoading";
 import Loading from "./loading";
 import { withApollo } from "react-apollo";
+import InsideHeader from "./insideHeader";
 
 class SingleStory extends React.Component {
 	constructor(props){
@@ -120,161 +121,166 @@ class SingleStory extends React.Component {
 		})
 	}
 	render(){
-		let params = getQueryParams(window.location.href);
-		let redirect_back = this.state.app ? `/app/${this.state.app.id}` : "#"
-		if (params["from"] === "stories"){
-			redirect_back = "/stories";
-		}
+		// let params = getQueryParams(window.location.href);
+		// let redirect_back = this.state.app ? `/app/${this.state.app.id}` : "#"
+		// if (params["from"] === "stories"){
+		// 	redirect_back = "/stories";
+		// }
 		return (
-			<div className="inside-stories">
-		        <div className="inside-stories__container">
-		          <Link to={redirect_back}>
-		          	<span className="inside-stories__close"><img src="/assets/toolkit/images/006-error.svg" alt /></span>
-		          </Link>
-		          <div className="inside-stories__top">
-		          {
-		          	!this.state.app ? <SingleStoryAppLoading/>
-		          	: 
-		          		<div className="apps__top">
-				              <div className="apps__top-image" style={{backgroundImage: `url("${this.state.app.logo.url}")`}} />
-				              <div className="apps__top-info">
-				                <h5 className="bold">{this.state.app.name}</h5>
-				                <p className="apps__small-title light-gray">{this.state.app.description}</p>
-				              </div>
-					  	</div> 
-		          }
-		          {
-		          	this.state.app 
-		          	? <Link to={redirect_back}>
-		            	<p className="pink">See other stories</p>
-		            </Link>
-		            :  <a href="#"><p className="pink">See other stories</p></a>
-		          }
-		          </div>
-		          <div className="inside-stories__hero">
-		            <div className="inside-stories__video">
-		            {
-		            	!this.state.video
-		            	? <img style={{borderRadius:25,width: 230}} src="/assets/toolkit/images/loadingVideo.png"/>
-		            	: <video style={{borderRadius:25}} controls width="230" height="500">
+			<div>
+				<InsideHeader 
+					back_to_msg="Back to stories"
+					back_to_path="/stories"
+					user={this.props.user} 
+				/>
 
-						    <source src={this.state.video}
-						            type={`video/${this.state.video.mimetype}`}/>
-						 </video>
-		            }
-		            </div>
-		            <div className="inside-stories__info">
-		              <div className="inside-stories__card">
-		                <div className="inside-stories__card--inside">
-		                  <p className="bold">Screens</p>
-		                  {
-		                  	this.state.storyCategories && !this.state.storyCategories.length
-		                  	? <p>Nothing to show</p>
-		                  	: ""
-		                  }
-		                  {
-		                  	!this.state.storyCategories ? 
-		                  	<div>
-		                  		<img style={{paddingRight:5}} src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAE8AAAAgCAYAAABTliUJAAAAfUlEQVRoQ+3UsQ3AMAwEMXv/fdUmgEfQtVR/DfHQnZnvuJXAhbdyexG8vR28YAcPXhEIrZ8HLwiE1PLgBYGQWh68IBBSy4MXBEJqefCCQEgtD14QCKnlwQsCIbU8eEEgpJYHLwiE1PLgBYGQWh68IBBSy4MXBEJqefCCQEh/JfZ8Qf2qHe8AAAAASUVORK5CYII="/>
-		                  		<img style={{paddingRight:5}} src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAE8AAAAgCAYAAABTliUJAAAAfUlEQVRoQ+3UsQ3AMAwEMXv/fdUmgEfQtVR/DfHQnZnvuJXAhbdyexG8vR28YAcPXhEIrZ8HLwiE1PLgBYGQWh68IBBSy4MXBEJqefCCQEgtD14QCKnlwQsCIbU8eEEgpJYHLwiE1PLgBYGQWh68IBBSy4MXBEJqefCCQEh/JfZ8Qf2qHe8AAAAASUVORK5CYII="/>
-		                  		<img style={{paddingRight:5}} src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAE8AAAAgCAYAAABTliUJAAAAfUlEQVRoQ+3UsQ3AMAwEMXv/fdUmgEfQtVR/DfHQnZnvuJXAhbdyexG8vR28YAcPXhEIrZ8HLwiE1PLgBYGQWh68IBBSy4MXBEJqefCCQEgtD14QCKnlwQsCIbU8eEEgpJYHLwiE1PLgBYGQWh68IBBSy4MXBEJqefCCQEh/JfZ8Qf2qHe8AAAAASUVORK5CYII="/>
-		                  	</div>
-		                  	: this.state.storyCategories.map(storyCategory => {
-		                  		return (
-				                  <div className="ux-label no-close">
-				                    <p className="light-gray">{storyCategory.name}</p>
-				                    <span><img src="/assets/toolkit/images/008-delete.svg" alt /></span>
-				                  </div>
-		                  		);
-		                  	})
-		                  }				
-		                 </div>
-		                <div className="inside-stories__card--inside">
-		                  <p className="bold">Elements</p>
-		                  {
-		                  	this.state.storyElements && !this.state.storyElements.length
-		                  	? <p>Nothing to show</p>
-		                  	: ""
-		                  }
-		                  {
-		                  	!this.state.storyElements ? 
-		                  	<div>
-		                  		<img style={{paddingRight:5}} src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAE8AAAAgCAYAAABTliUJAAAAfUlEQVRoQ+3UsQ3AMAwEMXv/fdUmgEfQtVR/DfHQnZnvuJXAhbdyexG8vR28YAcPXhEIrZ8HLwiE1PLgBYGQWh68IBBSy4MXBEJqefCCQEgtD14QCKnlwQsCIbU8eEEgpJYHLwiE1PLgBYGQWh68IBBSy4MXBEJqefCCQEh/JfZ8Qf2qHe8AAAAASUVORK5CYII="/>
-		                  		<img style={{paddingRight:5}} src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAE8AAAAgCAYAAABTliUJAAAAfUlEQVRoQ+3UsQ3AMAwEMXv/fdUmgEfQtVR/DfHQnZnvuJXAhbdyexG8vR28YAcPXhEIrZ8HLwiE1PLgBYGQWh68IBBSy4MXBEJqefCCQEgtD14QCKnlwQsCIbU8eEEgpJYHLwiE1PLgBYGQWh68IBBSy4MXBEJqefCCQEh/JfZ8Qf2qHe8AAAAASUVORK5CYII="/>
-		                  		<img style={{paddingRight:5}} src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAE8AAAAgCAYAAABTliUJAAAAfUlEQVRoQ+3UsQ3AMAwEMXv/fdUmgEfQtVR/DfHQnZnvuJXAhbdyexG8vR28YAcPXhEIrZ8HLwiE1PLgBYGQWh68IBBSy4MXBEJqefCCQEgtD14QCKnlwQsCIbU8eEEgpJYHLwiE1PLgBYGQWh68IBBSy4MXBEJqefCCQEh/JfZ8Qf2qHe8AAAAASUVORK5CYII="/>
-		                  	</div>
-		                  	: this.state.storyElements.map(storyElement => {
-		                  		return (
-				                  <div className="ux-label no-close">
-				                    <p className="light-gray">{storyElement.name}</p>
-				                    <span><img src="/assets/toolkit/images/008-delete.svg" alt /></span>
-				                  </div>
-		                  		);
-		                  	})
-		                  }					
-		                 </div>
-		                <hr />
-		                <div className="inside-stories__card--share">
-		                  <p className="bold">Share</p>
-		                  <div>
-		                    <a href="#"><img src="/assets/toolkit/images/fb.svg" alt /></a>
-		                    <a href="#"><img src="/assets/toolkit/images/twt.svg" alt /></a>
-		                    <a href="#"><img src="/assets/toolkit/images/pt.svg" alt /></a>
-		                    <a href="#"><img src="/assets/toolkit/images/mail.svg" alt /></a>
-		                  </div>
-		                </div>
-		                <hr />
-		                <div className="inside-stories__card--save">
-		                  <a href="#" onClick={this.saveToLibraries}><p className="bold">Save to libraries</p></a>
-		                  <button data-toggle="second" className="button">Select library</button>
-					        <div className="filter" id="second" data-dropdown data-auto-focus="true">
-						        {
-						          !this.props.user.libraries ? <DropdownLoading/>
-						          : <div className="filter-dropdown">
-						              <div className="filter-dropdown__top">
-						                <h5 className="gray bold">Save to libraries</h5>
-						                <p className="pink">{this.state.selectedLibraries.length} selected</p>
-						              </div>
-						              <div className="filter-dropdown__main">                
-						              {
-						              	this.state.savingStory ? <Loading/>
-						              	: this.props.user.libraries.map(library => {
-						                      return (
-						                        <label className="radio__container">
-						                          <label id={library.id+"_label"} className="gray bold">{library.name}</label>
-						                          <input 
-						                            className="ic" 
-						                            type="checkbox" 
-						                            name={library.name}
-						                            value={library.id}
-						                            onClick={this.selectLibrary}
-						                          />
-						                          <span className="checkmark"/>
-						                        </label>
-						                      );
-						                    })
-						                  }  
-						              </div>
-						          </div>
-						        }
-					        </div>
-		                </div>
-		              </div>
-		              <div className="inside-stories__card small">
-		                <a target="_blank" href="http://www.hudhud.io">
-			                <p className="bold">Sponsored</p>
-			                <div className="inside-stories__card--sponsored">
-			                  <div className="sponsored-card">
-			                    <img src="/assets/toolkit/images/hdhd.svg" alt />
+				<div className="inside-stories">
+			        <div className="inside-stories__container">
+			          <div className="inside-stories__top">
+			          {
+			          	!this.state.app ? <SingleStoryAppLoading/>
+			          	: 
+			          		<div className="apps__top">
+					              <div className="apps__top-image" style={{backgroundImage: `url("${this.state.app.logo.url}")`}} />
+					              <div className="apps__top-info">
+					                <h5 className="bold">{this.state.app.name}</h5>
+					                <p className="apps__small-title light-gray">{this.state.app.description}</p>
+					              </div>
+						  	</div> 
+			          }
+			          {
+			          	this.state.app 
+			          	? <Link to={`/app/${this.state.app.id}`}>
+			            	<p className="pink">See other stories</p>
+			            </Link>
+			            :  <a href="#"><p className="pink">See other stories</p></a>
+			          }
+			          </div>
+			          <div className="inside-stories__hero">
+			            <div className="inside-stories__video">
+			            {
+			            	!this.state.video
+			            	? <img style={{borderRadius:25,width: 230}} src="/assets/toolkit/images/loadingVideo.png"/>
+			            	: <video style={{borderRadius:25}} controls width="230" height="500">
+
+							    <source src={this.state.video}
+							            type={`video/${this.state.video.mimetype}`}/>
+							 </video>
+			            }
+			            </div>
+			            <div className="inside-stories__info">
+			              <div className="inside-stories__card">
+			                <div className="inside-stories__card--inside">
+			                  <p className="bold">Screens</p>
+			                  {
+			                  	this.state.storyCategories && !this.state.storyCategories.length
+			                  	? <p>Nothing to show</p>
+			                  	: ""
+			                  }
+			                  {
+			                  	!this.state.storyCategories ? 
+			                  	<div>
+			                  		<img style={{paddingRight:5}} src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAE8AAAAgCAYAAABTliUJAAAAfUlEQVRoQ+3UsQ3AMAwEMXv/fdUmgEfQtVR/DfHQnZnvuJXAhbdyexG8vR28YAcPXhEIrZ8HLwiE1PLgBYGQWh68IBBSy4MXBEJqefCCQEgtD14QCKnlwQsCIbU8eEEgpJYHLwiE1PLgBYGQWh68IBBSy4MXBEJqefCCQEh/JfZ8Qf2qHe8AAAAASUVORK5CYII="/>
+			                  		<img style={{paddingRight:5}} src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAE8AAAAgCAYAAABTliUJAAAAfUlEQVRoQ+3UsQ3AMAwEMXv/fdUmgEfQtVR/DfHQnZnvuJXAhbdyexG8vR28YAcPXhEIrZ8HLwiE1PLgBYGQWh68IBBSy4MXBEJqefCCQEgtD14QCKnlwQsCIbU8eEEgpJYHLwiE1PLgBYGQWh68IBBSy4MXBEJqefCCQEh/JfZ8Qf2qHe8AAAAASUVORK5CYII="/>
+			                  		<img style={{paddingRight:5}} src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAE8AAAAgCAYAAABTliUJAAAAfUlEQVRoQ+3UsQ3AMAwEMXv/fdUmgEfQtVR/DfHQnZnvuJXAhbdyexG8vR28YAcPXhEIrZ8HLwiE1PLgBYGQWh68IBBSy4MXBEJqefCCQEgtD14QCKnlwQsCIbU8eEEgpJYHLwiE1PLgBYGQWh68IBBSy4MXBEJqefCCQEh/JfZ8Qf2qHe8AAAAASUVORK5CYII="/>
+			                  	</div>
+			                  	: this.state.storyCategories.map(storyCategory => {
+			                  		return (
+					                  <div className="ux-label no-close">
+					                    <p className="light-gray">{storyCategory.name}</p>
+					                    <span><img src="/assets/toolkit/images/008-delete.svg" alt /></span>
+					                  </div>
+			                  		);
+			                  	})
+			                  }				
+			                 </div>
+			                <div className="inside-stories__card--inside">
+			                  <p className="bold">Elements</p>
+			                  {
+			                  	this.state.storyElements && !this.state.storyElements.length
+			                  	? <p>Nothing to show</p>
+			                  	: ""
+			                  }
+			                  {
+			                  	!this.state.storyElements ? 
+			                  	<div>
+			                  		<img style={{paddingRight:5}} src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAE8AAAAgCAYAAABTliUJAAAAfUlEQVRoQ+3UsQ3AMAwEMXv/fdUmgEfQtVR/DfHQnZnvuJXAhbdyexG8vR28YAcPXhEIrZ8HLwiE1PLgBYGQWh68IBBSy4MXBEJqefCCQEgtD14QCKnlwQsCIbU8eEEgpJYHLwiE1PLgBYGQWh68IBBSy4MXBEJqefCCQEh/JfZ8Qf2qHe8AAAAASUVORK5CYII="/>
+			                  		<img style={{paddingRight:5}} src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAE8AAAAgCAYAAABTliUJAAAAfUlEQVRoQ+3UsQ3AMAwEMXv/fdUmgEfQtVR/DfHQnZnvuJXAhbdyexG8vR28YAcPXhEIrZ8HLwiE1PLgBYGQWh68IBBSy4MXBEJqefCCQEgtD14QCKnlwQsCIbU8eEEgpJYHLwiE1PLgBYGQWh68IBBSy4MXBEJqefCCQEh/JfZ8Qf2qHe8AAAAASUVORK5CYII="/>
+			                  		<img style={{paddingRight:5}} src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAE8AAAAgCAYAAABTliUJAAAAfUlEQVRoQ+3UsQ3AMAwEMXv/fdUmgEfQtVR/DfHQnZnvuJXAhbdyexG8vR28YAcPXhEIrZ8HLwiE1PLgBYGQWh68IBBSy4MXBEJqefCCQEgtD14QCKnlwQsCIbU8eEEgpJYHLwiE1PLgBYGQWh68IBBSy4MXBEJqefCCQEh/JfZ8Qf2qHe8AAAAASUVORK5CYII="/>
+			                  	</div>
+			                  	: this.state.storyElements.map(storyElement => {
+			                  		return (
+					                  <div className="ux-label no-close">
+					                    <p className="light-gray">{storyElement.name}</p>
+					                    <span><img src="/assets/toolkit/images/008-delete.svg" alt /></span>
+					                  </div>
+			                  		);
+			                  	})
+			                  }					
+			                 </div>
+			                <hr />
+			                <div className="inside-stories__card--share">
+			                  <p className="bold">Share</p>
+			                  <div>
+			                    <a href="#"><img src="/assets/toolkit/images/fb.svg" alt /></a>
+			                    <a href="#"><img src="/assets/toolkit/images/twt.svg" alt /></a>
+			                    <a href="#"><img src="/assets/toolkit/images/pt.svg" alt /></a>
+			                    <a href="#"><img src="/assets/toolkit/images/mail.svg" alt /></a>
 			                  </div>
-			                  <p className="light-gray bold">Plan your team’s availabilty and we will estimate when work starts. Also manage projects with stories.</p>
 			                </div>
-			           </a>
-			         </div>
-		            </div>
-		          </div>
-		        </div>
+			                <hr />
+			                <div className="inside-stories__card--save">
+			                  <a href="#" onClick={this.saveToLibraries}><p className="bold">Save to libraries</p></a>
+			                  <button data-toggle="second" className="button">Select library</button>
+						        <div className="filter" id="second" data-dropdown data-auto-focus="true">
+							        {
+							          !this.props.user.libraries ? <DropdownLoading/>
+							          : <div className="filter-dropdown">
+							              <div className="filter-dropdown__top">
+							                <h5 className="gray bold">Save to libraries</h5>
+							                <p className="pink">{this.state.selectedLibraries.length} selected</p>
+							              </div>
+							              <div className="filter-dropdown__main">                
+							              {
+							              	this.state.savingStory ? <Loading/>
+							              	: this.props.user.libraries.map(library => {
+							                      return (
+							                        <label className="radio__container">
+							                          <label id={library.id+"_label"} className="gray bold">{library.name}</label>
+							                          <input 
+							                            className="ic" 
+							                            type="checkbox" 
+							                            name={library.name}
+							                            value={library.id}
+							                            onClick={this.selectLibrary}
+							                          />
+							                          <span className="checkmark"/>
+							                        </label>
+							                      );
+							                    })
+							                  }  
+							              </div>
+							          </div>
+							        }
+						        </div>
+			                </div>
+			              </div>
+			              <div className="inside-stories__card small">
+			                <a target="_blank" href="http://www.hudhud.io">
+				                <p className="bold">Sponsored</p>
+				                <div className="inside-stories__card--sponsored">
+				                  <div className="sponsored-card">
+				                    <img src="/assets/toolkit/images/hdhd.svg" alt />
+				                  </div>
+				                  <p className="light-gray bold">Plan your team’s availabilty and we will estimate when work starts. Also manage projects with stories.</p>
+				                </div>
+				           </a>
+				         </div>
+			            </div>
+			          </div>
+			        </div>
 		      </div>
+		   </div>
 		);
 	}
 }

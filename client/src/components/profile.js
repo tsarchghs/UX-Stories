@@ -8,6 +8,7 @@ import EditProfileModal from "./editProfileModal";
 import ReactDOM from 'react-dom';
 import CreateLibraryModal from "./createLibraryModal";
 import {loadToolkit} from "../helpers";
+import $ from "jquery";
 
 class Profile extends React.Component {
   constructor(props) {
@@ -22,11 +23,7 @@ class Profile extends React.Component {
     this.updateButton = undefined;
     this.editProfile = undefined;
   }
-  componentDidUpdate(){
-    loadToolkit();
-  }
   async componentDidMount() {
-      loadToolkit();
       ReactDOM.render(
         <ApolloProvider client={this.props.client}>
           <CreateLibraryModal

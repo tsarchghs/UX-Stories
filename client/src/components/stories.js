@@ -253,7 +253,7 @@ class _Stories extends React.Component {
                   
                   (
                     this.state.stories.map(story =>
-                      <Link to={`/story/${story.id}?from=stories`}>
+                      <Link to={`/story/${story.id}`}>
                         <p>appCategory: {story.app.appCategory.name}</p>
                         {
                           story.storyCategories.map(storyCategory => {

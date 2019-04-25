@@ -1,6 +1,6 @@
 import React from "react";
 import Loading from "./loading";
-import LibraryHeader from "./libraryHeader";
+import InsideHeader from "./insideHeader";
 import gql from "graphql-tag";
 import {getStoryCategories,getStoryElements,getActiveFilters,insertActiveFilters,loadToolkit} from "../helpers";
 import E404 from "./E404";
@@ -131,7 +131,11 @@ class Library extends React.Component {
 	render() {
 		return (
 			<div>
-				<LibraryHeader user={this.props.user} />
+				<InsideHeader 
+					back_to_msg="Back to profile"
+					back_to_path="/profile"
+					user={this.props.user} 
+				/>
 				{
 					this.state.show404 ? <E404/> : ""
 

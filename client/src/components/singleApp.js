@@ -275,7 +275,7 @@ class _SingleApp extends React.Component {
                   (
                     this.state.stories.map(story => {
                       return (
-                        <Link to={`/story/${story.id}?from=app`}>
+                        <Link to={`/story/${story.id}`}>
                           <img style={{borderRadius: '25px'}} src={story.thumbnail.url}/>
                         </Link>
                       );
