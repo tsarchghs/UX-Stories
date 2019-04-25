@@ -186,7 +186,6 @@ class _Table extends React.Component {
 			                      }
 			                        <td><div className="dd-nodrag btn-group ml-auto">
 			                            <button className="btn btn-sm btn-outline-light">Edit</button>
-			                            <button className="btn btn-sm btn-outline-light">
 				                            <Mutation 
 				                            	mutation={gql`
 				                            		mutation DeleteObject(
@@ -204,7 +203,14 @@ class _Table extends React.Component {
 				                            		}
 				                            `}>
 				                            	{(deleteObject,{loading,error,data}) => {
-													if (error) return <i style={{color:"red"}} className="far fa-trash-alt" />
+													if (error) {
+														alert(error.message);
+														return (
+					                              			<button className="btn btn-sm btn-outline-light">
+					                              				<i style={{color:"red"}} className="far fa-trash-alt" />
+				                            				</button>
+														)
+													}
 				                              		let onClick = async () => {
 				                              			if (loading) return;
 				                              			try {	
@@ -224,10 +230,13 @@ class _Table extends React.Component {
 
 				                              			console.log(data);
 				                              		}
-				                              		return <i onClick={onClick} className="far fa-trash-alt" />
+				                              		return (
+				                              			<button onClick={onClick} className="btn btn-sm btn-outline-light">
+				                              				<i className="far fa-trash-alt" />
+			                            				</button>
+			                            			);
 				                            	}}
 				                            </Mutation>
-			                            </button>
 			                          </div></td>
 			                      </tr>
 	                    		)
