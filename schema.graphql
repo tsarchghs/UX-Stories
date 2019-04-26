@@ -236,7 +236,9 @@ type Query {
   getLoggedInUser: User
   app(id: ID!,stories_first: Int): App
   apps(appFilterInput: AppFilterInput): [App!]!
-  appVersions: [AppVersion!]!
+  appVersions(
+    app: ID
+  ): [AppVersion!]!
   appCategories: [AppCategory!]!
 
   getObjectConnection(
@@ -252,8 +254,14 @@ type Query {
   stories(
     storiesFilterInput: StoriesFilterInput  
   ): [Story!]!
-  storyCategories: [StoryCategory!]!
-  storyElements: [StoryElement!]!
+  storyCategories(
+    app: ID
+  ): [StoryCategory!]!
+
+  storyElements(
+    app: ID
+  ): [StoryElement!]!
+
   library(
     id: ID!
   ): Library

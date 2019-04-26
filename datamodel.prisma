@@ -10,28 +10,31 @@ enum AccountType {
 }
 
 type File {
-  id: ID! @unique
+  id: ID! @unique @id
   filename: String!
   mimetype: String!
   encoding: String!
   url: String! @unique  
-  createdAt: DateTime!
+  createdAt: DateTime! @createdAt
+  updatedAt: DateTime! @updatedAt
 }
 
 type Video {
-  id: ID! @unique
+  id: ID! @unique @id
   file: File!
-  createdAt: DateTime!
+  createdAt: DateTime! @createdAt
+  updatedAt: DateTime! @updatedAt
 }
 
 type Job {
-  id: ID! @unique
+  id: ID! @unique @id
   name: String! @unique
-  createdAt: DateTime!
+  createdAt: DateTime! @createdAt
+  updatedAt: DateTime! @updatedAt
 }
 
 type User {
-  id: ID! @unique
+  id: ID! @unique @id
   email: String! @unique
   password: String!
   full_name: String!
@@ -40,35 +43,44 @@ type User {
   profile_photo: File
   apps: [App!]!
   libraries: [Library!]!
-  createdAt: DateTime!
+  createdAt: DateTime! @createdAt
+  updatedAt: DateTime! @updatedAt
 }
 
 type AppVersion {
-  id: ID! @unique
-  name: String! @unique
-  createdAt: DateTime!
+  id: ID! @unique @id
+  name: String! @unique 
+  stories: [Story!]!
+  createdAt: DateTime! @createdAt
+  updatedAt: DateTime! @updatedAt
 }
 
 type AppCategory {
-  id: ID! @unique
-  name: String! @unique
-  createdAt: DateTime!
+  id: ID! @unique @id
+  name: String! @unique 
+  stories: [Story!]!
+  createdAt: DateTime! @createdAt
+  updatedAt: DateTime! @updatedAt
 }
 
 type StoryCategory {
-  id: ID! @unique
-  name: String! @unique
-  createdAt: DateTime!
+  id: ID! @unique @id
+  name: String! @unique 
+  createdAt: DateTime! @createdAt
+  updatedAt: DateTime! @updatedAt
+  stories: [Story!]!
 }
 
 type StoryElement {
-  id: ID! @unique
-  name: String! @unique
-  createdAt: DateTime!
+  id: ID! @unique @id
+  name: String! @unique 
+  createdAt: DateTime! @createdAt
+  updatedAt: DateTime! @updatedAt
+  stories: [Story!]!
 }
 
 type App {
-  id: ID! @unique
+  id: ID! @unique @id
   createdBy: User!
   appCategory: AppCategory!
   appVersions: [AppVersion!]!
@@ -78,11 +90,12 @@ type App {
   company: String!
   logo: File!
   platform: Platform!
-  createdAt: DateTime!
+  createdAt: DateTime! @createdAt
+  updatedAt: DateTime! @updatedAt
 }
 
 type Story {
-  id: ID! @unique
+  id: ID! @unique @id
   createdBy: User!
   app: App!
   appVersions: [AppVersion!]!
@@ -91,13 +104,15 @@ type Story {
   libraries: [Library!]!
   video: Video!
   thumbnail: File!
-  createdAt: DateTime!
+  createdAt: DateTime! @createdAt
+  updatedAt: DateTime! @updatedAt
 }
 
 type Library {
-  id: ID! @unique
+  id: ID! @unique @id
   createdBy: User!
   stories: [Story!]!
   name: String!
-  createdAt: DateTime!
+  createdAt: DateTime! @createdAt
+  updatedAt: DateTime! @updatedAt
 }
