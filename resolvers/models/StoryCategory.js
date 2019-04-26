@@ -1,7 +1,13 @@
 const permissions = require("../permissions");
 
 const storyCategories = (root,args,context,info) => {
-	return context.db.query.storyCategories({},info);
+	let filterBy = {"where":{}}
+	if (args.app){
+		filterBy["where"]["stories_some"] = {
+			app: { id_in : args.app }
+		}
+	}
+	return context.db.query.storyCategories(filterBy,info);
 }
 
 const createStoryCategory = async (root,args,context,info) => {

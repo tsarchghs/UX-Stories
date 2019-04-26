@@ -1,7 +1,13 @@
 const permissions = require("../permissions");
 
 const appVersions = (root,args,context,info) => {
-	return context.db.query.appVersions({},info);
+	let filterBy = {"where":{}}
+	if (args.app){
+		filterBy["where"]["stories_some"] = {
+			app: { id_in : args.app }
+		}
+	}
+	return context.db.query.appVersions(filterBy,info);
 }
 
 const createAppVersion = async (root,args,context,info) => {
