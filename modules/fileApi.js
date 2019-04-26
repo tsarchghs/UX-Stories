@@ -22,8 +22,11 @@ const processUpload = async (upload,mimetype,context,save_encoding=false) => {
 	const extension = get_extension(imgdata)
 	const filename = `file-${uuid()}`;
 	const path = `/file/${filename}.${mimetype.split("/")[1]}`
-	const base64Data = imgdata.replace(/^data:([A-Za-z-+/]+);base64,/, '');
-
+	let base64Data = imgdata.replace(/^data:([A-Za-z-+/]+);base64,/, '');
+	if (base64Data.indexOf("video") !== -1){
+		base64Data =  base64Data.split(",")[1]
+	}
+	console.log(base64Data.slice(0,50));
 	fs.writeFileSync(__dirname + "/../public" + path, base64Data,  {encoding: 'base64'});
 	
 	const encoding = save_encoding ? imgdata : "notsaved"
