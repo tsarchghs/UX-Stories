@@ -158,11 +158,7 @@ class App extends Component {
                                     )
                                 }} />
                                 <Route path="/app/:id" exact component={({match}) => {
-                                    return (
-                                        user 
-                                        ? <SingleApp user={user} match={match}/>
-                                        : <Redirect to={`/login?success=app:${match.params.id}`}/>
-                                    );
+                                        return <SingleApp user={user} match={match} />
                                 }} />
 
                                 <Route path="/admin" component={() => {
