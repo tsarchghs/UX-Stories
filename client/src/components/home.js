@@ -7,7 +7,8 @@ import { debounce } from "lodash";
 import {getAppCategories,getActiveFilters,insertActiveFilters,loadToolkit} from "../helpers";
 import DropdownLoading from "./dropdownLoading";
 import AppCategoriesDropdown from "./appCategoriesDropdown";
-import { withApollo } from "react-apollo";
+import { withApollo, Query, Mutation } from "react-apollo";
+import Cookies from "js-cookie";
 
 class _Home extends React.Component {
   constructor(props) {
@@ -20,11 +21,14 @@ class _Home extends React.Component {
       nothing_to_show: false,
       filterBy: {
         appCategory: undefined
-      }
+      },
+      jobs: [],
+      show_email: true
     }
     this.skip = 0;
     this.loadMore = this.loadMore.bind(this);
     this.update = debounce(this.update.bind(this),500);
+    this.enteredEmail = this.enteredEmail.bind(this);
     this.callAllCategoriesFilterOnce = false
   }
   componentDidUpdate(){
@@ -109,6 +113,17 @@ class _Home extends React.Component {
 	async componentDidMount(){
 		this.loadToolkit();
     this.update();
+    let jobs = await this.props.client.query({
+      query: gql`
+        query {
+          jobs {
+            id
+            name
+          }
+        } 
+      `
+    })
+    this.setState({jobs:jobs.data.jobs});
 	}
   async loadMore() {
     this.setState({
@@ -123,24 +138,84 @@ class _Home extends React.Component {
 	      script.async = true;
 	      document.body.appendChild(script);
 	      console.log(123);	
-	}
+  }
+  enteredEmail(e) {
+    e.preventDefault();
+      if (this.state.show_email) {
+        this.setState({ show_email: false })
+      } else {
+        console.log();
+      }
+  }
 	render() {
 		return (
 			 <div>
         <Header user={this.props.user}/>
-        <section style={{display:"none"}} className="home-hero">
-          <div className="home-hero__left">
-            <div className="home-hero__left--content">
-              <h1 className="gray bold">Find real problems solved for millions of people</h1>
-              <h5 className="light-gray">UXstories is hand picked collection of top apps on App Store that have the best practises of UX from login to purchasing a product and more.</h5>
-              <div className="home-hero__input">
-                <input className="input" type="text" placeholder="Enter your email" />
-                <button className="button">SIGN UP</button>
+        <div style={{display: this.props.user ? "none" : "block"}}>
+          <section className="home-hero">
+            <div className="home-hero__left">
+              <div className="home-hero__left--content">
+                <h1 className="gray bold">Find real problems solved for millions of people</h1>
+                <h5 className="light-gray">UXstories is hand picked collection of top apps on App Store that have the best practises of UX from login to purchasing a product and more.</h5>
+                          <Mutation
+                            mutation={gql`
+                              mutation SignUp(
+                                $full_name: String!, $email: String!, 
+                                $password: String!,$job: ID!
+                              ) {
+                                signUp(
+                                  full_name: $full_name,
+                                  email: $email,
+                                  password: $password,
+                                  job: $job
+                                ) {
+                                  token
+                                }
+                              } 
+                            `}
+                          >
+                            {(signUp, { loading, error, data }) => {
+                                if (data && data.signUp.token) {
+                                  Cookies.set("token", data.signUp.token);
+                                  this.props.refetchApp();
+                                }
+                                let onSubmit = (e) => {
+                                  e.preventDefault();
+                                  console.log(5);
+                                  signUp({variables:{
+                                    full_name: this.full_name.value,
+                                    email: this.email.value,
+                                    password: this.password.value,
+                                    job: this.job.value
+                                  }})
+                                }
+                                return (
+                                  <form onSubmit={this.state.show_email ? this.enteredEmail : onSubmit}>
+                                    <div className="home-hero__input">
+                                        <input ref={node => this.email = node} style={{display: this.state.show_email ? "block" : "none" }} className="input" type="text" placeholder="Enter your email" />
+                                        {
+                                          !this.state.show_email &&
+                                            <div className="home-hero__input">
+                                            <input ref={node => this.full_name = node} className="input" type="text" placeholder="Enter your full name" />
+                                          <input ref={node => this.password = node} className="input" type="password" placeholder="Enter your password" />
+                                              <select ref={node => this.job = node} id="r_job">
+                                                {
+                                                  this.state.jobs.map(job => <option id={job.name} value={job.id}>{job.name}</option>)
+                                                }
+                                              </select>
+                                            </div>
+                                        }
+                                      <button className="button">SIGN UP</button>
+                                    </div>
+                                  </form>
+                                )
+                            }}
+                        </Mutation>                   
               </div>
             </div>
-          </div>
-          <div className="home-hero__img" />
-        </section>
+            <div style={{ backgroundImage:"url(http://localhost:3000/assets/toolkit/images/homeimg.jpg)"}} className="home-hero__img" />
+          </section>
+        </div>
         <div className="secondary-header">
           <div className="container">
             <div className="secodary-header__content smaller">
