@@ -38,6 +38,12 @@ class _Stories extends React.Component {
   componentDidUpdate(){
     loadToolkit()
   }
+  hasActiveFitlers(){
+    console.log(this.state.filterBy)
+    return (this.state.filterBy.appCategory && !(this.state.filterBy.appCategory === "all")) || 
+          (this.state.filterBy.storyCategories && this.state.filterBy.storyCategories.length) ||
+          (this.state.filterBy.storyElements && this.state.filterBy.storyElements.length)
+  }
   async componentDidMount() {
     loadToolkit()
     this.search("",true);
@@ -199,7 +205,10 @@ class _Stories extends React.Component {
           <div className="results">
             <div className="container">
               <div className="results__content">
-                <p className="results__results bold">Showing {this.state.stories ? this.state.stories.length : 0} Results</p>
+              {
+                !this.hasActiveFitlers() ? null
+                : <p className="results__results bold">Showing {this.state.stories ? this.state.stories.length : 0} Results</p>
+              }
                 {
                   this.state.filterBy.appCategory && this.state.filterBy.appCategory !== "all" ? 
                   (
