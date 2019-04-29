@@ -34,18 +34,20 @@ class _SingleApp extends React.Component {
     this.handleFilterClick = this.handleFilterClick.bind(this);
     this.resetFilters = this.resetFilters.bind(this);
     this.updateStories = debounce(this.updateStories.bind(this),500)
+    if (this.props.match.params.id[this.props.match.params.id.length-1] === "#"){
+      this.app_id = this.props.match.params.id[this.props.match.params.id.length-1]
+    } else {
+      this.app_id = this.props.match.params.id
+    }
   }
   async componentDidUpdate(){
     loadToolkit()
   }
 	async componentDidMount(){
-    if (this.props.match.params.id[this.props.match.params.id.length-1] === "#"){
-      this.props.match.params.id = this.props.match.params.id[this.props.match.params.id.length-1]
-    }
     let app = await this.props.client.query({
       query: gql`
         query {
-          app(id:"${this.props.match.params.id}"){
+          app(id:"${this.app_id}"){
             id
             name
             description
@@ -107,6 +109,7 @@ class _SingleApp extends React.Component {
     }
     let filters = {"storyCategories":[],"appVersions":[],"storyElements":[]};
     filters = insertActiveFilters(filters,this.state);
+    console.log(JSON.stringify(filters.appVersions));
     let data = await this.props.client.query({
       query:gql`
         query {
@@ -127,13 +130,14 @@ class _SingleApp extends React.Component {
         }
       `
     })
+    console.log(data,555);
     this.skip += 10
      this.setState(prevState => {
       let state = prevState
       if (!state.stories){
         state.stories = []
       }
-      state.stories = state.stories.concat(data.data.stories)
+      state.stories = data.data.stories
       state.show_stories_skeleton = false
       state.reached_end = data.data.stories.length < 10
       return state;
@@ -209,6 +213,7 @@ class _SingleApp extends React.Component {
         <StoryCategoriesDropdown 
           id="first"
           state={this.state}
+          app={this.app_id}
           handleFilterClick={(e,storyCategory) => this.handleFilterClick(e,"storyCategories")}
         />
 
@@ -216,6 +221,7 @@ class _SingleApp extends React.Component {
         <StoryElementsDropdown
           id="second"
           state={this.state}
+          app={this.app_id}
           handleFilterClick={(e,storyElement) => this.handleFilterClick(e,"storyElements")}
         />
 
@@ -223,7 +229,13 @@ class _SingleApp extends React.Component {
         <AppVersionsDropdown
           id="third"
           state={this.state}
-          handleFilterClick={(e,storyElement) => this.handleFilterClick(e,"appVersions")}
+          app={this.app_id}
+          handleFilterClick={(e,appVersion) => this.setState(prevState => {
+            let state = prevState;
+            let status = !state.filterBy.appVersions[appVersion.id]
+            state.filterBy.appVersions = {[appVersion.id] : status}
+            return state;
+          },this.updateStories)}
         />  
         </div>
 
@@ -241,7 +253,9 @@ class _SingleApp extends React.Component {
                 {
                   Object.keys(this.state.filterBy).map(type_ => {
                     return getActiveFilters(this.state,type_).map(obj => {
-                        return (
+                      console.log(this.state,type_)
+                      console.log(obj);  
+                      return (
                           <div className="ux-label ">
                             <p className="light-gray">{document.getElementById(obj+"_label").innerHTML}</p>
                             <span><a href="#"><img onClick={() => this.unFilter(type_,obj)} src="/assets/toolkit/images/008-delete.svg" alt /></a></span>
