@@ -10,13 +10,21 @@ class AppVersionsDropdown extends React.Component {
 			<div className="filter" id={this.props.id} data-dropdown data-auto-focus="true">
 	            <Query 
 	              query={gql`
-		              query {
-		                appVersions {
+		              query AppVersions (
+										$app: ID
+									){
+		                appVersions(
+											app: $app
+										) {
 		                  id
 		                  name
 		                }
 		              }
-	            `}>
+								`}
+								variables={{
+									app: this.props.app
+								}}
+							>
 	              { ({loading,error,data}) => {
 	                if (error) return <p>{error.message}</p>
 	                if (loading) return <DropdownLoading/>
@@ -29,19 +37,19 @@ class AppVersionsDropdown extends React.Component {
 	                      <div className="filter-dropdown__main">                
 	                          {
 	                            data.appVersions.map(appVersion => {
+																console.log(appVersion)
 	                              return (
-	                                <label className="radio__container">
-	                                  <label id={appVersion.id+"_label"} className="gray bold">{appVersion.name}</label>
-	                                  <input 
-	                                    className="ic" 
-	                                    type="checkbox"
-	                                    id={appVersion.id}
-	                                    name={1}
-	                                    value={1}
-	                                    onClick={(e) => this.props.handleFilterClick(e,appVersion)}
-	                                  />
-	                                  <span className="checkmark"/>
-	                                </label>
+																		<label className="radio-t rde">
+																			<label id={appVersion.id+"_label"} className="gray bold">{appVersion.name}</label>
+																			<input 
+																				className="ic" 
+																				type="radio" 
+																				name={1}
+																				value={1}
+																				onClick={(e) => this.props.handleFilterClick(e,appVersion)}
+																			/>
+																			<span className="checkmark"/>
+																	</label>
 	                              );
 	                            })
 	                          }  
