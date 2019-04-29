@@ -32,9 +32,14 @@ class AppVersionsDropdown extends React.Component {
 	                    <div className="filter-dropdown">
 	                      <div className="filter-dropdown__top">
 	                        <h5 className="gray bold">Filter with stories</h5>
-	                        <p className="pink">{getActiveFilters(this.props.state,"appVersions").length} selected</p>
-	                      </div>
+													{
+														!data.appVersions.length ? null 
+														:<p className="pink">{getActiveFilters(this.props.state,"appVersions").length} selected</p>
+													}	                      </div>
 	                      <div className="filter-dropdown__main">                
+														{
+															!data.appVersions.length && <p>No relevant filters</p>
+														}   
 	                          {
 	                            data.appVersions.map(appVersion => {
 																console.log(appVersion)
