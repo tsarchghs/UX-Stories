@@ -15,17 +15,6 @@ const story = async (root,args,context,info) => {
 }
 
 const stories = async (root,args,context,info) => {
-	if (args.storiesFilterInput && 
-		!(
-			args.storiesFilterInput.first || args.storiesFilterInput.skip || args.storiesFilterInput.app || args.storiesFilterInput.appCategory || typeof(args.storiesFilterInput.storyName_contains) === "string" ||
-			(args.storiesFilterInput.storyCategories && args.storiesFilterInput.storyCategories.length) ||
-			(args.storiesFilterInput.appVersions && args.storiesFilterInput.appVersions.length) ||
-
-			(args.storiesFilterInput.storyElements && args.storiesFilterInput.storyElements.length) || args.storiesFilterInput.inLibrary
-		)	
-	) {
-		throw new Error("If storiesFilterInput provided, appVersions,appCategory,storyCategory,inLibrary or element must be specified")
-	}
 	const filterBy = {where:{AND:[]}};
 	if (args.storiesFilterInput){
 		if (args.storiesFilterInput.app){
