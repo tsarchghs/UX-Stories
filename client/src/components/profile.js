@@ -24,6 +24,7 @@ class Profile extends React.Component {
     this.editProfile = undefined;
   }
   async componentDidMount() {
+      loadToolkit();
       ReactDOM.render(
         <ApolloProvider client={this.props.client}>
           <CreateLibraryModal
