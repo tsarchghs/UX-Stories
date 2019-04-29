@@ -1,10 +1,20 @@
 import React from "react";
 import { Link } from "react-router-dom";
-import {loadToolkit} from "../helpers";
 
 class Header extends React.Component {
-	componentDidMount(){
-		loadToolkit();
+	constructor(props){
+		super(props);
+		this.state = {
+			opened: false
+		}
+		this.toggleOpened = this.toggleOpened.bind(this);
+	}
+	toggleOpened(){
+		this.setState(prevState => {
+			let state = prevState;
+			state.opened = !state.opened
+			return state;
+		})
 	}
 	render() {
 		let location = window.location.href.split("/");
@@ -16,29 +26,19 @@ class Header extends React.Component {
 		              <div className="logo">
 		                <Link to="/"><img src="/assets/toolkit/images/logo.svg"/></Link>
 		              </div>        <div className="nav">
-		              	<Link to="/">
-		               		<h5 className={`light-gray ${pathname === "" || pathname === "#" ? "active" : ""}`}>Apps</h5>
-		                </Link>
-		                <Link to="/stories">
-		               		<h5 className={`light-gray ${pathname === "stories" || pathname === "stories#" ? "active" : ""}`}>Stories</h5>
-		               	</Link>
+		               		<h5 className={`light-gray ${pathname === "" || pathname === "#" ? "active" : ""}`}><Link to="/">Apps</Link></h5>
+		               		<h5 className={`light-gray ${pathname === "stories" || pathname === "stories#" ? "active" : ""}`}><Link to="/stories">Stories</Link></h5>
 		                <h5 className="light-gray"><a href="#">Jobs</a></h5>
 		              </div>        <div className="profile-nav">
 		                <p className="light-gray"><a href="#">About</a></p>
-		                <p className="light-gray"><a href="#">Contact</a></p>
+		                <p className="light-gray"><a href="#">Contact</a></p>	
 						{        
 							!this.props.user ? "" : <p className="light-gray"><a href="#">Upgrade</a></p>
 						}
 						{
 							this.props.user
-							? <div ref={node => this.profile_img = node} className="profile-nav__img--content">
-						        <div onClick={e => {
-						        	if (this.profile_img.className.indexOf("opened") === -1){
-						        		this.profile_img.classList.add("opened");
-						        	} else {
-						        		this.profile_img.classList.remove("opened");
-						        	}
-						        }} style={{
+									? <div ref={node => this.profile_img = node} className={`profile-nav__img--content ${this.state.opened ? "opened" : ""}`}>
+						        <div onClick={this.toggleOpened} style={{
 						        	cursor:"pointer",
 						        	backgroundImage: `url("${this.props.user && this.props.user.profile_photo ? this.props.user.profile_photo.url : "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQOo9ftjYQCU8HW1YByx0oAQdegRxO51mQN0tKKenGRnDZb-_D6"}")`}} className="profile-nav__img">
 								</div>
@@ -73,7 +73,7 @@ class Header extends React.Component {
 						      </div>
 						    : <div>
 				            		<Link to="/login"><p className="light-gray"><a>Login</a></p></Link>
-				            		<Link to="/register"><p className="light-gray"><a>Register</a></p></Link>
+				            		{/*<Link to="/register"><p className="light-gray"><a>Register</a></p></Link>*/}
 				            	</div>
 						}
 		              </div>    
