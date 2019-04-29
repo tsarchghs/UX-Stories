@@ -1,9 +1,20 @@
 import React from "react";
 import { Link } from "react-router-dom";
+import $ from "jquery";
 
 class LibraryCard extends React.Component {
+  componentDidUpdate(){
+    $('.show-dropdown').click(function () {
+      $(this).toggleClass('close');
+    });
+  }
+  componentDidMount(){
+    $('.show-dropdown').click(function () {
+      $(this).toggleClass('close');
+    });
+  }
   toggleDropDown(e){
-    e.target.className.indexOf("close") !== -1 ? e.target.classList.remove("close") : e.target.classList.add("close") 
+    $(e.target).toggleClass('close');
   } 
   render() {
     return (
