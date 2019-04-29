@@ -55,6 +55,11 @@ const signUp = async (root,args,context) => {
 		role: "MEMBER",
 		job: {
 			connect:{id:args.job}
+		},
+		libraries: {
+			create: {
+				name: "First Library"
+			}
 		}
 	}
 	if (profile_photo){
