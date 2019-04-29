@@ -4,6 +4,7 @@ import Alert from "./alert";
 import { Mutation } from "react-apollo";
 import gql from "graphql-tag";
 import Cookies from "js-cookie";
+import Loading from "./loading";
 
 class Login extends React.Component {
 	constructor(props){
@@ -62,7 +63,10 @@ class Login extends React.Component {
 			                  <Link to="/forget_password">
 			                  	<p className="login__rm light-gray text-right"><a href="#">Forgot your password</a></p>
 			                  </Link>
-			                  <button className="button full" type="submit">Log in</button>
+												{
+													loading ? <center><Loading style={{width:"50%"}}/></center>
+													: <button className="button full" type="submit">Log in</button> 
+												}
 			                </div>
 			              </div>
 			              <div className="login__card">
