@@ -12,9 +12,11 @@ class StoryCategoriesDropdown extends React.Component {
 	              query={gql`
 		              query StoryCategories (
 										$app: ID
+										$library: ID
 									){
 		                storyCategories(
 											app: $app
+											library: $library
 										) {
 		                  id
 		                  name
@@ -22,7 +24,8 @@ class StoryCategoriesDropdown extends React.Component {
 		              }
 								`}
 									variables={{
-										app: this.props.app
+										app: this.props.app,
+										library: this.props.library
 									}}
 							>
 	              { ({loading,error,data}) => {
@@ -32,9 +35,15 @@ class StoryCategoriesDropdown extends React.Component {
 	                    <div className="filter-dropdown">
 	                      <div className="filter-dropdown__top">
 	                        <h5 className="gray bold">Filter with stories</h5>
-	                        <p className="pink">{getActiveFilters(this.props.state,"storyCategories").length} selected</p>
+													{
+														!data.storyCategories.length ? null 
+														:<p className="pink">{getActiveFilters(this.props.state,"storyCategories").length} selected</p>
+													}
 	                      </div>
 	                      <div className="filter-dropdown__main">                
+												{
+													!data.storyCategories.length && <p>No relevant filters</p>
+												}   
 	                          {
 	                            data.storyCategories.map(storyCategory => {
 	                              return (
