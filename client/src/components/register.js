@@ -95,30 +95,31 @@ class Register extends React.Component {
 							                {
 							                	errors.map(error => <Alert style={{height:"70"}} red={true} message={error}/>)
 							                }
-							                {
-							                	loading ? <Loading />
-							                	: (
-														jobsLoading ? <Loading /> :                  
+														
+											{
+												jobsLoading ? <Loading /> :                  
 														<div className="input__wo-border">
-											                  <input ref={node => this.full_name = node} className="input first fmt" id="r_full_name" type="text" placeholder="First and your last name" />
-											                  <div className="select__div fmt wo-border">
-											                    <select ref={node => this.job = node} id="r_job">
-											                      {
-											                      	jobs.map(job => <option id={job.name} value={job.id}>{job.name}</option>)
-												                  }
-											                    </select>
+																<input ref={node => this.full_name = node} className="input first fmt" id="r_full_name" type="text" placeholder="First and your last name" />
+																<div className="select__div fmt wo-border">
+																<select ref={node => this.job = node} id="r_job">
+																	{
+																	jobs.map(job => <option id={job.name} value={job.id}>{job.name}</option>)
+																	}
+																</select>
 
-										                  </div>
-										                  <input ref={node => this.email = node} className="input fmt" type="email" id="r_email" placeholder="Email" />
-										                  <input ref={node => this.password = node} className="input last fmt" type="password" id="r_password" placeholder="Password" />
-										                  <p className="login__rm light-gray text-center">By clicking this button, you agree to our <a className="bold" href="#">Terms, Privacy Policy.</a></p>
-										                  <button className="button full">Create account</button>
-										   
-										                  <Link to="/login"><p className="sign-in light-gray text-center">Already using UX-Stories? <a href="#">Sign in here</a></p></Link>
-										                </div>
-									            )
+															</div>
+															<input ref={node => this.email = node} className="input fmt" type="email" id="r_email" placeholder="Email" />
+															<input ref={node => this.password = node} className="input last fmt" type="password" id="r_password" placeholder="Password" />
+															<p className="login__rm light-gray text-center">By clicking this button, you agree to our <a className="bold" href="#">Terms, Privacy Policy.</a></p>
+															{
+															loading ? <center><Loading style={{ width: "50%" }} /></center>
+															: <button className="button full">Create account</button>
+															}
+											
+															<Link to="/login"><p className="sign-in light-gray text-center">Already using UX-Stories? <a href="#">Sign in here</a></p></Link>
+														</div>
+											}
 
-							                }
 							              </div>
 							            </div>
 							          </div>
