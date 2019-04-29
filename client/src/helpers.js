@@ -30,7 +30,8 @@ const getAppCategories = async (client) => {
 	return results.data.appCategories;
 }
 
-const getAppVersions = async (client) => {
+const getAppVersions = async (client,app="") => {
+  // if app argument is empty query will return all
   const results = await client.query({
     query: gql`
       query {
@@ -44,7 +45,8 @@ const getAppVersions = async (client) => {
   return results.data.appVersions;
 }
 
-const getStoryCategories = async (client) => {
+const getStoryCategories = async (client,app="") => {
+  // if app argument is empty query will return all
 	const results = await await client.query({
       query: gql`
         query {
