@@ -94,7 +94,7 @@ class App extends Component {
                             }
                             return (
                                 <div>
-                                    <Route path="/" exact component={() => <Home user={user}/>}/>
+                                    <Route path="/" exact component={() => <Home refetchApp={refetch} user={user}/>}/>
                                     <Route path="/stories" exact component={() => {
                                         return (
                                             user
