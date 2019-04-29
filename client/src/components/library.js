@@ -7,7 +7,7 @@ import E404 from "./E404";
 import DropdownLoading from "./dropdownLoading";
 import { withApollo } from "react-apollo";
 import StoryCategoriesDropdown from "./storyCategoriesDropdown";
-import StoryElementsDropdown from "./storyCategoriesDropdown";
+import StoryElementsDropdown from "./storyElementsDropdown";
 import StoryCategoriesActiveFitlers from "./storyCategoriesActiveFitlers";
 import StoryElementsActiveFilters from "./storyElementsActiveFilters";
 
@@ -160,6 +160,7 @@ class Library extends React.Component {
 							        <button className="button white fbtn" data-toggle="second">Filter with Stories<img src="../../assets/toolkit/images/shape.svg" alt /></button>
 							        <StoryCategoriesDropdown 
 							          id="second"
+												library={this.props.match.params.id}
 							          state={this.state}
 							          handleFilterClick={(e,storyCategory) => this.handleFilterClick(e,storyCategory,"storyCategories")}
 							        />
@@ -167,6 +168,7 @@ class Library extends React.Component {
 							        <button className="button white fbtn" data-toggle="third">Filter with Elements<img src="../../assets/toolkit/images/shape.svg" alt /></button>
 							        <StoryElementsDropdown
 							          id="third"
+												library={this.props.match.params.id}
 							          state={this.state}
 							          handleFilterClick={(e,storyElement) => this.handleFilterClick(e,storyElement,"storyElements")}
 							        />
