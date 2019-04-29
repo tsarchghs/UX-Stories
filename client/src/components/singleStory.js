@@ -161,10 +161,10 @@ class SingleStory extends React.Component {
 			            {
 			            	!this.state.video
 			            	? <img style={{borderRadius:25,width: 230}} src="/assets/toolkit/images/loadingVideo.png"/>
-			            	: <video style={{borderRadius:25}} controls width="230" height="500">
+			            	: <video style={{borderRadius:25}} controls width="230" height="500" autoPlay>
 
-							    <source src={this.state.video}
-							            type={`video/${this.state.video.mimetype}`}/>
+							    <source style={{borderRadius:10}} src={this.state.video.url}
+							            type={this.state.video.mimetype}/>
 							 </video>
 			            }
 			            </div>
