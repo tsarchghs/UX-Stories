@@ -2,10 +2,12 @@ const permissions = require("../permissions");
 
 const storyCategories = (root,args,context,info) => {
 	let filterBy = {"where":{}}
-	if (args.app){
-		filterBy["where"]["stories_some"] = {
-			app: { id_in : args.app }
-		}
+	if (args.app || args.library){
+		let stories_some = {}
+		if (args.app) stories_some["app"] = { id_in: args.app }
+		if (args.library) stories_some["libraries_some"] = { id: args.library }
+		console.log(stories_some);
+		filterBy["where"]["stories_some"] = stories_some
 	}
 	return context.db.query.storyCategories(filterBy,info);
 }

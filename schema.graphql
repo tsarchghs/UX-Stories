@@ -256,10 +256,12 @@ type Query {
   ): [Story!]!
   storyCategories(
     app: ID
+    library: ID
   ): [StoryCategory!]!
 
   storyElements(
     app: ID
+    library: ID
   ): [StoryElement!]!
 
   library(
