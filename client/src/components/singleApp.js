@@ -10,7 +10,7 @@ import SingleAppLoading from "./singleAppLoading";
 import { debounce } from "lodash";
 import DropdownLoading from "./dropdownLoading";
 import { Link } from "react-router-dom";
-import { withApollo } from "react-apollo";
+import { withApollo, Query } from "react-apollo";
 import StoryCategoriesDropdown from "./storyCategoriesDropdown";
 import StoryElementsDropdown from "./storyElementsDropdown";
 import StoryElementsActiveFilters from "./storyElementsActiveFilters";
@@ -33,7 +33,7 @@ class _SingleApp extends React.Component {
     this.skip = 0
     this.handleFilterClick = this.handleFilterClick.bind(this);
     this.resetFilters = this.resetFilters.bind(this);
-    this.updateStories = debounce(this.updateStories.bind(this),500)
+    this.getFormattedFilterBy = this.getFormattedFilterBy.bind(this);
     if (this.props.match.params.id[this.props.match.params.id.length-1] === "#"){
       this.app_id = this.props.match.params.id[this.props.match.params.id.length-1]
     } else {
@@ -52,24 +52,17 @@ class _SingleApp extends React.Component {
             name
             description
             company
+            appVersions { 
+              id
+              name
+            }
+            appCategory {
+              id
+              name
+            }
             logo {
               id
               url
-            }
-            appCategory {
-              id  
-              name
-            }
-            stories(first:10) {
-              id
-              thumbnail {
-                id
-                url
-              }
-            }
-            appVersions {
-              id
-              name
             }
           }
         }
@@ -83,9 +76,7 @@ class _SingleApp extends React.Component {
       return;
     }
     this.setState({
-      app: app.data.app,
-      stories: app.data.app.stories,
-      reached_end: app.data.app.stories.length < 10
+      app: app.data.app
     })
   }
   async handleFilterClick(e,type) {
@@ -95,75 +86,41 @@ class _SingleApp extends React.Component {
     await this.setState(prevState => {
       let state = prevState
       state.show_stories_skeleton = true
+      state.reached_end = false
       state.stories = undefined
       console.log(state["filterBy"],type);
       state["filterBy"][type][id] = !state["filterBy"][type][id]
       return state
-    },this.updateStories)
+    })
   }
-  async updateStories(){
-    if (this.state.stories){
-      this.setState({
-        show_stories_skeleton: true
-      })
-    }
-    let filters = {"storyCategories":[],"appVersions":[],"storyElements":[]};
-    filters = insertActiveFilters(filters,this.state);
-    console.log(JSON.stringify(filters.appVersions));
-    let data = await this.props.client.query({
-      query:gql`
-        query {
-          stories(storiesFilterInput:{
-              first: 10
-              skip: ${this.skip}
-              app:"${this.state.app.id}"
-              appVersions:${JSON.stringify(filters.appVersions)}
-              storyCategories:${JSON.stringify(filters.storyCategories)}
-              storyElements:${JSON.stringify(filters.storyElements)}
-          }) {
-            id
-            thumbnail {
-              id
-              url
-            }
-          }
-        }
-      `
-    })
-    console.log(data,555);
-    this.skip += 10
-     this.setState(prevState => {
-      let state = prevState
-      if (!state.stories){
-        state.stories = []
-      }
-      state.stories = data.data.stories
-      state.show_stories_skeleton = false
-      state.reached_end = data.data.stories.length < 10
-      return state;
-    })
+  getFormattedFilterBy(){
+    let filters = { "storyCategories": [], "appVersions": [], "storyElements": [] };
+    filters = insertActiveFilters(filters, this.state);
+    return filters
   }
   resetFilters() {
     this.skip = 0
     this.setState(prevState => {
       let state = prevState;
+      state.reached_end = false
       state.stories = undefined
       state.show_stories_skeleton = true
       state.filterBy.storyCategories = {}
       state.filterBy.storyElements = {}
       state.filterBy.appVersions = {}      
       return state
-    },this.updateStories);
+    });
   }
   unFilter(type,obj){
     this.skip = 0
     this.setState(prevState => {
       let state = prevState;
+      state.reached_end = false
       state.stories = undefined
       state.show_stories_skeleton = true
       state.filterBy[type][obj] = false;
       return state;
-    },this.updateStories);
+    });
   }
 	render(){
     if (this.state.app){
@@ -172,13 +129,12 @@ class _SingleApp extends React.Component {
       if (!len) current_version = "None";
       else current_version = this.state.app.appVersions[len-1].name 
     }
+    if (this.state.show404) return <E404 />
+
 		return (
       <div>
         <div className="header back__header">
 	      <Header user={this.props.user} />
-        {
-          this.state.show404 ? <E404/> : ""
-        }
         {
 
           !this.state.app || this.state.show404 ? 
@@ -235,7 +191,7 @@ class _SingleApp extends React.Component {
             let status = !state.filterBy.appVersions[appVersion.id]
             state.filterBy.appVersions = {[appVersion.id] : status}
             return state;
-          },this.updateStories)}
+          })}
         />  
         </div>
 
@@ -246,80 +202,147 @@ class _SingleApp extends React.Component {
               </div>
             <div style={{position:"inline"}}>
               </div>
-              <div className="results">
-                <div className="container">
-                  <div className="results__content">
-                    <p className="results__results bold">Showing {this.state.stories && this.state.stories.length !== undefined ? this.state.stories.length : 0} Results</p>
-                {
-                  Object.keys(this.state.filterBy).map(type_ => {
-                    return getActiveFilters(this.state,type_).map(obj => {
-                      console.log(this.state,type_)
-                      console.log(obj);  
-                      return (
-                          <div className="ux-label ">
-                            <p className="light-gray">{document.getElementById(obj+"_label").innerHTML}</p>
-                            <span><a href="#"><img onClick={() => this.unFilter(type_,obj)} src="/assets/toolkit/images/008-delete.svg" alt /></a></span>
-                          </div>  
-                        );    
-                    })
-                  }).flat()     
-                }
-              <hr/>
-                    <br/>     
+                      <Query
+                        query={gql`
+                          query Stories(
+                            $storiesFilterInput: StoriesFilterInput
+                          ) {
+                            stories(
+                              storiesFilterInput: $storiesFilterInput
+                            ) {
+                              id
+                              thumbnail {
+                                id
+                                url
+                              }
+                            }
+                          }
+                        `}
+                          notifyOnNetworkStatusChange={true}
+                          variables={{
+                            storiesFilterInput: { ...this.getFormattedFilterBy(), app: this.app_id, first: 10 } 
+                          }}
+                      >
+                        {({ loading, error, data, fetchMore, networkStatus }) => {
+                          console.log(networkStatus);
+                          const BELOW_HEADER = (
+                            <div className="results">
+                              <div className="container">
+                                <div className="results__content">
+                                  <p className="results__results bold">Showing {data && data.stories ? data.stories.length : 0} Results</p>
+                                  {
+                                    Object.keys(this.state.filterBy).map(type_ => {
+                                      return getActiveFilters(this.state, type_).map(obj => {
+                                        console.log(this.state, type_)
+                                        console.log(obj);
+                                        return (
+                                          <div className="ux-label ">
+                                            <p className="light-gray">{document.getElementById(obj + "_label").innerHTML}</p>
+                                            <span><a href="#"><img onClick={() => this.unFilter(type_, obj)} src="/assets/toolkit/images/008-delete.svg" alt /></a></span>
+                                          </div>
+                                        );
+                                      })
+                                    }).flat()
+                                  }
+                                  <hr />
+                                  <br />
 
-                    {
-                      Object.keys(getActiveFilters(this.state,"storyCategories")).length ||  
-                      Object.keys(getActiveFilters(this.state,"storyElements")).length || 
-                      Object.keys(getActiveFilters(this.state,"appVersions")).length 
-                      ? <a href="#"><p onClick={() => this.resetFilters()} className="pink">Clear all filters</p></a>
-                      : ""
-                    }
-                  </div>
-                </div>
-              </div>      
-              <div className="cards">
-                <div className="container">
-                  <div className="cards__content">
-                {
+                                  {
+                                    Object.keys(getActiveFilters(this.state, "storyCategories")).length ||
+                                      Object.keys(getActiveFilters(this.state, "storyElements")).length ||
+                                      Object.keys(getActiveFilters(this.state, "appVersions")).length
+                                      ? <a href="#"><p onClick={() => this.resetFilters()} className="pink">Clear all filters</p></a>
+                                      : ""
+                                  }
+                                </div>
+                              </div>
+                            </div>
+                          )
+                          if (networkStatus === 1) {
+                            return (
+                              <div>
+                                {BELOW_HEADER}
+                                <div className="cards">
+                                  <div className="container">
+                                    <div className="cards__content">
+                                      <StoryThumbnailLoading /><StoryThumbnailLoading /><StoryThumbnailLoading /><StoryThumbnailLoading />
+                                      <StoryThumbnailLoading /><StoryThumbnailLoading /><StoryThumbnailLoading /><StoryThumbnailLoading />
+                                      <StoryThumbnailLoading /><StoryThumbnailLoading />
+                                    </div>
+                                  </div>
+                                </div>
+                              </div>
+                            )
+                          }
+                          if (error) return <p>{error.message}</p>
+                          let stories = data.stories;
+                          if (!stories.length){
+                            return <center><p>Nothing to show</p></center>
+                          }
+                          return (
+                            <div>
+                              {BELOW_HEADER}
+                              <div className="cards">
+                                <div className="container">
+                                  <div className="cards__content">
+                                    {
+                                      stories.map(story => {
+                                        return (
+                                          <Link to={`/story/${story.id}`}>
+                                            <img style={{ height: 350,width:160, borderRadius: '25px' }} src={story.thumbnail.url} />
+                                          </Link>
+                                        );
+                                      })
+                                    }
+                                  </div>
+                                </div>
+                              </div>
+                              <center>
+                                {
+                                  this.state.reached_end
+                                  ? <p>Reached the end</p>
+                                  : (
+                                      networkStatus === 3 ? <div>
+                                        <div className="cards">
+                                          <div className="container">
+                                            <div className="cards__content">
+                                              <StoryThumbnailLoading /><StoryThumbnailLoading /><StoryThumbnailLoading /><StoryThumbnailLoading />
+                                              <StoryThumbnailLoading /><StoryThumbnailLoading /><StoryThumbnailLoading /><StoryThumbnailLoading />
+                                              <StoryThumbnailLoading /><StoryThumbnailLoading />
+                                            </div>
+                                          </div>
+                                        </div>
+                                      </div>
+                                      : <button onClick={() => {
+                                            console.log(stories.length);
+                                            fetchMore({
+                                              variables: { 
+                                                storiesFilterInput: {
+                                                  ...this.getFormattedFilterBy(), skip: stories.length, first: 10, app: this.app_id
+                                                  }
+                                              },
+                                              updateQuery: (prev, { fetchMoreResult }) => {
+                                                let updated_stories = prev.stories;
+                                                updated_stories = updated_stories.concat(fetchMoreResult.stories);
+                                                console.log(fetchMoreResult.stories, fetchMoreResult.stories.length);
+                                                if (fetchMoreResult.stories.length < 10){
+                                                  this.setState({
+                                                    reached_end: true
+                                                  })
+                                                }
+                                                return { stories: updated_stories };
+                                              }  
+                                            })
+                                        }}>Load more</button>
+                                  )
+                                }
+                              </center>
+                            </div>
+                          )
+                        }}
 
-                  !this.state.stories ? ""
 
-                  :
-
-                  (
-                    this.state.stories.map(story => {
-                      return (
-                        <Link to={`/story/${story.id}`}>
-                          <img style={{borderRadius: '25px'}} src={story.thumbnail.url}/>
-                        </Link>
-                      );
-                    })
-                  )
-
-                }
-                  </div>
-                </div>
-              </div>
-              {
-                this.state.show_stories_skeleton || !this.state.stories ? 
-                      <div className="cards">
-                        <div className="container">
-                          <div className="cards__content">
-                            <StoryThumbnailLoading/><StoryThumbnailLoading/><StoryThumbnailLoading/><StoryThumbnailLoading/>
-                            <StoryThumbnailLoading/><StoryThumbnailLoading/><StoryThumbnailLoading/><StoryThumbnailLoading/>
-                            <StoryThumbnailLoading/><StoryThumbnailLoading/>                          
-                          </div>
-                        </div>
-                      </div>
-                : ""
-              }
-              <center>
-                {
-                  this.state.reached_end
-                  ? <p>Reached the end</p>
-                  : <button onClick={this.updateStories}>Load more</button>
-                }
-              </center>
+                    </Query>
               </div></div>
               </div>
           )
