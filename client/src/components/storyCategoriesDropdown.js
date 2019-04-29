@@ -10,13 +10,21 @@ class StoryCategoriesDropdown extends React.Component {
 			<div className="filter" id={this.props.id} data-dropdown data-auto-focus="true">
 	            <Query 
 	              query={gql`
-		              query {
-		                storyCategories {
+		              query StoryCategories (
+										$app: ID
+									){
+		                storyCategories(
+											app: $app
+										) {
 		                  id
 		                  name
 		                }
 		              }
-	            `}>
+								`}
+									variables={{
+										app: this.props.app
+									}}
+							>
 	              { ({loading,error,data}) => {
 	                if (error) return <p>{error.message}</p>
 	                if (loading) return <DropdownLoading/>
