@@ -1,6 +1,8 @@
 const fileHandling = require("../../modules/fileApi");
 const permissions = require("../permissions");
 const bcrypt = require("bcrypt");
+const { checkValidation } = require("../../helpers");
+const { editProfileSchema } = require("../../validations/userValidations");
 
 const saltRounds = 10;
 
@@ -28,6 +30,7 @@ const users = async (parent,args,context,info) => {
 }
 
 const editProfile = async (parent,args,context,info) => {
+	await checkValidation(editProfileSchema,args);
 	permissions.loginPermission(context,"MEMBER");
 	console.log(args);
 	if (

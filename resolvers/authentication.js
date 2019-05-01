@@ -3,8 +3,11 @@ const jwt = require("jsonwebtoken");
 const configs = require("../configs");
 const fileHandling = require("../modules/fileApi");
 const nodemailer = require("nodemailer");
+const mailgun = require('mailgun-js')(configs.mailgun);
+const { checkValidation } = require("../helpers.js");
+const { loginSchema, signUpSchema } = require("../validations/authValidations.js");
+
 const saltRounds = 10;
-var mailgun = require('mailgun-js')(configs.mailgun);
 
 const createToken = (userId) => {
 	const token = jwt.sign({
@@ -14,9 +17,7 @@ const createToken = (userId) => {
 }
 
 const login = async (root,args,context) => {
-	if (!args.email || !args.password){
-		throw new Error("Invalid credentials")
-	}
+	await checkValidation(loginSchema, args,false,"Invalid credentials");
 	const user = await context.db.query.user({where:{email:args.email}});
 	if (!user){
 		throw new Error("Invalid credentials");
@@ -33,16 +34,10 @@ const login = async (root,args,context) => {
 }
 
 const signUp = async (root,args,context) => {
+	await checkValidation(signUpSchema, args);
 	var hasLogo; 
 	var profile_photo;
-	if (!args.email || !args.full_name || !args.password || !args.job){
-		throw new Error("Please check that all of your arguments are not empty!")
-	}
-	if (args.profile_photo && !(args.profile_photo.base64 && args.profile_photo.mimetype)) {
-		throw new Error("profile_photo.base64 or profile_photo.mimetype is missing");
-	} else {
-		hasLogo = args.profile_photo ? true : false
-	}
+	hasLogo = args.profile_photo ? true : false
 	if (hasLogo){
 		profile_photo = await fileHandling.processUpload(args.profile_photo.base64,
 														args.profile_photo.mimetype,context);
