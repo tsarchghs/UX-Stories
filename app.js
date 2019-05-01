@@ -6,10 +6,8 @@ const { static } = require("express");
 const path = require("path");
 const bodyParser = require("body-parser");
 const jwt = require("jsonwebtoken");
-const dashboard_route = require("./routes/admin/dashboard");
-const auth_route = require("./routes/admin/auth");
-const expressStatic = require("express").static;
 const configs = require("./configs");
+const { formatError } = require("apollo-errors");
 
 const prismaDb = new Prisma({
 	typeDefs:prismaTypeDefs,
@@ -66,6 +64,8 @@ server.express.set("view engine","ejs");
 server.express.use(bodyParser.urlencoded({limit:"1000mb",extended:true}))
 server.express.use(bodyParser.json({limit:"1000mb"}))
 
+const options = {
+	formatError
+};
 
-
-server.start(() => console.log("Running on port 4000"));
+server.start(options,() => console.log("Running on port 4000"));
