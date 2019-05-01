@@ -2,6 +2,7 @@ import React from "react";
 import { Query, Mutation, withApollo } from "react-apollo";
 import { Redirect } from "react-router-dom";
 import Loading from "../../loading"
+import Alert from "../../alert";
 import gql from "graphql-tag";
 import { handleUploadPhotoInput } from "../../../helpers";
 import $ from "jquery";
@@ -41,7 +42,6 @@ class CreateObject extends React.Component {
 		               				return <Redirect to={this.props.location.pathname}/>
 		               			}
 		               			if (loading) return <center><Loading/></center>
-		               			if (error) return <h5>{error.message}</h5>
 		               			return (
 					                <form onSubmit={async (e) => {
 					                	e.preventDefault();
@@ -70,6 +70,11 @@ class CreateObject extends React.Component {
 					                }}>
 						                <div className="row">
 						                  <div className="col-md-8">
+															<center>
+																{
+																			error && error.graphQLErrors && error.graphQLErrors[0].name === "ValidationError" && error.graphQLErrors[0].data.errors.map(error => <Alert style={{height:50}} red={true} message={error} />)
+																}
+															</center>
 						                    <div className="card">
 						                      <div className="card-header">
 						                        <h4 className="mb-0">Creating new {this.props.typename}</h4>
