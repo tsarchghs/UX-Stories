@@ -3,6 +3,7 @@ import ReactDOM from "react-dom";
 import { Query, Mutation } from "react-apollo";
 import gql from "graphql-tag";
 import { handleUploadPhotoInput } from "../helpers";
+import Alert from "./alert";
 
 class EditProfileModal extends React.Component {
 	constructor(props) {
@@ -26,7 +27,6 @@ class EditProfileModal extends React.Component {
 				        }
 		      	`}>
 		      	{ ({loading,error,data}) => {
-		      		if (error) return <p>{error.message}</p>
 		      		let query_loading = loading
 		      		let jobs = data && data.jobs ? data.jobs : []
 		      		console.log(jobs);
@@ -38,12 +38,14 @@ class EditProfileModal extends React.Component {
 		      						$job: ID
 		      						$email: String
 		      						$profile_photo: FileInput
+											$password: String
 		      					){
 		      						editProfile(
 		      							full_name: $full_name
 		      							job: $job
 		      							email: $email
-		      							profile_photo: $profile_photo 
+		      							profile_photo: $profile_photo
+												password: $password 
 		      						) {
 		      							id
 		      						}
@@ -56,8 +58,10 @@ class EditProfileModal extends React.Component {
 										let variables = {
 											full_name: this.full_name.value,
 											job: this.job.value,
-											email: this.email.value
+											email: this.email.value,
+											password: this.password.value
 										}
+										console.log(variables);
 										if (this.uploadPhotoInput && this.uploadPhotoInput.base64){
 											variables["profile_photo"] = {
 												base64: this.uploadPhotoInput.base64,
@@ -89,6 +93,9 @@ class EditProfileModal extends React.Component {
 								          	:
 								          	(
 								          		<div>
+														{
+															error && error.graphQLErrors && error.graphQLErrors[0].name === "ValidationError" && error.graphQLErrors[0].data.errors.map(error => <Alert style={{ height: 50 }} red={true} message={error} />)
+														}
 										          <div className="modal__content">
 										            <div className="modal__upload">
 										              <img id="profile_image" className="modal__img" src={`${this.props.user.profile_photo ? this.props.user.profile_photo.url : "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQOo9ftjYQCU8HW1YByx0oAQdegRxO51mQN0tKKenGRnDZb-_D6"}`} />
