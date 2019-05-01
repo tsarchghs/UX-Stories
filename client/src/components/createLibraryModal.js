@@ -1,7 +1,7 @@
 import React from "react";
 import { Mutation } from "react-apollo";
 import gql from "graphql-tag";
-
+import Alert from "./alert";
 	            // <img src="https://loading.io/spinners/rolling/lg.curve-bars-loading-indicator.gif" />
 class CreateLibraryModal extends React.Component {
 	constructor(props) {
@@ -31,7 +31,6 @@ class CreateLibraryModal extends React.Component {
 		          			</center>
 	          			)
 	          		}
-	          		if (error) return <p>{error.message}</p>
 	          		if (data) {
 	          			this.props.closeAndUpdate();
 	          		}
@@ -43,6 +42,9 @@ class CreateLibraryModal extends React.Component {
 	          				})
 	          			}}>
 							<div>
+											{
+												error && error.graphQLErrors && error.graphQLErrors[0].name === "ValidationError" && error.graphQLErrors[0].data.errors.map(error => <Alert style={{ height: 50 }} red={true} message={error} />)
+											}
 					          <div>
 					            <input ref={node => this.libraryName = node} className="input" type="text" placeholder="Library name" />
 					          </div>
