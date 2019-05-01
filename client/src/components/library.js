@@ -88,23 +88,31 @@ class Library extends React.Component {
 	    },this.update)
 	  }
 	async update() {
-	    let filters = {"storyCategories":[],"storyElements":[]};
-	    filters = insertActiveFilters(filters,this.state);
+		let filters = {"storyCategories":[],"storyElements":[]};
+		filters = insertActiveFilters(filters,this.state);
 		let results = await this.props.client.query({
 			query: gql`
-				query {
-					stories(storiesFilterInput:{
-					    inLibrary:"cjtljmt7dtft20b91aj1our7n"
-			            storyCategories: ${JSON.stringify(filters.storyCategories)}
-			            storyElements:${JSON.stringify(filters.storyElements)}
-				  }){
+				query Stories(
+					$storiesFilterInput: StoriesFilterInput
+				){
+					stories(
+						storiesFilterInput: $storiesFilterInput
+					){
 				      id
 				      thumbnail {
+								id
 				      	url
 				  	}
+					}
+				}
+			`,
+			variables:{
+				storiesFilterInput: {
+					inLibrary: this.props.match.params.id,
+					storyCategories: filters.storyCategories,
+					storyElements: filters.storyElements
 				}
 			}
-			`
 		})
 		this.setState(prevState => {
 			let state = prevState;
