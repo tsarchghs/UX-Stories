@@ -46,7 +46,7 @@ const apps = async (root,args,context,info) => {
 	}
 	if (args.appFilterInput && args.appFilterInput.appCategory) {
 		if (!(args.appFilterInput.appCategory === "all")){
-			filterBy["where"]["appCategory"] = {name:args.appFilterInput.appCategory}
+			filterBy["where"]["appCategory"] = {id:args.appFilterInput.appCategory}
 		}
 	}
 	if (args.appFilterInput && args.appFilterInput.storyCategories && args.appFilterInput.storyCategories.length) {
