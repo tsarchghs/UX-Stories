@@ -12,6 +12,12 @@ class EditProfileModal extends React.Component {
 		this.full_name = undefined;
 		this.job = undefined;
 		this.email = undefined;
+		this.state = {
+			full_name: this.props.user.full_name,
+			email: this.props.user.email,
+			job: this.props.user.job.id,
+			password: undefined
+		}
 	}
 	render(){
 		return (
@@ -56,10 +62,10 @@ class EditProfileModal extends React.Component {
 									<form id="edit_profile" onSubmit={async (e) => {
 										e.preventDefault();
 										let variables = {
-											full_name: this.full_name.value,
-											job: this.job.value,
-											email: this.email.value,
-											password: this.password.value
+											full_name: this.state.full_name,
+											job: this.state.job,
+											email: this.state.email,
+											password: this.state.password
 										}
 										console.log(variables);
 										if (this.uploadPhotoInput && this.uploadPhotoInput.base64){
@@ -121,20 +127,18 @@ class EditProfileModal extends React.Component {
 										              	id="p_full_name" 
 										              	type="text" 
 										              	placeholder="First and last name" 
-										              	ref={node => {
-										              		this.full_name = node
-										              		if (this.full_name) this.full_name.value = this.props.user.full_name
-										              	}}
+																		value={this.state.full_name}
+																		onChange={e => this.setState({ full_name: e.target.value })}	
 										              />
 										              <div className="select__div">
-										                <select ref={node => this.job = node} id="p_job">
+																	<select id="p_job" onChange={e => this.setState({ job: e.target.value })}>
 										                {
 										                	jobs.map(job => {
 										                		return (
 											                		<option 
 											                			id={job.name} 
 											                			value={job.id}
-											                			selected={this.props.user.job.id === job.id}
+											                			selected={this.state.job.id === job.id}
 											                		>
 											                			{job.name}
 											                		</option> 
@@ -151,11 +155,8 @@ class EditProfileModal extends React.Component {
 										              	id="p_email" 
 										              	type="email" 
 										              	placeholder="Email" 
-										              	value={this.props.user.email}
-										              	ref={node => {
-										              		this.email = node
-										              		if (this.email) this.email.value = this.props.user.email
-										              	}}										              
+										              	value={this.state.email}
+																		onChange={e => this.setState({ email: e.target.value })}	
 										              />
 										              <input 
 										              	className="input" 
@@ -163,14 +164,23 @@ class EditProfileModal extends React.Component {
 										              	type="password" 
 										              	autoComplete="false" 
 										              	placeholder="New password" 
-										              	ref={node => this.password = node}											              
+										              	value={this.state.password}
+																		onChange={e => this.setState({ password: e.target.value ? e.target.value : undefined })}								              
 										              />
 										            </div>
 										          </div>
 										          <div className="text-right">
 										            <button className="button smaller">Update profile</button>
 										          </div>
-										          <button id="closeEditProfile" className="close-button" data-close aria-label="Close reveal" type="button">
+										          <button 
+																	ref={node => this.closeEditProfileRef = node} 
+																	id="closeEditProfile"
+																	className="close-button"
+																	onClick={e => {
+																		this.closeEditProfileRef.parentElement.parentElement.parentElement.parentElement.click()
+																	}} 
+																	type="button"
+															>
 										            <img src="../../assets/toolkit/images/006-error.svg" alt />
 										          </button>
 									          </div>
