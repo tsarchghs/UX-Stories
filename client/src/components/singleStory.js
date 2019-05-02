@@ -2,11 +2,12 @@ import React from "react";
 import SingleStoryAppLoading from "./singleStoryAppLoading";
 import gql from "graphql-tag";
 import { Link } from "react-router-dom";
-import { getQueryParams,getActiveFilters,loadToolkit } from "../helpers";
 import DropdownLoading from "./dropdownLoading";
 import Loading from "./loading";
-import { withApollo } from "react-apollo";
+import { withApollo, ApolloProvider } from "react-apollo";
 import InsideHeader from "./insideHeader";
+import CreateLibraryModal from "./createLibraryModal";
+import ReactDOM from 'react-dom';
 
 class SingleStory extends React.Component {
 	constructor(props){
@@ -16,11 +17,13 @@ class SingleStory extends React.Component {
 			storyCategories: undefined,
 			storyElements: undefined,
 			selectedLibraries: [],
-			savingStory: false
+			savingStory: false,
+			selectLibraryOpen: true
 		}
 		this.story_id = undefined;
 		this.selectLibrary = this.selectLibrary.bind(this);
 		this.saveToLibraries = this.saveToLibraries.bind(this);
+		this.toggleSelectLibrary = this.toggleSelectLibrary.bind(this);
 		let param_id = props.match.match.params.id
 		if (param_id[param_id.length - 1] === "#"){
 			this.story_id = param_id.slice(0,param_id.length-1);
@@ -28,10 +31,27 @@ class SingleStory extends React.Component {
 			this.story_id = param_id
 		}
 	}
-	async componentDidUpdate(){
-		loadToolkit();
+	toggleSelectLibrary(){
+		this.setState(prevState => {
+			let state = prevState
+			state.selectLibraryOpen = !state.selectLibraryOpen
+			console.log(state.selectLibraryOpen);
+			return state;
+		})
 	}
 	async componentDidMount(){
+		ReactDOM.render(
+			<ApolloProvider client={this.props.client}>
+				<CreateLibraryModal
+					id="singleStoryCreateLibrary"
+					refetchLibraries={this.props.refetchApp}
+					close={() => {
+						document.querySelector('#singleStoryCreateLibrary').parentElement.click()
+					}}
+				/>
+			</ApolloProvider>,
+			document.getElementById("createLibraryModal")
+		)
 		if (!this.state.app){
 			console.log(this.story_id,this.props.match.match.params.id)
 			let data = await this.props.client.query({
@@ -230,14 +250,15 @@ class SingleStory extends React.Component {
 			                </div>
 			                <hr />
 			                <div className="inside-stories__card--save">
-			                  <a href="#" onClick={this.saveToLibraries}><p className="bold">Save to libraries</p></a>
-			                  <button data-toggle="second" className="button">Select library</button>
-						        <div className="filter" id="second" data-dropdown data-auto-focus="true">
+												<a href="#" onClick={this.saveToLibraries}><p className="bold">Save to libraries</p></a>
+										<button onClick={this.toggleSelectLibrary} className="button">Select library</button>
+										<div style={{top:"16.7344px",left:"-185.391px"}} className={`filter ${this.state.selectLibraryOpen ? "is-open" : ""}`} id="second" data-dropdown data-auto-focus="true">
 							        {
 							          !this.props.user.libraries ? <DropdownLoading/>
 							          : <div className="filter-dropdown">
 							              <div className="filter-dropdown__top">
-							                <h5 className="gray bold">Save to libraries</h5>
+															<h5 className="gray bold">Save to libraries</h5>
+															<h5 data-open="singleStoryCreateLibrary" className="gray bold">ADD</h5>
 							                <p className="pink">{this.state.selectedLibraries.length} selected</p>
 							              </div>
 							              <div className="filter-dropdown__main">                
