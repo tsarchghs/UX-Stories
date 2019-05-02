@@ -30,9 +30,8 @@ class Profile extends React.Component {
           <CreateLibraryModal
             id="exampleModal2"
             refetchLibraries={this.props.refetchApp}
-            closeAndUpdate={() => {
+            close={() => {
               document.querySelector('#exampleModal2').parentElement.click()
-              this.refetchLibraries();
             }}
           />
         </ApolloProvider>,
