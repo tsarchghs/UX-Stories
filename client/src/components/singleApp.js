@@ -2,7 +2,7 @@ import React from "react";
 import Header from "./header";
 import Loading from "./loading";
 import gql from "graphql-tag";
-import {getStories,getAppVersions,getAppCategories,getStoryCategories,getStoryElements,getActiveFilters,insertActiveFilters,loadToolkit} from "../helpers";
+import {getStories,getAppVersions,getAppCategories,getStoryCategories,getStoryElements,getActiveFilters,insertActiveFilters} from "../helpers";
 import E404 from "./E404";
 import AppProfileLoading from "./appProfileLoading";
 import StoryThumbnailLoading from "./storyThumbnailLoading";
@@ -32,6 +32,7 @@ class _SingleApp extends React.Component {
     }
     this.skip = 0
     this.handleFilterClick = this.handleFilterClick.bind(this);
+    this.toggle = this.toggle.bind(this);
     this.resetFilters = this.resetFilters.bind(this);
     this.getFormattedFilterBy = this.getFormattedFilterBy.bind(this);
     if (this.props.match.params.id[this.props.match.params.id.length-1] === "#"){
@@ -39,9 +40,6 @@ class _SingleApp extends React.Component {
     } else {
       this.app_id = this.props.match.params.id
     }
-  }
-  async componentDidUpdate(){
-    loadToolkit()
   }
 	async componentDidMount(){
     let app = await this.props.client.query({
@@ -122,6 +120,12 @@ class _SingleApp extends React.Component {
       return state;
     });
   }
+  toggle(name) {
+    this.setState(nextState => {
+      nextState[name] = !nextState[name]
+      return nextState;
+    })
+  }
 	render(){
     if (this.state.app){
       var len = this.state.app.appVersions.length;
@@ -165,27 +169,36 @@ class _SingleApp extends React.Component {
                   <div className="colored">
 
       <div className="flex">
-        <button className="button white fbtn" data-toggle="first">Filter with Categories<img src="/assets/toolkit/images/shape.svg" alt /></button>
+        <button onClick={() => this.toggle("storyCategoriesFilterOpen")} className="button white fbtn" data-toggle="first">Filter with Categories<img src="/assets/toolkit/images/shape.svg" alt /></button>
         <StoryCategoriesDropdown 
           id="first"
           state={this.state}
           app={this.app_id}
+          filterBy={this.state.filterBy}
+          style={{top: "43.8984px",left: "-198.188px"}}
+          open={this.state.storyCategoriesFilterOpen}
           handleFilterClick={(e,storyCategory) => this.handleFilterClick(e,"storyCategories")}
         />
 
-        <button className="button white fbtn" data-toggle="second">Filter with Stories<img src="../../assets/toolkit/images/shape.svg" alt /></button>
+        <button onClick={() => this.toggle("storyElementsFilterOpen")} className="button white fbtn" data-toggle="second">Filter with Stories<img src="../../assets/toolkit/images/shape.svg" alt /></button>
         <StoryElementsDropdown
           id="second"
           state={this.state}
           app={this.app_id}
+          filterBy={this.state.filterBy}
+          style={{top: "43.8984px",left: "-173.367px"}}
+          open={this.state.storyElementsFilterOpen}
           handleFilterClick={(e,storyElement) => this.handleFilterClick(e,"storyElements")}
         />
 
-        <button className="button white fbtn" data-toggle="third">Filter by versions<img src="/assets/toolkit/images/shape.svg" alt /></button>
+        <button onClick={() => this.toggle("appVersionsFilterOpen")} className="button white fbtn" data-toggle="third">Filter by versions<img src="/assets/toolkit/images/shape.svg" alt /></button>
         <AppVersionsDropdown
           id="third"
           state={this.state}
           app={this.app_id}
+          filterBy={this.state.filterBy}
+          open={this.state.appVersionsFilterOpen}
+          style={{top: "43.8984px",left: "-171.773px"}}
           handleFilterClick={(e,appVersion) => this.setState(prevState => {
             let state = prevState;
             let status = !state.filterBy.appVersions[appVersion.id]

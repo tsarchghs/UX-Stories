@@ -2,7 +2,7 @@ import React from "react";
 import Loading from "./loading";
 import InsideHeader from "./insideHeader";
 import gql from "graphql-tag";
-import {getStoryCategories,getStoryElements,getActiveFilters,insertActiveFilters,loadToolkit} from "../helpers";
+import {getStoryCategories,getStoryElements,getActiveFilters,insertActiveFilters} from "../helpers";
 import E404 from "./E404";
 import DropdownLoading from "./dropdownLoading";
 import { withApollo } from "react-apollo";
@@ -19,11 +19,12 @@ class Library extends React.Component {
 		    storyCategories: undefined,
 		    storyElements: undefined,
 		    filterBy: {
-		        storyCategories: [],
-		        storyElements: []
+		        storyCategories: {},
+		        storyElements: {}
 	      	},
 	      	show404: false
 		}
+		this.toggle = this.toggle.bind(this);
 		this.all_stories = undefined;
 		this.handleFilterClick = this.handleFilterClick.bind(this);
 		this.update = this.update.bind(this);
@@ -36,11 +37,7 @@ class Library extends React.Component {
 			return state;
 		})
 	}
-	async componentDidUpdate(){
-		loadToolkit();
-	}
 	async componentDidMount() {
-		loadToolkit();
 		try {
 			var results = await this.props.client.query({
 				query: gql`
@@ -82,9 +79,10 @@ class Library extends React.Component {
 			return state;
 		})
 		  this.setState((prevState) => {
-	      let state = prevState.filterBy[type] = {...prevState.filterBy[type],
-	      										[obj.id]:!prevState.filterBy[type][obj.id]}
-	      return state
+	      prevState.filterBy[type] = {...prevState.filterBy[type],
+														[obj.id]:!prevState.filterBy[type][obj.id]}
+				console.log(prevState);
+	      return prevState
 	    },this.update)
 	  }
 	async update() {
@@ -120,6 +118,12 @@ class Library extends React.Component {
 			return state;
 		})
 	}
+  toggle(name) {
+    this.setState(nextState => {
+      nextState[name] = !nextState[name]
+      return nextState;
+    })
+  }
 	unFilter(type,obj){
 	    this.setState(prevState => {
 	      let state = prevState;
@@ -165,19 +169,25 @@ class Library extends React.Component {
 								  <div className="flex ac">
 									<a href="#"><img src="../../assets/toolkit/images/edit.svg" alt /></a>
 		        
-							        <button className="button white fbtn" data-toggle="second">Filter with Stories<img src="../../assets/toolkit/images/shape.svg" alt /></button>
+							        <button onClick={e => this.toggle("storyCategoriesFilterOpen")} className="button white fbtn" data-toggle="second">Filter with Stories<img src="../../assets/toolkit/images/shape.svg" alt /></button>
 							        <StoryCategoriesDropdown 
 							          id="second"
 												library={this.props.match.params.id}
+												filterBy={this.state.filterBy}
+												open={this.state.storyCategoriesFilterOpen}
 							          state={this.state}
+												style={{ top: "21.9609px", left: "-173.367px"}}
 							          handleFilterClick={(e,storyCategory) => this.handleFilterClick(e,storyCategory,"storyCategories")}
 							        />
 
-							        <button className="button white fbtn" data-toggle="third">Filter with Elements<img src="../../assets/toolkit/images/shape.svg" alt /></button>
+							        <button onClick={e => this.toggle("storyElementsFilterOpen")} className="button white fbtn" data-toggle="third">Filter with Elements<img src="../../assets/toolkit/images/shape.svg" alt /></button>
 							        <StoryElementsDropdown
 							          id="third"
 												library={this.props.match.params.id}
-							          state={this.state}
+												filterBy={this.state.filterBy}
+												open={this.state.storyElementsFilterOpen}
+												style={{top: "21.9609px", left: "-188.578px"}}
+												state={this.state}
 							          handleFilterClick={(e,storyElement) => this.handleFilterClick(e,storyElement,"storyElements")}
 							        />
 

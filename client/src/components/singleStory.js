@@ -18,7 +18,7 @@ class SingleStory extends React.Component {
 			storyElements: undefined,
 			selectedLibraries: [],
 			savingStory: false,
-			selectLibraryOpen: true
+			selectLibraryOpen: false
 		}
 		this.story_id = undefined;
 		this.selectLibrary = this.selectLibrary.bind(this);
@@ -141,11 +141,6 @@ class SingleStory extends React.Component {
 		})
 	}
 	render(){
-		// let params = getQueryParams(window.location.href);
-		// let redirect_back = this.state.app ? `/app/${this.state.app.id}` : "#"
-		// if (params["from"] === "stories"){
-		// 	redirect_back = "/stories";
-		// }
 		return (
 			<div>
 				<InsideHeader 
@@ -160,14 +155,18 @@ class SingleStory extends React.Component {
 			          {
 			          	!this.state.app ? <SingleStoryAppLoading/>
 			          	: 
-			          		<div className="apps__top">
-					              <div className="apps__top-image" style={{backgroundImage: `url("${this.state.app.logo.url}")`}} />
-					              <div className="apps__top-info">
-					                <h5 className="bold">{this.state.app.name}</h5>
-					                <p className="apps__small-title light-gray">{this.state.app.description}</p>
-					              </div>
-						  	</div> 
-			          }
+											<div className="apps__top">
+												<Link to={`/app/${this.state.app.id}`}>
+													<div className="apps__top-image" style={{backgroundImage: `url("${this.state.app.logo.url}")`}} />
+												</Link>
+													<div className="apps__top-info">
+														<Link to={`/app/${this.state.app.id}`}>
+															<h5 className="bold">{this.state.app.name}</h5>
+														</Link>
+														<p className="apps__small-title light-gray">{this.state.app.description}</p>
+													</div>
+											</div> 
+								}
 			          {
 			          	this.state.app 
 			          	? <Link to={`/app/${this.state.app.id}`}>

@@ -7,7 +7,7 @@ import {getActiveFilters} from "../helpers";
 class AppVersionsDropdown extends React.Component {
 	render(){
 		return (
-			<div className="filter" id={this.props.id} data-dropdown data-auto-focus="true">
+			<div className={`filter ${this.props.open ? "is-open" : ""}`} style={this.props.style} id={this.props.id} data-dropdown data-auto-focus="true">
 	            <Query 
 	              query={gql`
 		              query AppVersions (
@@ -43,8 +43,9 @@ class AppVersionsDropdown extends React.Component {
 	                          {
 	                            data.appVersions.map(appVersion => {
 																console.log(appVersion)
+																let active = this.props.filterBy.appVersions[appVersion.id]
 	                              return (
-																		<label className="radio-t rde">
+																	<label className={`radio-t rde ${active ? 'checked' : ''}`}>
 																			<label id={appVersion.id+"_label"} className="gray bold">{appVersion.name}</label>
 																			<input 
 																				className="ic" 

@@ -3,7 +3,7 @@ import Loading from "./loading";
 import gql from "graphql-tag";
 import Header from "./header";
 import { Link } from "react-router-dom";
-import {getStories,getAppCategories,getStoryCategories,getStoryElements,getActiveFilters,insertActiveFilters,loadToolkit} from "../helpers";
+import {getActiveFilters,insertActiveFilters} from "../helpers";
 import uuidv1 from 'uuid/v1';
 import { debounce } from "lodash";
 import DropdownLoading from "./dropdownLoading";
@@ -35,22 +35,20 @@ class _Stories extends React.Component {
       storyCategories: undefined,
       storyElements: undefined,
       filterBy: {
-        appCategory: undefined,
-        storyCategories: [],
-        storyElements: []
+        appCategory: "all",
+        storyCategories: {},
+        storyElements: {}
       },
       reached_end: false,
       searchId: undefined
     }
     this.search = debounce( this.search.bind(this), 500 );
     this.resetFilters = this.resetFilters.bind(this);
+    this.toggle = this.toggle.bind(this);
     this.once = false
     this.allCategoriesFilterClickOnce = false
     this.searchNode = undefined
     this.first = 8
-  }
-  componentDidUpdate(){
-    loadToolkit()
   }
   hasActiveFitlers(){
     console.log(this.state.filterBy)
@@ -59,7 +57,6 @@ class _Stories extends React.Component {
           (this.state.filterBy.storyElements && this.state.filterBy.storyElements.length)
   }
   async componentDidMount() {
-    loadToolkit()
     this.search("",true);
   }
   async search(storyName_contains,firstTime,pagination=false) {
@@ -126,6 +123,9 @@ class _Stories extends React.Component {
         } else {
           state.stories = stories
         }
+        if (firstTime){
+          this.reached_end = stories.length < this.first
+        }
         state.pagination_skeleton =  false
         return state
       })
@@ -159,8 +159,8 @@ class _Stories extends React.Component {
     this.setState(prevState => {
       let state = prevState;
       state.filterBy.appCategory = undefined
-      state.filterBy.storyCategories = []
-      state.filterBy.storyElements = []
+      state.filterBy.storyCategories = {}
+      state.filterBy.storyElements = {}
       console.log(state);
       return state;
     },() => this.search(this.searchNode.value))
@@ -180,6 +180,12 @@ class _Stories extends React.Component {
       state.filterBy[type][obj] = false;
       return state;
     },() => this.search(this.searchNode.value))
+  }
+  toggle(name){
+    this.setState(nextState => {
+      nextState[name] = !nextState[name]
+      return nextState;
+    })
   }
   render() {
     console.log(this.state,122);
@@ -207,24 +213,32 @@ class _Stories extends React.Component {
                                           //   <button className="button white">Filter with Elements<img src="/assets/toolkit/images/008-delete.svg" alt /></button>
                                           // </div>
                                         }
-        <button className="button white fbtn" data-toggle="first" aria-controls="first" data-is-focus="false" data-yeti-box="first" aria-haspopup="true" aria-expanded="false">Filter with Categories<img src="/assets/toolkit/images/shape.svg" alt /></button>        
+        <button onClick={(e) => this.toggle("appCategoriesFilterOpen")} className="button white fbtn" data-toggle="first" aria-controls="first" data-is-focus="false" data-yeti-box="first" aria-haspopup="true" aria-expanded="false">Filter with Categories<img src="/assets/toolkit/images/shape.svg" alt /></button>        
         <AppCategoriesDropdown 
           id="first" 
           filterBy={this.state.filterBy}
+          open={this.state.appCategoriesFilterOpen}
+          style={{ top: "44px", left: "-198.25px" }}
           handleAllFilterClick={(e) => this.handleFilterClick(e,{id:"all",name:"all"},"appCategory")}
           handleFilterClick={(e,appCategory) => this.handleFilterClick(e,appCategory,"appCategory")} 
         />
 
-        <button className="button white fbtn" data-toggle="second">Filter with Stories<img src="../../assets/toolkit/images/shape.svg" alt /></button>
+        <button onClick={(e) => this.toggle("storyCategoriesFilterOpen")} className="button white fbtn" data-toggle="second">Filter with Stories<img src="../../assets/toolkit/images/shape.svg" alt /></button>
         <StoryCategoriesDropdown 
           id="second"
+          filterBy={this.state.filterBy}
           state={this.state}
+          style={{ top: "43.8984px", left: "-173.367px" }}
+          open={this.state.storyCategoriesFilterOpen}
           handleFilterClick={(e,storyCategory) => this.handleFilterClick(e,storyCategory,"storyCategories")}
         />
 
-        <button className="button white fbtn" data-toggle="third">Filter with Elements<img src="../../assets/toolkit/images/shape.svg" alt /></button>
+        <button onClick={(e) => this.toggle("storyElementsFilterOpen")} className="button white fbtn" data-toggle="third">Filter with Elements<img src="../../assets/toolkit/images/shape.svg" alt /></button>
         <StoryElementsDropdown
           id="third"
+          filterBy={this.state.filterBy}
+          open={this.state.storyElementsFilterOpen}
+          style={{ top: "43.8984px", left: "-188.641px" }}
           state={this.state}
           handleFilterClick={(e,storyElement) => this.handleFilterClick(e,storyElement,"storyElements")}
         />

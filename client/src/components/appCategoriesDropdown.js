@@ -6,7 +6,7 @@ import DropdownLoading from "./dropdownLoading";
 class AppCategoriesDropdown extends React.Component {
 	render(){
 		return (
-	        <div className="filter" id={this.props.id} data-dropdown data-auto-focus="true">
+			<div className={`filter ${this.props.open ? "is-open" : ""}`} style={this.props.style} id={this.props.id} data-dropdown data-auto-focus="true">
 	            <Query
 	              query={gql`
 	                query {
@@ -26,29 +26,19 @@ class AppCategoriesDropdown extends React.Component {
 	                    <p className="pink">{this.props.filterBy.appCategory && (this.props.filterBy.appCategory !== "all") ? 1 : 0} selected</p>
 	                  </div>
 	                  <div className="filter-dropdown__main">
-
-	                        <label className="radio-t rde">
-	                          <label id={"all"+"_label"} className="gray bold">all</label>
-	                          <input 
-	                            className="ic" 
-	                            type="radio" 
-	                            name={1}
-	                            value={1}
-	                            onClick={this.props.handleAllFilterClick}
-	                          />
-	                          <span id="allCategoriesFilter" className="checkmark"/>
-	                        </label>
 	                    {
-	                      data.appCategories.map(appCategory => {
+	                      [{id:"all",name:"all"}].concat(data.appCategories).map(appCategory => {
+													let active = appCategory.id == this.props.filterBy.appCategory;
 	                        return (
 
-	                          <label className="radio-t rde">
+	                          <label className={`radio-t rde ${active ? 'checked' : ''}`}>
 	                            <label id={appCategory.id+"_label"} className="gray bold">{appCategory.name}</label>
 	                            <input 
 	                              className="ic" 
 	                              type="radio" 
 	                              name={1}
 	                              value={1}
+																checked={active}
 	                              onClick={(e) => this.props.handleFilterClick(e,appCategory)}
 	                            />
 	                            <span className="checkmark"/>

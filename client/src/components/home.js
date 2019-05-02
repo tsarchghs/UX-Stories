@@ -4,7 +4,6 @@ import AppLoading from "./appLoading";
 import gql from "graphql-tag";
 import { Link } from "react-router-dom";
 import { debounce } from "lodash";
-import {getAppCategories,getActiveFilters,insertActiveFilters,loadToolkit} from "../helpers";
 import DropdownLoading from "./dropdownLoading";
 import AppCategoriesDropdown from "./appCategoriesDropdown";
 import { withApollo, Query, Mutation } from "react-apollo";
@@ -20,34 +19,28 @@ class _Home extends React.Component {
       reached_end: false,
       nothing_to_show: false,
       filterBy: {
-        appCategory: undefined
+        appCategory: "all"
       },
       jobs: [],
       show_email: true
     }
     this.skip = 0;
     this.loadMore = this.loadMore.bind(this);
+    this.toggle = this.toggle.bind(this);
     this.update = debounce(this.update.bind(this),500);
     this.enteredEmail = this.enteredEmail.bind(this);
     this.callAllCategoriesFilterOnce = false
   }
-  componentDidUpdate(){
-    loadToolkit()
-    if (!this.callAllCategoriesFilterOnce && document.getElementById("allCategoriesFilter")){
-      document.getElementById("allCategoriesFilter").click();
-      this.callAllCategoriesFilterOnce = true
-    }
-  }
   filterCategory(appCategory) {
     console.log(appCategory);
-    if (appCategory.name === "all" && !this.callAllCategoriesFilterOnce){
+    if (appCategory.id === "all" && !this.callAllCategoriesFilterOnce){
       this.callAllCategoriesFilterOnce = true
       return;
     }
     if (!this.state.filterBy.appCategory || !(this.state.filterBy.appCategory.id === appCategory.id)){
       this.setState(prevState => {
         let state = prevState;
-        state.filterBy.appCategory = appCategory.name
+        state.filterBy.appCategory = appCategory.id
       },() => this.update(null,true));
     }
   }
@@ -110,8 +103,13 @@ class _Home extends React.Component {
       return prevState
     })
   }
+  toggle(name) {
+    this.setState(nextState => {
+      nextState[name] = !nextState[name]
+      return nextState;
+    })
+  }
 	async componentDidMount(){
-		this.loadToolkit();
     this.update();
     let jobs = await this.props.client.query({
       query: gql`
@@ -131,13 +129,6 @@ class _Home extends React.Component {
     })
     this.skip += 4
     this.update();
-  }
-	loadToolkit() {
-	      let script = document.createElement("script");
-	      script.src = "/assets/toolkit/scripts/toolkit.js"
-	      script.async = true;
-	      document.body.appendChild(script);
-	      console.log(123);	
   }
   enteredEmail(e) {
     e.preventDefault();
@@ -233,10 +224,13 @@ class _Home extends React.Component {
                 </div>			
               </div>
               <div className="flex">
-                <button className="button white fbtn" data-toggle="first">Filter with Categories<img src="/assets/toolkit/images/shape.svg" alt /></button>
+                <button onClick={e => this.toggle("appCategoryFilterOpen")} className="button white fbtn" data-toggle="first">Filter with Categories<img src="/assets/toolkit/images/shape.svg" alt /></button>
               <AppCategoriesDropdown 
                 id="first" 
                 filterBy={this.state.filterBy}
+                style={{ top: "43.8984px", left: "-198.188px"}}
+                open={this.state.appCategoryFilterOpen}
+                value={this.state.filterBy.appCategory}
                 handleAllFilterClick={() => this.filterCategory({id:"all",name:"all"})}
                 handleFilterClick={(e,appCategory) => this.filterCategory(appCategory)} 
               />			

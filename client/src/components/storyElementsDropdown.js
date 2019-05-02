@@ -7,7 +7,7 @@ import {getActiveFilters} from "../helpers";
 class StoryElementsDropdown extends React.Component {
 	render(){
 		return (
-			<div className="filter" id={this.props.id} data-dropdown data-auto-focus="true">
+			<div className={`filter ${this.props.open ? "is-open" : ""}`} style={this.props.style} id={this.props.id} data-dropdown data-auto-focus="true">
 	            <Query 
 	              query={gql`
 		              query StoryElements(
@@ -47,13 +47,15 @@ class StoryElementsDropdown extends React.Component {
 												} 
 	                          {
 	                            data.storyElements.map(storyElement => {
+																let active = this.props.filterBy.storyElements[storyElement.id]
 	                              return (
-	                                <label className="radio__container">
+																	<label className={`radio__container ${active ? 'checked' : ''}`}>
 	                                  <label id={storyElement.id+"_label"} className="gray bold">{storyElement.name}</label>
 	                                  <input 
 	                                    className="ic" 
 	                                    type="checkbox" 
 	                                    id={storyElement.id}
+																			checked={active}
 	                                    name={1}
 	                                    value={1}
 	                                    onClick={(e) => this.props.handleFilterClick(e,storyElement)}
