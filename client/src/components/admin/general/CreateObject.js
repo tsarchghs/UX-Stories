@@ -50,7 +50,6 @@ class CreateObject extends React.Component {
 		               			if (data) {
 		               				return <Redirect to={this.props.location.pathname}/>
 		               			}
-		               			if (loading) return <center><Loading/></center>
 		               			return (
 					                <form onSubmit={async (e) => {
 					                	e.preventDefault();
@@ -197,7 +196,10 @@ class CreateObject extends React.Component {
 						                          Valid first name is required.
 						                        </div>
 						                        <hr className="mb-12" />
-						                        <button className="btn btn-primary btn-lg btn-block" type="submit" style={{marginBottom: '20px'}}>Create this {this.props.typename}🥳</button>
+																		{
+																				loading ? <center><Loading style={{ width: 75, height: 75, marginBottom: 15 }} /></center>
+																				: <button className="btn btn-primary btn-lg btn-block" type="submit" style={{marginBottom: '20px'}}>Create this {this.props.typename}🥳</button>
+																		}
 						                      </div>
 						                    </div>
 						                  </div>
