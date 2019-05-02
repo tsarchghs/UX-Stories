@@ -64,6 +64,9 @@ class CreateObject extends React.Component {
 					                		}
 					                		return JSON.stringify({ [ref_key]: node.value })
 					                	})
+														data = data.concat(Object.keys(this.state).map(key => {
+															return JSON.stringify({ [key]: this.state[key]})
+														}))
 					                	console.log(data);
 					                	let repr = JSON.stringify(data);
 					                	console.log(1);
