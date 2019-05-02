@@ -5879,7 +5879,6 @@ p {
           flex: 1; }
 
 .home-hero__img {
-  background-image: url("../images/homeimg.jpg");
   width: 100%;
   -webkit-box-flex: 1;
       -ms-flex: 1;
