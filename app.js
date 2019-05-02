@@ -8,12 +8,17 @@ const bodyParser = require("body-parser");
 const jwt = require("jsonwebtoken");
 const configs = require("./configs");
 const { formatError } = require("apollo-errors");
+const fs = require("fs");
 
 const prismaDb = new Prisma({
 	typeDefs:prismaTypeDefs,
 	endpoint:"https://eu1.prisma.sh/gjergj-kadriu-c6f550/stories/dev",
 	debug: false
 })
+
+if (!fs.existsSync("./public/file")){
+	fs.mkdirSync("./public/file");
+}
 
 const server = new graphqlServer({
 	endpoint: "/graphql",
