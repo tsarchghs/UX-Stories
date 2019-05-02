@@ -28,7 +28,16 @@ const CreateObjectMutation = gql`
 class CreateObject extends React.Component {
 	constructor(props){
 		super(props);
+		this.handleOnChange = this.handleOnChange.bind(this); 
+		this.state = {
+
+		}
 		this.refs = {}
+	}
+	handleOnChange(e, fieldQueryName){
+		this.setState({
+			[fieldQueryName]: e.target.value
+		})
 	}
 	render(){
 		return (
@@ -105,7 +114,11 @@ class CreateObject extends React.Component {
 						                      				console.log(field.type,55);
 						                      				return <div>
 											                        <label htmlFor="firstName">{field.show}</label>
-											                        <input type={"password"} ref={node => this.refs = Object.assign({},this.refs,{ [field.queryName]: node })} type="text" className="form-control" id="firstName" placeholder required />
+											                        <input 
+																								value={this.state[field.queryName]}
+																								onChange={(e) => this.handleOnChange(e, field.queryName)}
+																								type="text" className="form-control" id="firstName" placeholder required 
+																							/>
 								                      			</div>
 						                      			}
 						                      			if (field.options){
@@ -145,7 +158,7 @@ class CreateObject extends React.Component {
 						                      						return (
 						                      							<div>
 						                      								<label htmlFor="firstName">{field.show}</label>
-							                      							<select multiple={field.hasMany} ref={node => this.refs = Object.assign({},this.refs,{ [field.queryName]: node })}
+																									<select onChange={e => console.log(e.target.value)} multiple={field.hasMany} ref={node => this.refs = Object.assign({},this.refs,{ [field.queryName]: node })}
 								                      								className="form-control" id="input-select"
 								                      							>
 										                      					{
@@ -154,7 +167,14 @@ class CreateObject extends React.Component {
 										                      					}
 																				{
 													                      			objects.map(obj => {
-													                      				return <option id={obj.id} value={obj.id}>{obj.name}</option>
+													                      				return (
+																													<option 
+																														id={obj.id} 
+																														value={obj.id}
+																													>
+																														{obj.name}
+																													</option>
+																												)
 													                      			})
 																				}
 							                      							</select>
