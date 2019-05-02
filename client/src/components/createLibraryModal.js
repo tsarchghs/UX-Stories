@@ -1,12 +1,14 @@
 import React from "react";
-import { Mutation } from "react-apollo";
+import { Mutation, withApollo } from "react-apollo";
 import gql from "graphql-tag";
 import Alert from "./alert";
-	            // <img src="https://loading.io/spinners/rolling/lg.curve-bars-loading-indicator.gif" />
-class CreateLibraryModal extends React.Component {
+
+class _CreateLibraryModal extends React.Component {
 	constructor(props) {
 		super(props);
-		this.libraryName = undefined;
+		this.state = {
+			libraryName: ""
+		}
 	}
 	render(){
 		return (
@@ -19,8 +21,14 @@ class CreateLibraryModal extends React.Component {
 	          			createLibrary(
 	          				name: $name
 	          			) {
-	          				id
-	          			}
+											id
+											name
+											stories {
+												thumbnail {
+												url
+											}
+										}
+									}
 	          		}
 	          `}>
 	          	{ (createLibrary,{loading,error,data}) => {
@@ -31,22 +39,76 @@ class CreateLibraryModal extends React.Component {
 		          			</center>
 	          			)
 	          		}
-	          		if (data) {
-	          			this.props.closeAndUpdate();
-	          		}
 	          		return (
-	          			<form onSubmit={(e) => {
+	          			<form onSubmit={async (e) => {
 	          				e.preventDefault();
-	          				createLibrary({
-	          					variables:{name:this.libraryName.value}
+	          				let res = await createLibrary({
+	          					variables:{name:this.state.libraryName}
 	          				})
+										let data = res.data;
+										try {
+											const LIBRARIES_QUERY = gql`query {
+											libraries {
+													id
+                          name
+                          stories {
+														thumbnail {
+														url
+													}
+												}
+                      }
+										}`
+											let current_libraries = this.props.client.readQuery({ query: LIBRARIES_QUERY });
+											current_libraries.libraries.push(data.createLibrary);
+											this.props.client.writeQuery({
+												query: LIBRARIES_QUERY,
+												data: current_libraries
+											})
+										} catch (e) { 
+											console.log(e,1);
+										}
+
+										try {
+											const GET_LOGGED_IN_USER_QUERY = gql`                                    
+													query {
+														getLoggedInUser{
+															full_name
+															email
+															role
+															job {
+																	id
+																	name
+															}
+															profile_photo {
+																url
+															}   
+															libraries {
+																	id
+																	name
+															}
+														}
+													}`
+											let current_data = this.props.client.readQuery({ query: GET_LOGGED_IN_USER_QUERY});
+											let new_library = data.createLibrary;
+											current_data.getLoggedInUser.libraries.push({
+												__typename: "Library",
+												id: new_library.id,
+												name: new_library.name
+											})
+											this.props.client.writeQuery({
+												query: GET_LOGGED_IN_USER_QUERY,
+												data: current_data
+											})
+										} catch (e) {console.log(e,2)}
+
+										this.props.close();
 	          			}}>
 							<div>
 											{
 												error && error.graphQLErrors && error.graphQLErrors[0].name === "ValidationError" && error.graphQLErrors[0].data.errors.map(error => <Alert style={{ height: 50 }} red={true} message={error} />)
 											}
 					          <div>
-					            <input ref={node => this.libraryName = node} className="input" type="text" placeholder="Library name" />
+												<input value={this.state.libraryName} onChange={e => this.setState({ libraryName: e.target.value })} className="input" type="text" placeholder="Library name" />
 					          </div>
 					          <div className="text-right">
 					            <button className="button" id="createLibraryButton">Create</button>
@@ -65,4 +127,4 @@ class CreateLibraryModal extends React.Component {
 	}
 }
 
-export default CreateLibraryModal;
+export default withApollo(_CreateLibraryModal);
