@@ -32,30 +32,35 @@ const libraries = async (root,args,context,info) => {
 			stories_every:{}
 		}
 	} 
-	if (args.libraryFilterInput && args.libraryFilterInput.storyCategories && args.libraryFilterInput.storyCategories.length){
-		filterBy["where"]["stories_every"] = {
-			AND: args.libraryFilterInput.storyCategories.map(storyCategory=> (
-					{
-						storyCategories_some:{
-							name:storyCategory
-						}
-					}
-				))
+	if (args.libraryFilterInput){
+		if (args.libraryFilterInput.containsStory){
+			filterBy["where"]["stories_some"] = { id: args.libraryFilterInput.containsStory }
 		}
-	}
-	if (args.libraryFilterInput && args.libraryFilterInput.storyElements && args.libraryFilterInput.storyElements.length) {
-		if (filterBy["where"]["stories_every"]["AND"] === undefined){
-			filterBy["where"]["stories_every"]["AND"] = []
-		}
-		filterBy["where"]["stories_every"]["AND"] = filterBy["where"]["stories_every"]["AND"].concat(
-				args.libraryFilterInput.storyElements.map(storyElement => (
+		if (args.libraryFilterInput.storyCategories && args.libraryFilterInput.storyCategories.length){
+			filterBy["where"]["stories_every"] = {
+				AND: args.libraryFilterInput.storyCategories.map(storyCategory=> (
 						{
-							storyElements_some: {
-								name: storyElement
+							storyCategories_some:{
+								name:storyCategory
 							}
 						}
 					))
-			)
+			}
+		}
+		if (args.libraryFilterInput.storyElements && args.libraryFilterInput.storyElements.length) {
+			if (filterBy["where"]["stories_every"]["AND"] === undefined){
+				filterBy["where"]["stories_every"]["AND"] = []
+			}
+			filterBy["where"]["stories_every"]["AND"] = filterBy["where"]["stories_every"]["AND"].concat(
+					args.libraryFilterInput.storyElements.map(storyElement => (
+							{
+								storyElements_some: {
+									name: storyElement
+								}
+							}
+						))
+				)
+		}
 	}
 	const libraries = await context.db.query.libraries(filterBy,info);
 	return libraries;
