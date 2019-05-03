@@ -51,7 +51,7 @@ class Library extends React.Component {
 						  id
 						  thumbnail {
 						  	id
-							url
+								url
 						  }
 						}
 					  }
@@ -226,14 +226,16 @@ class Library extends React.Component {
 										<div className="cards">
 										  <div className="container">
 											<div className="cards__content">
-												{
-													this.state.library.stories.length ? "" : <center>{"Nothing to show"}</center>   
-												}
-												{
-													this.state.library.stories.map(story => 
-													  <a href="#" key={story.id}><img style={{borderRadius:30,width:300,height:600}} key={story.id} src={story.thumbnail.url} alt /></a>
-													)
-												}
+											<center>
+													{
+														this.state.library.stories.length ? "" : <center>{"Nothing to show"}</center>   
+													}
+													{
+														this.state.library.stories.map(story => 
+															<a href="#" key={story.id}><img style={{borderRadius:30,width:300,height:600}} key={story.id} src={story.thumbnail.url} alt /></a>
+														)
+													}
+											</center>
 											</div>
 										  </div>
 										</div>
