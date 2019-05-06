@@ -10,6 +10,18 @@ import CreateLibraryModal from "./createLibraryModal";
 import {loadToolkit} from "../helpers";
 import $ from "jquery";
 
+const LIBRARIES_QUERY = gql`query {
+    libraries {
+        id
+        name
+        stories {
+          thumbnail {
+          url
+        }
+      }
+    }
+  }`
+
 class Profile extends React.Component {
   constructor(props) {
     super(props);
@@ -29,7 +41,6 @@ class Profile extends React.Component {
         <ApolloProvider client={this.props.client}>
           <CreateLibraryModal
             id="exampleModal2"
-            refetchLibraries={this.props.refetchApp}
             close={() => {
               document.querySelector('#exampleModal2').parentElement.click()
             }}
@@ -107,28 +118,44 @@ class Profile extends React.Component {
                           id
                           name
                           stories {
+                            id
                             thumbnail {
+                              id
                               url
                             }
                           }
                         }
                       }
                   `}>
-                  { ({loading,error,data,refetch}) => {
+                  { ({loading,error,data,refetch,networkStatus}) => {
+                    console.log(networkStatus);
                     this.refetchLibraries = refetch;
-                    if (loading) return <Loading />
                     if (error) return <p>{error.message}</p>
-                    let libraries = data.libraries;
+                    var data_or_cache = data
+                    if (!data.libraries){
+                      try {
+                        var data_or_cache = this.props.client.readQuery({query:LIBRARIES_QUERY});
+                      } catch (e) {}
+                      console.log(data_or_cache,511);
+                    }
+                    let libraries = data_or_cache.libraries ? data_or_cache.libraries : []
+                    console.log(data_or_cache,5123);
                     return (
                         <div className="libraries__content">
-                          <div data-open="exampleModal2" className="libraries-card create">
-                            <img src="../../assets/toolkit/images/007-plus.svg" />
-                            <p className="pink bold">Create new library</p>
-                          </div>
                           {
-                            libraries.map(library => {
-                                return <LibraryCard key={library.id} library={library} />
-                            })
+                            loading && !libraries.length? <Loading/>
+                            : 
+                            <div className="libraries__content">
+                              <div data-open="exampleModal2" className="libraries-card create">
+                                <img src="../../assets/toolkit/images/007-plus.svg" />
+                                <p className="pink bold">Create new library</p>
+                              </div>
+                              {
+                                libraries.map(library => {
+                                  return <LibraryCard key={library.id} library={library} />
+                                })
+                              }
+                            </div>
                           }
                         </div>
                       );
