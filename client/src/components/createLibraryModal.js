@@ -72,6 +72,7 @@ class _CreateLibraryModal extends React.Component {
 											const GET_LOGGED_IN_USER_QUERY = gql`                                    
 													query {
 														getLoggedInUser{
+															id
 															full_name
 															email
 															role
