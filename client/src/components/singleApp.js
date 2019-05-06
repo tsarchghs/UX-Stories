@@ -1,5 +1,5 @@
 import React from "react";
-import Header from "./header";
+import InsideHeader from "./insideHeader";
 import Loading from "./loading";
 import gql from "graphql-tag";
 import {getStories,getAppVersions,getAppCategories,getStoryCategories,getStoryElements,getActiveFilters,insertActiveFilters} from "../helpers";
@@ -9,12 +9,13 @@ import StoryThumbnailLoading from "./storyThumbnailLoading";
 import SingleAppLoading from "./singleAppLoading";
 import { debounce } from "lodash";
 import DropdownLoading from "./dropdownLoading";
-import { Link } from "react-router-dom";
+import { Link, withRouter } from "react-router-dom";
 import { withApollo, Query } from "react-apollo";
 import StoryCategoriesDropdown from "./storyCategoriesDropdown";
 import StoryElementsDropdown from "./storyElementsDropdown";
 import StoryElementsActiveFilters from "./storyElementsActiveFilters";
 import AppVersionsDropdown from "./appVersionsDropdown";
+import { compose } from "recompose";
 
 class _SingleApp extends React.Component {
   constructor(props){
@@ -134,11 +135,22 @@ class _SingleApp extends React.Component {
       else current_version = this.state.app.appVersions[len-1].name 
     }
     if (this.state.show404) return <E404 />
-
+   
+    let state = {}
+    console.log(this.props.location,123123);
+    if (this.props.location && this.props.location.state) {
+      state["filterBy"] = this.props.location.state.filterBy
+    } 
+    console.log(state,55555);
 		return (
       <div>
         <div className="header back__header">
-	      <Header user={this.props.user} />
+          <InsideHeader
+            back_to_msg="Back to apps"
+            back_to_path="/"
+            state={state}
+            user={this.props.user}
+          />        
         {
 
           !this.state.app || this.state.show404 ? 
@@ -367,4 +379,4 @@ class _SingleApp extends React.Component {
 	}
 }
 
-export default withApollo(_SingleApp);
+export default compose(withApollo, withRouter)(_SingleApp);
