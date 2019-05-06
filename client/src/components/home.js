@@ -2,28 +2,35 @@ import React from "react";
 import Header from "./header";
 import AppLoading from "./appLoading";
 import gql from "graphql-tag";
-import { Link } from "react-router-dom";
+import { Link, withRouter } from "react-router-dom";
 import { debounce } from "lodash";
 import DropdownLoading from "./dropdownLoading";
 import AppCategoriesDropdown from "./appCategoriesDropdown";
 import { withApollo, Query, Mutation } from "react-apollo";
 import Cookies from "js-cookie";
+import { compose } from "recompose";
 
 class _Home extends React.Component {
   constructor(props) {
     super(props);
+    let filterBy = {
+      appCategory: "all"
+    }
+    if (this.props.location && this.props.location.state && this.props.location.state.filterBy) {
+      filterBy = this.props.location.state.filterBy
+    }
+    console.log(this.props.location,12333);
     this.state = {
       appCategories:undefined,
       apps: undefined,
       show_skeleton: true,
       reached_end: false,
       nothing_to_show: false,
-      filterBy: {
-        appCategory: "all"
-      },
+      filterBy: filterBy,
       jobs: [],
       show_email: true
     }
+    console.log(this.props.location);
     this.skip = 0;
     this.loadMore = this.loadMore.bind(this);
     this.toggle = this.toggle.bind(this);
@@ -196,7 +203,7 @@ class _Home extends React.Component {
                                               </select>
                                             </div>
                                         }
-                                      <button className="button">SIGN UP</button>
+                                      <button style={{ marginBottom:"0px !important"}} className="button">SIGN UP</button>
                                     </div>
                                   </form>
                                 )
@@ -250,14 +257,20 @@ class _Home extends React.Component {
             {
               !this.state.apps ? "" :
               this.state.apps.map(app => {
+                let to = {
+                  pathname: `/app/${app.id}`,
+                  state: {
+                    filterBy: this.state.filterBy
+                  }
+                }
                 return (
                   <div className="app">
                     <div className="apps__top">
-                      <Link to={`/app/${app.id}`}>
+                      <Link to={to}>
                         <div className="apps__top-image" style={{backgroundImage: `url(${app.logo.url})`}} />
                       </Link>
                       <div className="apps__top-info">
-                        <Link to={`/app/${app.id}`}>
+                        <Link to={to}>
                           <h5 className="bold">{app.name}</h5>
                         </Link>
                         <p className="apps__small-title light-gray">{app.description}</p>
@@ -270,7 +283,7 @@ class _Home extends React.Component {
                           <p className="apps__small-title light-gray">Category</p>
                           <p>{app.appCategory.name}</p>
                         </div>
-                      <Link to={`/app/${app.id}`}>
+                      <Link to={to}>
                         <button className="button naked pink">View Stories</button>
                       </Link>
                       </div>
@@ -282,7 +295,7 @@ class _Home extends React.Component {
                       {
                         app.stories.map(story => {
                           return (
-                            <Link to={`/app/${app.id}`}>
+                            <Link to={to}>
                               <div className="app__images">
                                 <img src={story.thumbnail.url} alt /> 
                               </div>
@@ -322,4 +335,4 @@ class _Home extends React.Component {
 	}
 }
 
-export default withApollo(_Home);
+export default compose(withRouter,withApollo)(_Home);
