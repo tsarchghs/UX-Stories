@@ -118,6 +118,7 @@ class AdminListPage extends React.Component {
 			                	where={this.state.where}
 			                	delete_type={this.props.delete_type}
 			                	first={this.props.first}
+												typename_url_friendly={this.props.typename_url_friendly}
 			                	setOnSearch={this.setOnSearch}
 			                />
 		                }

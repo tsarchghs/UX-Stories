@@ -2,30 +2,8 @@ import React from "react";
 import { Query, Mutation, withApollo } from "react-apollo";
 import gql from "graphql-tag";
 import { debounce } from "lodash";
-
-const getObjectConnectionQuery = gql`
-  query GetObjectConnection(
-  	$connection_type: CONNECTION_TYPE!
-  	$fields: [String!]!
-  	$filterBy: [Dict!]
-  	$where: [Dict!]
-  ) {
-    getObjectConnection(
-		connection_type: $connection_type
-		fields: $fields
-		filterBy: $filterBy
-		where: $where
-    ) {
-      id
-      pageInfo{
-        hasNextPage
-      }
-      nodes {
-        repr
-      }
-    }
- }
-`
+import { Link } from "react-router-dom";
+import { getObjectConnectionQuery } from "../../../Queries";
 
 class _Table extends React.Component {
 	constructor(props){
@@ -43,16 +21,17 @@ class _Table extends React.Component {
 	render(){
 		let showFields = []
 		this.props.fields.map(field => !field.hideTable ? showFields.push(field) : null);
+		let get_obj_connection_variables = {
+			connection_type: this.props.connection_type,
+			fields: showFields.map(field => field.fetch ? field.fetch : field),
+			filterBy: this.props.filterBy.concat([this.skipBy]),
+			where: this.props.where
+		}
 		return (
 		<Query 
         	query={getObjectConnectionQuery}
         	notifyOnNetworkStatusChange={false}
-        	variables={{
-        		connection_type: this.props.connection_type,
-        		fields: showFields.map(field => field.fetch ? field.fetch : field),
-        		filterBy: this.props.filterBy.concat([this.skipBy]),
-        		where: this.props.where
-        	}}
+				variables={get_obj_connection_variables}
         >
         	{ ({loading,error,data,fetchMore,refetch,networkStatus,updateQuery}) => {	
         		console.log(networkStatus,loading,data,555);
@@ -161,6 +140,11 @@ class _Table extends React.Component {
 			                      		if (key === "id"){
 			                      			return  <th scope="row">{object[key]}</th>
 			                      		}
+																if (object[key].url){
+																	return (
+																		<img src={object[key].url}></img>
+																	)
+																}
 			                      		if (typeof(object[key]) === "object" && !object[key].primitive){
 			                      			return object[key].length !== undefined ?
 			                      					<th>
@@ -183,7 +167,14 @@ class _Table extends React.Component {
 			                      	})
 			                      }
 			                        <td><div className="dd-nodrag btn-group ml-auto">
+															<Link to={{
+																pathname:`/admin/${this.props.typename_url_friendly}/${object.id}`,
+																state:{
+																	get_obj_connection_variables
+																}	
+															}}>
 			                            <button className="btn btn-sm btn-outline-light">Edit</button>
+															</Link>
 				                            <Mutation 
 				                            	mutation={gql`
 				                            		mutation DeleteObject(
