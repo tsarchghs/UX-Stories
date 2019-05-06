@@ -28,7 +28,7 @@ import StoryCategories from "./components/admin/storyCategories";
 import StoryElements from "./components/admin/storyElements";
 import AppCategories from "./components/admin/appCategories";
 
-const URI = "http://uxstories.herokuapp.com/";
+const URI = "http://localhost:4000/";
 
 const client = new ApolloClient({
   uri: URI,
@@ -65,6 +65,7 @@ class App extends Component {
                         query={gql`
                                 query {
                                     getLoggedInUser{
+                                        id
                                         full_name
                                         email
                                         role
