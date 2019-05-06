@@ -52,6 +52,7 @@ class AppVersionsDropdown extends React.Component {
 																				type="radio" 
 																				name={1}
 																				value={1}
+																				checked={active}
 																				onClick={(e) => this.props.handleFilterClick(e,appVersion)}
 																			/>
 																			<span className="checkmark"/>
