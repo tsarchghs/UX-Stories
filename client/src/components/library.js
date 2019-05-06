@@ -10,6 +10,7 @@ import StoryCategoriesDropdown from "./storyCategoriesDropdown";
 import StoryElementsDropdown from "./storyElementsDropdown";
 import StoryCategoriesActiveFitlers from "./storyCategoriesActiveFitlers";
 import StoryElementsActiveFilters from "./storyElementsActiveFilters";
+import { Link } from "react-router-dom";
 
 class Library extends React.Component {
 	constructor(props){
@@ -232,7 +233,13 @@ class Library extends React.Component {
 													}
 													{
 														this.state.library.stories.map(story => 
-															<a href="#" key={story.id}><img style={{borderRadius:30,width:300,height:600}} key={story.id} src={story.thumbnail.url} alt /></a>
+															<Link to={{
+																pathname: `/story/${story.id}`,
+																state: {
+																	from_library: true,
+																	library_id: this.props.match.params.id
+																}
+															}} key={story.id}><img style={{borderRadius:30,width:300,height:600}} key={story.id} src={story.thumbnail.url} alt /></Link>
 														)
 													}
 											</center>
