@@ -19,14 +19,12 @@ import ForgetPassword from "./components/forgetPassword";
 import ResetPassword from "./components/resetPassword";
 import SingleStory from "./components/singleStory";
 import Dashboard from "./components/admin/dashboard";
-import Users from "./components/admin/users";
-import Apps from "./components/admin/apps";
-import AdminStories from "./components/admin/stories";
-import CreateApp from "./components/admin/createApp";
-import CreateAppCategory from "./components/admin/createAppCategory";
-import StoryCategories from "./components/admin/storyCategories";
-import StoryElements from "./components/admin/storyElements";
-import AppCategories from "./components/admin/appCategories";
+import { Users, UpdateUser } from "./components/admin/users";
+import { Apps, UpdateApp} from "./components/admin/apps";
+import { AdminStories, UpdateStory } from "./components/admin/stories";
+import { StoryCategories, UpdateStoryCategory} from "./components/admin/storyCategories";
+import { StoryElements, UpdateStoryElement } from "./components/admin/storyElements";
+import { AppCategories, UpdateAppCategory } from "./components/admin/appCategories";
 
 const URI = "http://localhost:4000/";
 
@@ -178,22 +176,6 @@ class App extends Component {
                                                 );
                                             }} />
 
-                                            <Route path="/admin/create_app" exact component={() => {
-                                                return (
-                                                    user && user.role === "ADMIN"
-                                                    ? <CreateApp user={user}/>
-                                                    : <Redirect to={`/login?success=admin:create_app`}/>
-                                                );
-                                            }} />
-
-                                            <Route path="/admin/create_app_category" exact component={() => {
-                                                return (
-                                                    user && user.role === "ADMIN"
-                                                    ? <CreateAppCategory user={user}/>
-                                                    : <Redirect to={`/login?success=admin:create_app_category`}/>
-                                                );
-                                            }} />
-
                                             <Route path="/admin/stories" exact component={() => {
                                                 return (
                                                     user && user.role === "ADMIN"
@@ -241,7 +223,48 @@ class App extends Component {
                                                     : <Redirect to={`/login?success=admin:dashboard`}/>
                                                 );
                                             }} />
-
+                                            <Route path="/admin/app_category/:id" component={({match}) =>{
+                                                return (
+                                                    user && user.role === "ADMIN"
+                                                    ? <UpdateAppCategory match={match}/>
+                                                    : <Redirect to={`/login?success=typename_friendly_url:id`} />
+                                                )
+                                            }}/>
+                                            <Route path="/admin/story_category/:id" component={({ match }) => {
+                                                return (
+                                                    user && user.role === "ADMIN"
+                                                        ? <UpdateStoryCategory match={match} />
+                                                        : <Redirect to={`/login?success=typename_friendly_url:id`} />
+                                                )
+                                            }} />
+                                            <Route path="/admin/story_element/:id" component={({ match }) => {
+                                                return (
+                                                    user && user.role === "ADMIN"
+                                                        ? <UpdateStoryElement match={match} />
+                                                        : <Redirect to={`/login?success=typename_friendly_url:id`} />
+                                                )
+                                            }} />
+                                            <Route path="/admin/user/:id" component={({ match }) => {
+                                                return (
+                                                    user && user.role === "ADMIN"
+                                                        ? <UpdateUser match={match} />
+                                                        : <Redirect to={`/login?success=typename_friendly_url:id`} />
+                                                )
+                                            }} />
+                                            <Route path="/admin/story/:id" component={({ match }) => {
+                                                return (
+                                                    user && user.role === "ADMIN"
+                                                        ? <UpdateStory match={match} />
+                                                        : <Redirect to={`/login?success=typename_friendly_url:id`} />
+                                                )
+                                            }} />
+                                            <Route path="/admin/app/:id" component={({ match }) => {
+                                                return (
+                                                    user && user.role === "ADMIN"
+                                                        ? <UpdateApp match={match} />
+                                                        : <Redirect to={`/login?success=typename_friendly_url:id`} />
+                                                )
+                                            }} />
                                         </div>
                                     )
                                 }}/>
