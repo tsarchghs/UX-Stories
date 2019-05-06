@@ -54,17 +54,6 @@ class Register extends React.Component {
 							`}
 						>
 						{ (signUp,{loading,error,data}) => {
-							let errors = []
-							if (error){
-								if (error.message === "GraphQL error: Please check that all of your arguments are not empty!"){
-									errors.push("Please fill out all the fields");
-								} else if (error.message === "GraphQL error: A unique constraint would be violated on User. Details: Field name = email"){
-									errors.push("Email is already taken");
-								} else {
-									return <p>{error.message}</p>
-								}
-
-							}
 							console.log(data);
 							if (data && data.signUp.token){
 								Cookies.set("token",data.signUp.token);
@@ -83,7 +72,7 @@ class Register extends React.Component {
 							        <div className="login__container">
 							          <div className="login__content">
 							          	<Link to="/login">
-							            	<h4 className="pink bold header__back"><a href="#" className="flex ac"><img src="../../assets/toolkit/images/008-delete.svg" alt />Back</a></h4>
+							            	<h4 className="pink bold header__back"><a href="#" className="flex ac"><img src="/assets/toolkit/images/backArrow.png" alt />Back</a></h4>
 							            </Link>
 							            <div className="login__header mb50">
 							              <img src="../../assets/toolkit/images/logo.svg" alt />
@@ -92,9 +81,9 @@ class Register extends React.Component {
 							            <div className="login__hero">
 							              <div className="login__hero--left">
 							                <h1 className="bold text-center">Create your account</h1>
-							                {
-							                	errors.map(error => <Alert style={{height:"70"}} red={true} message={error}/>)
-							                }
+												{
+														error && error.graphQLErrors && error.graphQLErrors[0] && error.graphQLErrors[0].name === "ValidationError" && error.graphQLErrors[0].data.errors.map(error => <Alert style={{ height: 50 }} red={true} message={error} />)
+												}
 														
 											{
 												jobsLoading ? <Loading /> :                  
