@@ -223,6 +223,15 @@ input JSON_OBJECT_Input {
   repr: String!
 }
 
+enum QUERY_TYPE {
+  user
+  app
+  story
+  appCategory
+  storyCategory
+  storyElement
+}
+
 enum MUTATION_TYPE {
   createUser
   createApp
@@ -231,6 +240,14 @@ enum MUTATION_TYPE {
   createStory
   createStoryCategory
   createStoryElement
+  
+  updateUser
+  updateApp
+  updateAppCategory
+  updateAppVersion
+  updateStory
+  updateStoryCategory
+  updateStoryElement
 }
 type ToggleStoryInfo {
   action: LinkType!
@@ -245,6 +262,12 @@ type Query {
     app: ID
   ): [AppVersion!]!
   appCategories: [AppCategory!]!
+
+  getObject(
+    id: ID!
+    query_type: QUERY_TYPE!
+    fields: [String!]!
+  ): JSON_OBJECT!
 
   getObjectConnection(
     connection_type: CONNECTION_TYPE!
@@ -285,6 +308,14 @@ type Query {
 }
 type Mutation {
   createObject(
+    data: JSON_OBJECT_Input!
+    fields: [String!]
+    mutation_type: MUTATION_TYPE!
+    fields_info: JSON_OBJECT_Input!
+  ): JSON_OBJECT!
+
+  updateObject(
+    id: ID!
     data: JSON_OBJECT_Input!
     fields: [String!]
     mutation_type: MUTATION_TYPE!

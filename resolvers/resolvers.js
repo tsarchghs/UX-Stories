@@ -29,10 +29,12 @@ module.exports = {
 		countUsers: userResolvers.countUsers,
 		jobs: jobResolvers.jobs,
 		users: userResolvers.users,
+		getObject: generalResolvers.getObject,
 		getObjectConnection: generalResolvers.getObjectConnection
 	},
 	Mutation: {
 		createObject: generalResolvers.createObject,
+		updateObject: generalResolvers.updateObject,
 		deleteObject: generalResolvers.deleteObject,
 		toggleStoryLibrary: libraryResolvers.toggleStoryLibrary,
 		login: authResolvers.login,
