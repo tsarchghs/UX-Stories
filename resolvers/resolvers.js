@@ -34,6 +34,7 @@ module.exports = {
 	Mutation: {
 		createObject: generalResolvers.createObject,
 		deleteObject: generalResolvers.deleteObject,
+		toggleStoryLibrary: libraryResolvers.toggleStoryLibrary,
 		login: authResolvers.login,
 		signUp: authResolvers.signUp,
 		verifyForgotPassword: authResolvers.verifyForgotPassword,

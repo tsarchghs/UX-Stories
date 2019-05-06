@@ -4,7 +4,7 @@ const configs = require("../configs");
 const fileHandling = require("../modules/fileApi");
 const nodemailer = require("nodemailer");
 const mailgun = require('mailgun-js')(configs.mailgun);
-const { checkValidation } = require("../helpers.js");
+const { checkValidation, CreateValidationError } = require("../helpers.js");
 const { loginSchema, signUpSchema } = require("../validations/authValidations.js");
 
 const saltRounds = 10;
@@ -34,7 +34,7 @@ const login = async (root,args,context) => {
 }
 
 const signUp = async (root,args,context) => {
-	await checkValidation(signUpSchema, args);
+	var errors = await checkValidation(signUpSchema, args, false);
 	var hasLogo; 
 	var profile_photo;
 	hasLogo = args.profile_photo ? true : false
@@ -62,7 +62,26 @@ const signUp = async (root,args,context) => {
 			connect: { id: profile_photo.id }
 		}
 	}
-	const user = await context.db.mutation.createUser({data:userParams});
+	console.log(errors,123);
+	if (!errors.length){
+		try {
+			var user = await context.db.mutation.createUser({data:userParams});
+		} catch (e) {
+			if (e.message === "A unique constraint would be violated on User. Details: Field name = email"){
+				var errors = ["Email is already taken."]
+			}
+		}
+	} else {
+		const user = await context.db.query.user({where:{email:args.email}});
+		if (user){
+			errors.push("Email is already taken.");
+		}
+	}
+	console.log(errors);
+	if (errors.length){
+		let ERROR = CreateValidationError(errors);
+		throw new ERROR;
+	}
 	return {
 		userId: user.id,
 		token: createToken(user.id),
