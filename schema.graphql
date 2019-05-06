@@ -232,6 +232,10 @@ enum MUTATION_TYPE {
   createStoryCategory
   createStoryElement
 }
+type ToggleStoryInfo {
+  action: LinkType!
+  library: Library!
+}
 
 type Query {
   getLoggedInUser: User
@@ -286,6 +290,11 @@ type Mutation {
     mutation_type: MUTATION_TYPE!
     fields_info: JSON_OBJECT_Input!
   ): JSON_OBJECT!
+
+  toggleStoryLibrary(
+    library: ID!
+    story: ID!
+  ): ToggleStoryInfo
 
   deleteObject(
     delete_type: DELETE_TYPE!
