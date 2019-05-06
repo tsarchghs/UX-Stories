@@ -45,7 +45,7 @@ class Login extends React.Component {
 				        <div className="login__container">
 			          <div className="login__content">
 			          	<Link to="/">
-			            	<h4 className="pink bold header__back"><a href="#" className="flex ac"><img src="/assets/toolkit/images/008-delete.svg" alt />Back</a></h4>
+			            	<h4 className="pink bold header__back"><a href="#" className="flex ac"><img src="/assets/toolkit/images/backArrow.png" alt />Back</a></h4>
 			            </Link>
 			            <div className="login__header">
 			              <img src="/assets/toolkit/images/logo.svg" alt />

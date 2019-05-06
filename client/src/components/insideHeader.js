@@ -1,12 +1,9 @@
 import React from "react";
 import { Link } from "react-router-dom";
-import {loadToolkit} from "../helpers";
 
 class InsideHeader extends React.Component {
-	componentDidMount(){
-		loadToolkit();
-	}
 	render() {
+		console.log(this.props);
 		return (
 			<div className="header back__header">
 	          <div className="container">
@@ -14,7 +11,10 @@ class InsideHeader extends React.Component {
 	              <div className="logo">
 	                <a href="#"><img src="/assets/toolkit/images/logo.svg" alt /></a>
 	              </div>				
-	              <Link to={this.props.back_to_path}><h4 className="pink bold header__back"><a href="#" className="flex ac"><img src="../../assets/toolkit/images/008-delete.svg" alt />{this.props.back_to_msg}</a></h4></Link>
+	              <Link to={{
+									pathname: this.props.back_to_path,
+									state: this.props.state
+								}}><h4 className="pink bold header__back"><a href="#" className="flex ac"><img src="/assets/toolkit/images/backArrow.png" alt />{this.props.back_to_msg}</a></h4></Link>
 								<div ref={node => this.profile_img = node} className="profile-nav__img--content">
 
 						        <div onClick={e => {
