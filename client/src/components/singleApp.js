@@ -16,6 +16,7 @@ import StoryElementsDropdown from "./storyElementsDropdown";
 import StoryElementsActiveFilters from "./storyElementsActiveFilters";
 import AppVersionsDropdown from "./appVersionsDropdown";
 import { compose } from "recompose";
+import Header from "./header";
 
 class _SingleApp extends React.Component {
   constructor(props){
@@ -145,12 +146,17 @@ class _SingleApp extends React.Component {
 		return (
       <div>
         <div className="header back__header">
-          <InsideHeader
-            back_to_msg="Back to apps"
-            back_to_path="/"
-            state={state}
-            user={this.props.user}
-          />        
+        {
+            this.props.user
+            ?<InsideHeader
+                back_to_msg="Back to apps"
+                back_to_path="/"
+                state={state}
+                user={this.props.user}
+            />
+            :
+              <Header/>        
+        }
         {
 
           !this.state.app || this.state.show404 ? 
