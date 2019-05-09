@@ -202,6 +202,8 @@ class _Table extends React.Component {
 													}
 				                              		let onClick = async () => {
 				                              			if (loading) return;
+																						let verification = prompt("Type 'DELETE' to delete");
+																						if (verification !== "DELETE") return;
 				                              			try {	
 					                              			let data = await deleteObject({
 					                              				variables:{
