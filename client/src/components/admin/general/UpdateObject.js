@@ -165,7 +165,7 @@ class UpdateObject extends React.Component {
                                                             <div className="col-md-12 mb-12" style={{ marginTop: '30px' }}>
                                                                 {
                                                                     this.props.fields.map(field => {
-                                                                        if (field.hideCreate || field === "id" || field.type === "id") return;
+                                                                        if (field.hideCreate || field === "id" || field.type === "id" || field.type === "password") return;
                                                                         console.log(field, typeof (field))
                                                                         let show = typeof (field) === "object" ? field.type : field
                                                                         if (typeof (field) === "object") {
