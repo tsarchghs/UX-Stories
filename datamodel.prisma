@@ -113,6 +113,7 @@ type Library {
   createdBy: User!
   stories: [Story!]!
   name: String!
+  custom_updatedAt: DateTime!
   createdAt: DateTime! @createdAt
   updatedAt: DateTime! @updatedAt
 }
