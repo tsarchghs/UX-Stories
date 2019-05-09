@@ -175,6 +175,7 @@ class Library extends React.Component {
 							          id="second"
 												library={this.props.match.params.id}
 												filterBy={this.state.filterBy}
+												fetchPolicy="no-cache"
 												open={this.state.storyCategoriesFilterOpen}
 							          state={this.state}
 												style={{ top: "21.9609px", left: "-173.367px"}}
@@ -186,6 +187,7 @@ class Library extends React.Component {
 							          id="third"
 												library={this.props.match.params.id}
 												filterBy={this.state.filterBy}
+												fetchPolicy="no-cache"
 												open={this.state.storyElementsFilterOpen}
 												style={{top: "21.9609px", left: "-188.578px"}}
 												state={this.state}
