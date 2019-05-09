@@ -23,6 +23,7 @@ class StoryElementsDropdown extends React.Component {
 		                }
 		              }
 							`}
+								fetchPolicy={this.props.fetchPolicy ? this.props.fetchPolicy : "cache-first"}
 								variables={{
 									app: this.props.app,
 									library: this.props.library
@@ -30,8 +31,7 @@ class StoryElementsDropdown extends React.Component {
 							>
 	              { ({loading,error,data}) => {
 	                if (error) return <p>{error.message}</p>
-	                if (loading) return <DropdownLoading/>
-	                	console.log(data);
+									if (loading || !Object.keys(data).length) return <DropdownLoading />
 	                return (
 	                    <div className="filter-dropdown">
 	                      <div className="filter-dropdown__top">

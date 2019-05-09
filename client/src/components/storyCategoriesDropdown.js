@@ -23,6 +23,7 @@ class StoryCategoriesDropdown extends React.Component {
 		                }
 		              }
 								`}
+									fetchPolicy={this.props.fetchPolicy ? this.props.fetchPolicy : "cache-first"}
 									variables={{
 										app: this.props.app,
 										library: this.props.library
@@ -30,19 +31,19 @@ class StoryCategoriesDropdown extends React.Component {
 							>
 	              { ({loading,error,data}) => {
 	                if (error) return <p>{error.message}</p>
-	                if (loading) return <DropdownLoading/>
+									if (loading || !Object.keys(data).length) return <DropdownLoading />
 	                return (
 	                    <div className="filter-dropdown">
 	                      <div className="filter-dropdown__top">
 	                        <h5 className="gray bold">Filter with stories</h5>
 													{
-														!data.storyCategories.length ? null 
+														loading ? null 
 														:<p className="pink">{getActiveFilters(this.props.state,"storyCategories").length} selected</p>
 													}
 	                      </div>
 	                      <div className="filter-dropdown__main">                
 												{
-													!data.storyCategories.length && <p>No relevant filters</p>
+													!loading && data.storyCategories && !data.storyCategories.length && <p>No relevant filters</p>
 												}   
 	                          {
 	                            data.storyCategories.map(storyCategory => {
