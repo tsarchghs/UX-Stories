@@ -259,7 +259,7 @@ class _Stories extends React.Component {
               <div className="results__content">
               {
                 !this.hasActiveFitlers() ? null
-                : <p className="results__results bold">Showing {this.state.stories ? this.state.stories.length : 0} Results</p>
+                : <p style={{fontWeight:"bold"}} className="results__results bold">Showing {this.state.stories ? this.state.stories.length : 0} Results</p>
               }
                 {
                   this.state.filterBy.appCategory && this.state.filterBy.appCategory !== "all" ? 
@@ -307,17 +307,25 @@ class _Stories extends React.Component {
                           filterBy: this.state.filterBy
                         }
                       }}>
-                        <p>appCategory: {story.app.appCategory.name}</p>
-                        {
-                          story.storyCategories.map(storyCategory => {
-                            return <p>StoryCategory: {storyCategory.name}</p>
-                          })
-                        }
-                        {
-                          story.storyElements.map(storyElement => {
-                            return <p>StoryElement: {storyElement.name}</p>
-                          })
-                        }
+                      {
+                        true ? null
+                        :
+                        (
+                          <div>
+                            <p>appCategory: {story.app.appCategory.name}</p>
+                          {
+                            story.storyCategories.map(storyCategory => {
+                              return <p>StoryCategory: {storyCategory.name}</p>
+                            })
+                          }
+                          {
+                            story.storyElements.map(storyElement => {
+                              return <p>StoryElement: {storyElement.name}</p>
+                            })
+                          }
+                              </div>
+                        )
+                      }
                         <img src={story.thumbnail.url} key={story.id} style={{borderRadius:30,width:250,height:550,marginRight:25,marginBottom:10}}/>
                       </Link> 
                     )
