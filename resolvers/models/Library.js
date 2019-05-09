@@ -41,7 +41,8 @@ const toggleStoryLibrary = async (root,args,context,info) => {
 		data: {
 			stories:{
 				[type]: { id: args.story }
-			}
+			},
+			custom_updatedAt: new Date()
 		},
 		where: { id: args.library }
 	})
@@ -93,6 +94,7 @@ const libraries = async (root,args,context,info) => {
 				)
 		}
 	}
+	filterBy["orderBy"] = "custom_updatedAt_DESC";
 	const libraries = await context.db.query.libraries(filterBy,info);
 	return libraries;
 }
@@ -106,6 +108,7 @@ const createLibrary = async (root,args,context,info) => {
 			createdBy: {
 				connect: { id: createBy.id }
 			},
+			custom_updatedAt: new Date(),
 			name: args.name
 		}
 	},info)
@@ -128,7 +131,7 @@ const editLibrary = async (root,args,context,info) => {
 		console.log(links);
 		data["stories"] = links
 	}
-
+	data["custom_updatedAt"] = new Date()
 	const library = await context.db.mutation.updateLibrary({
 		where: { id: args.id},
 		data:data
