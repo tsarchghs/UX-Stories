@@ -28,6 +28,14 @@ const fields = [
 		primitive: true
 	},
 	{
+		type: "password",
+		fetch: "password",
+		show: "Password",
+		queryName: "password",
+		primitive: true,
+		hideTable: true
+	},
+	{
 		fetch:"libraries { id name }",
 		show:"libraries",
 		queryName: "libraries",
