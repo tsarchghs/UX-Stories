@@ -623,6 +623,8 @@ export type LibraryOrderByInput =
   | "id_DESC"
   | "name_ASC"
   | "name_DESC"
+  | "custom_updatedAt_ASC"
+  | "custom_updatedAt_DESC"
   | "createdAt_ASC"
   | "createdAt_DESC"
   | "updatedAt_ASC"
@@ -874,6 +876,7 @@ export interface UserUpsertNestedInput {
 export interface LibraryCreateWithoutStoriesInput {
   createdBy: UserCreateOneWithoutLibrariesInput;
   name: String;
+  custom_updatedAt: DateTimeInput;
 }
 
 export interface AppUpdateWithoutStoriesDataInput {
@@ -1455,6 +1458,7 @@ export interface StoryCategoryUpdateInput {
 export interface LibraryUpdateWithoutCreatedByDataInput {
   stories?: StoryUpdateManyWithoutLibrariesInput;
   name?: String;
+  custom_updatedAt?: DateTimeInput;
 }
 
 export type StoryWhereUniqueInput = AtLeastOne<{
@@ -1507,6 +1511,7 @@ export interface LibraryUpdateInput {
   createdBy?: UserUpdateOneRequiredWithoutLibrariesInput;
   stories?: StoryUpdateManyWithoutLibrariesInput;
   name?: String;
+  custom_updatedAt?: DateTimeInput;
 }
 
 export interface StoryUpsertWithWhereUniqueWithoutLibrariesInput {
@@ -1832,6 +1837,14 @@ export interface LibraryWhereInput {
   name_not_starts_with?: String;
   name_ends_with?: String;
   name_not_ends_with?: String;
+  custom_updatedAt?: DateTimeInput;
+  custom_updatedAt_not?: DateTimeInput;
+  custom_updatedAt_in?: DateTimeInput[] | DateTimeInput;
+  custom_updatedAt_not_in?: DateTimeInput[] | DateTimeInput;
+  custom_updatedAt_lt?: DateTimeInput;
+  custom_updatedAt_lte?: DateTimeInput;
+  custom_updatedAt_gt?: DateTimeInput;
+  custom_updatedAt_gte?: DateTimeInput;
   createdAt?: DateTimeInput;
   createdAt_not?: DateTimeInput;
   createdAt_in?: DateTimeInput[] | DateTimeInput;
@@ -2296,6 +2309,7 @@ export interface LibraryUpdateManyWithoutStoriesInput {
 
 export interface LibraryUpdateManyMutationInput {
   name?: String;
+  custom_updatedAt?: DateTimeInput;
 }
 
 export interface LibraryUpdateWithWhereUniqueWithoutStoriesInput {
@@ -2310,6 +2324,7 @@ export interface JobUpdateManyMutationInput {
 export interface LibraryUpdateWithoutStoriesDataInput {
   createdBy?: UserUpdateOneRequiredWithoutLibrariesInput;
   name?: String;
+  custom_updatedAt?: DateTimeInput;
 }
 
 export interface FileUpdateInput {
@@ -2403,6 +2418,14 @@ export interface LibraryScalarWhereInput {
   name_not_starts_with?: String;
   name_ends_with?: String;
   name_not_ends_with?: String;
+  custom_updatedAt?: DateTimeInput;
+  custom_updatedAt_not?: DateTimeInput;
+  custom_updatedAt_in?: DateTimeInput[] | DateTimeInput;
+  custom_updatedAt_not_in?: DateTimeInput[] | DateTimeInput;
+  custom_updatedAt_lt?: DateTimeInput;
+  custom_updatedAt_lte?: DateTimeInput;
+  custom_updatedAt_gt?: DateTimeInput;
+  custom_updatedAt_gte?: DateTimeInput;
   createdAt?: DateTimeInput;
   createdAt_not?: DateTimeInput;
   createdAt_in?: DateTimeInput[] | DateTimeInput;
@@ -2452,6 +2475,7 @@ export interface AppCreateWithoutCreatedByInput {
 
 export interface LibraryUpdateManyDataInput {
   name?: String;
+  custom_updatedAt?: DateTimeInput;
 }
 
 export interface StoryCreateInput {
@@ -2773,6 +2797,7 @@ export interface LibraryCreateInput {
   createdBy: UserCreateOneWithoutLibrariesInput;
   stories?: StoryCreateManyWithoutLibrariesInput;
   name: String;
+  custom_updatedAt: DateTimeInput;
 }
 
 export interface StoryUpdateManyWithoutAppInput {
@@ -2983,6 +3008,7 @@ export interface StoryCreateWithoutAppVersionsInput {
 export interface LibraryCreateWithoutCreatedByInput {
   stories?: StoryCreateManyWithoutLibrariesInput;
   name: String;
+  custom_updatedAt: DateTimeInput;
 }
 
 export interface NodeNode {
@@ -4171,6 +4197,7 @@ export interface AggregateLibrarySubscription
 export interface LibraryPreviousValues {
   id: ID_Output;
   name: String;
+  custom_updatedAt: DateTimeOutput;
   createdAt: DateTimeOutput;
   updatedAt: DateTimeOutput;
 }
@@ -4180,6 +4207,7 @@ export interface LibraryPreviousValuesPromise
     Fragmentable {
   id: () => Promise<ID_Output>;
   name: () => Promise<String>;
+  custom_updatedAt: () => Promise<DateTimeOutput>;
   createdAt: () => Promise<DateTimeOutput>;
   updatedAt: () => Promise<DateTimeOutput>;
 }
@@ -4189,6 +4217,7 @@ export interface LibraryPreviousValuesSubscription
     Fragmentable {
   id: () => Promise<AsyncIterator<ID_Output>>;
   name: () => Promise<AsyncIterator<String>>;
+  custom_updatedAt: () => Promise<AsyncIterator<DateTimeOutput>>;
   createdAt: () => Promise<AsyncIterator<DateTimeOutput>>;
   updatedAt: () => Promise<AsyncIterator<DateTimeOutput>>;
 }
@@ -4743,6 +4772,7 @@ export interface StoryEdgeSubscription
 export interface Library {
   id: ID_Output;
   name: String;
+  custom_updatedAt: DateTimeOutput;
   createdAt: DateTimeOutput;
   updatedAt: DateTimeOutput;
 }
@@ -4762,6 +4792,7 @@ export interface LibraryPromise extends Promise<Library>, Fragmentable {
     }
   ) => T;
   name: () => Promise<String>;
+  custom_updatedAt: () => Promise<DateTimeOutput>;
   createdAt: () => Promise<DateTimeOutput>;
   updatedAt: () => Promise<DateTimeOutput>;
 }
@@ -4783,6 +4814,7 @@ export interface LibrarySubscription
     }
   ) => T;
   name: () => Promise<AsyncIterator<String>>;
+  custom_updatedAt: () => Promise<AsyncIterator<DateTimeOutput>>;
   createdAt: () => Promise<AsyncIterator<DateTimeOutput>>;
   updatedAt: () => Promise<AsyncIterator<DateTimeOutput>>;
 }

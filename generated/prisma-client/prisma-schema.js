@@ -1206,6 +1206,7 @@ type Library {
   createdBy: User!
   stories(where: StoryWhereInput, orderBy: StoryOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Story!]
   name: String!
+  custom_updatedAt: DateTime!
   createdAt: DateTime!
   updatedAt: DateTime!
 }
@@ -1220,6 +1221,7 @@ input LibraryCreateInput {
   createdBy: UserCreateOneWithoutLibrariesInput!
   stories: StoryCreateManyWithoutLibrariesInput
   name: String!
+  custom_updatedAt: DateTime!
 }
 
 input LibraryCreateManyWithoutCreatedByInput {
@@ -1235,11 +1237,13 @@ input LibraryCreateManyWithoutStoriesInput {
 input LibraryCreateWithoutCreatedByInput {
   stories: StoryCreateManyWithoutLibrariesInput
   name: String!
+  custom_updatedAt: DateTime!
 }
 
 input LibraryCreateWithoutStoriesInput {
   createdBy: UserCreateOneWithoutLibrariesInput!
   name: String!
+  custom_updatedAt: DateTime!
 }
 
 type LibraryEdge {
@@ -1252,6 +1256,8 @@ enum LibraryOrderByInput {
   id_DESC
   name_ASC
   name_DESC
+  custom_updatedAt_ASC
+  custom_updatedAt_DESC
   createdAt_ASC
   createdAt_DESC
   updatedAt_ASC
@@ -1261,6 +1267,7 @@ enum LibraryOrderByInput {
 type LibraryPreviousValues {
   id: ID!
   name: String!
+  custom_updatedAt: DateTime!
   createdAt: DateTime!
   updatedAt: DateTime!
 }
@@ -1294,6 +1301,14 @@ input LibraryScalarWhereInput {
   name_not_starts_with: String
   name_ends_with: String
   name_not_ends_with: String
+  custom_updatedAt: DateTime
+  custom_updatedAt_not: DateTime
+  custom_updatedAt_in: [DateTime!]
+  custom_updatedAt_not_in: [DateTime!]
+  custom_updatedAt_lt: DateTime
+  custom_updatedAt_lte: DateTime
+  custom_updatedAt_gt: DateTime
+  custom_updatedAt_gte: DateTime
   createdAt: DateTime
   createdAt_not: DateTime
   createdAt_in: [DateTime!]
@@ -1337,14 +1352,17 @@ input LibraryUpdateInput {
   createdBy: UserUpdateOneRequiredWithoutLibrariesInput
   stories: StoryUpdateManyWithoutLibrariesInput
   name: String
+  custom_updatedAt: DateTime
 }
 
 input LibraryUpdateManyDataInput {
   name: String
+  custom_updatedAt: DateTime
 }
 
 input LibraryUpdateManyMutationInput {
   name: String
+  custom_updatedAt: DateTime
 }
 
 input LibraryUpdateManyWithoutCreatedByInput {
@@ -1379,11 +1397,13 @@ input LibraryUpdateManyWithWhereNestedInput {
 input LibraryUpdateWithoutCreatedByDataInput {
   stories: StoryUpdateManyWithoutLibrariesInput
   name: String
+  custom_updatedAt: DateTime
 }
 
 input LibraryUpdateWithoutStoriesDataInput {
   createdBy: UserUpdateOneRequiredWithoutLibrariesInput
   name: String
+  custom_updatedAt: DateTime
 }
 
 input LibraryUpdateWithWhereUniqueWithoutCreatedByInput {
@@ -1441,6 +1461,14 @@ input LibraryWhereInput {
   name_not_starts_with: String
   name_ends_with: String
   name_not_ends_with: String
+  custom_updatedAt: DateTime
+  custom_updatedAt_not: DateTime
+  custom_updatedAt_in: [DateTime!]
+  custom_updatedAt_not_in: [DateTime!]
+  custom_updatedAt_lt: DateTime
+  custom_updatedAt_lte: DateTime
+  custom_updatedAt_gt: DateTime
+  custom_updatedAt_gte: DateTime
   createdAt: DateTime
   createdAt_not: DateTime
   createdAt_in: [DateTime!]
