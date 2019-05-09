@@ -9,6 +9,35 @@ import AppCategoriesDropdown from "./appCategoriesDropdown";
 import { withApollo, Query, Mutation } from "react-apollo";
 import Cookies from "js-cookie";
 import { compose } from "recompose";
+import searchClient from "../searchClient";
+
+const APPS_QUERY = gql`
+  query Apps(
+    $appFilterInput: AppFilterInput 
+  ) {
+    apps(appFilterInput: $appFilterInput){
+        id
+        name
+        description
+        logo {
+          id
+          url
+        }
+        stories(first:3) {
+          id
+          thumbnail {
+            id
+            url
+          }
+        }
+        appCategory {
+          id
+          name
+        }
+        company
+      }
+    }
+`
 
 class _Home extends React.Component {
   constructor(props) {
@@ -65,38 +94,17 @@ class _Home extends React.Component {
     // quick hack to prevent error when user switches forth and back while update is being executed :'(
     // lesson learned. use refs next time
     let appName_contains = document.getElementById("appName_contains") ? document.getElementById("appName_contains").value : ""
+    let appFilterInput = {
+      first: 4,
+      skip: this.skip,
+      appName_contains: appName_contains
+    }
+    if (this.state.filterBy.appCategory){
+      appFilterInput["appCategory"] = this.state.filterBy.appCategory
+    }
     let appsData = await this.props.client.query({
-      query: gql`
-        query {
-          apps(appFilterInput:
-              {
-                first:4,
-                skip:${this.skip},
-                appName_contains:"${appName_contains}"
-                ${this.state.filterBy.appCategory ? `appCategory: "${this.state.filterBy.appCategory}"` : ""}
-              }) {
-            id
-            name
-            description
-            logo {
-              id
-              url
-            }
-            stories(first:3) {
-              id
-              thumbnail {
-                id
-                url
-              }
-            }
-            appCategory {
-              id
-              name
-            }
-            company
-          }
-        }
-      `
+      query: APPS_QUERY,
+      variables: { appFilterInput }
     })
     this.setState(prevState => {
       let state = prevState;
