@@ -38,11 +38,11 @@ class LeftSidebar extends React.Component {
                         	<a className={`nav-link ${`light-gray ${path === "users" ? "active" : ""}`}`} aria-expanded="false" data-target="#submenu-1"><i className="far fa-user-circle" />Users</a>
                       	</Link>
                       </li>
-                      <li className="nav-item ">
+                      {/* <li className="nav-item ">
                       	<Link to="/admin/pro_users">
                         	<a className={`nav-link ${`light-gray ${path === "pro_users" ? "active" : ""}`}`} aria-expanded="false" data-target="#submenu-1"><i className="fas fa-credit-card" />PRO Users</a>
                       	</Link>
-                      </li>
+                      </li> */}
                       <li className="nav-item ">
                       	<Link to="/admin/app_categories">
                         	<a className={`nav-link ${`light-gray ${path === "app_categories" ? "active" : ""}`}`} aria-expanded="false" data-target="#submenu-1"><i className="fas fa-list" />App Categories</a>
