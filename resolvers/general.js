@@ -6,6 +6,9 @@ const { createAppSchema } = require("../validations/appValidations");
 const { createStorySchema } = require("../validations/storyValidations");
 const { createUserSchema } = require("../validations/userValidations")
 const { nameOnlyRequired } = require("../validations/commonFields");
+const bcrypt = require("bcrypt");
+
+const saltRounds = 10;
 
 const getObject = async (parent,args,context) => {
 	let obj = await context.db.query[args.query_type]({
@@ -100,6 +103,8 @@ const createObject = async (parent,args,context) => {
 		let createFieldName = field_info.create_queryName ? field_info.create_queryName : x
 		if (field_info.options) {
 			valid_data[createFieldName] = formatted_data[x]
+		} else if (field_info.type === "password"){
+			valid_data[createFieldName] = await bcrypt.hash(formatted_data[x], saltRounds)
 		} else if (field_info.type === "file" || field_info.type === "video"){
 			let mimetype = field_info.type === "file" ? "image/png" : "video/mp4"
 			let base64 = formatted_data[x] 
