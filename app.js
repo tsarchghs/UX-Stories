@@ -1,7 +1,5 @@
 const graphqlServer = require("graphql-yoga").GraphQLServer;
 const resolvers = require("./resolvers/resolvers");
-const prismaTypeDefs = require("./generated/prisma-client/prisma-schema.js").typeDefs;
-const { Prisma } = require("prisma-binding");
 const { static } = require("express");
 const path = require("path");
 const bodyParser = require("body-parser");
@@ -9,12 +7,9 @@ const jwt = require("jsonwebtoken");
 const configs = require("./configs");
 const { formatError } = require("apollo-errors");
 const fs = require("fs");
+const prismaDb = require("./prismaDb");
 
-const prismaDb = new Prisma({
-	typeDefs:prismaTypeDefs,
-	endpoint:"https://eu1.prisma.sh/gjergj-kadriu-c6f550/stories/dev",
-	debug: false
-})
+require("./algolia/init")();
 
 if (!fs.existsSync("./public/file")){
 	fs.mkdirSync("./public/file");
