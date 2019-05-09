@@ -138,7 +138,7 @@ class EditProfileModal extends React.Component {
 											                		<option 
 											                			id={job.name} 
 											                			value={job.id}
-											                			selected={this.state.job.id === job.id}
+											                			selected={this.state.job === job.id}
 											                		>
 											                			{job.name}
 											                		</option> 
