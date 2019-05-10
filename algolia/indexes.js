@@ -6,6 +6,9 @@ const storiesIndex = client.initIndex("stories_index");
 appsIndex.setSettings({
     searchableAttributes:[
         "name"
+    ],
+    attributesForFaceting: [
+        "appCategory.name"
     ]
 })
 
