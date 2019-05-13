@@ -9,6 +9,7 @@ import ReactDOM from 'react-dom';
 import CreateLibraryModal from "./createLibraryModal";
 import {loadToolkit} from "../helpers";
 import $ from "jquery";
+import EditLibraryModal from "./editLibraryModal";
 
 const LIBRARIES_QUERY = gql`query {
     libraries {
@@ -66,6 +67,7 @@ class Profile extends React.Component {
   render() {
     console.log(this.props.user);
     return (
+      <ApolloProvider client={this.props.client}>
       <div>
       <Header user={this.props.user} />
         <div className="container">
@@ -152,6 +154,16 @@ class Profile extends React.Component {
                               </div>
                               {
                                 libraries.map(library => {
+                                  let el = document.getElementById(`editLibrary_${library.id}`)
+                                  if (!el){
+                                    let div = document.createElement("div");
+                                    ReactDOM.render(
+                                      <ApolloProvider client={this.props.client}>
+                                        <EditLibraryModal client={this.props.client} id={library.id} name={library.name} />
+                                      </ApolloProvider>
+                                      , div)
+                                    document.body.appendChild(div);
+                                  }
                                   return <LibraryCard key={library.id} library={library} />
                                 })
                               }
@@ -165,6 +177,7 @@ class Profile extends React.Component {
           </div>
         </div>
       </div>
+                  </ApolloProvider>
     );
   }
 };
