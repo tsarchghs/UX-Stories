@@ -28,7 +28,7 @@ class AppCategoriesDropdown extends React.Component {
 	                  <div className="filter-dropdown__main">
 	                    {
 	                      [{id:"all",name:"all"}].concat(data.appCategories).map(appCategory => {
-													let active = appCategory.name == this.props.filterBy.appCategory;
+													let active = appCategory.id == this.props.filterBy.appCategory;
 	                        return (
 
 	                          <label className={`radio-t rde ${active ? 'checked' : ''}`}>
