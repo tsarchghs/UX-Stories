@@ -235,49 +235,49 @@ class App extends Component {
                                             <Route path="/admin/app_category/:id" component={({match}) =>{
                                                 return (
                                                     user && user.role === "ADMIN"
-                                                    ? <UpdateAppCategory match={match}/>
+                                                    ? <UpdateAppCategory match={match} user={user}/>
                                                     : <Redirect to={`/login?success=typename_friendly_url:id`} />
                                                 )
                                             }}/>
                                             <Route path="/admin/story_category/:id" component={({ match }) => {
                                                 return (
                                                     user && user.role === "ADMIN"
-                                                        ? <UpdateStoryCategory match={match} />
+                                                        ? <UpdateStoryCategory match={match} user={user} />
                                                         : <Redirect to={`/login?success=typename_friendly_url:id`} />
                                                 )
                                             }} />
                                             <Route path="/admin/story_element/:id" component={({ match }) => {
                                                 return (
                                                     user && user.role === "ADMIN"
-                                                        ? <UpdateStoryElement match={match} />
+                                                        ? <UpdateStoryElement match={match} user={user} />
                                                         : <Redirect to={`/login?success=typename_friendly_url:id`} />
                                                 )
                                             }} />
                                             <Route path="/admin/user/:id" component={({ match }) => {
                                                 return (
                                                     user && user.role === "ADMIN"
-                                                        ? <UpdateUser match={match} />
+                                                        ? <UpdateUser match={match} user={user} />
                                                         : <Redirect to={`/login?success=typename_friendly_url:id`} />
                                                 )
                                             }} />
                                             <Route path="/admin/story/:id" component={({ match }) => {
                                                 return (
                                                     user && user.role === "ADMIN"
-                                                        ? <UpdateStory match={match} />
+                                                        ? <UpdateStory match={match} user={user} />
                                                         : <Redirect to={`/login?success=typename_friendly_url:id`} />
                                                 )
                                             }} />
                                             <Route path="/admin/app/:id" component={({ match }) => {
                                                 return (
                                                     user && user.role === "ADMIN"
-                                                        ? <UpdateApp match={match} />
+                                                        ? <UpdateApp match={match} user={user} />
                                                         : <Redirect to={`/login?success=typename_friendly_url:id`} />
                                                 )
                                             }} />
                                             <Route path="/admin/job/:id" component={({ match }) => {
                                                 return (
                                                     user && user.role === "ADMIN"
-                                                        ? <UpdateJob match={match} />
+                                                        ? <UpdateJob match={match} user={user} />
                                                         : <Redirect to={`/login?success=typename_friendly_url:id`} />
                                                 )
                                             }} />
