@@ -121,24 +121,15 @@ class _Stories extends React.Component {
       let stories = results.data.stories;
       this.setState(prevState => {
         let state = prevState;
+        state.reached_end = stories.length < this.first
         if (pagination){
-          if (stories.length < this.first) state.reached_end = true
           state.stories = state.stories.concat(stories);
         } else {
           state.stories = stories
         }
-        if (firstTime){
-          this.reached_end = stories.length < this.first
-        }
         state.pagination_skeleton =  false
         return state
       })
-    }
-    if (firstTime){
-      if (document.getElementById("allCategoriesFilter") && !this.once){
-        this.once = true
-        document.getElementById("allCategoriesFilter").click()
-      }
     }
   }
   async handleFilterClick(e,obj,type) {
@@ -288,13 +279,14 @@ class _Stories extends React.Component {
               }
               </div>
             </div>
-          </div><div className="cards">
+          </div>
+                {
+                      this.state.stories && !this.state.stories.length ? <h6 style={{paddingLeft:"26%"}}>Nothing to show, try different filters or query.</h6> : ""
+                }
+            <div className="cards">
             <center>
               <div className="container">
                 <div className="cards__content">
-                {
-                  this.state.stories && !this.state.stories.length ? <center>{"Nothing to show"}</center> : ""
-                }
                 {
                   this.state.stories === undefined ? SKELETON
                   :
@@ -338,14 +330,13 @@ class _Stories extends React.Component {
               </div>
               {
                   this.state.reached_end 
-                  ? <h3>Reached end</h3>
+                  ? <h3></h3>
                   : <h3 onClick={() => this.search(this.searchNode.value,false,true)}>Load more</h3>
               }
             </center>
           </div>
         </div>
       </div>
-        }
             <script src="../assets/toolkit/scripts/jquery.min.js"></script>
     <script src="../assets/toolkit/scripts/toolkit.js"></script>
       </div>
