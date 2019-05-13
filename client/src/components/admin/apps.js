@@ -92,7 +92,7 @@ class Apps extends React.Component {
   render(){
     return (
       <div>
-        <Header/>
+        <Header user={this.props.user}/>
         <LeftSidebar/>
         <AdminListPage
           typename="app"
@@ -114,7 +114,7 @@ class UpdateApp extends React.Component {
   render() {
     return (
       <div>
-        <Header />
+        <Header user={this.props.user}/>
         <LeftSidebar />
         <UpdateObject
           typename="app"

@@ -8,7 +8,7 @@ class AppCategories extends React.Component {
 	render(){
 		return (
 			<div>
-				<Header/>
+				<Header user={this.props.user}/>
 				<LeftSidebar/>
 				<AdminListPage 
 					typename="app category"
@@ -38,7 +38,7 @@ class UpdateAppCategory extends React.Component {
 	render(){
 		return (
 			<div>
-				<Header />
+				<Header user={this.props.user}/>
 				<LeftSidebar />
 				<UpdateObject
 					typename="app category"

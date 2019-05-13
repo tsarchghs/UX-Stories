@@ -67,7 +67,7 @@ class AdminStories extends React.Component {
 	render(){
 		return (
 			<div>
-		        <Header/>
+		        <Header user={this.props.user}/>
 		        <LeftSidebar/>
 		        <AdminListPage
 		          typename="story"
@@ -89,7 +89,7 @@ class UpdateStory extends React.Component {
 	render() {
 		return (
 			<div>
-				<Header />
+				<Header user={this.props.user}/>
 				<LeftSidebar />
 				<UpdateObject
 					typename="story"

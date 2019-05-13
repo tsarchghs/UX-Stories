@@ -58,6 +58,11 @@ class LeftSidebar extends React.Component {
                         	<a className={`nav-link ${`light-gray ${path === "story_elements" ? "active" : ""}`}`} aria-expanded="false" data-target="#submenu-1"><i className="fas fa-th" />Stories Elements</a>
                       	</Link>
                       </li>
+                      <li className="nav-item ">
+                        <Link to="/admin/jobs">
+                          <a className={`nav-link ${`light-gray ${path === "jobs" ? "active" : ""}`}`} aria-expanded="false" data-target="#submenu-1"><i className=" fas fa-user-md" />Jobs</a>
+                        </Link>
+                      </li>
                     </ul>
                   </div>
                 </nav>

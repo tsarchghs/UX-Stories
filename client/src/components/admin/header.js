@@ -2,6 +2,20 @@ import React from "react";
 import { Link } from "react-router-dom";
 
 class Header extends React.Component {
+  constructor(props){
+    super(props);
+    this.state = {
+      show: false
+    }
+    this.toggleShow = this.toggleShow.bind(this);
+  }
+  toggleShow(){
+    this.setState(nextState => {
+      let state = nextState;
+      state.show = !state.show
+      return state;
+    })
+  }
   render(){
     return (
         <div className="dashboard-header">
@@ -13,16 +27,20 @@ class Header extends React.Component {
                   <p style={{marginTop:12}} className="btn btn-primary float-right">Visit as user</p>
                 </Link>
                 <li className="nav-item dropdown nav-user">
-                  <a className="nav-link nav-user-img" href="#" id="navbarDropdownMenuLink2" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><img src={`${this.props.user && this.props.user.profile_photo ? this.props.user.profile_photo.url : "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQOo9ftjYQCU8HW1YByx0oAQdegRxO51mQN0tKKenGRnDZb-_D6"}`} alt className="user-avatar-md rounded-circle" /></a>
-                  <div className="dropdown-menu dropdown-menu-right nav-user-dropdown" aria-labelledby="navbarDropdownMenuLink2">
+                  <p style={{cursor:"pointer"}} onClick={this.toggleShow} className="nav-link nav-user-img" id="navbarDropdownMenuLink2" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><img src={`${this.props.user && this.props.user.profile_photo ? this.props.user.profile_photo.url : "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQOo9ftjYQCU8HW1YByx0oAQdegRxO51mQN0tKKenGRnDZb-_D6"}`} alt className="user-avatar-md rounded-circle" /></p>
+                  <div className={`dropdown-menu dropdown-menu-right nav-user-dropdown ${this.state.show ? "show":""}`} aria-labelledby="navbarDropdownMenuLink2">
                     <div className="nav-user-info">
                       <h5 className="mb-0 text-white nav-user-name">
-                        John Abraham</h5>
+                        {this.props.user.full_name}</h5>
                       <span className="status" /><span className="ml-2">Available</span>
                     </div>
-                    <a className="dropdown-item" href="#"><i className="fas fa-user mr-2" />Account</a>
-                    <a className="dropdown-item" href="#"><i className="fas fa-cog mr-2" />Setting</a>
-                    <a className="dropdown-item" href="#"><i className="fas fa-power-off mr-2" />Logout</a>
+                    <Link to="/profile">
+                      <p className="dropdown-item" href="#"><i className="fas fa-user mr-2" />Account</p>
+                    </Link>
+                    <Link to="/admin/settings">
+                      <p className="dropdown-item" href="#"><i className="fas fa-cog mr-2" />Setting</p>
+                    </Link>
+                    <p className="dropdown-item" href="#"><i className="fas fa-power-off mr-2" />Logout</p>
                   </div>
                 </li>
               </ul>

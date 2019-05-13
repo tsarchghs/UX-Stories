@@ -8,7 +8,7 @@ class StoryElements extends React.Component {
 	render(){
 		return (
 			<div>
-				<Header/>
+				<Header user={this.props.user}/>
 				<LeftSidebar/>
 				<AdminListPage 
 					typename="story element"
@@ -39,7 +39,7 @@ class UpdateStoryElement extends React.Component {
 	render() {
 		return (
 			<div>
-				<Header />
+				<Header user={this.props.user}/>
 				<LeftSidebar />
 				<UpdateObject
 					typename="story element"
