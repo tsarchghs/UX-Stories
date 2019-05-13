@@ -1,5 +1,4 @@
 const configs = require("./configs");
-const multerS3 = require("multer-s3");
 const aws = require("aws-sdk");
 
 aws.config.update({
