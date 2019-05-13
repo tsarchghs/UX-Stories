@@ -12,10 +12,11 @@ class EditProfileModal extends React.Component {
 		this.full_name = undefined;
 		this.job = undefined;
 		this.email = undefined;
+		console.log(props,"ASDAS");
 		this.state = {
-			full_name: this.props.user.full_name,
-			email: this.props.user.email,
-			job: this.props.user.job.id,
+			full_name: props.user.full_name,
+			email: props.user.email,
+			job: props.user.job.id,
 			password: undefined
 		}
 	}
