@@ -53,7 +53,8 @@ const signUp = async (root,args,context) => {
 		},
 		libraries: {
 			create: {
-				name: "First Library"
+				name: "First Library",
+				custom_updatedAt: new Date()
 			}
 		}
 	}
