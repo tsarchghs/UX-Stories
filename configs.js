@@ -2,8 +2,8 @@
 module.exports = {
 	jwt_secret: "secret_very_secret",
 	jwt_forgotPassword_secret: "forgot_password_token_secret",
-	URI: "http://localhost:4000",
-	PRODUCTION: false,
+	URI: "http://uxstories.herokuapp.com",
+	PRODUCTION: true,
 	auth: {
 		user: "gjergjk71@gmail.com",
 		pass: "gjergji.123"

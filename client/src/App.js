@@ -27,7 +27,7 @@ import { StoryElements, UpdateStoryElement } from "./components/admin/storyEleme
 import { AppCategories, UpdateAppCategory } from "./components/admin/appCategories";
 import { Jobs, UpdateJob } from "./components/admin/jobs";
 
-const URI = "http://localhost:4000/";
+const URI = "http://uxstories.herokuapp.com";
 
 const client = new ApolloClient({
   uri: URI,
