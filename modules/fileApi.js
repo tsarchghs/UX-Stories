@@ -1,44 +1,47 @@
 const uuid = require("uuid");
 const fs = require("fs");
 const configs = require("../configs");
+const { aws, S3 } = require("../aws");
 
 const get_extension = (encoded) => {
-	if (encoded[0] == "/"){
+	if (encoded[0] == "/") {
 		return "jpg"
 	} else if (encoded[0] == "i") {
 		return "png"
-	} else if (encoded[0] == "R"){
+	} else if (encoded[0] == "R") {
 		return "gif"
 	} else if (encoded[0] == "U") {
 		return "webp"
 	}
-} 
+}
 
-const processUpload = async (upload,mimetype,context,save_encoding=false) => {
+const processUpload = async (upload, mimetype, context, save_encoding = false) => {
 	if (!upload) {
 		return console.log("ERROR: No file received");
 	}
-	const imgdata = upload
-	const extension = get_extension(imgdata)
-	const filename = `file-${uuid()}`;
-	const path = `/file/${filename}.${mimetype.split("/")[1]}`
+	let imgdata = upload
+	let extension = get_extension(imgdata)
+	let filename = `file-${uuid()}`;
 	let base64Data = imgdata.replace(/^data:([A-Za-z-+/]+);base64,/, '');
-	if (base64Data.indexOf("video") !== -1){
-		base64Data =  base64Data.split(",")[1]
+	let buff = new Buffer(base64Data, "base64");
+	// fs.writeFileSync(__dirname + "/../public" + path, base64Data,  {encoding: 'base64'});
+	let s3_data = {
+		Key: filename,
+		Body: buff,
+		ContentEncoding: "base64",
+		ContentType: mimetype ? mimetype : "image/png"
 	}
-	console.log(base64Data.slice(0,50));
-	fs.writeFileSync(__dirname + "/../public" + path, base64Data,  {encoding: 'base64'});
-	
-	const encoding = save_encoding ? imgdata : "notsaved"
 
-	const data = {
-		filename: filename, 
+	S3.putObject(s3_data, console.log)
+	console.log(`http://uxstories.s3.amazonaws.com/${filename}`);
+	let fileData = {
+		filename: filename,
 		mimetype: mimetype,
-		encoding: encoding,
-		url: `${configs.URI}/static` + path
+		encoding: "",
+		url: `http://uxstories.s3.amazonaws.com/${filename}`
 	}
-	const file = context.db.mutation.createFile({
-		data
+	let file = context.db.mutation.createFile({
+		data: fileData
 	})
 	return file;
 }
