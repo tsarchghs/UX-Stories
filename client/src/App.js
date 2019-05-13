@@ -25,6 +25,7 @@ import { AdminStories, UpdateStory } from "./components/admin/stories";
 import { StoryCategories, UpdateStoryCategory} from "./components/admin/storyCategories";
 import { StoryElements, UpdateStoryElement } from "./components/admin/storyElements";
 import { AppCategories, UpdateAppCategory } from "./components/admin/appCategories";
+import { Jobs, UpdateJob } from "./components/admin/jobs";
 
 const URI = "http://localhost:4000/";
 
@@ -143,6 +144,7 @@ class App extends Component {
                                         );
                                     }} />
                                 <Route path="/profile" exact component={() => {
+                                    console.log(user,9911);
                                     return (
                                         user
                                         ? <Profile refetchApp={refetch} user={user} />
@@ -211,8 +213,15 @@ class App extends Component {
                                             <Route path="/admin/app_categories" exact component={() => {
                                                 return (
                                                     user && user.role === "ADMIN"
-                                                    ? <AppCategories user={user}/>
-                                                    : <Redirect to={`/login?success=admin:app_categories`}/>
+                                                        ? <AppCategories user={user} />
+                                                        : <Redirect to={`/login?success=admin:app_categories`} />
+                                                );
+                                            }} />
+                                            <Route path="/admin/jobs" exact component={() => {
+                                                return (
+                                                    user && user.role === "ADMIN"
+                                                    ? <Jobs user={user}/>
+                                                    : <Redirect to={`/login?success=admin:jobs`}/>
                                                 );
                                             }} />
                                             
@@ -262,6 +271,13 @@ class App extends Component {
                                                 return (
                                                     user && user.role === "ADMIN"
                                                         ? <UpdateApp match={match} />
+                                                        : <Redirect to={`/login?success=typename_friendly_url:id`} />
+                                                )
+                                            }} />
+                                            <Route path="/admin/job/:id" component={({ match }) => {
+                                                return (
+                                                    user && user.role === "ADMIN"
+                                                        ? <UpdateJob match={match} />
                                                         : <Redirect to={`/login?success=typename_friendly_url:id`} />
                                                 )
                                             }} />
