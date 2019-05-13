@@ -59,7 +59,7 @@ class _CreateLibraryModal extends React.Component {
                       }
 										}`
 											let current_libraries = this.props.client.readQuery({ query: LIBRARIES_QUERY });
-											current_libraries.libraries.push(data.createLibrary);
+											current_libraries.libraries= [data.createLibrary].concat(current_libraries.libraries);
 											this.props.client.writeQuery({
 												query: LIBRARIES_QUERY,
 												data: current_libraries
@@ -91,11 +91,13 @@ class _CreateLibraryModal extends React.Component {
 													}`
 											let current_data = this.props.client.readQuery({ query: GET_LOGGED_IN_USER_QUERY});
 											let new_library = data.createLibrary;
-											current_data.getLoggedInUser.libraries.push({
-												__typename: "Library",
-												id: new_library.id,
-												name: new_library.name
-											})
+											current_data.getLoggedInUser.libraries = [
+												{
+													__typename: "Library",
+													id: new_library.id,
+													name: new_library.name
+												}
+											].concat(current_data.getLoggedInUser.libraries);
 											this.props.client.writeQuery({
 												query: GET_LOGGED_IN_USER_QUERY,
 												data: current_data
