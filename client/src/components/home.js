@@ -9,7 +9,7 @@ import AppCategoriesDropdown from "./appCategoriesDropdown";
 import { withApollo, Query, Mutation } from "react-apollo";
 import Cookies from "js-cookie";
 import { compose } from "recompose";
-import searchClient from "../searchClient";
+import { appsIndexHelper } from "../algoliaClients";
 
 const APPS_QUERY = gql`
   query Apps(
@@ -48,7 +48,6 @@ class _Home extends React.Component {
     if (this.props.location && this.props.location.state && this.props.location.state.filterBy) {
       filterBy = this.props.location.state.filterBy
     }
-    console.log(this.props.location,12333);
     this.state = {
       appCategories:undefined,
       apps: undefined,
@@ -59,24 +58,24 @@ class _Home extends React.Component {
       jobs: [],
       show_email: true
     }
-    console.log(this.props.location);
     this.skip = 0;
     this.loadMore = this.loadMore.bind(this);
     this.toggle = this.toggle.bind(this);
-    this.update = debounce(this.update.bind(this),500);
+    this.update = debounce(this.update.bind(this),150);
     this.enteredEmail = this.enteredEmail.bind(this);
-    this.callAllCategoriesFilterOnce = false
+    this.hitsPerPage = 4
   }
   filterCategory(appCategory) {
-    console.log(appCategory);
-    if (appCategory.id === "all" && !this.callAllCategoriesFilterOnce){
-      this.callAllCategoriesFilterOnce = true
-      return;
-    }
     if (!this.state.filterBy.appCategory || !(this.state.filterBy.appCategory.id === appCategory.id)){
       this.setState(prevState => {
         let state = prevState;
         state.filterBy.appCategory = appCategory.id
+        appsIndexHelper.state.hitsPerPage = this.hitsPerPage
+        appsIndexHelper.state.facetsRefinements["appCategory.name"] = []
+        if (appCategory.name !== "all"){
+          appsIndexHelper.toggleFacetRefinement("appCategory.name", appCategory.name)
+        }
+        return state;
       },() => this.update(null,true));
     }
   }
@@ -102,20 +101,20 @@ class _Home extends React.Component {
     if (this.state.filterBy.appCategory){
       appFilterInput["appCategory"] = this.state.filterBy.appCategory
     }
-    let appsData = await this.props.client.query({
-      query: APPS_QUERY,
-      variables: { appFilterInput }
-    })
-    this.setState(prevState => {
-      let state = prevState;
-      if (!state.apps){
-        state.apps = []  
-      }
-      state.apps = state.apps.concat(appsData.data.apps)
-      state.reached_end = appsData.data.apps.length < 4
-      state.show_skeleton = false
-      state.nothing_to_show = appsData.data.apps.length === 0
-      return prevState
+    appsIndexHelper.setQuery(appName_contains).search();
+    appsIndexHelper.on("result",data => {
+      let appsData = { data : { apps: data._rawResults[0].hits } }
+      this.setState(prevState => {
+        let state = prevState;
+        if (!state.apps){
+          state.apps = []  
+        }
+        state.apps = appsData.data.apps
+        state.reached_end = data.nbPages < 2 
+        state.show_skeleton = false
+        state.nothing_to_show = appsData.data.apps.length === 0
+        return prevState
+      })
     })
   }
   toggle(name) {
@@ -142,7 +141,7 @@ class _Home extends React.Component {
     this.setState({
       show_skeleton:true
     })
-    this.skip += 4
+    appsIndexHelper.state.hitsPerPage += this.hitsPerPage;
     this.update();
   }
   enteredEmail(e) {
@@ -150,7 +149,6 @@ class _Home extends React.Component {
       if (this.state.show_email) {
         this.setState({ show_email: false })
       } else {
-        console.log();
       }
   }
 	render() {
@@ -187,7 +185,6 @@ class _Home extends React.Component {
                                 }
                                 let onSubmit = (e) => {
                                   e.preventDefault();
-                                  console.log(5);
                                   signUp({variables:{
                                     full_name: this.full_name.value,
                                     email: this.email.value,
