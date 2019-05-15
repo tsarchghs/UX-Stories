@@ -24,6 +24,19 @@ const getObjectConnectionQuery = gql`
  }
 `
 
+const LIBRARIES_QUERY = gql`query {
+    libraries {
+        id
+        name
+        stories {
+          thumbnail {
+          url
+        }
+      }
+    }
+  }`
+
 export {
-    getObjectConnectionQuery
+    getObjectConnectionQuery,
+    LIBRARIES_QUERY
 }

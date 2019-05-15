@@ -10,18 +10,7 @@ import CreateLibraryModal from "./createLibraryModal";
 import {loadToolkit} from "../helpers";
 import $ from "jquery";
 import EditLibraryModal from "./editLibraryModal";
-
-const LIBRARIES_QUERY = gql`query {
-    libraries {
-        id
-        name
-        stories {
-          thumbnail {
-          url
-        }
-      }
-    }
-  }`
+import { LIBRARIES_QUERY } from "../Queries";
 
 class Profile extends React.Component {
   constructor(props) {
@@ -65,6 +54,7 @@ class Profile extends React.Component {
     )
   }
   render() {
+    loadToolkit()
     console.log(this.props.user);
     return (
       <ApolloProvider client={this.props.client}>
