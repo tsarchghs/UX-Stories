@@ -53,7 +53,6 @@ class UpdateObject extends React.Component {
 
         }
         this.refs = {}
-        console.log(this.props.location,123);
         this.allowed_fields = []
         this.props.fields.map(field => field.hideTable ? undefined : this.allowed_fields.push(field));
         this.queryVariables = {
@@ -68,7 +67,6 @@ class UpdateObject extends React.Component {
         })
     }
     render() {
-        console.log(this.props.object_id,5555);
         return (
             <Query 
                 query={GetObjectQuery}
@@ -77,7 +75,6 @@ class UpdateObject extends React.Component {
                 { ({loading,error,data}) => {
                     if (loading) return <Loading style={{marginTop:200}}/>;
                     if (error) return <p style={{marginTop:200}}>{error.message}</p>
-                    console.log(data,123456765432345);  
                     let object = JSON.parse(data.getObject.repr);
                     return (
                         <div style={{marginTop:200,marginLeft:200}} className="row">
@@ -86,7 +83,6 @@ class UpdateObject extends React.Component {
                                     mutation={UpdateObjectMutation}
                                 >
                                     {(updateObject, { loading, error, data }) => {
-                                        console.log(data, 4);
                                         if (data) {
                                             return <Redirect to={this.props.location.pathname} />
                                         }
@@ -107,9 +103,7 @@ class UpdateObject extends React.Component {
                                                 data = data.concat(Object.keys(this.state).map(key => {
                                                     return JSON.stringify({ [key]: this.state[key] })
                                                 }))
-                                                console.log(data);
                                                 let repr = JSON.stringify(data);
-                                                console.log(1,repr);
                                                 let res = await updateObject({
                                                     variables: {
                                                         id: this.props.match.params.id,
@@ -119,8 +113,10 @@ class UpdateObject extends React.Component {
                                                         fields: this.allowed_fields.map(field => field.fetch ? field.fetch : field)
                                                     }
                                                 })
+                                                if (this.props.afterSuccess){
+                                                    this.props.afterSuccess(this.props.object_id);
+                                                }
                                                 try {
-                                                    console.log(res,9999);
                                                     this.props.client.writeQuery({
                                                         query:GetObjectQuery,
                                                         variables: this.queryVariables,
@@ -141,13 +137,11 @@ class UpdateObject extends React.Component {
                                                         return node
                                                     })
                                                     cache_d.getObjectConnection.nodes.repr = JSON.stringify(updated_nodes);
-                                                    console.log(JSON.parse(cache_d_clone), cache_d_clone === JSON.stringify(cache_d), cache_d,res.data.updateObject);
                                                     this.props.client.writeQuery({
                                                         query: getObjectConnectionQuery,
                                                         variables: this.props.location.state.get_obj_connection_variables,
                                                         data: cache_d
                                                     })
-                                                    console.log(this.props.location.state.get_obj_connection_variables);
                                                 } catch (e) { console.log(e) }
                                                 this.props.history.push(this.props.redirect_after_success)
                                             }}>
@@ -166,7 +160,6 @@ class UpdateObject extends React.Component {
                                                                 {
                                                                     this.props.fields.map(field => {
                                                                         if (field.hideCreate || field === "id" || field.type === "id" || field.type === "password") return;
-                                                                        console.log(field, typeof (field))
                                                                         let show = typeof (field) === "object" ? field.type : field
                                                                         if (typeof (field) === "object") {
                                                                             if (field.type === "file" || field.type === "video") {
@@ -178,15 +171,13 @@ class UpdateObject extends React.Component {
                                                                                                 onChange={() => handleUploadPhotoInput(this.refs[field.queryName], false)}
                                                                                                 ref={node => {
                                                                                                     this.refs = Object.assign({}, this.refs, { [field.queryName]: node })
-                                                                                                }
-                                                                                                }
+                                                                                                }}
                                                                                                 type="file" name="pic" accept="image/*" />
                                                                                         </div>
                                                                                     </div>
                                                                                 );
                                                                             }
                                                                             if (field.primitive && !field.options) {
-                                                                                console.log(field.type, 55);
                                                                                 return <div>
                                                                                     <label htmlFor="firstName">{field.show}</label>
                                                                                     <input
@@ -215,7 +206,6 @@ class UpdateObject extends React.Component {
                                                                                     query={field.query}
                                                                                 >
                                                                                     {({ loading, data, error }) => {
-                                                                                        console.log(field.query)
                                                                                         if (loading) {
                                                                                             return (
                                                                                                 <div>
@@ -227,9 +217,7 @@ class UpdateObject extends React.Component {
                                                                                             )
                                                                                         }
                                                                                         if (error) return <p>{error.message}</p>
-                                                                                        console.log(data, field);
                                                                                         let objects = data ? data[field.queryName] : []
-                                                                                        console.log(objects)
                                                                                         return (
                                                                                             <div>
                                                                                                 <label htmlFor="firstName">{field.show}</label>
@@ -256,7 +244,6 @@ class UpdateObject extends React.Component {
                                                                                                                 var current_object = current_objects;
                                                                                                                 selected = current_object.id === obj.id;
                                                                                                             }
-                                                                                                            console.log(key,object);
                                                                                                             return (
                                                                                                                 <option
                                                                                                                     selected={selected}

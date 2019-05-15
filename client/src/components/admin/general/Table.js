@@ -34,7 +34,6 @@ class _Table extends React.Component {
 				variables={get_obj_connection_variables}
         >
         	{ ({loading,error,data,fetchMore,refetch,networkStatus,updateQuery}) => {	
-        		console.log(networkStatus,loading,data,555);
         		if (!this.refetch) {
         			this.refetch = refetch;
         		}
@@ -54,23 +53,20 @@ class _Table extends React.Component {
 	        				return;
 	        			}
 	    				try {
-	    						console.log(variables);
 	    						let objs = this.props.client.readQuery({
 	    							query: getObjectConnectionQuery,
 	    							variables
 	    						})
-	    						console.log(1);
 	    						updateQuery((prev, options) => {
 	    							return objs
 	    						})
 	    						return;
 	    				} catch (e){
-	    					console.log(e);
+								console.log(e);
 	    				}
 	        			let results = fetchMore({
 	        				variables,
 	        				updateQuery: (prev, { fetchMoreResult }) => {
-	        					console.log(fetchMoreResult,1000)
 	        					this.props.client.writeQuery({
 	        						query: getObjectConnectionQuery,
 	        						variables,
@@ -79,7 +75,6 @@ class _Table extends React.Component {
 	        					return fetchMoreResult
 	        				}
 	        			})
-	        			console.log(this.props.client.store.cache.data)
 	        		}
 	        		let debounced = debounce(onSearch,250)
         			this.props.setOnSearch(debounced);
@@ -112,7 +107,6 @@ class _Table extends React.Component {
         		if (loading && networkStatus !== 3) return <h4>loading</h4>
         		if (error) return <p>{error.message}</p>
         		let objects = Object.keys(data).length ? JSON.parse(data.getObjectConnection.nodes.repr) : []
-        		console.log(objects,networkStatus);
                 return (
                 	<div className="card-body">
                   <table className="table">
@@ -212,14 +206,16 @@ class _Table extends React.Component {
 					                              					id: object.id
 					                              				}
 					                              			})
+																							if (this.props.afterDelete){
+																								console.log(object.id,"ID");
+																								this.props.afterDelete(object.id);
+																							}
 					                              			this.deleted++;
 				                              				// this.refs[object.id].innerHTML = ""
 				                              				document.getElementById(object.id).innerHTML = "";	
 				                              			} catch(e) {
 				                              				console.log(e);
 				                              			}
-
-				                              			console.log(data);
 				                              		}
 				                              		return (
 				                              			<button onClick={onClick} className="btn btn-sm btn-outline-light">

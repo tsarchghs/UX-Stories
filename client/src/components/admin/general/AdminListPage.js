@@ -45,7 +45,6 @@ class AdminListPage extends React.Component {
 		this.setState({onSearch})
 	}
 	render(){
-		console.log(this.props);
 		let create_url = this.props.location.pathname + "#create";
 		let showCreate = this.props.location.hash === "#create"
 		return (
@@ -110,6 +109,7 @@ class AdminListPage extends React.Component {
 		                		location={this.props.location}
 		                		typename={this.props.typename}
 		                		mutation_type={this.props.mutation_type}
+												afterCreate={this.props.afterCreate}
 		                	/>
 		                	: <Table 
 			                	connection_type={this.props.connection_type}
@@ -120,6 +120,7 @@ class AdminListPage extends React.Component {
 			                	first={this.props.first}
 												typename_url_friendly={this.props.typename_url_friendly}
 			                	setOnSearch={this.setOnSearch}
+												afterDelete={this.props.afterDelete}
 			                />
 		                }
 		              </div>

@@ -46,7 +46,6 @@ class CreateObject extends React.Component {
 		                <Mutation 
 		                	mutation={CreateObjectMutation}>
 		               		{ (createObject,{loading,error,data}) => {
-		               			console.log(data,4);
 		               			if (data) {
 		               				return <Redirect to={this.props.location.pathname}/>
 		               			}
@@ -67,9 +66,7 @@ class CreateObject extends React.Component {
 														data = data.concat(Object.keys(this.state).map(key => {
 															return JSON.stringify({ [key]: this.state[key]})
 														}))
-					                	console.log(data);
 					                	let repr = JSON.stringify(data);
-					                	console.log(1);
 					                	let res = await createObject({
 					                		variables: {
 					                			data: { repr },
@@ -77,7 +74,10 @@ class CreateObject extends React.Component {
 					                			fields_info: { repr: JSON.stringify(this.props.fields) }
 					                		}
 					                	})
-					                	console.log(res);
+														if (this.props.afterCreate){
+															let obj = JSON.parse(res.data.createObject.repr);
+															this.props.afterCreate(obj.id)
+														}
 					                }}>
 						                <div className="row">
 						                  <div className="col-md-8">
@@ -94,7 +94,6 @@ class CreateObject extends React.Component {
 						                      {
 						                      	this.props.fields.map(field => {
 						                      		if (field.hideCreate || field === "id" || field.type === "id") return;
-						                      		console.log(field,typeof(field))
 						                      		let show = typeof(field) === "object" ? field.type : field
 						                      		if (typeof(field) === "object"){
 						                      			if (field.type === "file" || field.type === "video"){
@@ -113,7 +112,6 @@ class CreateObject extends React.Component {
 						                      				);
 						                      			}
 						                      			if (field.primitive && !field.options){
-						                      				console.log(field.type,55);
 						                      				return <div>
 											                        <label htmlFor="firstName">{field.show}</label>
 											                        <input 
@@ -142,7 +140,6 @@ class CreateObject extends React.Component {
 						                      					query={field.query}
 						                      				>
 						                      					{ ({loading,data,error}) => {
-						                      						console.log(field.query)
 						                      						if (loading){
 						                      							return (
 						                      								<div>
@@ -154,9 +151,7 @@ class CreateObject extends React.Component {
 						                      							)
 						                      						}
 						                      						if (error) return <p>{error.message}</p>
-						                      						console.log(data,field);
 						                      						let objects = data ? data[field.queryName] : []
-						                      						console.log(objects)
 						                      						return (
 						                      							<div>
 						                      								<label htmlFor="firstName">{field.show}</label>
