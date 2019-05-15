@@ -4,9 +4,11 @@
   "private": true,
   "dependencies": {
     "algoliasearch": "^3.32.1",
+    "algoliasearch-helper": "^2.28.0",
     "apollo-boost": "^0.3.1",
     "graphql": "^14.1.1",
     "install": "^0.12.2",
+    "instantsearch.js": "^3.4.0",
     "jquery": "^3.4.0",
     "js-cookie": "^2.2.0",
     "lodash": "^4.17.11",
