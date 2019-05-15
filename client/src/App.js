@@ -3,9 +3,7 @@ import { BrowserRouter as Router, Route, Link, Redirect } from "react-router-dom
 import { ApolloProvider } from "react-apollo";
 import { Query } from "react-apollo";
 import gql from "graphql-tag";
-import { InMemoryCache } from 'apollo-cache-inmemory';
 import { getQueryParams, loadToolkit } from "./helpers";
-import ApolloClient from "apollo-boost";
 import Profile from "./components/profile";
 import Stories from "./components/stories";
 import Login from "./components/login";
@@ -26,22 +24,8 @@ import { StoryCategories, UpdateStoryCategory} from "./components/admin/storyCat
 import { StoryElements, UpdateStoryElement } from "./components/admin/storyElements";
 import { AppCategories, UpdateAppCategory } from "./components/admin/appCategories";
 import { Jobs, UpdateJob } from "./components/admin/jobs";
-
-const URI = "http://localhost:4000/";
-
-const client = new ApolloClient({
-  uri: URI,
-  connectToDevTools: true,
-  cache: new InMemoryCache(),
-  request: async (operation) => {
-    const token = Cookies.get("token");
-    operation.setContext({
-      headers: {
-        authorization: `Bearer ${token}`
-      }
-    })
-  }
-});
+import client from "./apolloClient";
+import { URI } from "./configs";
 
 class App extends Component {
     constructor(props){
