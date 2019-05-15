@@ -21,7 +21,6 @@ enum LinkType {
 
 type BasicInfo {
   success: Boolean!
-  error: String
 }
 
 type TokenValidation {
@@ -312,6 +311,21 @@ type Query {
   countUsers: Int!
 }
 type Mutation {
+  updateAlgoliaIndex(
+    indexName: String!
+    object_id: ID!
+  ): BasicInfo!
+
+  addAlgoliaIndex(
+    indexName: String!
+    object_id: ID!
+  ): BasicInfo!
+
+  deleteAlgoliaIndex(
+    indexName: String!
+    object_id: ID!
+  ): BasicInfo!
+
   createObject(
     data: JSON_OBJECT_Input!
     fields: [String!]

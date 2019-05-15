@@ -10,6 +10,7 @@ const libraryResolvers = require("./models/Library");
 const storyResolvers = require("./models/Story");
 const jobResolvers = require("./models/Job");
 const generalResolvers = require("./general");
+const algoliaResolvers = require("./algolia");
 
 module.exports = {
 	Query: {
@@ -33,6 +34,9 @@ module.exports = {
 		getObjectConnection: generalResolvers.getObjectConnection
 	},
 	Mutation: {
+		addAlgoliaIndex: algoliaResolvers.addAlgoliaIndex,
+		updateAlgoliaIndex: algoliaResolvers.updateAlgoliaIndex,
+		deleteAlgoliaIndex: algoliaResolvers.deleteAlgoliaIndex,
 		createObject: generalResolvers.createObject,
 		updateObject: generalResolvers.updateObject,
 		deleteObject: generalResolvers.deleteObject,
