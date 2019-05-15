@@ -9,7 +9,8 @@ const { formatError } = require("apollo-errors");
 const fs = require("fs");
 const prismaDb = require("./prismaDb");
 
-require("./algolia/init")();
+// soft algolia sync script
+// require("./algolia/init")();
 
 if (!fs.existsSync("./public/file")){
 	fs.mkdirSync("./public/file");
