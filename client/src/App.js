@@ -89,6 +89,7 @@ class App extends Component {
                             if (user && !user.logout){
                                 user.logout = () => {
                                     Cookies.set("token","");
+                                    client.resetStore()
                                     refetch();
                                 }
                             }
