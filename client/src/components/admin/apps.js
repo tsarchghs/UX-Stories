@@ -4,6 +4,12 @@ import LeftSidebar from "./leftSidebar";
 import AdminListPage from "./general/AdminListPage";
 import gql from "graphql-tag";
 import UpdateObject from "./general/UpdateObject";
+import apolloClient from "../../apolloClient";
+import { 
+  ADD_ALGOLIA_INDEX_QUERY,
+  UPDATE_ALGOLIA_INDEX_QUERY,
+  DELETE_ALGOLIA_INDEX_QUERY 
+} from "../../Queries";
 
 const fields = [
   {
@@ -80,15 +86,6 @@ const fields = [
 ]
 
 class Apps extends React.Component {
-  componentDidMount(){
-    console.log("MOUNTED")
-  }
-  componentWillUpdate(){
-    console.log("UPDATED");
-  }
-  componentWillMount(){
-    console.log("UNMOUNTED");
-  }
   render(){
     return (
       <div>
@@ -104,6 +101,24 @@ class Apps extends React.Component {
           search_by="name_contains"
           fields={fields}
           first={5}
+          afterDelete={obj_id => {
+            apolloClient.mutate({
+              mutation: DELETE_ALGOLIA_INDEX_QUERY,
+              variables: {
+                indexName: "apps_index",
+                object_id: obj_id
+              }
+            })
+          }}
+          afterCreate={obj_id => {
+            apolloClient.mutate({
+              mutation: ADD_ALGOLIA_INDEX_QUERY,
+              variables: {
+                indexName: "apps_index",
+                object_id: obj_id
+              }
+            })
+          }}
         />
        </div>
     );
@@ -124,6 +139,15 @@ class UpdateApp extends React.Component {
           object_id={this.props.match.params.id}
           redirect_after_success="/admin/apps"
           fields={fields}
+          afterSuccess={(obj_id) => {
+            apolloClient.mutate({
+              mutation: UPDATE_ALGOLIA_INDEX_QUERY,
+              variables: {
+                indexName: "apps_index",
+                object_id: obj_id
+              }
+            })
+          }}
         />
       </div>
     )
