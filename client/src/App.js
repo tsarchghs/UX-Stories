@@ -27,7 +27,7 @@ import { StoryElements, UpdateStoryElement } from "./components/admin/storyEleme
 import { AppCategories, UpdateAppCategory } from "./components/admin/appCategories";
 import { Jobs, UpdateJob } from "./components/admin/jobs";
 
-const URI = "http://uxstories.herokuapp.com";
+const URI = "http://localhost:4000/";
 
 const client = new ApolloClient({
   uri: URI,
@@ -95,7 +95,10 @@ class App extends Component {
                             }
                             return (
                                 <div>
-                                    <Route path="/" exact component={() => <Home refetchApp={refetch} user={user}/>}/>
+                                    <Route path="/" exact component={() => {
+                                        console.log(555);
+                                        return <Home refetchApp={refetch} user={user}/>
+                                    }}/>
                                     <Route path="/stories" exact component={() => {
                                         return (
                                             user
@@ -138,11 +141,13 @@ class App extends Component {
                                     }} />
                                     <Route path="/story/:id" exact component={match => {
                                         return (
-                                            <SingleStory 
-                                                user={user}     
-                                                match={match}
-                                            />
-                                        );
+                                            user
+                                                ? <SingleStory 
+                                                    user={user}     
+                                                    match={match}
+                                                  />
+                                                : <Redirect to={`/login?success=story:${match.match.params.id}`} />
+                                        )
                                     }} />
                                 <Route path="/profile" exact component={() => {
                                     console.log(user,9911);

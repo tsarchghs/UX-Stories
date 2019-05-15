@@ -11,34 +11,6 @@ import Cookies from "js-cookie";
 import { compose } from "recompose";
 import { appsIndexHelper } from "../algoliaClients";
 
-const APPS_QUERY = gql`
-  query Apps(
-    $appFilterInput: AppFilterInput 
-  ) {
-    apps(appFilterInput: $appFilterInput){
-        id
-        name
-        description
-        logo {
-          id
-          url
-        }
-        stories(first:3) {
-          id
-          thumbnail {
-            id
-            url
-          }
-        }
-        appCategory {
-          id
-          name
-        }
-        company
-      }
-    }
-`
-
 class _Home extends React.Component {
   constructor(props) {
     super(props);
@@ -71,36 +43,26 @@ class _Home extends React.Component {
         let state = prevState;
         state.filterBy.appCategory = appCategory.id
         appsIndexHelper.state.hitsPerPage = this.hitsPerPage
+        this.setState({apps:undefined,show_skeleton:true})
         appsIndexHelper.state.facetsRefinements["appCategory.name"] = []
         if (appCategory.name !== "all"){
           appsIndexHelper.toggleFacetRefinement("appCategory.name", appCategory.name)
         }
         return state;
-      },() => this.update(null,true));
+      },() => this.update());
     }
   }
-  async update(e,resetApps){
+  async update(fromMount){
+    console.log(123);
     let values = {
       reached_end: false,
       show_skeleton: true,
       nothing_to_show: false
     }
-    if (resetApps){
-      this.skip = 0
-      values["apps"] = undefined
-    }
     this.setState(values)
     // quick hack to prevent error when user switches forth and back while update is being executed :'(
     // lesson learned. use refs next time
     let appName_contains = document.getElementById("appName_contains") ? document.getElementById("appName_contains").value : ""
-    let appFilterInput = {
-      first: 4,
-      skip: this.skip,
-      appName_contains: appName_contains
-    }
-    if (this.state.filterBy.appCategory){
-      appFilterInput["appCategory"] = this.state.filterBy.appCategory
-    }
     appsIndexHelper.setQuery(appName_contains).search();
     appsIndexHelper.on("result",data => {
       let appsData = { data : { apps: data._rawResults[0].hits } }
@@ -124,6 +86,7 @@ class _Home extends React.Component {
     })
   }
 	async componentDidMount(){
+    console.log("MOUNT")
     this.update();
     let jobs = await this.props.client.query({
       query: gql`
@@ -230,13 +193,13 @@ class _Home extends React.Component {
                   <input 
                     type="text" 
                     placeholder="Search by app name..."
-                    onChange={(e) => this.update(e,true)}
+                    onChange={(e) => this.update()}
                     id="appName_contains"
                   />
                 </div>			
               </div>
               <div className="flex">
-                <button onClick={e => this.toggle("appCategoryFilterOpen")} className="button white fbtn" data-toggle="first">Filter with Categories<img src="/assets/toolkit/images/shape.svg" alt /></button>
+                <button style={{cursor:"pointer"}} onClick={e => this.toggle("appCategoryFilterOpen")} className="button white fbtn" data-toggle="first">Filter with Categories<img src="/assets/toolkit/images/shape.svg" alt /></button>
               <AppCategoriesDropdown 
                 id="first" 
                 filterBy={this.state.filterBy}

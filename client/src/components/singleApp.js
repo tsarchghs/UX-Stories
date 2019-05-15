@@ -37,6 +37,7 @@ class _SingleApp extends React.Component {
     this.toggle = this.toggle.bind(this);
     this.resetFilters = this.resetFilters.bind(this);
     this.getFormattedFilterBy = this.getFormattedFilterBy.bind(this);
+    this.reachedEndFindOnce = true
     if (this.props.match.params.id[this.props.match.params.id.length-1] === "#"){
       this.app_id = this.props.match.params.id[this.props.match.params.id.length-1]
     } else {
@@ -68,7 +69,7 @@ class _SingleApp extends React.Component {
         }
       `
     })
-    this.skip += 10;
+    this.skip += 6;
     if (!app.data.app){
       this.setState({
         show404: true
@@ -251,30 +252,36 @@ class _SingleApp extends React.Component {
                         `}
                           notifyOnNetworkStatusChange={true}
                           variables={{
-                            storiesFilterInput: { ...this.getFormattedFilterBy(), app: this.app_id, first: 10 } 
+                            storiesFilterInput: { ...this.getFormattedFilterBy(), app: this.app_id, first: 6 } 
                           }}
                       >
                         {({ loading, error, data, fetchMore, networkStatus }) => {
+                          if (data && data.stories && this.reachedEndFindOnce) {
+                            this.setState({
+                              reached_end: data.stories.length < 6
+                            })
+                            this.reachedEndFindOnce = false
+                          }
                           console.log(networkStatus);
                           const BELOW_HEADER = (
                             <div className="results">
                               <div className="container">
                                 <div className="results__content">
                                   <p className="results__results bold">Showing {data && data.stories ? data.stories.length : 0} Results</p>
-                                  {
-                                    Object.keys(this.state.filterBy).map(type_ => {
-                                      return getActiveFilters(this.state, type_).map(obj => {
-                                        console.log(this.state, type_)
-                                        console.log(obj);
-                                        return (
-                                          <div className="ux-label ">
-                                            <p className="light-gray">{document.getElementById(obj + "_label").innerHTML}</p>
-                                            <span><a href="#"><img onClick={() => this.unFilter(type_, obj)} src="/assets/toolkit/images/008-delete.svg" alt /></a></span>
-                                          </div>
-                                        );
-                                      })
-                                    }).flat()
-                                  }
+                                    {
+                                      Object.keys(this.state.filterBy).map(type_ => {
+                                        return getActiveFilters(this.state, type_).map(obj => {
+                                          console.log(this.state, type_)
+                                          console.log(obj);
+                                          return (
+                                            <div className="ux-label ">
+                                              <p className="light-gray">{document.getElementById(obj + "_label").innerHTML}</p>
+                                              <span><a href="#"><img onClick={() => this.unFilter(type_, obj)} src="/assets/toolkit/images/008-delete.svg" alt /></a></span>
+                                            </div>
+                                          );
+                                        })
+                                      }).flat()
+                                    }
                                   <hr />
                                   <br />
 
@@ -296,9 +303,11 @@ class _SingleApp extends React.Component {
                                 <div className="cards">
                                   <div className="container">
                                     <div className="cards__content">
-                                      <StoryThumbnailLoading /><StoryThumbnailLoading /><StoryThumbnailLoading /><StoryThumbnailLoading />
+                                    <center>
+
                                       <StoryThumbnailLoading /><StoryThumbnailLoading /><StoryThumbnailLoading /><StoryThumbnailLoading />
                                       <StoryThumbnailLoading /><StoryThumbnailLoading />
+                                    </center>
                                     </div>
                                   </div>
                                 </div>
@@ -316,15 +325,17 @@ class _SingleApp extends React.Component {
                               <div className="cards">
                                 <div className="container">
                                   <div className="cards__content">
-                                    {
-                                      stories.map(story => {
-                                        return (
-                                          <Link to={`/story/${story.id}`}>
-                                            <img style={{ height: 350,width:160, borderRadius: '25px' }} src={story.thumbnail.url} />
-                                          </Link>
-                                        );
-                                      })
-                                    }
+                                  <center>
+                                      {
+                                        stories.map(story => {
+                                          return (
+                                            <Link to={`/story/${story.id}`}>
+                                              <img style={{ height: 450,width: 230, borderRadius: '25px' }} src={story.thumbnail.url} />
+                                            </Link>
+                                          );
+                                        })
+                                      }
+                                  </center>
                                   </div>
                                 </div>
                               </div>
@@ -337,9 +348,10 @@ class _SingleApp extends React.Component {
                                         <div className="cards">
                                           <div className="container">
                                             <div className="cards__content">
-                                              <StoryThumbnailLoading /><StoryThumbnailLoading /><StoryThumbnailLoading /><StoryThumbnailLoading />
+                                            <center>
                                               <StoryThumbnailLoading /><StoryThumbnailLoading /><StoryThumbnailLoading /><StoryThumbnailLoading />
                                               <StoryThumbnailLoading /><StoryThumbnailLoading />
+                                            </center>
                                             </div>
                                           </div>
                                         </div>
@@ -349,14 +361,14 @@ class _SingleApp extends React.Component {
                                             fetchMore({
                                               variables: { 
                                                 storiesFilterInput: {
-                                                  ...this.getFormattedFilterBy(), skip: stories.length, first: 10, app: this.app_id
+                                                  ...this.getFormattedFilterBy(), skip: stories.length, first: 6, app: this.app_id
                                                   }
                                               },
                                               updateQuery: (prev, { fetchMoreResult }) => {
                                                 let updated_stories = prev.stories;
                                                 updated_stories = updated_stories.concat(fetchMoreResult.stories);
                                                 console.log(fetchMoreResult.stories, fetchMoreResult.stories.length);
-                                                if (fetchMoreResult.stories.length < 10){
+                                                if (fetchMoreResult.stories.length < 6){
                                                   this.setState({
                                                     reached_end: true
                                                   })

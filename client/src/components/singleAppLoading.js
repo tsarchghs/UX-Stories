@@ -22,9 +22,10 @@ class SingleAppLoading extends React.Component {
 			        <br />
 			      </div>
                   <div className="cards__content">
-                            <StoryThumbnailLoading/><StoryThumbnailLoading/><StoryThumbnailLoading/><StoryThumbnailLoading/>
+									<center>
                             <StoryThumbnailLoading/><StoryThumbnailLoading/><StoryThumbnailLoading/><StoryThumbnailLoading/>
                             <StoryThumbnailLoading/><StoryThumbnailLoading/>
+									</center>
                   </div>
                 </div>
               </div>

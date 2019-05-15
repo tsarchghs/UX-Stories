@@ -36,7 +36,35 @@ const LIBRARIES_QUERY = gql`query {
     }
   }`
 
+const APPS_QUERY = gql`
+  query Apps(
+    $appFilterInput: AppFilterInput 
+  ) {
+    apps(appFilterInput: $appFilterInput){
+        id
+        name
+        description
+        logo {
+          id
+          url
+        }
+        stories(first:3) {
+          id
+          thumbnail {
+            id
+            url
+          }
+        }
+        appCategory {
+          id
+          name
+        }
+        company
+      }
+    }
+`
 export {
     getObjectConnectionQuery,
-    LIBRARIES_QUERY
+    LIBRARIES_QUERY,
+    APPS_QUERY
 }
