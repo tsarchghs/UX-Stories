@@ -63,8 +63,52 @@ const APPS_QUERY = gql`
       }
     }
 `
+const UPDATE_ALGOLIA_INDEX_QUERY = gql`
+  mutation UpdateAlgoliaIndex(
+    $indexName: String!
+    $object_id: ID!
+  ) {
+     updateAlgoliaIndex(
+       indexName: $indexName,
+       object_id: $object_id
+     ) {
+       success
+     }
+  }
+`
+
+const DELETE_ALGOLIA_INDEX_QUERY = gql`
+  mutation DeleteAlgoliaIndex(
+    $indexName: String!
+    $object_id: ID!
+  ) {
+     deleteAlgoliaIndex(
+       indexName: $indexName,
+       object_id: $object_id
+     ) {
+       success
+     }
+  }
+`
+const ADD_ALGOLIA_INDEX_QUERY = gql`
+  mutation AddAlgoliaIndex(
+    $indexName: String!
+    $object_id: ID!
+  ) {
+     addAlgoliaIndex(
+       indexName: $indexName,
+       object_id: $object_id
+     ) {
+       success
+     }
+  }
+`
+
 export {
     getObjectConnectionQuery,
     LIBRARIES_QUERY,
-    APPS_QUERY
+    APPS_QUERY,
+    UPDATE_ALGOLIA_INDEX_QUERY,
+    DELETE_ALGOLIA_INDEX_QUERY,
+    ADD_ALGOLIA_INDEX_QUERY
 }
