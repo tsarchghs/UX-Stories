@@ -15,7 +15,13 @@ appsIndex.setSettings({
 storiesIndex.setSettings({
     searchableAttributes: [
         "storyCategories.name"
-    ]
+    ],
+    attributesForFaceting: [
+        "app.appCategory.name",
+        "storyCategories.name",
+        "storyElements.name"
+    ],
+    
 })
 
 module.exports = {
