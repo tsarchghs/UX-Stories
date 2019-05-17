@@ -9,7 +9,8 @@ class StoryCategoriesActiveFitlers extends React.Component {
                   getActiveFilters(this.props.state,"storyCategories").map(storyCategory => {
                       return (
                         <div className="ux-label ">
-                          <p className="light-gray">{document.getElementById(storyCategory + "_label") && document.getElementById(storyCategory+"_label").innerHTML}</p>
+                          <p className="light-gray">{
+                            this.props.is_name ? storyCategory : document.getElementById(storyCategory + "_label") && document.getElementById(storyCategory + "_label").innerHTML}</p>
                           <span><a href="#"><img onClick={(e) => this.props.unFilter(e,storyCategory)} src="/assets/toolkit/images/008-delete.svg" alt /></a></span>
                         </div>  
                       );    

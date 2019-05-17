@@ -9,7 +9,9 @@ class StoryElementsActiveFilters extends React.Component {
                   getActiveFilters(this.props.state,"storyElements").map(storyElement => {
                       return (
                         <div className="ux-label ">
-                          <p className="light-gray">{document.getElementById(storyElement+"_label") && document.getElementById(storyElement+"_label").innerHTML}</p>
+                          <p className="light-gray">
+                            {this.props.is_name ? storyElement : document.getElementById(storyElement+"_label") && document.getElementById(storyElement+"_label").innerHTML}}
+                          </p>
                           <span><a href="#"><img onClick={(e) => this.props.unFilter(e,storyElement)} src="/assets/toolkit/images/008-delete.svg" alt /></a></span>
                         </div>  
                       );    

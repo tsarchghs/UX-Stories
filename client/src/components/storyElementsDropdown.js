@@ -47,14 +47,15 @@ class StoryElementsDropdown extends React.Component {
 												} 
 	                          {
 	                            data.storyElements.map(storyElement => {
-																let active = this.props.filterBy.storyElements[storyElement.id]
+																let identifier = this.props.use_name ? storyElement.name : storyElement.id
+																let active = this.props.filterBy.storyElements[identifier]
 	                              return (
 																	<label className={`radio__container ${active ? 'checked' : ''}`}>
-	                                  <label id={storyElement.id+"_label"} className="gray bold">{storyElement.name}</label>
+	                                  <label id={identifier+"_label"} className="gray bold">{storyElement.name}</label>
 	                                  <input 
 	                                    className="ic" 
 	                                    type="checkbox" 
-	                                    id={storyElement.id}
+	                                    id={identifier}
 																			checked={active}
 	                                    name={1}
 	                                    value={1}

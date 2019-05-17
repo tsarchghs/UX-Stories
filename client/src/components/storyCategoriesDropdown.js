@@ -48,14 +48,15 @@ class StoryCategoriesDropdown extends React.Component {
 	                          {
 	                            data.storyCategories.map(storyCategory => {
 																console.log(this.props.filterBy,555);
-																let active = this.props.filterBy.storyCategories[storyCategory.id]
+																let identifier = this.props.use_name ? storyCategory.name : storyCategory.id
+																let active = this.props.filterBy.storyCategories[identifier]
 	                              return (
 																	<label className={`radio__container ${active ? 'checked' : ''}`}>
-	                                  <label id={storyCategory.id+"_label"} className="gray bold">{storyCategory.name}</label>
+	                                  <label id={identifier+"_label"} className="gray bold">{storyCategory.name}</label>
 	                                  <input 
 	                                    className="ic" 
 	                                    type="checkbox"
-	                                    id={storyCategory.id}
+	                                    id={identifier}
 																			checked={active}
 	                                    name={1}
 	                                    value={1}
