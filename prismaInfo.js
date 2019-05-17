@@ -40,6 +40,10 @@ const storiesInfo = `
         app {
             id
             name
+            appCategory {
+                id
+                name
+            }
         }
         storyElements {
             id
@@ -48,6 +52,10 @@ const storiesInfo = `
         storyCategories {
             id
             name
+        }
+        thumbnail {
+            id
+            url
         }
         createdAt
         updatedAt
