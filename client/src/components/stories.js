@@ -1,12 +1,8 @@
 import React from "react";
-import Loading from "./loading";
-import gql from "graphql-tag";
 import Header from "./header";
 import { Link, withRouter} from "react-router-dom";
 import {getActiveFilters,insertActiveFilters} from "../helpers";
-import uuidv1 from 'uuid/v1';
 import { debounce } from "lodash";
-import DropdownLoading from "./dropdownLoading";
 import { withApollo } from "react-apollo";
 import AppCategoriesDropdown from "./appCategoriesDropdown";
 import StoryCategoriesDropdown from "./storyCategoriesDropdown";
@@ -14,6 +10,7 @@ import StoryElementsDropdown from "./storyElementsDropdown";
 import StoryCategoriesActiveFitlers from "./storyCategoriesActiveFitlers";
 import StoryElementsActiveFilters from "./storyElementsActiveFilters";
 import { compose } from "recompose";
+import { storiesIndexHelper } from "../algoliaClients";
 
 const SKELETON = <div>
   <img style={{ borderRadius: 30, width: 250, height: 550, marginRight: 25, marginBottom: 10 }} src="data:image/png;base64,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" />
@@ -36,6 +33,22 @@ class _Stories extends React.Component {
     }
     if (this.props.location && this.props.location.state && this.props.location.state.filterBy){
       filterBy = this.props.location.state.filterBy
+      console.log(storiesIndexHelper,123433)
+      storiesIndexHelper.state.facetsRefinements = {}
+      if (filterBy.appCategory){
+        storiesIndexHelper.toggleFacetRefinement("app.appCategory.name",filterBy.appCategory)
+      }
+      for (var key in filterBy.storyElements){
+        if (filterBy.storyElements[key]){
+          storiesIndexHelper.toggleFacetRefinement("storyElements.name", key)
+        }
+      } 
+      for (var key in filterBy.storyCategories) {
+        if (filterBy.storyCategories[key]) {
+          storiesIndexHelper.toggleFacetRefinement("storyCategories.name", key)
+        }
+      } 
+
     }
     this.state = {
       stories: undefined,
@@ -43,16 +56,18 @@ class _Stories extends React.Component {
       storyCategories: undefined,
       storyElements: undefined,
       filterBy: filterBy,
-      reached_end: false,
-      searchId: undefined
+      reached_end: false
     }
-    this.search = debounce( this.search.bind(this), 500 );
+    this.search = debounce( this.search.bind(this), 150 );
     this.resetFilters = this.resetFilters.bind(this);
     this.toggle = this.toggle.bind(this);
     this.once = false
-    this.allCategoriesFilterClickOnce = false
     this.searchNode = undefined
-    this.first = 8
+    this.hitsPerPage = 8
+  }
+  componentWillUnmount(){
+    storiesIndexHelper.setQuery("");
+    storiesIndexHelper.clearRefinements()
   }
   hasActiveFitlers(){
     console.log(this.state.filterBy)
@@ -64,91 +79,62 @@ class _Stories extends React.Component {
     this.search("",true);
   }
   async search(storyName_contains,firstTime,pagination=false) {
-    let searchId = uuidv1();
     this.setState(prevState => {
       let state = prevState
       if (!pagination) state.stories = undefined
-      state.searchId = searchId;
       state.pagination_skeleton = pagination
       return state;
     })
     let filters = {"storyCategories":[],"storyElements":[]};
     filters = insertActiveFilters(filters,this.state);
-    let results = await this.props.client.query({
-      query: gql`
-        query Stories(
-          $storiesFilterInput: StoriesFilterInput
-        ) {
-          stories(
-            storiesFilterInput: $storiesFilterInput
-          ) {
-            id
-            app {
-              id
-              appCategory {
-                id
-                name
-              }
-            }
-            storyCategories { 
-              id
-              name
-            }
-            storyElements {
-              id
-              name
-            }
-            thumbnail {
-              id
-              url
-            }
-          }
-        }
-      `,
-      variables: {
-        storiesFilterInput:{
-            storyName_contains: storyName_contains,
-            appCategory: this.state.filterBy.appCategory,
-            storyCategories: filters.storyCategories,
-            storyElements: filters.storyElements,
-            first: this.first,
-            skip: pagination ? this.state.stories.length : 0
-        }
-      }
-    })
-    console.log(this.state.searchId,this.state.searchId === searchId,searchId);
-    if (this.state.searchId === undefined || (this.state.searchId === searchId)){
+    if (pagination){
+      storiesIndexHelper.state.hitsPerPage += this.hitsPerPage
+    }
+    console.log(storiesIndexHelper);
+    
+    storiesIndexHelper.setQuery(storyName_contains).search();
+    storiesIndexHelper.on("result",data => {
+      var results = { data: { stories: data.hits }}
       let stories = results.data.stories;
       this.setState(prevState => {
         let state = prevState;
-        state.reached_end = stories.length < this.first
+        state.reached_end = stories.length < storiesIndexHelper.state.hitsPerPage
         if (pagination){
-          state.stories = state.stories.concat(stories);
+          let new_stories = stories.slice(state.stories.length, 999)
+          state.stories = state.stories.concat(new_stories);
         } else {
           state.stories = stories
         }
         state.pagination_skeleton =  false
         return state
       })
-    }
+    })
   }
   async handleFilterClick(e,obj,type) {
-    if (!this.allCategoriesFilterClickOnce){
-      this.allCategoriesFilterClickOnce = true;
-      return;
+    storiesIndexHelper.state.hitsPerPage = this.hitsPerPage
+    if (type === "appCategory") {
+      storiesIndexHelper.state.facetsRefinements["app.appCategory.name"] = []
+      if (obj.name !== "all") {
+        storiesIndexHelper.toggleFacetRefinement("app.appCategory.name", obj.name);
+      }
+    } else {
+      storiesIndexHelper.toggleFacetRefinement(`${type}.name`, obj.name);
     }
     this.setState((prevState) => {
       let state = prevState;
-      if (type === "appCategory"){
-        state.filterBy.appCategory = obj.id
+      // state.stories = undefined;
+      if (type === "appCategory") {
+        state.filterBy.appCategory = obj.name
       } else {
-        state = prevState.filterBy[type] = {...prevState.filterBy[type],[obj.id]:!prevState.filterBy[type][obj.id]}
+        state.filterBy[type] = {
+          ...state.filterBy[type],
+          [obj.name] : !state.filterBy[type][obj.name]
+        }
         console.log(state);
       }
       return state
-    },() => {
-      console.log(this.state);
-      this.search(this.searchNode.value)})
+    })
+    this.search(this.searchNode.value)
   }
   resetFilters(){
     this.setState(prevState => {
@@ -156,7 +142,9 @@ class _Stories extends React.Component {
       state.filterBy.appCategory = undefined
       state.filterBy.storyCategories = {}
       state.filterBy.storyElements = {}
-      console.log(state);
+      state.pagination_skeleton = true
+      state.stories = undefined
+      storiesIndexHelper.state.facetsRefinements = {}
       return state;
     },() => this.search(this.searchNode.value))
   }
@@ -169,10 +157,15 @@ class _Stories extends React.Component {
     this.setState(prevState => {
       let state = prevState;
       if (type === "appCategory"){
+        storiesIndexHelper.state.facetsRefinements["app.appCategory.name"] = []
         state.filterBy.appCategory = undefined
-        return state;
+      } else {
+        let facets = storiesIndexHelper.state.facetsRefinements[`${type}.name`];
+        let obj_name = document.getElementById(obj + "_label") ? document.getElementById(obj+"_label").innerHTML : null
+        console.log(obj,123);
+        storiesIndexHelper.state.facetsRefinements[`${type}.name`] = facets.filter(x => x !== obj_name);
+        state.filterBy[type][obj] = false;
       }
-      state.filterBy[type][obj] = false;
       return state;
     },() => this.search(this.searchNode.value))
   }
@@ -197,7 +190,13 @@ class _Stories extends React.Component {
                   <span className="seperator" />
                   <div className="search">
                     <img src="/assets/toolkit/images/search-icon.svg" alt />
-                    <input ref={node => this.searchNode = node} onChange={(e) => this.search(e.target.value)} type="text" placeholder="Search by story..." />
+                    <input ref={node => this.searchNode = node} onChange={(e) => {
+                      this.setState({
+                        stories: undefined,
+                        pagination_skeleton: true
+                      })  
+                      this.search(e.target.value)
+                    }} type="text" placeholder="Search by story..." />
                   </div>      </div>
                 <div className="flex">
                   { //<div className="filter">
@@ -215,7 +214,8 @@ class _Stories extends React.Component {
           open={this.state.appCategoriesFilterOpen}
           style={{ top: "44px", left: "-198.25px" }}
           handleAllFilterClick={(e) => this.handleFilterClick(e,{id:"all",name:"all"},"appCategory")}
-          handleFilterClick={(e,appCategory) => this.handleFilterClick(e,appCategory,"appCategory")} 
+          handleFilterClick={(e,appCategory) => this.handleFilterClick(e,appCategory,"appCategory")}
+          use_name={true} 
         />
 
         <button onClick={(e) => this.toggle("storyCategoriesFilterOpen")} className="button white fbtn" data-toggle="second">Filter with Stories<img src="../../assets/toolkit/images/shape.svg" alt /></button>
@@ -226,6 +226,7 @@ class _Stories extends React.Component {
           style={{ top: "43.8984px", left: "-173.367px" }}
           open={this.state.storyCategoriesFilterOpen}
           handleFilterClick={(e,storyCategory) => this.handleFilterClick(e,storyCategory,"storyCategories")}
+          use_name={true}
         />
 
         <button onClick={(e) => this.toggle("storyElementsFilterOpen")} className="button white fbtn" data-toggle="third">Filter with Elements<img src="../../assets/toolkit/images/shape.svg" alt /></button>
@@ -236,6 +237,7 @@ class _Stories extends React.Component {
           style={{ top: "43.8984px", left: "-188.641px" }}
           state={this.state}
           handleFilterClick={(e,storyElement) => this.handleFilterClick(e,storyElement,"storyElements")}
+          use_name={true}
         />
 
                 </div>
@@ -256,7 +258,7 @@ class _Stories extends React.Component {
                   this.state.filterBy.appCategory && this.state.filterBy.appCategory !== "all" ? 
                   (
                         <div className="ux-label ">
-                          <p className="light-gray">{document.getElementById(this.state.filterBy.appCategory + "_label") && document.getElementById(this.state.filterBy.appCategory+"_label").innerHTML}</p>
+                          <p className="light-gray">{this.state.filterBy.appCategory}</p>
                           <span><a href="#"><img onClick={() => this.unFilter("appCategory")} src="/assets/toolkit/images/008-delete.svg" alt /></a></span>
                         </div>  
                   )
@@ -268,10 +270,12 @@ class _Stories extends React.Component {
                   <StoryCategoriesActiveFitlers 
                     state={this.state}
                     unFilter={(e,storyCategory) => this.unFilter("storyCategories",storyCategory)}
+                    is_name={true}
                   />
                   <StoryElementsActiveFilters 
                     state={this.state}
                     unFilter={(e,storyElement) => this.unFilter("storyElements",storyElement)}
+                    is_name={true}
                   />
               {
                 !((this.state.filterBy.appCategory && this.state.filterBy.appCategory !== "all") || getActiveFilters(this.state,"storyElements").concat(getActiveFilters(this.state,"storyCategories")).length) ?  "" :
