@@ -4,6 +4,12 @@ import LeftSidebar from "./leftSidebar";
 import AdminListPage from "./general/AdminListPage";
 import gql from "graphql-tag";
 import UpdateObject from "./general/UpdateObject";
+import {
+	ADD_ALGOLIA_INDEX_QUERY,
+	UPDATE_ALGOLIA_INDEX_QUERY,
+	DELETE_ALGOLIA_INDEX_QUERY
+} from "../../Queries";
+import { algoliaSync } from "./helpers";
 
 let fields = [
 	"id",
@@ -77,6 +83,8 @@ class AdminStories extends React.Component {
 		          search_by="id_contains"
 		          delete_type="deleteStory"
 		          mutation_type="createStory"
+				  afterDelete={obj_id => algoliaSync(obj_id, "stories_index", DELETE_ALGOLIA_INDEX_QUERY)}
+				  afterCreate={obj_id => algoliaSync(obj_id, "stories_index", ADD_ALGOLIA_INDEX_QUERY)}
 		          fields={fields}
 		          first={5}
 		        />
@@ -99,6 +107,7 @@ class UpdateStory extends React.Component {
 					object_id={this.props.match.params.id}
 					redirect_after_success="/admin/stories"
 					fields={fields}
+					afterSuccess={obj_id => algoliaSync(obj_id, "stories_index", UPDATE_ALGOLIA_INDEX_QUERY)}
 				/>
 			</div>
 		)
