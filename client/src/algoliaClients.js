@@ -12,7 +12,13 @@ const appsIndexHelper = algoliasearchHelper(searchClient,"apps_index",{
     hitsPerPage: 4
 });
 
+const storiesIndexHelper = algoliasearchHelper(searchClient,"stories_index",{
+    facets: ["app.appCategory.name","storyCategories.name","storyElements.name"],
+    hitsPerPage: 8
+})
+
 export {
     searchClient,
-    appsIndexHelper
+    appsIndexHelper,
+    storiesIndexHelper
 };
