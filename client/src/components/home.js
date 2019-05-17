@@ -19,6 +19,9 @@ class _Home extends React.Component {
     }
     if (this.props.location && this.props.location.state && this.props.location.state.filterBy) {
       filterBy = this.props.location.state.filterBy
+      if (filterBy.appCategory !== "all"){
+        appsIndexHelper.toggleFacetRefinement("appCategory.name",filterBy.appCategory);
+      }
     }
     this.state = {
       appCategories:undefined,
@@ -38,10 +41,10 @@ class _Home extends React.Component {
     this.hitsPerPage = 4
   }
   filterCategory(appCategory) {
-    if (!this.state.filterBy.appCategory || !(this.state.filterBy.appCategory.id === appCategory.id)){
+    if (!this.state.filterBy.appCategory || !(this.state.filterBy.appCategory.name === appCategory.name)){
       this.setState(prevState => {
         let state = prevState;
-        state.filterBy.appCategory = appCategory.id
+        state.filterBy.appCategory = appCategory.name
         appsIndexHelper.state.hitsPerPage = this.hitsPerPage
         this.setState({apps:undefined,show_skeleton:true})
         appsIndexHelper.state.facetsRefinements["appCategory.name"] = []
@@ -51,6 +54,10 @@ class _Home extends React.Component {
         return state;
       },() => this.update());
     }
+  }
+  componentWillUnmount(){
+    appsIndexHelper.setQuery("");
+    appsIndexHelper.clearRefinements()
   }
   async update(fromMount){
     console.log(123);
@@ -193,7 +200,14 @@ class _Home extends React.Component {
                   <input 
                     type="text" 
                     placeholder="Search by app name..."
-                    onChange={(e) => this.update()}
+                    onChange={(e) => {
+                      this.setState({
+                        apps: undefined,
+                        nothing_to_show: false,
+                        show_skeleton: true
+                      })  
+                      this.update()
+                    }}
                     id="appName_contains"
                   />
                 </div>			
@@ -207,7 +221,8 @@ class _Home extends React.Component {
                 open={this.state.appCategoryFilterOpen}
                 value={this.state.filterBy.appCategory}
                 handleAllFilterClick={() => this.filterCategory({id:"all",name:"all"})}
-                handleFilterClick={(e,appCategory) => this.filterCategory(appCategory)} 
+                handleFilterClick={(e,appCategory) => this.filterCategory(appCategory)}
+                use_name={true}
               />			
                </div>
             </div>
