@@ -59,6 +59,7 @@ module.exports = {
 		deleteAppVersion: appVersionResolvers.deleteAppVersion,
 		createLibrary: libraryResolvers.createLibrary,
 		editLibrary: libraryResolvers.editLibrary,
+		deleteLibrary: libraryResolvers.deleteLibrary,
 		createStory: storyResolvers.createStory,
 		editStory: storyResolvers.editStory,
 		storyToLibrary: storyResolvers.storyToLibrary,

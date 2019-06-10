@@ -15,7 +15,7 @@ class InsideHeader extends React.Component {
 									pathname: this.props.back_to_path,
 									state: this.props.state
 								}}><h4 className="pink bold header__back"><a href="#" className="flex ac"><img src="/assets/toolkit/images/backArrow.png" alt />{this.props.back_to_msg}</a></h4></Link>
-								<div ref={node => this.profile_img = node} className="profile-nav__img--content">
+								{/* <div ref={node => this.profile_img = node} className="profile-nav__img--content">
 
 						        <div onClick={e => {
 						        	if (this.profile_img.className.indexOf("opened") === -1){
@@ -55,7 +55,7 @@ class InsideHeader extends React.Component {
 						            <p onClick={this.props.user.logout} className="bold"><a href="#">Logout</a></p>
 						          </div>
 						        </div>
-						      </div>
+						      </div> */}
 	            </div>
 	          </div>
 	        </div>

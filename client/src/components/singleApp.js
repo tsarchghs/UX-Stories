@@ -147,17 +147,12 @@ class _SingleApp extends React.Component {
 		return (
       <div>
         <div className="header back__header">
-        {
-            this.props.user
-            ?<InsideHeader
-                back_to_msg="Back to apps"
-                back_to_path="/"
-                state={state}
-                user={this.props.user}
-            />
-            :
-              <Header/>        
-        }
+          <InsideHeader
+            back_to_msg="Back to apps"
+            back_to_path="/"
+            state={state}
+            user={this.props.user}
+          />
         {
 
           !this.state.app || this.state.show404 ? 

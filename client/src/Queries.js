@@ -103,6 +103,17 @@ const ADD_ALGOLIA_INDEX_QUERY = gql`
      }
   }
 `
+const DELETE_LIBRARY_MUTATION = gql`
+  mutation DeleteLibrary(
+    $id: ID!
+  ){
+    deleteLibrary(
+      id: $id
+    ) {
+      id
+    }
+  }
+`
 
 export {
     getObjectConnectionQuery,
@@ -110,5 +121,6 @@ export {
     APPS_QUERY,
     UPDATE_ALGOLIA_INDEX_QUERY,
     DELETE_ALGOLIA_INDEX_QUERY,
-    ADD_ALGOLIA_INDEX_QUERY
+    ADD_ALGOLIA_INDEX_QUERY,
+    DELETE_LIBRARY_MUTATION
 }

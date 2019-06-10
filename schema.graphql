@@ -461,6 +461,10 @@ type Mutation {
     stories: [StoryLinkType!]
   ): Library!
 
+  deleteLibrary(
+    id: ID!
+  ): Library!
+
   createStory(
     app: ID!
     video: FileInput!

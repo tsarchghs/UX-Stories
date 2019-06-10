@@ -139,11 +139,19 @@ const editLibrary = async (root,args,context,info) => {
 	return library
 }
 
+const deleteLibrary = async (root,args,context,info) => {
+	permissions.loginPermission(context,"MEMBER");
+	await permissions.libraryPermission(context, args.id)
+	const library = await context.db.mutation.deleteLibrary({where:{id:args.id}});
+	return library;
+}
+
 
 module.exports = {
 	library,
 	libraries,
 	createLibrary,
 	editLibrary,
-	toggleStoryLibrary
+	toggleStoryLibrary,
+	deleteLibrary
 }
