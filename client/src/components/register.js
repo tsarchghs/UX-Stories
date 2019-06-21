@@ -1,5 +1,5 @@
 import React from "react";
-import { Link } from "react-router-dom";
+import { Link, withRouter } from "react-router-dom";
 import Loading from "./loading";
 import gql from "graphql-tag";
 import Alert from "./alert";
@@ -10,15 +10,16 @@ class Register extends React.Component {
 	constructor(props) {
 		super(props);
 		this.state = {
-			jobs: undefined
+			jobs: undefined,
+			email: this.props.location.state && this.props.location.state.email
 		}
 		this.full_name = undefined;
 		this.job = undefined;
 		this.password = undefined;
-		this.email = undefined;
+		console.log(this.props.location.state)
+		this.focusOnFullNameOnce = false
 	}
 	render() {
-		console.log(this.props.show_messages_register)
 		return (
 			  <Query 
 			  	query={gql`
@@ -54,24 +55,24 @@ class Register extends React.Component {
 							`}
 						>
 						{ (signUp,{loading,error,data}) => {
-							console.log(data);
 							if (data && data.signUp.token){
 								Cookies.set("token",data.signUp.token);
-								this.props.refetchApp();
+								let callback = () => this.props.history.push("/price") 
+								this.props.refetchApp(callback);
 							}
 							return (
 								<form className="login" onSubmit={(e) => {
 									e.preventDefault();
 									signUp({variables:{
 										full_name: this.full_name.value,
-										email: this.email.value,
+										email: this.state.email,
 										password: this.password.value,
 										job: this.job.value
 									}})
 								}}>
 							        <div className="login__container">
 							          <div className="login__content">
-							          	<Link to="/login">
+											<Link to={this.props.location.state && this.props.location.state.from ? this.props.location.state.from : "/" }>
 							            	<h4 className="pink bold header__back"><a href="#" className="flex ac"><img src="/assets/toolkit/images/backArrow.png" alt />Back</a></h4>
 							            </Link>
 							            <div className="login__header mb50">
@@ -88,7 +89,14 @@ class Register extends React.Component {
 											{
 												jobsLoading ? <Loading /> :                  
 														<div className="input__wo-border">
-																<input ref={node => this.full_name = node} className="input first fmt" id="r_full_name" type="text" placeholder="First and your last name" />
+																<input ref={node => {
+																	this.full_name = node
+																	if (this.full_name && !this.focusOnFullNameOnce){
+																		this.full_name.focus()
+																		this.focusOnFullNameOnce = true
+																	} 
+																	
+																}} className="input first fmt" id="r_full_name" type="text" placeholder="First and your last name" />
 																<div className="select__div fmt wo-border">
 																<select ref={node => this.job = node} id="r_job">
 																	{
@@ -97,14 +105,13 @@ class Register extends React.Component {
 																</select>
 
 															</div>
-															<input ref={node => this.email = node} className="input fmt" type="email" id="r_email" placeholder="Email" />
+															<input onChange={e => this.setState({email:e.target.value})} value={this.state.email} className="input fmt" type="email" id="r_email" placeholder="Email" />
 															<input ref={node => this.password = node} className="input last fmt" type="password" id="r_password" placeholder="Password" />
 															<p className="login__rm light-gray text-center">By clicking this button, you agree to our <a className="bold" href="#">Terms, Privacy Policy.</a></p>
 															{
 															loading ? <center><Loading style={{ width: "50%" }} /></center>
 															: <button className="button full">Create account</button>
 															}
-											
 															<Link to="/login"><p className="sign-in light-gray text-center">Already using UX-Stories? <a href="#">Sign in here</a></p></Link>
 														</div>
 											}
@@ -124,4 +131,4 @@ class Register extends React.Component {
 	}
 }
 
-export default Register;
+export default withRouter(Register);

@@ -17,6 +17,7 @@ import ForgetPassword from "./components/forgetPassword";
 import ResetPassword from "./components/resetPassword";
 import SingleStory from "./components/singleStory";
 import Dashboard from "./components/admin/dashboard";
+import Price from "./components/price";
 import { Users, UpdateUser } from "./components/admin/users";
 import { Apps, UpdateApp} from "./components/admin/apps";
 import { AdminStories, UpdateStory } from "./components/admin/stories";
@@ -95,7 +96,10 @@ class App extends Component {
                                         return (
                                             user 
                                             ? <Redirect to="/" /> 
-                                            : <Register refetchApp={refetch}/>
+                                            : <Register refetchApp={async callback => {
+                                                await refetch()
+                                                callback()
+                                            }}/>
                                         );
                                     }} />
                                     <Route path="/login" exact component={()  => {
@@ -133,11 +137,26 @@ class App extends Component {
                                                 : <Redirect to={`/login?success=story:${match.match.params.id}`} />
                                         )
                                     }} />
+                                
+                                <Route path="/price" exact component={() => {
+                                    console.log(user, 9911);
+                                    return (
+                                        user
+                                            ? <Price user={user} />
+                                            : <Redirect to="/login?success=price" />
+                                    );
+                                }} />
+
                                 <Route path="/profile" exact component={() => {
                                     console.log(user,9911);
                                     return (
                                         user
-                                        ? <Profile refetchApp={refetch} user={user} />
+                                        ? <Profile refetchApp={to => {
+                                            refetch()
+                                            if (to){
+                                                this.props.history.push(to)
+                                            }
+                                        }} user={user} />
                                         : <Redirect to="/login?success=profile"/>
                                     );
                                 }} />

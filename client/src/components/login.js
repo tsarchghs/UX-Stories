@@ -72,7 +72,12 @@ class Login extends React.Component {
 			              <div className="login__card">
 			                <div className="login__card-img"><img src="/assets/toolkit/images/invalid-name.svg" alt /></div>
 			                <h3 className="white">Join us and create free acount</h3>
-			                <Link to="/register"><button className="bold button whitest small">Sign up here</button></Link>
+			                <Link to={{
+								pathname:"/register",
+								state:{
+									from: "/login"
+								}
+							}}><button className="bold button whitest small">Sign up here</button></Link>
 			              </div>
 			            </div>
 			          </div>

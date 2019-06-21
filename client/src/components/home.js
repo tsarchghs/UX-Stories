@@ -31,13 +31,13 @@ class _Home extends React.Component {
       nothing_to_show: false,
       filterBy: filterBy,
       jobs: [],
-      show_email: true
+      show_email: true,
+      email: undefined
     }
     this.skip = 0;
     this.loadMore = this.loadMore.bind(this);
     this.toggle = this.toggle.bind(this);
     this.update = debounce(this.update.bind(this),150);
-    this.enteredEmail = this.enteredEmail.bind(this);
     this.hitsPerPage = 4
   }
   filterCategory(appCategory) {
@@ -114,13 +114,6 @@ class _Home extends React.Component {
     appsIndexHelper.state.hitsPerPage += this.hitsPerPage;
     this.update();
   }
-  enteredEmail(e) {
-    e.preventDefault();
-      if (this.state.show_email) {
-        this.setState({ show_email: false })
-      } else {
-      }
-  }
 	render() {
 		return (
 			 <div>
@@ -131,59 +124,41 @@ class _Home extends React.Component {
               <div className="home-hero__left--content">
                 <h1 className="gray bold">Find real problems solved for millions of people</h1>
                 <h5 className="light-gray">UXstories is hand picked collection of top apps on App Store that have the best practises of UX from login to purchasing a product and more.</h5>
-                          <Mutation
-                            mutation={gql`
-                              mutation SignUp(
-                                $full_name: String!, $email: String!, 
-                                $password: String!,$job: ID!
-                              ) {
-                                signUp(
-                                  full_name: $full_name,
-                                  email: $email,
-                                  password: $password,
-                                  job: $job
-                                ) {
-                                  token
-                                }
-                              } 
-                            `}
-                          >
-                            {(signUp, { loading, error, data }) => {
-                                if (data && data.signUp.token) {
-                                  Cookies.set("token", data.signUp.token);
-                                  this.props.refetchApp();
-                                }
-                                let onSubmit = (e) => {
-                                  e.preventDefault();
-                                  signUp({variables:{
-                                    full_name: this.full_name.value,
-                                    email: this.email.value,
-                                    password: this.password.value,
-                                    job: this.job.value
-                                  }})
-                                }
-                                return (
-                                  <form onSubmit={this.state.show_email ? this.enteredEmail : onSubmit}>
-                                    <div className="home-hero__input">
-                                        <input ref={node => this.email = node} style={{display: this.state.show_email ? "block" : "none" }} className="input" type="text" placeholder="Enter your email" />
-                                        {
-                                          !this.state.show_email &&
-                                            <div className="home-hero__input">
-                                            <input ref={node => this.full_name = node} className="input" type="text" placeholder="Enter your full name" />
-                                          <input ref={node => this.password = node} className="input" type="password" placeholder="Enter your password" />
-                                              <select ref={node => this.job = node} id="r_job">
-                                                {
-                                                  this.state.jobs.map(job => <option id={job.name} value={job.id}>{job.name}</option>)
-                                                }
-                                              </select>
-                                            </div>
-                                        }
-                                      <button style={{ marginBottom:"0px !important"}} className="button">SIGN UP</button>
-                                    </div>
-                                  </form>
-                                )
-                            }}
-                        </Mutation>                   
+                <div className="home-hero__input">
+                  <form
+                   style={{display: "inline"}}
+                   onSubmit={e => {
+                    this.props.history.push({
+                      pathname: "/register",
+                      state: {
+                        email: this.state.email,
+                        from: "/"
+                      }
+                    })
+                  }}>
+                    <input
+                        onChange={e => {
+                        this.setState({email: e.target.value})
+                        }} style={{display: "inline"}} className="input" type="email" placeholder="Enter your email"
+                        required
+                      />
+                        <Link to={{
+                          pathname:"/register",
+                          state: { 
+                            email: this.state.email,
+                            from: "/" 
+                          }
+                        }} style={{color:"white"}}>
+                        <button 
+                          style={{ marginBottom:"0px !important",display: "inline"}} 
+                          className="button"
+                          type="submit"
+                        >
+                            SIGN UP
+                      </button>
+                      </Link>
+                  </form>
+                </div>
               </div>
             </div>
             <div style={{ backgroundImage:"url(http://localhost:3000/assets/toolkit/images/homeimg.jpg)"}} className="home-hero__img" />
