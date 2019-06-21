@@ -4,6 +4,26 @@ import { Query, Mutation } from "react-apollo";
 import gql from "graphql-tag";
 import { handleUploadPhotoInput } from "../helpers";
 import Alert from "./alert";
+import Modal from 'react-modal';
+
+const customStyles = {
+	content: {
+		top: '370px',
+		left: '50%',
+		right: 'auto',
+		bottom: 'auto',
+		marginRight: '-50%',
+		transform: 'translate(-50%, -50%)',
+		width: "368px",
+		borderRadius: "6px",
+		outline: "none"
+	},
+	overlay: {
+		backgroundColor: "rgba(10, 10, 10, 0.75)"
+	}
+};
+
+Modal.setAppElement('#root')
 
 class EditProfileModal extends React.Component {
 	constructor(props) {
@@ -22,8 +42,14 @@ class EditProfileModal extends React.Component {
 	}
 	render(){
 		return (
-			ReactDOM.createPortal(
-		      <div className="modal reveal" id={this.props.id} data-reveal>
+			<Modal
+				isOpen={this.props.modalIsOpen}
+				onAfterOpen={this.props.afterOpenModal}
+				onRequestClose={this.props.closeModal}
+				style={customStyles}
+				contentLabel="Example Modal"
+			>
+		      <div id={this.props.id}>
 		      	<Query
 		      		query={gql`
 				        query {
@@ -182,7 +208,7 @@ class EditProfileModal extends React.Component {
 																	}} 
 																	type="button"
 															>
-										            <img src="../../assets/toolkit/images/006-error.svg" alt />
+										            <img onClick={this.props.closeModal} src="../../assets/toolkit/images/006-error.svg" alt />
 										          </button>
 									          </div>
 								          	)
@@ -195,7 +221,7 @@ class EditProfileModal extends React.Component {
 		      	}}
 			  </Query>
 		    </div>
-		    ,document.body)
+			</Modal>
 		)
 	}
 }

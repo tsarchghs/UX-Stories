@@ -19,46 +19,64 @@ class Profile extends React.Component {
       libraries: undefined,
       profile_photo: this.props.user && this.props.user.profile_photo ? this.props.user.profile_photo.url : undefined,
       jobs: undefined,
-      editProfile_open: false
+      editProfile_open: false,
+      editLibrary:{
+        id: undefined,
+        name: undefined
+      }
     }
     this.refetchLibraries = undefined;
-    this.updateButton = undefined;
     this.editProfile = undefined;
+    this.closeModal = this.closeModal.bind(this);
+    this.editLibraryModal = this.editLibraryModal.bind(this);
+    this.editLibraryNameOnChange = this.editLibraryNameOnChange.bind(this);
   }
-  async componentDidMount() {
-      loadToolkit();
-      ReactDOM.render(
-        <ApolloProvider client={this.props.client}>
-          <CreateLibraryModal
-            id="exampleModal2"
-            close={() => {
-              document.querySelector('#exampleModal2').parentElement.click()
-            }}
-          />
-        </ApolloProvider>,
-        document.getElementById("createLibraryModal")
-        )
-      ReactDOM.render(
-        <ApolloProvider client={this.props.client}>
-          <EditProfileModal
-            id="editProfile"
-            user={this.props.user}
-            refetchApp={this.props.refetchApp}
-            closeAndUpdate={() => {
-              document.querySelector('#editProfile').parentElement.click()
-              this.updateButton.click();
-            }}
-          />
-        </ApolloProvider>,
-        document.getElementById("editProfileModal")
-    )
+  closeModal(){
+    this.setState({ currentModal: undefined })
+  }
+  editLibraryModal(library){
+    console.log(library);
+    this.setState({
+      editLibrary: {
+        id: library.id,
+        name: library.name
+      },
+      currentModal: "EditLibraryModal"
+    })
+    console.log(this.state);
+  }
+  editLibraryNameOnChange(e){
+    let target = e.target;
+    this.setState(nextState => {
+      nextState.editLibrary.name = target.value
+      return nextState;
+    })
   }
   render() {
-    loadToolkit()
     console.log(this.props.user);
     return (
       <ApolloProvider client={this.props.client}>
       <div>
+        <EditProfileModal
+          user={this.props.user}
+          modalIsOpen={this.state.currentModal === "EditProfileModal"}
+          refetchApp={this.props.refetchApp}
+          closeModal={this.closeModal}
+          closeAndUpdate={() => {
+            this.props.refetchApp()
+          }}
+        />
+        <CreateLibraryModal
+          modalIsOpen={this.state.currentModal === "CreateLibraryModal"}
+          closeModal={this.closeModal}
+        />
+        <EditLibraryModal
+          modalIsOpen={this.state.currentModal === "EditLibraryModal"}
+          closeModal={this.closeModal}
+          id={this.state.editLibrary.id}
+          name={this.state.editLibrary.name}
+          onChange={this.editLibraryNameOnChange}
+        />
       <Header user={this.props.user} />
         <div className="container">
           <div className="profile__content">
@@ -83,13 +101,12 @@ class Profile extends React.Component {
                               </div>  
                               <button 
                                 style={{display:"none"}}
-                                ref={node => this.updateButton = node} 
-                                onClick={() => this.props.refetchApp()} 
                                 className="button">Save</button>
 
                               <button 
                                 ref={node => this.editProfile = node}
                                 data-open="editProfile"
+                                onClick={() => this.setState({currentModal:"EditProfileModal"})}
                                 className="button">Edit Profile</button>
                     </div>
                     ) :
@@ -138,23 +155,18 @@ class Profile extends React.Component {
                             loading && !libraries.length? <Loading/>
                             : 
                             <div className="libraries__content">
-                              <div data-open="exampleModal2" className="libraries-card create">
+                              <div onClick={() => {
+                                this.setState({
+                                  currentModal: "CreateLibraryModal"
+                                })
+                              }} className="libraries-card create">
                                 <img src="../../assets/toolkit/images/007-plus.svg" />
                                 <p className="pink bold">Create new library</p>
                               </div>
                               {
                                 libraries.map(library => {
-                                  let el = document.getElementById(`editLibrary_${library.id}`)
-                                  if (!el){
-                                    let div = document.createElement("div");
-                                    ReactDOM.render(
-                                      <ApolloProvider client={this.props.client}>
-                                        <EditLibraryModal client={this.props.client} id={library.id} name={library.name} />
-                                      </ApolloProvider>
-                                      , div)
-                                    document.body.appendChild(div);
-                                  }
-                                  return <LibraryCard key={library.id} library={library} />
+
+                                  return <LibraryCard editLibraryModal={this.editLibraryModal} key={library.id} library={library} />
                                 })
                               }
                             </div>
