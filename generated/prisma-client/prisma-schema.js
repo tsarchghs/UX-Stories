@@ -2533,6 +2533,8 @@ type User {
   job: Job!
   role: AccountType!
   profile_photo: File
+  customer_id: ID
+  subscription_id: ID
   apps(where: AppWhereInput, orderBy: AppOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [App!]
   libraries(where: LibraryWhereInput, orderBy: LibraryOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Library!]
   createdAt: DateTime!
@@ -2552,6 +2554,8 @@ input UserCreateInput {
   job: JobCreateOneInput!
   role: AccountType!
   profile_photo: FileCreateOneInput
+  customer_id: ID
+  subscription_id: ID
   apps: AppCreateManyWithoutCreatedByInput
   libraries: LibraryCreateManyWithoutCreatedByInput
 }
@@ -2578,6 +2582,8 @@ input UserCreateWithoutAppsInput {
   job: JobCreateOneInput!
   role: AccountType!
   profile_photo: FileCreateOneInput
+  customer_id: ID
+  subscription_id: ID
   libraries: LibraryCreateManyWithoutCreatedByInput
 }
 
@@ -2588,6 +2594,8 @@ input UserCreateWithoutLibrariesInput {
   job: JobCreateOneInput!
   role: AccountType!
   profile_photo: FileCreateOneInput
+  customer_id: ID
+  subscription_id: ID
   apps: AppCreateManyWithoutCreatedByInput
 }
 
@@ -2607,6 +2615,10 @@ enum UserOrderByInput {
   full_name_DESC
   role_ASC
   role_DESC
+  customer_id_ASC
+  customer_id_DESC
+  subscription_id_ASC
+  subscription_id_DESC
   createdAt_ASC
   createdAt_DESC
   updatedAt_ASC
@@ -2619,6 +2631,8 @@ type UserPreviousValues {
   password: String!
   full_name: String!
   role: AccountType!
+  customer_id: ID
+  subscription_id: ID
   createdAt: DateTime!
   updatedAt: DateTime!
 }
@@ -2648,6 +2662,8 @@ input UserUpdateDataInput {
   job: JobUpdateOneRequiredInput
   role: AccountType
   profile_photo: FileUpdateOneInput
+  customer_id: ID
+  subscription_id: ID
   apps: AppUpdateManyWithoutCreatedByInput
   libraries: LibraryUpdateManyWithoutCreatedByInput
 }
@@ -2659,6 +2675,8 @@ input UserUpdateInput {
   job: JobUpdateOneRequiredInput
   role: AccountType
   profile_photo: FileUpdateOneInput
+  customer_id: ID
+  subscription_id: ID
   apps: AppUpdateManyWithoutCreatedByInput
   libraries: LibraryUpdateManyWithoutCreatedByInput
 }
@@ -2668,6 +2686,8 @@ input UserUpdateManyMutationInput {
   password: String
   full_name: String
   role: AccountType
+  customer_id: ID
+  subscription_id: ID
 }
 
 input UserUpdateOneRequiredInput {
@@ -2698,6 +2718,8 @@ input UserUpdateWithoutAppsDataInput {
   job: JobUpdateOneRequiredInput
   role: AccountType
   profile_photo: FileUpdateOneInput
+  customer_id: ID
+  subscription_id: ID
   libraries: LibraryUpdateManyWithoutCreatedByInput
 }
 
@@ -2708,6 +2730,8 @@ input UserUpdateWithoutLibrariesDataInput {
   job: JobUpdateOneRequiredInput
   role: AccountType
   profile_photo: FileUpdateOneInput
+  customer_id: ID
+  subscription_id: ID
   apps: AppUpdateManyWithoutCreatedByInput
 }
 
@@ -2789,6 +2813,34 @@ input UserWhereInput {
   role_in: [AccountType!]
   role_not_in: [AccountType!]
   profile_photo: FileWhereInput
+  customer_id: ID
+  customer_id_not: ID
+  customer_id_in: [ID!]
+  customer_id_not_in: [ID!]
+  customer_id_lt: ID
+  customer_id_lte: ID
+  customer_id_gt: ID
+  customer_id_gte: ID
+  customer_id_contains: ID
+  customer_id_not_contains: ID
+  customer_id_starts_with: ID
+  customer_id_not_starts_with: ID
+  customer_id_ends_with: ID
+  customer_id_not_ends_with: ID
+  subscription_id: ID
+  subscription_id_not: ID
+  subscription_id_in: [ID!]
+  subscription_id_not_in: [ID!]
+  subscription_id_lt: ID
+  subscription_id_lte: ID
+  subscription_id_gt: ID
+  subscription_id_gte: ID
+  subscription_id_contains: ID
+  subscription_id_not_contains: ID
+  subscription_id_starts_with: ID
+  subscription_id_not_starts_with: ID
+  subscription_id_ends_with: ID
+  subscription_id_not_ends_with: ID
   apps_every: AppWhereInput
   apps_some: AppWhereInput
   apps_none: AppWhereInput

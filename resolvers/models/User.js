@@ -3,6 +3,7 @@ const permissions = require("../permissions");
 const bcrypt = require("bcrypt");
 const { checkValidation } = require("../../helpers");
 const { editProfileSchema } = require("../../validations/userValidations");
+const stripe = require('stripe')(process.env.stripe_secret_key);
 
 const saltRounds = 10;
 
@@ -68,9 +69,60 @@ const getLoggedInUser = async (parent,args,context,info) => {
 	},info);
 }
 
+const User = {
+	subscription: async (parent,args,context) => {
+		if (!context.user.subscription_id){
+			return undefined
+		}
+		let subs = await stripe.subscriptions.retrieve(context.user.subscription_id);
+		return {
+			id: subs.id,
+			status: subs.status,
+			cancel_at_period_end: subs.cancel_at_period_end
+		};
+	},
+	invoices: async (parent,args,context) => {
+		let subscription_id = context.user.subscription_id;
+		let customer_id = context.user.customer_id;
+		if (!subscription_id || !customer_id){
+			return []	
+		}
+		let subscription = parent.subscription;
+		if (subscription){
+			subscription = await stripe.subscriptions.retrieve(subscription_id);
+		}
+		let res_invoices = await stripe.invoices.list({customer: customer_id})
+		let invoices = res_invoices.data
+		let formatted = []
+		for (let x in invoices){
+			let invoice = invoices[x];
+			let charge = await stripe.charges.retrieve(invoice.charge)
+			console.log(JSON.stringify({
+				...invoice,
+				last4: charge.source.last4
+			}))
+			formatted.push({
+				...invoice,
+				last4: charge.source.last4
+			})
+		}
+		return formatted;
+	},
+	customer: async (parent,args,context) => {
+		let customer_id = context.user.customer_id;
+		let customer = await stripe.customers.retrieve(customer_id);
+		return {
+			...customer,
+			source: customer.sources.data[0]
+		}
+
+	}
+}
+
 module.exports = {
 	users,
 	getLoggedInUser,
 	editProfile,
-	countUsers
+	countUsers,
+	User
 }

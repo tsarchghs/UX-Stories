@@ -1,15 +1,12 @@
 import React from "react";
 import LibraryCard from "./libraryCard";
-import gql from "graphql-tag";
 import Loading from "./loading";
 import Header from "./header";
 import { withApollo, Query,ApolloProvider } from "react-apollo";
 import EditProfileModal from "./editProfileModal";
-import ReactDOM from 'react-dom';
 import CreateLibraryModal from "./createLibraryModal";
-import {loadToolkit} from "../helpers";
-import $ from "jquery";
 import EditLibraryModal from "./editLibraryModal";
+import DeleteLibraryModal from "./deleteLibraryModal";
 import { LIBRARIES_QUERY } from "../Queries";
 
 class Profile extends React.Component {
@@ -23,37 +20,48 @@ class Profile extends React.Component {
       editLibrary:{
         id: undefined,
         name: undefined
-      }
+      },
+      deleteLibrary:{
+        id: undefined,
+        name: undefined
+      },
+      currentDropDownOpen: undefined
     }
     this.refetchLibraries = undefined;
     this.editProfile = undefined;
     this.closeModal = this.closeModal.bind(this);
-    this.editLibraryModal = this.editLibraryModal.bind(this);
-    this.editLibraryNameOnChange = this.editLibraryNameOnChange.bind(this);
+    this.openLibraryModal = this.openLibraryModal.bind(this);
+    this.updateLibraryNameOnChange = this.updateLibraryNameOnChange.bind(this);
+    this.toggleDropDown = this.toggleDropDown.bind(this);
   }
   closeModal(){
     this.setState({ currentModal: undefined })
   }
-  editLibraryModal(library){
-    console.log(library);
+  openLibraryModal(type,modalName,library){
     this.setState({
-      editLibrary: {
+      [type]: {
         id: library.id,
         name: library.name
       },
-      currentModal: "EditLibraryModal"
+      currentModal: modalName
     })
-    console.log(this.state);
   }
-  editLibraryNameOnChange(e){
+  updateLibraryNameOnChange(type,e){
     let target = e.target;
     this.setState(nextState => {
-      nextState.editLibrary.name = target.value
+      nextState[type].name = target.value
       return nextState;
     })
   }
+  toggleDropDown(value) {
+    this.setState(prevState => {
+      let last_value = prevState["currentDropdown"];
+      prevState["currentDropdown"] = last_value === value ? undefined : value
+      console.log(last_value,55,value)  
+      return prevState;
+    })
+  }
   render() {
-    console.log(this.props.user);
     return (
       <ApolloProvider client={this.props.client}>
       <div>
@@ -75,9 +83,20 @@ class Profile extends React.Component {
           closeModal={this.closeModal}
           id={this.state.editLibrary.id}
           name={this.state.editLibrary.name}
-          onChange={this.editLibraryNameOnChange}
+          onChange={(e) => this.updateLibraryNameOnChange("editLibrary",e)}
         />
-      <Header user={this.props.user} />
+        <DeleteLibraryModal
+            modalIsOpen={this.state.currentModal === "DeleteLibraryModal"}
+            closeModal={this.closeModal}
+            id={this.state.deleteLibrary.id}
+            name={this.state.deleteLibrary.name}
+            onChange={(e) => this.updateLibraryNameOnChange("deleteLibrary", e)}
+        />
+      <Header 
+        user={this.props.user} 
+        opened={this.state.currentDropdown === "profileDropdown"}
+        toggleOpened={() => this.toggleDropDown("profileDropdown")}
+      />
         <div className="container">
           <div className="profile__content">
 
@@ -88,11 +107,12 @@ class Profile extends React.Component {
                               <div className="user-profile">
                                 <div 
                                   className="user-profile__img" style={{
-                                  backgroundImage: (
-                                    `url(${this.state.profile_photo ? this.state.profile_photo : "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQOo9ftjYQCU8HW1YByx0oAQdegRxO51mQN0tKKenGRnDZb-_D6"})`
-                                    ),
-                                  maxWidth:100,
-                                  maxHeight:100
+                                    backgroundImage: (
+                                      `url(${this.state.profile_photo ? this.state.profile_photo : "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQOo9ftjYQCU8HW1YByx0oAQdegRxO51mQN0tKKenGRnDZb-_D6"})`
+                                      ),
+                                    maxWidth:100,
+                                    maxHeight:100,
+                                    backgroundSize: "cover"
                                 }} />
                                 <div className="flex fd-column jc-se">
                                   <h2>{this.props.user.full_name}</h2>
@@ -105,7 +125,6 @@ class Profile extends React.Component {
 
                               <button 
                                 ref={node => this.editProfile = node}
-                                data-open="editProfile"
                                 onClick={() => this.setState({currentModal:"EditProfileModal"})}
                                 className="button">Edit Profile</button>
                     </div>
@@ -121,23 +140,9 @@ class Profile extends React.Component {
             <div className="libraries">
               <h3 className="text-center">Libraries</h3>
                 <Query 
-                  query={gql`
-                    query {
-                        libraries {
-                          id
-                          name
-                          stories {
-                            id
-                            thumbnail {
-                              id
-                              url
-                            }
-                          }
-                        }
-                      }
-                  `}>
+                  query={LIBRARIES_QUERY}
+                  >
                   { ({loading,error,data,refetch,networkStatus}) => {
-                    console.log(networkStatus);
                     this.refetchLibraries = refetch;
                     if (error) return <p>{error.message}</p>
                     var data_or_cache = data
@@ -145,10 +150,8 @@ class Profile extends React.Component {
                       try {
                         var data_or_cache = this.props.client.readQuery({query:LIBRARIES_QUERY});
                       } catch (e) {}
-                      console.log(data_or_cache,511);
                     }
                     let libraries = data_or_cache.libraries ? data_or_cache.libraries : []
-                    console.log(data_or_cache,5123);
                     return (
                         <div className="libraries__content">
                           {
@@ -166,7 +169,12 @@ class Profile extends React.Component {
                               {
                                 libraries.map(library => {
 
-                                  return <LibraryCard editLibraryModal={this.editLibraryModal} key={library.id} library={library} />
+                                  return <LibraryCard 
+                                      openLibraryModal={this.openLibraryModal} 
+                                      key={library.id}
+                                      library={library}
+
+                                    />
                                 })
                               }
                             </div>

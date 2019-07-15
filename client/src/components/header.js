@@ -2,20 +2,6 @@ import React from "react";
 import { Link } from "react-router-dom";
 
 class Header extends React.Component {
-	constructor(props){
-		super(props);
-		this.state = {
-			opened: false
-		}
-		this.toggleOpened = this.toggleOpened.bind(this);
-	}
-	toggleOpened(){
-		this.setState(prevState => {
-			let state = prevState;
-			state.opened = !state.opened
-			return state;
-		})
-	}
 	render() {
 		let location = window.location.href.split("/");
 		let pathname = location[location.length-1]
@@ -32,13 +18,18 @@ class Header extends React.Component {
 		              </div>        <div className="profile-nav">
 		                <p className="light-gray"><a href="#">About</a></p>
 		                <p className="light-gray"><a href="#">Contact</a></p>	
-						{        
-							!this.props.user ? "" : <p className="light-gray"><a href="#">Upgrade</a></p>
-						}
+							<Link to="/payment">
+								{        
+									!this.props.user ? "" : <p className="light-gray blackOnHover" style={pathname.indexOf("payment") !== -1 ? {
+										color: "#000",
+										borderBottom: "2px solid #000"
+									} : undefined}>Plan</p>
+								}
+							</Link>
 						{
 							this.props.user
-									? <div ref={node => this.profile_img = node} className={`profile-nav__img--content ${this.state.opened ? "opened" : ""}`}>
-						        <div onClick={this.toggleOpened} style={{
+									? <div ref={node => this.profile_img = node} className={`profile-nav__img--content ${this.props.opened ? "opened" : ""}`}>
+						        <div onClick={this.props.toggleOpened} style={{
 						        	cursor:"pointer",
 						        	backgroundImage: `url("${this.props.user && this.props.user.profile_photo ? this.props.user.profile_photo.url : "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQOo9ftjYQCU8HW1YByx0oAQdegRxO51mQN0tKKenGRnDZb-_D6"}")`}} className="profile-nav__img">
 								</div>
@@ -55,13 +46,14 @@ class Header extends React.Component {
 						              <p className="bold">{this.props.user.full_name}</p>
 						              <p className="light-gray">{this.props.user.email}</p>
 						              <Link to="/profile">
-						              	<button className="button">Edit profile</button>
-						              </Link>
+									  	<button className="button">Edit profile</button>
+									  </Link>
 						            </div>
 						          </div>
 						          <hr />
 						          <div className="profile-nav__dropdown--list">
-						            <p className="bold"><a href="#">Upgrade to PRO 🚀</a></p>
+						            <p className="bold">
+									<Link to="/invoices">Invoices</Link></p>
 						            <p className="bold"><a href="#">Become Contributor</a></p>
 						            <hr />
 						            <p className="bold"><a href="#">About</a></p>

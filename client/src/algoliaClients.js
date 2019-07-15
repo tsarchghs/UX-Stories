@@ -13,7 +13,7 @@ const appsIndexHelper = algoliasearchHelper(searchClient,"apps_index",{
 });
 
 const storiesIndexHelper = algoliasearchHelper(searchClient,"stories_index",{
-    facets: ["app.appCategory.name","storyCategories.name","storyElements.name"],
+    facets: ["app.id","appVersions.name","app.appCategory.name","storyCategories.name","storyElements.name"],
     hitsPerPage: 8
 })
 

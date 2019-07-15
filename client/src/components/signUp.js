@@ -1,12 +1,15 @@
 import React from "react";
 import { Link, withRouter } from "react-router-dom";
 import Loading from "./loading";
-import gql from "graphql-tag";
 import Alert from "./alert";
 import { Query, Mutation } from "react-apollo";
 import Cookies from "js-cookie";
+import {
+	JOBS_QUERY,
+	SIGN_UP_MUTATION
+} from "../Queries"
 
-class Register extends React.Component {
+class _SignUp extends React.Component {
 	constructor(props) {
 		super(props);
 		this.state = {
@@ -16,21 +19,12 @@ class Register extends React.Component {
 		this.full_name = undefined;
 		this.job = undefined;
 		this.password = undefined;
-		console.log(this.props.location.state)
 		this.focusOnFullNameOnce = false
 	}
 	render() {
 		return (
 			  <Query 
-			  	query={gql`
-					query {
-						jobs {
-							id
-							name
-						}
-					}
-				`
-			}>
+			  	query={JOBS_QUERY}>
 				{ ({loading,error,data}) => {
 					if (error) return <p>{error.message}</p>
 					let jobs = data.jobs;
@@ -38,26 +32,12 @@ class Register extends React.Component {
 
 					return (
 						<Mutation
-							mutation={gql`
-								mutation SignUp(
-									$full_name: String!, $email: String!, 
-									$password: String!,$job: ID!
-								) {
-									signUp(
-										full_name: $full_name,
-										email: $email,
-										password: $password,
-										job: $job
-									) {
-										token
-									}
-								} 
-							`}
+							mutation={SIGN_UP_MUTATION}
 						>
 						{ (signUp,{loading,error,data}) => {
 							if (data && data.signUp.token){
 								Cookies.set("token",data.signUp.token);
-								let callback = () => this.props.history.push("/price") 
+								let callback = () => this.props.history.push("/payment") 
 								this.props.refetchApp(callback);
 							}
 							return (
@@ -107,7 +87,8 @@ class Register extends React.Component {
 															</div>
 															<input onChange={e => this.setState({email:e.target.value})} value={this.state.email} className="input fmt" type="email" id="r_email" placeholder="Email" />
 															<input ref={node => this.password = node} className="input last fmt" type="password" id="r_password" placeholder="Password" />
-															<p className="login__rm light-gray text-center">By clicking this button, you agree to our <a className="bold" href="#">Terms, Privacy Policy.</a></p>
+																<p className="login__rm light-gray text-center">Before going further please sign up.</p>
+																<p className="login__rm light-gray text-center">By clicking this button, you agree to our <a className="bold" href="#">Terms, Privacy Policy.</a></p>
 															{
 															loading ? <center><Loading style={{ width: "50%" }} /></center>
 															: <button className="button full">Create account</button>
@@ -131,4 +112,4 @@ class Register extends React.Component {
 	}
 }
 
-export default withRouter(Register);
+export default withRouter(_SignUp);

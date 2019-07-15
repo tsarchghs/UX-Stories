@@ -3,33 +3,22 @@ import { Link } from "react-router-dom";
 import Alert from "./alert";
 import gql from "graphql-tag";
 import { withApollo } from "react-apollo";
-
+import { FORGET_PASSWORD_MUTATION } from "../Queries";
 
 class _ForgetPassword extends React.Component {
 	constructor(props){
 		super(props);
 		this.state = {
+			reset_email: "",
 			success: undefined
 		}
 		this.sendEmail = this.sendEmail.bind(this);
 	}
 	async sendEmail(e){
 		e.preventDefault();
-		console.log(`
-				mutation {
-					forgetPassword(email:"${document.getElementById("reset_email").value}"){
-				    success
-				  }
-				}
-			`);
 		let data = await this.props.client.mutate({
-			mutation: gql`
-				mutation {
-					forgetPassword(email:"${document.getElementById("reset_email").value}"){
-				    success
-				  }
-				}
-			`
+			mutation: FORGET_PASSWORD_MUTATION,
+			variables: { email: this.state.reset_email }
 		})
 		this.setState({
 			success: data.data.forgetPassword.success
@@ -61,7 +50,7 @@ class _ForgetPassword extends React.Component {
 		                	  )
 		                }			
 						<div className="input__wo-border">
-		                  <input id="reset_email" className="input first fmt" type="text" placeholder="Email" />
+		                  <input onChange={(e) => this.setState({reset_email: e.target.value })} className="input first fmt" type="text" placeholder="Email" />
 		                  <p className="login__rm light-gray text-center">By clicking this button, you agree to our <a className="bold" href="#">Terms, Privacy Policy.</a></p>
 		                  <button className="button full">Reset password</button>
 			          		<Link to="/login">

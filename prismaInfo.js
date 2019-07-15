@@ -45,6 +45,10 @@ const storiesInfo = `
                 name
             }
         }
+        appVersions {
+            id
+            name
+        }
         storyElements {
             id
             name

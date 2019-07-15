@@ -10,6 +10,8 @@ import { withApollo, Query, Mutation } from "react-apollo";
 import Cookies from "js-cookie";
 import { compose } from "recompose";
 import { appsIndexHelper } from "../algoliaClients";
+import { if_user_call_func } from "../helpers";
+import PickMembershipModal from "./pickMembershipModal"; 
 
 class _Home extends React.Component {
   constructor(props) {
@@ -32,7 +34,9 @@ class _Home extends React.Component {
       filterBy: filterBy,
       jobs: [],
       show_email: true,
-      email: undefined
+      email: undefined,
+      appName_contains: "",
+      currentModal: undefined
     }
     this.skip = 0;
     this.loadMore = this.loadMore.bind(this);
@@ -60,7 +64,6 @@ class _Home extends React.Component {
     appsIndexHelper.clearRefinements()
   }
   async update(fromMount){
-    console.log(123);
     let values = {
       reached_end: false,
       show_skeleton: true,
@@ -69,8 +72,7 @@ class _Home extends React.Component {
     this.setState(values)
     // quick hack to prevent error when user switches forth and back while update is being executed :'(
     // lesson learned. use refs next time
-    let appName_contains = document.getElementById("appName_contains") ? document.getElementById("appName_contains").value : ""
-    appsIndexHelper.setQuery(appName_contains).search();
+    appsIndexHelper.setQuery(this.state.appName_contains).search();
     appsIndexHelper.on("result",data => {
       let appsData = { data : { apps: data._rawResults[0].hits } }
       this.setState(prevState => {
@@ -86,14 +88,15 @@ class _Home extends React.Component {
       })
     })
   }
-  toggle(name) {
-    this.setState(nextState => {
-      nextState[name] = !nextState[name]
-      return nextState;
+  toggle(value) {
+    this.setState(prevState => {
+      let last_value = prevState["currentDropdown"];
+      prevState["currentDropdown"] = last_value === value ? undefined : value
+      console.log(last_value,55,value)  
+      return prevState;
     })
   }
 	async componentDidMount(){
-    console.log("MOUNT")
     this.update();
     let jobs = await this.props.client.query({
       query: gql`
@@ -117,7 +120,16 @@ class _Home extends React.Component {
 	render() {
 		return (
 			 <div>
-        <Header user={this.props.user}/>
+        <Header 
+          user={this.props.user}
+          opened={this.state.currentDropdown === "profileDropdown"}
+          toggleOpened={() => this.toggle("profileDropdown")}
+        />
+        <PickMembershipModal
+          modalIsOpen={this.state.currentModal === "PickMembershipModal"}
+          closeModal={(e) => this.setState({ currentModal: undefined })}
+          email={this.state.email}
+        />
         <div style={{display: this.props.user ? "none" : "block"}}>
           <section className="home-hero">
             <div className="home-hero__left">
@@ -128,13 +140,8 @@ class _Home extends React.Component {
                   <form
                    style={{display: "inline"}}
                    onSubmit={e => {
-                    this.props.history.push({
-                      pathname: "/register",
-                      state: {
-                        email: this.state.email,
-                        from: "/"
-                      }
-                    })
+                     e.preventDefault()
+                     this.setState({currentModal: "PickMembershipModal"})
                   }}>
                     <input
                         onChange={e => {
@@ -142,13 +149,6 @@ class _Home extends React.Component {
                         }} style={{display: "inline"}} className="input" type="email" placeholder="Enter your email"
                         required
                       />
-                        <Link to={{
-                          pathname:"/register",
-                          state: { 
-                            email: this.state.email,
-                            from: "/" 
-                          }
-                        }} style={{color:"white"}}>
                         <button 
                           style={{ marginBottom:"0px !important",display: "inline"}} 
                           className="button"
@@ -156,7 +156,7 @@ class _Home extends React.Component {
                         >
                             SIGN UP
                       </button>
-                      </Link>
+
                   </form>
                 </div>
               </div>
@@ -179,21 +179,20 @@ class _Home extends React.Component {
                       this.setState({
                         apps: undefined,
                         nothing_to_show: false,
-                        show_skeleton: true
+                        show_skeleton: true,
+                        appName_contains: e.target.value
                       })  
                       this.update()
                     }}
-                    id="appName_contains"
                   />
                 </div>			
               </div>
               <div className="flex">
-                <button style={{cursor:"pointer"}} onClick={e => this.toggle("appCategoryFilterOpen")} className="button white fbtn" data-toggle="first">Filter with Categories<img src="/assets/toolkit/images/shape.svg" alt /></button>
+                <button style={{cursor:"pointer"}} onClick={e => this.toggle("appCategoryFilter")} className="button white fbtn">Filter with Categories<img src="/assets/toolkit/images/shape.svg" alt /></button>
               <AppCategoriesDropdown 
-                id="first" 
                 filterBy={this.state.filterBy}
                 style={{ top: "43.8984px", left: "-198.188px"}}
-                open={this.state.appCategoryFilterOpen}
+                open={this.state.currentDropdown === "appCategoryFilter"}
                 value={this.state.filterBy.appCategory}
                 handleAllFilterClick={() => this.filterCategory({id:"all",name:"all"})}
                 handleFilterClick={(e,appCategory) => this.filterCategory(appCategory)}
@@ -283,7 +282,7 @@ class _Home extends React.Component {
         {
           !this.state.reached_end
           ? <center>
-              <button onClick={this.loadMore}>Load more</button>
+              <button onClick={() => if_user_call_func(this.props.user,this.loadMore,this.setState.bind(this))}>Load more</button>
             </center>
           : ""
         }

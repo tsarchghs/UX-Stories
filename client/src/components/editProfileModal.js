@@ -1,10 +1,10 @@
 import React from "react";
-import ReactDOM from "react-dom";
-import { Query, Mutation } from "react-apollo";
-import gql from "graphql-tag";
+import { Query, Mutation, withApollo } from "react-apollo";
 import { handleUploadPhotoInput } from "../helpers";
 import Alert from "./alert";
 import Modal from 'react-modal';
+import { JOBS_QUERY, EDIT_PROFILE_MUTATION, GET_LOGGED_IN_USER_QUERY } from "../Queries";
+import Loading from "./loading";
 
 const customStyles = {
 	content: {
@@ -25,19 +25,31 @@ const customStyles = {
 
 Modal.setAppElement('#root')
 
-class EditProfileModal extends React.Component {
+class _EditProfileModal extends React.Component {
 	constructor(props) {
 		super(props);
 		this.uploadPhotoInput = undefined;
 		this.full_name = undefined;
 		this.job = undefined;
 		this.email = undefined;
-		console.log(props,"ASDAS");
-		this.state = {
-			full_name: props.user.full_name,
-			email: props.user.email,
-			job: props.user.job.id,
-			password: undefined
+		this.state = {}
+		if (props.user){
+			this.state = {
+				full_name: props.user.full_name,
+				email: props.user.email,
+				job: props.user.job,
+				password: undefined
+			}
+		}
+	}
+	componentWillReceiveProps(nextProps){
+		if (nextProps.user && !this.state.user) {
+			this.setState({
+				full_name: nextProps.user.full_name,
+				email: nextProps.user.email,
+				job: nextProps.user.job,
+				password: undefined
+			})
 		}
 	}
 	render(){
@@ -51,50 +63,24 @@ class EditProfileModal extends React.Component {
 			>
 		      <div id={this.props.id}>
 		      	<Query
-		      		query={gql`
-				        query {
-				          jobs {
-				            id
-				            name
-				          }
-				        }
-		      	`}>
+		      		query={JOBS_QUERY}>
 		      	{ ({loading,error,data}) => {
 		      		let query_loading = loading
 		      		let jobs = data && data.jobs ? data.jobs : []
-		      		console.log(jobs);
 		      		return (
 		      			<Mutation
-		      				mutation={gql`
-		      					mutation EditProfile(
-		      						$full_name: String
-		      						$job: ID
-		      						$email: String
-		      						$profile_photo: FileInput
-											$password: String
-		      					){
-		      						editProfile(
-		      							full_name: $full_name
-		      							job: $job
-		      							email: $email
-		      							profile_photo: $profile_photo
-												password: $password 
-		      						) {
-		      							id
-		      						}
-		      					}
-		      			`}>
+		      				mutation={EDIT_PROFILE_MUTATION}>
 			      			{ (editProfile,{loading,error,data}) => {
 								return (
 									<form id="edit_profile" onSubmit={async (e) => {
 										e.preventDefault();
+										if (loading) return;
 										let variables = {
 											full_name: this.state.full_name,
-											job: this.state.job,
+											job: this.state.job.id,
 											email: this.state.email,
 											password: this.state.password
 										}
-										console.log(variables);
 										if (this.uploadPhotoInput && this.uploadPhotoInput.base64){
 											variables["profile_photo"] = {
 												base64: this.uploadPhotoInput.base64,
@@ -102,12 +88,25 @@ class EditProfileModal extends React.Component {
 											}
 										}
 										let data = await editProfile({variables})
-										this.props.closeAndUpdate()
-										// this.props.refetchApp();
-										// if (document.querySelector('body > div:nth-child(6)')){
-										// 	document.querySelector('body > div:nth-child(6)').click()
+										// let cache = this.props.client.readQuery({
+										// 	query: GET_LOGGED_IN_USER_QUERY
+										// })
+										// let user = cache.getLoggedInUser;
+										// user.full_name = this.state.full_name
+										// user.job = {
+										// 	...this.state.job,
+										// 	__typename: "Library"
 										// }
-										// console.log(data)
+										// user.profile_photo = data.data.editProfile.profile_photo
+										// user.email = this.state.email
+										// user.password = this.state.password
+										// user.profile_photo = 
+										// this.props.client.writeQuery({
+										// 	query: GET_LOGGED_IN_USER_QUERY,
+										// 	data: JSON.parse(JSON.stringify(cache))
+										// })
+										this.props.closeAndUpdate && this.props.closeAndUpdate()
+										this.props.closeModal && this.props.closeModal()
 									}}>
 								          <h3 className="modal__title">Edit profile</h3>
 								          {
@@ -158,7 +157,7 @@ class EditProfileModal extends React.Component {
 																		onChange={e => this.setState({ full_name: e.target.value })}	
 										              />
 										              <div className="select__div">
-																	<select id="p_job" onChange={e => this.setState({ job: e.target.value })}>
+																	<select id="p_job" onChange={e => this.setState({ job: { id: e.target.value, name: e.target.id } })}>
 										                {
 										                	jobs.map(job => {
 										                		return (
@@ -197,17 +196,20 @@ class EditProfileModal extends React.Component {
 										            </div>
 										          </div>
 										          <div className="text-right">
-										            <button className="button smaller">Update profile</button>
+												  {
+													  loading ? <Loading noCenter={true} style={{width: 45,textAlign:"right"}}/> : 
+										            	<button className="button smaller">Update profile</button>
+												  }
 										          </div>
 										          <button 
-																	ref={node => this.closeEditProfileRef = node} 
-																	id="closeEditProfile"
-																	className="close-button"
-																	onClick={e => {
-																		this.closeEditProfileRef.parentElement.parentElement.parentElement.parentElement.click()
-																	}} 
-																	type="button"
-															>
+													ref={node => this.closeEditProfileRef = node} 
+													id="closeEditProfile"
+													className="close-button"
+													onClick={e => {
+														this.closeEditProfileRef.parentElement.parentElement.parentElement.parentElement.click()
+													}} 
+													type="button"
+												>
 										            <img onClick={this.props.closeModal} src="../../assets/toolkit/images/006-error.svg" alt />
 										          </button>
 									          </div>
@@ -226,4 +228,4 @@ class EditProfileModal extends React.Component {
 	}
 }
 
-export default EditProfileModal;
+export default withApollo(_EditProfileModal);

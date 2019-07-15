@@ -1,9 +1,11 @@
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
-const configs = require("../configs");
 const fileHandling = require("../modules/fileApi");
 const nodemailer = require("nodemailer");
-const mailgun = require('mailgun-js')(configs.mailgun);
+const mailgun = require('mailgun-js')({
+	apiKey: process.env.mailgun_apikey,
+	DOMAIN: process.env.mailgun_domain
+});
 const { checkValidation, CreateValidationError } = require("../helpers.js");
 const { loginSchema, signUpSchema } = require("../validations/authValidations.js");
 
@@ -12,7 +14,7 @@ const saltRounds = 10;
 const createToken = (userId) => {
 	const token = jwt.sign({
 		userId: userId
-	},configs.jwt_secret);
+	},process.env.jwt_secret);
 	return token
 }
 
@@ -112,12 +114,12 @@ const forgetPassword = async (root,args,context) => {
 	}
 	const token = jwt.sign({
 		forgotPassword: user.id
-	},configs.jwt_forgotPassword_secret);
+	}, process.env.jwt_forgotPassword_secret);
 	var data = {
 	  from: 'Mailgun Sandbox <postmaster@sandbox7c10cba56e9a4f0f9b23c09194475167.mailgun.org>',
 	  to: `${user.full_name} <${user.email}>`,
 	  subject: `UX-Stories: Forgot password`,
-	  text: `Here it is ${`${configs.URI}/reset/${token}`}!`
+	  text: `Here it is ${`${process.env.URI}/reset/${token}`}!`
 	};
 	console.log(data);
 	mailgun.messages().send(data,(err,body) => {
@@ -130,7 +132,7 @@ const verifyForgotPassword = async (root,args,context) => {
 	if (!args.token){
 		throw new Error("Token can't be empty");
 	}
-	return await jwt.verify(args.token,configs.jwt_forgotPassword_secret,(err,decoded) => {
+	return await jwt.verify(args.token, process.env.jwt_forgotPassword_secret,(err,decoded) => {
 		return {valid:!err}
 	})
 }
@@ -145,7 +147,7 @@ const resetPassword = async (root,args,context) => {
 			error: "Password do not match"
 		}
 	}
-	const decoded = await jwt.verify(args.token,configs.jwt_forgotPassword_secret,(err,decoded) => {
+	const decoded = await jwt.verify(args.token, process.env.jwt_forgotPassword_secret,(err,decoded) => {
 		if (err) return new Error("Invalid token");
 		return decoded
 	});

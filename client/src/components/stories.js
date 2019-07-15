@@ -11,6 +11,8 @@ import StoryCategoriesActiveFitlers from "./storyCategoriesActiveFitlers";
 import StoryElementsActiveFilters from "./storyElementsActiveFilters";
 import { compose } from "recompose";
 import { storiesIndexHelper } from "../algoliaClients";
+import { if_user_call_func } from "../helpers";
+import PickMembershipModal from "./pickMembershipModal"; 
 
 const SKELETON = <div>
   <img style={{ borderRadius: 30, width: 250, height: 550, marginRight: 25, marginBottom: 10 }} src="data:image/png;base64,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" />
@@ -33,9 +35,8 @@ class _Stories extends React.Component {
     }
     if (this.props.location && this.props.location.state && this.props.location.state.filterBy){
       filterBy = this.props.location.state.filterBy
-      console.log(storiesIndexHelper,123433)
       storiesIndexHelper.state.facetsRefinements = {}
-      if (filterBy.appCategory){
+      if (filterBy.appCategory && filterBy.appCategory !== "all"){
         storiesIndexHelper.toggleFacetRefinement("app.appCategory.name",filterBy.appCategory)
       }
       for (var key in filterBy.storyElements){
@@ -70,7 +71,6 @@ class _Stories extends React.Component {
     storiesIndexHelper.clearRefinements()
   }
   hasActiveFitlers(){
-    console.log(this.state.filterBy)
     return (this.state.filterBy.appCategory && !(this.state.filterBy.appCategory === "all")) || 
           (this.state.filterBy.storyCategories && this.state.filterBy.storyCategories.length) ||
           (this.state.filterBy.storyElements && this.state.filterBy.storyElements.length)
@@ -90,7 +90,6 @@ class _Stories extends React.Component {
     if (pagination){
       storiesIndexHelper.state.hitsPerPage += this.hitsPerPage
     }
-    console.log(storiesIndexHelper);
     
     storiesIndexHelper.setQuery(storyName_contains).search();
     storiesIndexHelper.on("result",data => {
@@ -109,6 +108,9 @@ class _Stories extends React.Component {
         return state
       })
     })
+  }
+  componentWillMount(){
+    storiesIndexHelper.state.hitsPerPage = this.hitsPerPage
   }
   async handleFilterClick(e,obj,type) {
     storiesIndexHelper.state.hitsPerPage = this.hitsPerPage
@@ -130,7 +132,6 @@ class _Stories extends React.Component {
           ...state.filterBy[type],
           [obj.name] : !state.filterBy[type][obj.name]
         }
-        console.log(state);
       }
       return state
     })
@@ -161,27 +162,32 @@ class _Stories extends React.Component {
         state.filterBy.appCategory = undefined
       } else {
         let facets = storiesIndexHelper.state.facetsRefinements[`${type}.name`];
-        let obj_name = document.getElementById(obj + "_label") ? document.getElementById(obj+"_label").innerHTML : null
-        console.log(obj,123);
+        let obj_name = obj
         storiesIndexHelper.state.facetsRefinements[`${type}.name`] = facets.filter(x => x !== obj_name);
         state.filterBy[type][obj] = false;
       }
       return state;
-    },() => this.search(this.searchNode.value))
-  }
-  toggle(name){
+      },() => this.search(this.searchNode.value))
+    }
+  toggle(name) {
     this.setState(nextState => {
-      nextState[name] = !nextState[name]
+      nextState.currentDropdown = nextState.currentDropdown === name ? undefined : name
       return nextState;
     })
   }
   render() {
-    console.log(this.state,122);
     return (
       <div>
-      <Header user={this.props.user} />
+      <Header 
+        user={this.props.user}
+        opened={this.state.currentDropdown === "profileDropdown"}
+        toggleOpened={() => this.toggle("profileDropdown")}
+      />
+        <PickMembershipModal
+          modalIsOpen={this.state.currentModal === "PickMembershipModal"}
+          closeModal={(e) => this.setState({ currentModal: undefined })}
+        />
         <div>
-        <script src="http://uxstories.herokuapp.com//assets/toolkit/scripts/toolkit.js"></script>
           <div className="secondary-header">
             <div className="container">
               <div className="secodary-header__content">
@@ -199,41 +205,30 @@ class _Stories extends React.Component {
                     }} type="text" placeholder="Search by story..." />
                   </div>      </div>
                 <div className="flex">
-                  { //<div className="filter">
-                                          //   <button className="button white">Filter with Categories<img src="/assets/toolkit/images/008-delete.svg" alt /></button>
-                                          // </div>        <div className="filter">
-                                          //   <button className="button white">Filter with Stories<img src="/assets/toolkit/images/008-delete.svg" alt /></button>
-                                          // </div>        <div className="filter">
-                                          //   <button className="button white">Filter with Elements<img src="/assets/toolkit/images/008-delete.svg" alt /></button>
-                                          // </div>
-                                        }
-        <button onClick={(e) => this.toggle("appCategoriesFilterOpen")} className="button white fbtn" data-toggle="first" aria-controls="first" data-is-focus="false" data-yeti-box="first" aria-haspopup="true" aria-expanded="false">Filter with Categories<img src="/assets/toolkit/images/shape.svg" alt /></button>        
+        <button onClick={e => this.toggle("appCategoriesFilterOpen")} className="button white fbtn" aria-controls="first" data-is-focus="false" data-yeti-box="first" aria-haspopup="true" aria-expanded="false">Filter with Categories<img src="/assets/toolkit/images/shape.svg" alt /></button>        
         <AppCategoriesDropdown 
-          id="first" 
           filterBy={this.state.filterBy}
-          open={this.state.appCategoriesFilterOpen}
+          open={this.state.currentDropdown === "appCategoriesFilterOpen"}
           style={{ top: "44px", left: "-198.25px" }}
-          handleAllFilterClick={(e) => this.handleFilterClick(e,{id:"all",name:"all"},"appCategory")}
+          handleAllFilterClick={e => this.handleFilterClick(e,{id:"all",name:"all"},"appCategory")}
           handleFilterClick={(e,appCategory) => this.handleFilterClick(e,appCategory,"appCategory")}
           use_name={true} 
         />
 
-        <button onClick={(e) => this.toggle("storyCategoriesFilterOpen")} className="button white fbtn" data-toggle="second">Filter with Stories<img src="../../assets/toolkit/images/shape.svg" alt /></button>
+        <button onClick={e => this.toggle("storyCategoriesFilterOpen")} className="button white fbtn">Filter with Stories<img src="../../assets/toolkit/images/shape.svg" alt /></button>
         <StoryCategoriesDropdown 
-          id="second"
           filterBy={this.state.filterBy}
           state={this.state}
           style={{ top: "43.8984px", left: "-173.367px" }}
-          open={this.state.storyCategoriesFilterOpen}
+          open={this.state.currentDropdown === "storyCategoriesFilterOpen"}
           handleFilterClick={(e,storyCategory) => this.handleFilterClick(e,storyCategory,"storyCategories")}
           use_name={true}
         />
 
-        <button onClick={(e) => this.toggle("storyElementsFilterOpen")} className="button white fbtn" data-toggle="third">Filter with Elements<img src="../../assets/toolkit/images/shape.svg" alt /></button>
+        <button onClick={e => this.toggle("storyElementsFilterOpen")} className="button white fbtn">Filter with Elements<img src="../../assets/toolkit/images/shape.svg" alt /></button>
         <StoryElementsDropdown
-          id="third"
           filterBy={this.state.filterBy}
-          open={this.state.storyElementsFilterOpen}
+          open={this.state.currentDropdown === "storyElementsFilterOpen"}
           style={{ top: "43.8984px", left: "-188.641px" }}
           state={this.state}
           handleFilterClick={(e,storyElement) => this.handleFilterClick(e,storyElement,"storyElements")}
@@ -335,14 +330,16 @@ class _Stories extends React.Component {
               {
                   this.state.reached_end 
                   ? <h3></h3>
-                  : <h3 onClick={() => this.search(this.searchNode.value,false,true)}>Load more</h3>
+                  : <h3 onClick={() => if_user_call_func(
+                      this.props.user,
+                      () => this.search(this.searchNode.value,false,true)
+                      ,this.setState.bind(this))}
+                    >Load more</h3>
               }
             </center>
           </div>
         </div>
       </div>
-            <script src="../assets/toolkit/scripts/jquery.min.js"></script>
-    <script src="../assets/toolkit/scripts/toolkit.js"></script>
       </div>
     );
   }

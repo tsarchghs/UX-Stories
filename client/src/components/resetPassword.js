@@ -3,27 +3,29 @@ import gql from "graphql-tag";
 import { Link } from "react-router-dom";
 import Alert from "./alert";
 import { withApollo } from "react-apollo";
+import {
+	RESET_PASSWORD_MUTATION,
+	VERIFY_FORGOT_PASSWORD_MUTATION
+} from "../Queries";
 
-//localhost:3000/reset/eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJmb3Jnb3RQYXNzd29yZCI6ImNqdHZzaWlkcWV5dzMwYjYwY3c4bndjbTIiLCJpYXQiOjE1NTQzNjg2Mzd9.4ymRHBkFCbh47WgPtkI-PvSi71e7-yT3jwx5KfdV2K4
-//localhost:3000/reset/eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJmb3Jnb3RQYXNzd29yZCI6ImNqdHZzaWlkcWV5dzMwYjYwY3c4bndjbTIiLCJpYXQiOjE1NTQzNjk0MjJ9.A4XrjIZpg_Px2W-WrfPNfJctKASqUxw1ULtl20WmMRk
 class _ResetPassword extends React.Component {
 	constructor(props){
 		super(props);
 		this.state = {
 			valid: undefined,
 			success: undefined,
-			error_message: undefined
+			error_message: undefined,
+			new_password: "",
+			repeat_new_passwod: ""
 		}
 		this.resetPassword = this.resetPassword.bind(this);
 	}
 	async componentDidMount(){
-		console.log(this.props.match);
 		let data = await this.props.client.mutate({
-			mutation: gql`
-				mutation {
-					verifyForgotPassword(token:"${this.props.match.match.params.token}"){valid}
-				}
-			`
+			mutation: VERIFY_FORGOT_PASSWORD_MUTATION,
+			variables: {
+				token: this.props.match.match.params.token
+			}
 		})
 		this.setState({
 			valid: data.data.verifyForgotPassword.valid
@@ -32,8 +34,8 @@ class _ResetPassword extends React.Component {
 	}
 	async resetPassword(e){
 		e.preventDefault();
-		let new_password = document.getElementById("new_password").value;
-		let repeat_new_password = document.getElementById("repeat_new_password").value;
+		let new_password = this.state.new_password
+		let repeat_new_password = this.state.repeat_new_passwod
 		if (!new_password){
 			this.setState({
 				error_message: "Password can't be empty"
@@ -41,27 +43,19 @@ class _ResetPassword extends React.Component {
 			return;
 		}
 		if (!(new_password === repeat_new_password)){
-			console.log("dsads");
 			this.setState({
 				error_message:"Password's do not match"
 			})
 			return;
 		}
 		let data = await this.props.client.mutate({
-			mutation: gql`
-				mutation {
-					resetPassword(
-				    token:"${this.props.match.match.params.token}"
-				    new_password:"${new_password}"
-				    repeat_new_password:"${repeat_new_password}"
-				  ){
-					success
-				    error
-				  }
-				}
-			`
+			mutation: RESET_PASSWORD_MUTATION,
+			variables: {
+				token: this.props.match.match.params.token,
+				new_password,
+				repeat_new_password
+			}
 		})
-		console.log(data);
 		if (!data.data.resetPassword.error){
 			this.setState({
 				success: true,
@@ -110,13 +104,23 @@ class _ResetPassword extends React.Component {
 			                		{
 			                			!this.state.success 
 						                ? <div>
-						                	<input id="new_password" className="input first fmt" type="text" placeholder="New password" />
-						                  	<input id="repeat_new_password" className="input first fmt" type="text" placeholder="Repeat new password" />	
-							                  <p className="login__rm light-gray text-center">By clicking this button, you agree to our <a className="bold" href="#">Terms, Privacy Policy.</a></p>
-							                  <button type="submit" className="button full">Reset password</button>
-								          		<Link to="/login">
-								                  <p className="sign-in light-gray text-center">Return to <a href="#">Sign in here</a></p>
-												</Link>
+											<input 
+												onChange={(e) => this.setState({new_password: e.target.value})} 
+												value={this.state.new_password}
+												className="input first fmt" type="text" 
+												placeholder="New password" 	
+											/>
+											<input 
+												onChange={(e) => this.setState({repeat_new_passwod: e.target.value})} 
+												value={this.state.repeat_new_passwod}
+												className="input first fmt" type="text" 
+												placeholder="Repeat new password" 	
+											/>	
+											<p className="login__rm light-gray text-center">By clicking this button, you agree to our <a className="bold" href="#">Terms, Privacy Policy.</a></p>
+											<button type="submit" className="button full">Reset password</button>
+											<Link to="/login">
+												<p className="sign-in light-gray text-center">Return to <a href="#">Sign in here</a></p>
+											</Link>
 			                			  </div>
 			                			: <div>
 			                				<Link to="/login">

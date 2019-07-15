@@ -4,6 +4,8 @@ import gql from "graphql-tag";
 import Alert from "./alert";
 import ReactDOM from "react-dom";
 import Modal from 'react-modal';
+import { LIBRARIES_QUERY, EDIT_LIBRARY_MUTATION } from "../Queries";
+import Loading from "./loading";
 
 const customStyles = {
   content: {
@@ -42,111 +44,38 @@ class _EditLibraryModal extends React.Component {
             <h3 className="modal__title">Edit library</h3>
             <div id="inside_exampleModal2">
               <Mutation
-                mutation={gql`
-                  mutation EditLibrary(
-                            $id: ID!
-                            $name:String!
-                            $stories: [StoryLinkType!]
-                          ){
-                    editLibrary(
-                              id: $id
-                              name: $name
-                              stories: $stories
-                    ) {
-                              id
-                              name
-                              stories {
-                                  thumbnail {
-                                  url
-                                  }
-                              }
-                          }
-                  }
-              `}>
+              mutation={EDIT_LIBRARY_MUTATION}>
                 { (editLibrary,{loading,error,data}) => {
-                  if (loading) {
-                    return (
-                      <center>
-                        <img src="https://loading.io/spinners/rolling/lg.curve-bars-loading-indicator.gif" />
-                      </center>
-                    )
-                  }
+                  console.log(data,loading)
                   return (
                     <form onSubmit={async (e) => {
                       e.preventDefault();
-                      console.log(this.props);
+                      if (loading) return;
                       let res = await editLibrary({
                         variables:{
                           id: this.props.id,
                           name: this.props.name
                         }
                       })
-                      console.log(res);
-                              let data = res.data;
-                              try {
-                                  const LIBRARIES_QUERY = gql`query {
-                                  libraries {
-                                          id
-                                          name
-                                          stories {
-                                                  thumbnail {
-                                                  url
-                                              }
-                                          }
-                                      }
-                                  }`
-                                  let current_libraries = this.props.client.readQuery({ query: LIBRARIES_QUERY });
-                                  current_libraries.libraries.map(library => {
-                                    if (library.id === this.props.id){
-                                        return data.editLibrary
-                                    }
-                                    return library
-                                  })
-                                  this.props.client.writeQuery({
-                                      query: LIBRARIES_QUERY,
-                                      data: current_libraries
-                                  })
-                              } catch (e) { 
-                                  console.log(e,1);
-                              }
+                      let data = res.data;
+                      try {
+                          let current_libraries = this.props.client.readQuery({ query: LIBRARIES_QUERY });
+                          current_libraries.libraries = current_libraries.libraries.map(library => {
+                            if (library.id === this.props.id){
+                                return data.editLibrary
+                            }
+                            return library
+                          })
+                        console.log(JSON.parse(JSON.stringify(current_libraries)))
+                        this.props.client.writeQuery({
+                            query: LIBRARIES_QUERY,
+                            data: JSON.parse(JSON.stringify(current_libraries))
+                        })
+                      } catch (e) { 
+                        console.log(e)
+                      }
+                      this.props.closeModal()
 
-                              // try {
-                              //     const GET_LOGGED_IN_USER_QUERY = gql`                                    
-                              //             query {
-                              //                 getLoggedInUser{
-                              //                     id
-                              //                     full_name
-                              //                     email
-                              //                     role
-                              //                     job {
-                              //                             id
-                              //                             name
-                              //                     }
-                              //                     profile_photo {
-                              //                         url
-                              //                     }   
-                              //                     libraries {
-                              //                             id
-                              //                             name
-                              //                     }
-                              //                 }
-                              //             }`
-                              //     let current_data = this.props.client.readQuery({ query: GET_LOGGED_IN_USER_QUERY});
-                              //     let new_library = data.editLibrary;
-                              //     current_data.getLoggedInUser.libraries = [
-                              //         {
-                              //             __typename: "Library",
-                              //             id: new_library.id,
-                              //             name: new_library.name
-                              //         }
-                              //     ].concat(current_data.getLoggedInUser.libraries);
-                              //     this.props.client.writeQuery({
-                              //         query: GET_LOGGED_IN_USER_QUERY,
-                              //         data: current_data
-                              //     })
-                              // } catch (e) {console.log(e,2)}
-
-                              this.props.closeModal()
                     }}>
                 <div>
                         {
@@ -156,7 +85,10 @@ class _EditLibraryModal extends React.Component {
                           <input value={this.props.name} onChange={this.props.onChange} className="input" type="text" placeholder="Library name" />
                       </div>
                       <div className="text-right">
-                        <button className="button">Save</button>
+                      {
+                        loading ? <Loading noCenter={true} style={{width: 45,textAlign:"right"}}/>
+                        : <button className="button">Save</button>
+                      }
                       </div>
                     </div>
                 </form>

@@ -3,6 +3,25 @@ import { DELETE_LIBRARY_MUTATION, LIBRARIES_QUERY } from "../Queries";
 import { Mutation, withApollo } from "react-apollo";
 import Alert from "./alert";
 import Loading from "./loading";
+import Modal from 'react-modal';
+
+const customStyles = {
+    overlay: {
+        'backgroundColor': 'rgba(10, 10, 10, 0.75)',
+        opacity: 1
+    },
+    content: {
+        top: '50%',
+        left: '50%',
+        right: '70%',
+        bottom: 'auto',
+        marginRight: '-50%',
+        transform: 'translate(-50%, -50%)',
+    }
+};
+
+// Make sure to bind modal to your appElement (http://reactcommunity.org/react-modal/accessibility/)
+Modal.setAppElement('#root')
 
 class _DeleteLibraryModal extends React.Component {
     constructor(props){
@@ -15,27 +34,20 @@ class _DeleteLibraryModal extends React.Component {
         console.log("UNMMMM")
     }
     render(){
-        let mainEl = document.getElementById(`deleteLibrary_${this.props.id}`);
-        if (mainEl){
-            mainEl.style.display = this.props.open ? "block" : "none"
-        }
         return (
-            <div style={{display: this.props.open ? "block" : "none" }} className="modal reveal" id={`deleteLibrary_${this.props.id}`} data-reveal>
-                <h3 className="modal__title">Enter {this.props.name} to confirm</h3>
-                <div id="inside_exampleModal2">
-                    <Mutation
-                        mutation={DELETE_LIBRARY_MUTATION}
-                    >
-                        { (deleteLibrary,{loading,error,data}) => {
-                            let onSubmit = async e => {
-                                e.preventDefault();
-                                console.log(loading,this.confirmation.value,this.props.name);
-                                if (loading) return;
-                                if (this.confirmation.value !== this.props.name){
-                                    this.setState({
-                                        error: "Confirmation faield"
-                                    })
-                                } else {
+                <Modal
+                    isOpen={this.props.modalIsOpen}
+                    onRequestClose={this.props.closeModal}
+                    style={customStyles}
+                    contentLabel="Example Modal"
+                >
+                        <Mutation
+                            mutation={DELETE_LIBRARY_MUTATION}
+                        >
+                            { (deleteLibrary,{loading,error,data}) => {
+                                let onSubmit = async e => {
+                                    e.preventDefault();
+                                    if (loading) return;
                                     let res = await deleteLibrary({
                                         variables:{
                                             id: this.props.id
@@ -44,36 +56,32 @@ class _DeleteLibraryModal extends React.Component {
                                     let currentCache = this.props.client.readQuery({
                                         query: LIBRARIES_QUERY
                                     })
-                                    currentCache.libraries = currentCache.libraries.filter(x => x !== this.props.id);
+                                    console.log(currentCache.libraries.length);
+                                    currentCache.libraries = currentCache.libraries.filter(x => x.id !== this.props.id);
+                                    console.log(currentCache.libraries.length);
                                     this.props.client.writeQuery({
                                         query: LIBRARIES_QUERY,
                                         data: currentCache
                                     })
-                                    {/* document.getElementById(`libraryCard_${this.props.id}`).outerHTML = "" */}
-                                    this.props.close();
+                                    this.props.closeModal();
                                 }
-                            }
-                            return (
-                                <form onSubmit={onSubmit}>
+                                return (
                                     <div>
-                                        {this.state.error && <Alert message={this.state.error} red={true}/>}
-                                        <div>
-                                            <input ref={node => this.confirmation = node} className="input" type="text" placeholder="Library name"/>
+                                        <div className="modal__header">
+                                            <h4>Delete {this.props.name}</h4>
+                                            <p className="gray">This will delete {this.props.name}={this.props.id} and cannot be undone</p>
                                         </div>
-                                        <div>
-                                        {!loading && <button className="button" style={{ width: '100%' }}>DELETE</button>}
-                                        {loading && <Loading style={{width:50}}/>}
+                                        <div className="modal__footer">
+                                            <div className="modal__footer-buttons">
+                                                <a onClick={this.props.closeModal} className="button gray" data-close aria-label="Close modal">No I don’t want</a>
+                                                <a onClick={onSubmit} style={{ backgroundColor: "#F6534E" }} className="button red">Delete</a>
+                                            </div>
+                                        </div>
                                     </div>
-                                </div>
-                            </form>
-                            )
-                        } }
-                    </Mutation>
-                </div>
-                <button className="close-button" data-close="true" aria-label="Close reveal" type="button">
-                    <img src="../../assets/toolkit/images/006-error.svg" />
-                </button>
-            </div>
+                                )
+                            } }
+                        </Mutation>
+            </Modal>
         )
     }
 }

@@ -19,6 +19,16 @@ enum LinkType {
   disconnect  
 }
 
+enum SUBSCRIPTION_STATUS {
+  NULL
+  incomplete
+  incomplete_expired
+  trialing
+  active
+  past_due
+  canceled
+  unpaid
+}
 type BasicInfo {
   success: Boolean!
 }
@@ -51,6 +61,31 @@ type Job {
   name: String!
 }
 
+type Source {
+  id: ID!
+  last4: Int!
+}
+
+type Customer {
+  id: ID
+  source: Source!
+}
+
+type Subscription {
+  id: ID!
+  cancel_at_period_end: Boolean!
+  status: SUBSCRIPTION_STATUS!
+}
+
+type Invoice {
+  id: ID!
+  status: String!
+  last4: Int!
+  paid: Boolean!
+  total: Int!
+  hosted_invoice_url: String!
+}
+
 type User {
   id: ID!
   email: String!
@@ -58,9 +93,12 @@ type User {
   full_name: String!
   job: Job!
   role: AccountType!
+  customer: Customer
+  subscription: Subscription
   profile_photo: File
   apps: [App!]!
   libraries: [Library!]!
+  invoices: [Invoice!]!
 }
 
 type AppVersion {
@@ -311,6 +349,12 @@ type Query {
   countUsers: Int!
 }
 type Mutation {
+  cancelSubscription: Subscription!
+  renewSubscription: Subscription!
+  payment(
+    stripe_token: String!
+  ): Subscription!
+
   updateAlgoliaIndex(
     indexName: String!
     object_id: ID!

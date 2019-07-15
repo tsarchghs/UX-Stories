@@ -10,9 +10,9 @@ class StoryElementsActiveFilters extends React.Component {
                       return (
                         <div className="ux-label ">
                           <p className="light-gray">
-                            {this.props.is_name ? storyElement : document.getElementById(storyElement+"_label") && document.getElementById(storyElement+"_label").innerHTML}}
+                            {!this.props.split ? storyElement : storyElement.split("_")[1]}
                           </p>
-                          <span><a href="#"><img onClick={(e) => this.props.unFilter(e,storyElement)} src="/assets/toolkit/images/008-delete.svg" alt /></a></span>
+                          <span><p style={{"cursor":"pointer"}}><img onClick={(e) => this.props.unFilter(e,storyElement)} src="/assets/toolkit/images/008-delete.svg" alt /></p></span>
                         </div>  
                       );    
                    })

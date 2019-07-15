@@ -1,5 +1,11 @@
 import gql from "graphql-tag";
 
+const if_user_call_func = (user,func,setState) => {
+  console.log(user);  
+  if (user) func()
+  else setState({ currentModal:"PickMembershipModal"})
+}
+
 const getStories = async (client) => {
 	const results = await client.query({
       query: gql`
@@ -84,10 +90,13 @@ const getActiveFilters = (state,type) => {
   return list
 }
 
-const insertActiveFilters = (filters,state) => {
+const insertActiveFilters = (filters,state,split) => {
     for (var type_ in filters){
       for (var obj in state.filterBy[type_]){
           if (state.filterBy[type_][obj]){
+            if (split){
+              obj = obj.split("_")[0]
+            }
             filters[type_].push(obj)
           }
       }
@@ -150,5 +159,6 @@ export {
   getQueryParams,
   loadToolkit,
   loadJs,
-  getAppVersions
+  getAppVersions,
+  if_user_call_func
 }

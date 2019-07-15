@@ -3,7 +3,6 @@ import { Link } from "react-router-dom";
 
 class InsideHeader extends React.Component {
 	render() {
-		console.log(this.props);
 		return (
 			<div className="header back__header">
 	          <div className="container">

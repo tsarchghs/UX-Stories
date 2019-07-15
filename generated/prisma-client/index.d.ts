@@ -675,6 +675,10 @@ export type UserOrderByInput =
   | "full_name_DESC"
   | "role_ASC"
   | "role_DESC"
+  | "customer_id_ASC"
+  | "customer_id_DESC"
+  | "subscription_id_ASC"
+  | "subscription_id_DESC"
   | "createdAt_ASC"
   | "createdAt_DESC"
   | "updatedAt_ASC"
@@ -994,6 +998,8 @@ export interface UserCreateWithoutLibrariesInput {
   job: JobCreateOneInput;
   role: AccountType;
   profile_photo?: FileCreateOneInput;
+  customer_id?: ID_Input;
+  subscription_id?: ID_Input;
   apps?: AppCreateManyWithoutCreatedByInput;
 }
 
@@ -1115,6 +1121,34 @@ export interface UserWhereInput {
   role_in?: AccountType[] | AccountType;
   role_not_in?: AccountType[] | AccountType;
   profile_photo?: FileWhereInput;
+  customer_id?: ID_Input;
+  customer_id_not?: ID_Input;
+  customer_id_in?: ID_Input[] | ID_Input;
+  customer_id_not_in?: ID_Input[] | ID_Input;
+  customer_id_lt?: ID_Input;
+  customer_id_lte?: ID_Input;
+  customer_id_gt?: ID_Input;
+  customer_id_gte?: ID_Input;
+  customer_id_contains?: ID_Input;
+  customer_id_not_contains?: ID_Input;
+  customer_id_starts_with?: ID_Input;
+  customer_id_not_starts_with?: ID_Input;
+  customer_id_ends_with?: ID_Input;
+  customer_id_not_ends_with?: ID_Input;
+  subscription_id?: ID_Input;
+  subscription_id_not?: ID_Input;
+  subscription_id_in?: ID_Input[] | ID_Input;
+  subscription_id_not_in?: ID_Input[] | ID_Input;
+  subscription_id_lt?: ID_Input;
+  subscription_id_lte?: ID_Input;
+  subscription_id_gt?: ID_Input;
+  subscription_id_gte?: ID_Input;
+  subscription_id_contains?: ID_Input;
+  subscription_id_not_contains?: ID_Input;
+  subscription_id_starts_with?: ID_Input;
+  subscription_id_not_starts_with?: ID_Input;
+  subscription_id_ends_with?: ID_Input;
+  subscription_id_not_ends_with?: ID_Input;
   apps_every?: AppWhereInput;
   apps_some?: AppWhereInput;
   apps_none?: AppWhereInput;
@@ -1317,6 +1351,8 @@ export interface UserUpdateManyMutationInput {
   password?: String;
   full_name?: String;
   role?: AccountType;
+  customer_id?: ID_Input;
+  subscription_id?: ID_Input;
 }
 
 export interface UserUpdateOneRequiredWithoutAppsInput {
@@ -1337,6 +1373,8 @@ export interface UserUpdateWithoutAppsDataInput {
   job?: JobUpdateOneRequiredInput;
   role?: AccountType;
   profile_photo?: FileUpdateOneInput;
+  customer_id?: ID_Input;
+  subscription_id?: ID_Input;
   libraries?: LibraryUpdateManyWithoutCreatedByInput;
 }
 
@@ -1532,6 +1570,8 @@ export interface UserUpdateDataInput {
   job?: JobUpdateOneRequiredInput;
   role?: AccountType;
   profile_photo?: FileUpdateOneInput;
+  customer_id?: ID_Input;
+  subscription_id?: ID_Input;
   apps?: AppUpdateManyWithoutCreatedByInput;
   libraries?: LibraryUpdateManyWithoutCreatedByInput;
 }
@@ -2352,6 +2392,8 @@ export interface UserUpdateWithoutLibrariesDataInput {
   job?: JobUpdateOneRequiredInput;
   role?: AccountType;
   profile_photo?: FileUpdateOneInput;
+  customer_id?: ID_Input;
+  subscription_id?: ID_Input;
   apps?: AppUpdateManyWithoutCreatedByInput;
 }
 
@@ -2373,6 +2415,8 @@ export interface UserCreateWithoutAppsInput {
   job: JobCreateOneInput;
   role: AccountType;
   profile_photo?: FileCreateOneInput;
+  customer_id?: ID_Input;
+  subscription_id?: ID_Input;
   libraries?: LibraryCreateManyWithoutCreatedByInput;
 }
 
@@ -2556,6 +2600,8 @@ export interface UserUpdateInput {
   job?: JobUpdateOneRequiredInput;
   role?: AccountType;
   profile_photo?: FileUpdateOneInput;
+  customer_id?: ID_Input;
+  subscription_id?: ID_Input;
   apps?: AppUpdateManyWithoutCreatedByInput;
   libraries?: LibraryUpdateManyWithoutCreatedByInput;
 }
@@ -2732,6 +2778,8 @@ export interface UserCreateInput {
   job: JobCreateOneInput;
   role: AccountType;
   profile_photo?: FileCreateOneInput;
+  customer_id?: ID_Input;
+  subscription_id?: ID_Input;
   apps?: AppCreateManyWithoutCreatedByInput;
   libraries?: LibraryCreateManyWithoutCreatedByInput;
 }
@@ -4375,6 +4423,8 @@ export interface User {
   password: String;
   full_name: String;
   role: AccountType;
+  customer_id?: ID_Output;
+  subscription_id?: ID_Output;
   createdAt: DateTimeOutput;
   updatedAt: DateTimeOutput;
 }
@@ -4387,6 +4437,8 @@ export interface UserPromise extends Promise<User>, Fragmentable {
   job: <T = JobPromise>() => T;
   role: () => Promise<AccountType>;
   profile_photo: <T = FilePromise>() => T;
+  customer_id: () => Promise<ID_Output>;
+  subscription_id: () => Promise<ID_Output>;
   apps: <T = FragmentableArray<App>>(
     args?: {
       where?: AppWhereInput;
@@ -4423,6 +4475,8 @@ export interface UserSubscription
   job: <T = JobSubscription>() => T;
   role: () => Promise<AsyncIterator<AccountType>>;
   profile_photo: <T = FileSubscription>() => T;
+  customer_id: () => Promise<AsyncIterator<ID_Output>>;
+  subscription_id: () => Promise<AsyncIterator<ID_Output>>;
   apps: <T = Promise<AsyncIterator<AppSubscription>>>(
     args?: {
       where?: AppWhereInput;
@@ -4564,6 +4618,8 @@ export interface UserPreviousValues {
   password: String;
   full_name: String;
   role: AccountType;
+  customer_id?: ID_Output;
+  subscription_id?: ID_Output;
   createdAt: DateTimeOutput;
   updatedAt: DateTimeOutput;
 }
@@ -4576,6 +4632,8 @@ export interface UserPreviousValuesPromise
   password: () => Promise<String>;
   full_name: () => Promise<String>;
   role: () => Promise<AccountType>;
+  customer_id: () => Promise<ID_Output>;
+  subscription_id: () => Promise<ID_Output>;
   createdAt: () => Promise<DateTimeOutput>;
   updatedAt: () => Promise<DateTimeOutput>;
 }
@@ -4588,6 +4646,8 @@ export interface UserPreviousValuesSubscription
   password: () => Promise<AsyncIterator<String>>;
   full_name: () => Promise<AsyncIterator<String>>;
   role: () => Promise<AsyncIterator<AccountType>>;
+  customer_id: () => Promise<AsyncIterator<ID_Output>>;
+  subscription_id: () => Promise<AsyncIterator<ID_Output>>;
   createdAt: () => Promise<AsyncIterator<DateTimeOutput>>;
   updatedAt: () => Promise<AsyncIterator<DateTimeOutput>>;
 }

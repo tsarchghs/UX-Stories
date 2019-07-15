@@ -11,6 +11,8 @@ const storyResolvers = require("./models/Story");
 const jobResolvers = require("./models/Job");
 const generalResolvers = require("./general");
 const algoliaResolvers = require("./algolia");
+const paymentResolvers = require("./payment");
+
 
 module.exports = {
 	Query: {
@@ -34,6 +36,9 @@ module.exports = {
 		getObjectConnection: generalResolvers.getObjectConnection
 	},
 	Mutation: {
+		payment: paymentResolvers.payment,
+		cancelSubscription: paymentResolvers.cancelSubscription,
+		renewSubscription: paymentResolvers.renewSubscription,
 		addAlgoliaIndex: algoliaResolvers.addAlgoliaIndex,
 		updateAlgoliaIndex: algoliaResolvers.updateAlgoliaIndex,
 		deleteAlgoliaIndex: algoliaResolvers.deleteAlgoliaIndex,
@@ -79,5 +84,6 @@ module.exports = {
 	},
 	App: {
 		stories: appResolvers.stories
-	}
+	},
+	User: userResolvers.User
 }

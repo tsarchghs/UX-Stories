@@ -1,10 +1,10 @@
+require('dotenv').config()
 const graphqlServer = require("graphql-yoga").GraphQLServer;
 const resolvers = require("./resolvers/resolvers");
 const { static } = require("express");
 const path = require("path");
 const bodyParser = require("body-parser");
 const jwt = require("jsonwebtoken");
-const configs = require("./configs");
 const { formatError } = require("apollo-errors");
 const fs = require("fs");
 const prismaDb = require("./prismaDb");
@@ -25,7 +25,7 @@ const server = new graphqlServer({
 		var loggedIn = false
 		if (req.request.headers["authorization"]){
 			const token = req.request.headers["authorization"].split(" ")[1];
-			const decoded = await jwt.verify(token,configs.jwt_secret,(err,decoded) => {
+			const decoded = await jwt.verify(token,process.env.jwt_secret,(err,decoded) => {
 				if (err) {
 					if (err.name === "JsonWebTokenError") {
 						return false
@@ -51,16 +51,13 @@ const server = new graphqlServer({
 
 // the __dirname is the current directory from where the script is running
 server.express.use('/static', static(path.join(__dirname, 'public')))
-if (configs.PRODUCTION){
+if (process.env.PRODUCTION){
 	server.express.use(static(path.join(__dirname, './client/build')));
 
 	server.express.get('/*', function (req, res) {
 	  res.sendFile(path.join(__dirname, './client/build', 'index.html'));
 	});
 }
-
-
-server.express.set("view engine","ejs");
 
 server.express.use(bodyParser.urlencoded({limit:"1000mb",extended:true}))
 server.express.use(bodyParser.json({limit:"1000mb"}))

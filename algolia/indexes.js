@@ -17,6 +17,8 @@ storiesIndex.setSettings({
         "storyCategories.name"
     ],
     attributesForFaceting: [
+        "app.id",
+        "appVersions.name",
         "app.appCategory.name",
         "storyCategories.name",
         "storyElements.name"

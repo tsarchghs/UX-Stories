@@ -1,43 +1,21 @@
 import React from "react";
 import SingleStoryAppLoading from "./singleStoryAppLoading";
-import gql from "graphql-tag";
 import { Link, withRouter } from "react-router-dom";
 import DropdownLoading from "./dropdownLoading";
 import Loading from "./loading";
 import { withApollo, ApolloProvider, Query, Mutation } from "react-apollo";
 import InsideHeader from "./insideHeader";
 import CreateLibraryModal from "./createLibraryModal";
-import ReactDOM from 'react-dom';
-import { loadToolkit } from "../helpers";
+import { if_user_call_func } from "../helpers";
 import { compose } from "recompose";
-import profile from "./profile";
-
-const LIBRARIES_QUERY = gql`
-	query Libraries(
-		$libraryFilterInput: LibraryFilterInput
-	){
-		libraries(
-			libraryFilterInput: $libraryFilterInput
-		) {
-			id
-			name
-		}
-	}
-`
-
-const PROFILE_LIBRARIES_QUERY = gql`
-	query {
-		libraries {
-		id
-		name
-		stories {
-			thumbnail {
-			url
-			}
-		}
-		}
-	}
-`
+import { 
+	LIBRARIES_QUERY_SHALLOW,
+	TOGGLE_STORY_LIBRARY_MUTATION,
+	STORY_QUERY,
+	LIBRARIES_QUERY
+} from "../Queries";
+import PickMembershipModal from "./pickMembershipModal";
+import E404 from "./E404";
 
 class SingleStory extends React.Component {
 	constructor(props) {
@@ -49,12 +27,12 @@ class SingleStory extends React.Component {
 			selectedLibraries: [],
 			savingStory: false,
 			story: undefined,
-			selectLibraryOpen: false
+			selectLibraryOpen: false,
+			not_found: false
 		}
-		console.log(this.props.location);
-		this.from_library = this.props.location.state && this.props.location.state.from_library
 		this.story_id = undefined;
 		this.toggleSelectLibrary = this.toggleSelectLibrary.bind(this);
+		this.onCloseModal = this.onCloseModal.bind(this);
 		let param_id = this.props.match.params.id
 		if (param_id[param_id.length - 1] === "#") {
 			this.story_id = param_id.slice(0, param_id.length - 1);
@@ -62,81 +40,93 @@ class SingleStory extends React.Component {
 			this.story_id = param_id
 		}
 	}
-	async componentDidUpdate(){
-		loadToolkit();
-	}
 	toggleSelectLibrary() {
 		this.setState(prevState => {
 			let state = prevState
 			state.selectLibraryOpen = !state.selectLibraryOpen
-			console.log(state.selectLibraryOpen);
 			return state;
 		})
 	}
 	async componentDidMount() {
-		loadToolkit();
-		ReactDOM.render(
-			<ApolloProvider client={this.props.client}>
-				<CreateLibraryModal
-					id="singleStoryCreateLibrary"
-					refetchLibraries={this.props.refetchApp}
-					close={() => {
-						document.querySelector('#singleStoryCreateLibrary').parentElement.click()
-					}}
-				/>
-			</ApolloProvider>,
-			document.getElementById("createLibraryModal")
-		)
+		console.log("MOUNTED",this.state.app)
 		if (!this.state.app) {
-			console.log(this.story_id, this.props.match.params.id)
 			let data = await this.props.client.query({
-				query: gql`
-					query {
-						story(id:"${this.story_id}"){
-						    id
-							thumbnail {
-								id
-								url
-							}
-							app {
-								id
-								name
-								description
-								logo {
-									id
-									url
-								}
-							}
-						    storyElements {
-						    	id
-						    	name
-						    }
-						    storyCategories {
-						    	id
-						    	name
-						    }
-						    video {
-						    	id
-						    	file {
-						    		id
-						    		url
-						    		mimetype
-						    	}
-						    }
-					  }
-					}
-				`
+				query: STORY_QUERY,
+				variables: { id: this.story_id }
 			})
-			this.setState({
-				app: data.data.story.app,
-				storyElements: data.data.story.storyElements,
-				storyCategories: data.data.story.storyCategories,
-				video: data.data.story.video.file,
-				story: data.data.story
-			}, () => console.log(this.state))
-			console.log(data);
-			console.log(this.props.user);
+			console.log(data.data.story);
+			if (!data.data.story){
+				this.setState({
+					not_found: true
+				})
+			} else {
+				this.setState({
+					app: data.data.story.app,
+					storyElements: data.data.story.storyElements,
+					storyCategories: data.data.story.storyCategories,
+					video: data.data.story.video.file,
+					story: data.data.story
+				})
+			}
 		}
+	}
+	onCloseModal(){
+		this.setState({ currentModal: undefined, selectLibraryOpen: true }, () => {
+			this.setState({ selectLibraryOpen: true })
+		})
+	}
+	async updateLibrariesQueryCache(action,library){
+		try {
+			let cache2 = this.props.client.readQuery({
+				query: LIBRARIES_QUERY
+			})
+			console.log("cache2", cache2);
+			if (action === "connect") {
+				for (var x in cache2.libraries) {
+					let lib = cache2.libraries[x];
+					if (lib.id === library.id) {
+						lib.stories.push(this.state.story)
+						break;
+					}
+				}
+			} else if (action === "disconnect") {
+				for (var x in cache2.libraries) {
+					let lib = cache2.libraries[x];
+					if (lib.id === library.id) {
+						lib.stories = lib.stories.filter(story => story.id !== this.story_id)
+						break;
+					}
+				}
+			}
+			this.props.client.writeQuery({
+				query: LIBRARIES_QUERY,
+				data: JSON.parse(JSON.stringify({ libraries: [...cache2.libraries] }))
+			})
+		} catch (e) { console.log(e) }
+	}
+	async updateShallowLibrariesQueryCache(action,library){
+		try {
+			let cache = this.props.client.readQuery({
+				query: LIBRARIES_QUERY_SHALLOW,
+				variables: { libraryFilterInput: { containsStory: this.story_id } }
+			})
+			console.log("cache",this.props.client);
+			if (action === "connect") {
+				let new_library = {
+					__typename: "Library",
+					id: library.id,
+					name: library.name
+				}
+				cache.libraries.push(new_library);
+			} else if (action === "disconnect") {
+				cache.libraries = cache.libraries.filter(x => x.id !== library.id)
+			}
+			this.props.client.writeQuery({
+				query: LIBRARIES_QUERY_SHALLOW,
+				variables: { libraryFilterInput: { containsStory: this.story_id } },
+				data: JSON.parse(JSON.stringify({ libraries: [...cache.libraries] }))
+			})
+		} catch (e) { console.log(e) }
 	}
 	render() {
 		// let params = getQueryParams(window.location.href);
@@ -144,20 +134,33 @@ class SingleStory extends React.Component {
 		// if (params["from"] === "stories"){
 		// 	redirect_back = "/stories";
 		// }
-		let back_to_path = this.from_library ? `/library/${this.props.location.state.library_id}` : "/stories"
+		let back_to_path = "/stories";
 		let state = {}
-		if (this.props.location && this.props.location.state){
+		if (this.props.location.state){
+			if (this.props.location.state.from_app){
+				back_to_path = `/app/${this.props.location.state.from_app}`
+			} else if (this.props.location.state.from_library){
+				back_to_path = `/library/${this.props.location.state.library_id}`
+			} 
 			state["filterBy"] = this.props.location.state.filterBy
-		} 
+		}
+		if (this.state.not_found) return <E404/>
 		return (
 			<div>
 				<InsideHeader
-					back_to_msg={`Back to ${this.from_library ? "library" : "stories"}`}
+					back_to_msg={`Back to ${back_to_path && back_to_path.split("/")[1]}`}
 					state={state}
 					back_to_path={back_to_path}
 					user={this.props.user}
 				/>
-
+				<CreateLibraryModal
+					modalIsOpen={this.state.currentModal === "CreateLibraryModal"}
+					closeModal={this.onCloseModal}
+				/>
+				<PickMembershipModal
+					modalIsOpen={this.state.currentModal === "PickMembershipModal"}
+					closeModal={(e) => this.setState({ currentModal: undefined })}
+				/>
 				<div className="inside-stories">
 					<div className="inside-stories__container">
 						<div className="inside-stories__top">
@@ -165,9 +168,13 @@ class SingleStory extends React.Component {
 								!this.state.app ? <SingleStoryAppLoading />
 									:
 									<div className="apps__top">
+									<Link to={`/app/${this.state.app.id}`}>
 										<div className="apps__top-image" style={{ backgroundImage: `url("${this.state.app.logo.url}")` }} />
+									</Link>
 										<div className="apps__top-info">
-											<h5 className="bold">{this.state.app.name}</h5>
+											<Link to={`/app/${this.state.app.id}`}>
+												<h5 className="bold">{this.state.app.name}</h5>
+											</Link>	
 											<p className="apps__small-title light-gray">{this.state.app.description}</p>
 										</div>
 									</div>
@@ -253,142 +260,105 @@ class SingleStory extends React.Component {
 										</div>
 									</div>
 									<hr />
-									<Query 
-										query={LIBRARIES_QUERY}
-										variables={{
-											libraryFilterInput: { containsStory: this.story_id }
-										}}
-									>
-										{ ({loading,error,data} ) => {
-											console.log(this,5552);
-											let checked_libraries = []
-											if (data && data.libraries) console.log(data,5123);
-											if (data && data.libraries) checked_libraries = data.libraries.map(library => library.id)
-											let current_librariesQuery_result = data
-											return (
-												<div className="inside-stories__card--save">
-													<p className="bold">Save to libraries</p>
-													<button onClick={this.toggleSelectLibrary} className="button">Select library</button>
-													<div style={{ top: "16.7344px", left: "-185.391px" }} className={`filter ${this.state.selectLibraryOpen ? "is-open" : ""}`} id="second" data-dropdown data-auto-focus="true">
-														{
-															!this.props.user.libraries ? <DropdownLoading />
-																: <div className="filter-dropdown">
-																	<div className="filter-dropdown__top">
-																		<h5 className="gray bold">Save to libraries</h5>
-																		<h5 data-open="singleStoryCreateLibrary" className="gray bold">ADD</h5>
-																	</div>
-																	<div className="filter-dropdown__main">
-																		{
-																			this.state.savingStory ? <Loading />
-																				: this.props.user.libraries.map(library => {
-																					let checked = checked_libraries.includes(library.id);
-																					console.log(checked,"checked"); 
-																					return (
-																						<Mutation
-																							mutation={gql`
-																								mutation ToggleStoryLibrary(
-																									$library: ID!
-																									$story: ID!
-																								) {
-																									toggleStoryLibrary(
-																										library: $library
-																										story: $story
-																									){
-																										action
-																										library {
-																											id
-																											name
-																										}
-																									}
-																								}
-																							`}
-																						>
-																							{(toggleStoryLibrary,{loading,error,data}) => {
-																								let toggleLibrary = async () => {
-																									let response = await toggleStoryLibrary({
-																										variables: { 
-																											library: library.id,
-																											story: this.story_id
-																									}})
-																									let data = response.data.toggleStoryLibrary;
-																									let new_library = data.library;
-																									console.log(new_library);
-																									try {
-																										let profile_libraries = this.props.client.readQuery({
-																											query: PROFILE_LIBRARIES_QUERY
-																										})
-																										let profile_library = undefined;
-																										profile_libraries.libraries.map(library => {
-																											if (library.id === new_library.id){
-																												profile_library = library
-																											}
-																										})
-																										if (data.action === "connect"){
-																											profile_library.stories.push(this.state.story);
-																											current_librariesQuery_result.libraries.push(new_library)
-																										} else {
-																											profile_library.stories.filter(story => story.id !== this.story_id);
-																											current_librariesQuery_result.libraries = current_librariesQuery_result.libraries.filter(library => library.id !== new_library.id)
-																										}
-																										this.props.client.writeQuery({
-																											query: PROFILE_LIBRARIES_QUERY,
-																											data: profile_libraries
-																										})
-																									} catch (e) { console.log(e) }
-
-																									try {
-																										if (data.action === "connect") {
-																											current_librariesQuery_result.libraries.push(new_library)
-																										} else {
-																											current_librariesQuery_result.libraries = current_librariesQuery_result.libraries.filter(library => library.id !== new_library.id)
-																										}
-																										this.props.client.writeQuery({
-																											query: LIBRARIES_QUERY,
-																											variables: { libraryFilterInput: { containsStory: this.story_id } },
-																											data: current_librariesQuery_result
-																										})
-																									} catch (e) { console.log(e) }
-
-																									this.setState(this.state)
-																								}
-																								let backgroundColor;
-																								if (loading){
-																									backgroundColor = "#d3d3d3"
-																								} else {
-																									if (checked) backgroundColor = "rgba(199, 88, 117, 0.22)"
-																								}
+													<div className="inside-stories__card--save">
+														<p className="bold">Save to libraries</p>
+														<button 
+															onClick={() => if_user_call_func(this.props.user,this.toggleSelectLibrary,this.setState.bind(this))}
+															className="button">Select library</button>
+														<div style={{ top: "16.7344px", left: "-185.391px" }} className={`filter ${this.state.selectLibraryOpen ? "is-open" : ""}`}>
+									{
+										this.props.user && 
+											<Query 
+												query={LIBRARIES_QUERY_SHALLOW}
+												variables={{
+													libraryFilterInput: { containsStory: this.story_id }
+												}}
+											>
+												{ ({loading: loading_top,error,data,refetch} ) => {
+													let checked_libraries = []
+													if (data && data.libraries) checked_libraries = data.libraries.map(library => library.id)
+													let current_librariesQuery_result = data
+													return (
+														<div>
+																	<Query
+																		query={LIBRARIES_QUERY_SHALLOW}
+																	>
+																	{ ({loading,error,data}) => {
+																		if (loading) return <DropdownLoading />;
+																		return (
+																			<div className = "filter-dropdown" >
+																				<div className="filter-dropdown__top">
+																					<h5 className="gray bold">Save to libraries</h5>
+																					<h5 onClick={() => this.setState({ currentModal: "CreateLibraryModal" })} className="gray bold">ADD</h5>
+																				</div>
+																				<div className="filter-dropdown__main">
+																					{
+																						this.state.savingStory ? <Loading />
+																							: data.libraries.map(library => {
+																								let checked = checked_libraries.includes(library.id);
 																								return (
-																									<label 
-																										className={`radio__container ${checked ? "checked" :""}`}
-																										style={{ backgroundColor}}
+																									<Mutation
+																										mutation={TOGGLE_STORY_LIBRARY_MUTATION}
 																									>
-																										
-																										<label id={library.id + "_label"} className="gray bold">{library.name}</label>
-																										<input
-																											className="ic"
-																											type="checkbox"
-																											name={library.name}
-																											value={library.id}
-																											checked={checked}
-																											onChange={toggleLibrary}
-																										/>
-																										<span className="checkmark" />
-																									</label>
-																								)
-																							}}
+																										{(toggleStoryLibrary, { loading, error, data }) => {
+																											let toggleLibrary = async (e) => {
+																												if (loading) return;
+																												let response = await toggleStoryLibrary({
+																													variables: {
+																														library: library.id,
+																														story: this.story_id
+																													}
+																												})
+																												let action = response.data.toggleStoryLibrary.action;
+																												await this.updateShallowLibrariesQueryCache(action,library);
+																												await this.updateLibrariesQueryCache(action,library);
+																												this.setState(this.state)
+																											}
+																											let backgroundColor;
+																											if (loading) {
+																												backgroundColor = "#d3d3d3"
+																											} else {
+																												if (checked) backgroundColor = "rgba(199, 88, 117, 0.22)"
+																											}
+																											return (
+																												<label
+																													className={`radio__container ${checked ? "checked" : ""}`}
+																													style={{ backgroundColor }}
+																												>
 
-																						</Mutation>
-																					);
-																				})
-																		}
-																	</div>
-																</div>
-														}
+																													<label id={library.id + "_label"} className="gray bold">{library.name}</label>
+																													<input
+																														className="ic"
+																														type="checkbox"
+																														name={library.name}
+																														value={library.id}
+																														checked={checked}
+																														onChange={toggleLibrary}
+																													/>
+																													<span className="checkmark" />
+																												</label>
+																											)
+																										}}
+
+																									</Mutation>
+																								);
+																							})
+																					}
+																				</div>
+																			</div>
+																			)
+																		}}
+
+																	</Query>
+																}
+														</div>
+													)
+												}}
+											</Query>
+
+									}
+														</div>
 													</div>
-												</div>
-											)
-										}}
-									</Query>
 								</div>
 								<div className="inside-stories__card small">
 									<a target="_blank" href="http://www.hudhud.io">

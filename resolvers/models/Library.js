@@ -37,7 +37,7 @@ const toggleStoryLibrary = async (root,args,context,info) => {
 			type = "disconnect"
 		}
 	})
-	await context.db.mutation.updateLibrary({ 
+	let updated_library = await context.db.mutation.updateLibrary({ 
 		data: {
 			stories:{
 				[type]: { id: args.story }
@@ -48,7 +48,7 @@ const toggleStoryLibrary = async (root,args,context,info) => {
 	})
 	return {
 		action: type,
-		library: library
+		library: updated_library
 	}
 }
 

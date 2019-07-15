@@ -41,6 +41,8 @@ type User {
   job: Job!
   role: AccountType!
   profile_photo: File
+  customer_id: ID
+  subscription_id: ID
   apps: [App!]!
   libraries: [Library!]!
   createdAt: DateTime! @createdAt
