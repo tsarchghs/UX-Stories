@@ -116,7 +116,7 @@ class Profile extends React.Component {
                                 }} />
                                 <div className="flex fd-column jc-se">
                                   <h2>{this.props.user.full_name}</h2>
-                                  <p className="light-gray">{this.props.user.job.name}</p>
+                                  <p className="light-gray">{this.props.user.job ? this.props.user.job.name : "None"}</p>
                                 </div>
                               </div>  
                               <button 

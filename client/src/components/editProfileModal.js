@@ -42,6 +42,9 @@ class _EditProfileModal extends React.Component {
 			}
 		}
 	}
+	componentWillMount(){
+		this.props.client.query({ query: JOBS_QUERY })
+	}
 	componentWillReceiveProps(nextProps){
 		if (nextProps.user && !this.state.user) {
 			this.setState({
@@ -75,16 +78,23 @@ class _EditProfileModal extends React.Component {
 									<form id="edit_profile" onSubmit={async (e) => {
 										e.preventDefault();
 										if (loading) return;
+										let job = this.state.job
+										if (!job){
+											let res = await this.props.client.query({query:JOBS_QUERY})
+											job = res.data.jobs[0]
+										}
 										let variables = {
 											full_name: this.state.full_name,
-											job: this.state.job.id,
+											job: job.id,
 											email: this.state.email,
 											password: this.state.password
 										}
 										if (this.uploadPhotoInput && this.uploadPhotoInput.base64){
 											variables["profile_photo"] = {
-												base64: this.uploadPhotoInput.base64,
-												mimetype: "image/png"
+												createWithBase64: {
+													base64: this.uploadPhotoInput.base64,
+													mimetype: "image/png"
+												}
 											}
 										}
 										let data = await editProfile({variables})
@@ -179,7 +189,8 @@ class _EditProfileModal extends React.Component {
 										              <input 
 										              	className="input" 
 										              	id="p_email" 
-										              	type="email" 
+										              	type="email"
+														readOnly={this.props.user.google_accessToken} 
 										              	placeholder="Email" 
 										              	value={this.state.email}
 																		onChange={e => this.setState({ email: e.target.value })}	

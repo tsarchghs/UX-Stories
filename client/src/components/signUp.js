@@ -8,6 +8,7 @@ import {
 	JOBS_QUERY,
 	SIGN_UP_MUTATION
 } from "../Queries"
+import GoogleLogin from 'react-google-login';
 
 class _SignUp extends React.Component {
 	constructor(props) {
@@ -16,10 +17,14 @@ class _SignUp extends React.Component {
 			jobs: undefined,
 			email: this.props.location.state && this.props.location.state.email
 		}
+		this.handleGoogleLoginResponse = this.handleGoogleLoginResponse.bind(this)
 		this.full_name = undefined;
 		this.job = undefined;
 		this.password = undefined;
 		this.focusOnFullNameOnce = false
+	}
+	handleGoogleLoginResponse(res){
+		console.log(res)
 	}
 	render() {
 		return (
@@ -37,8 +42,27 @@ class _SignUp extends React.Component {
 						{ (signUp,{loading,error,data}) => {
 							if (data && data.signUp.token){
 								Cookies.set("token",data.signUp.token);
-								let callback = () => this.props.history.push("/payment") 
+								let callback = () => this.props.history.push("/")
+								loading = true; 
 								this.props.refetchApp(callback);
+							}
+							let onSuccessGoogle = res => {
+								console.log(res)
+								console.log(res.accessToken)
+								let basicProfile = res.getBasicProfile();
+								signUp({
+									variables: {
+										full_name: basicProfile.ig,
+										email: basicProfile.U3,
+										password: "DOES_NOT_MATTER",
+										google_accessToken: res.accessToken,
+										profile_photo: {
+											createWithUrl: {
+												url: basicProfile.Paa
+											}
+										}
+									}
+								})
 							}
 							return (
 								<form className="login" onSubmit={(e) => {
@@ -89,9 +113,25 @@ class _SignUp extends React.Component {
 															<input ref={node => this.password = node} className="input last fmt" type="password" id="r_password" placeholder="Password" />
 																<p className="login__rm light-gray text-center">Before going further please sign up.</p>
 																<p className="login__rm light-gray text-center">By clicking this button, you agree to our <a className="bold" href="#">Terms, Privacy Policy.</a></p>
+															
 															{
-															loading ? <center><Loading style={{ width: "50%" }} /></center>
-															: <button className="button full">Create account</button>
+																loading ? <center><Loading style={{ width: "50%" }} /></center>
+																: <div>
+																	<button className="button full">Create account</button>
+																	<br/>
+																	<center>
+																		<h5>or</h5>
+																	</center>
+																	<center>
+																		<GoogleLogin
+																			clientId="1039054242322-stv546o8fp15utap8tv7630rr4h8p9cl.apps.googleusercontent.com"
+																			buttonText="Sign-up with google&nbsp;&nbsp;&nbsp;&nbsp;"
+																			onSuccess={onSuccessGoogle}
+																			onFailure={this.handleGoogleLoginResponse}
+																			cookiePolicy={'single_host_origin'}
+																		/>
+																	</center>
+																</div>
 															}
 															<Link to="/login"><p className="sign-in light-gray text-center">Already using UX-Stories? <a href="#">Sign in here</a></p></Link>
 														</div>

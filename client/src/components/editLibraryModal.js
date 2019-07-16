@@ -97,7 +97,7 @@ class _EditLibraryModal extends React.Component {
               </Mutation>
             </div>
             <button className="close-button" data-close aria-label="Close reveal" type="button">
-              <img src="../../assets/toolkit/images/006-error.svg" alt />
+              <img onClick={this.props.closeModal} src="../../assets/toolkit/images/006-error.svg" alt />
             </button>
           </div>
         </Modal>

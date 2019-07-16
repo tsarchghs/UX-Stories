@@ -23,36 +23,29 @@ class Login extends React.Component {
 		super(props);
 		this.email = undefined;
 		this.password = undefined;
-		this.state = {
-			errors: []
-		}
-	}
-	loginWithToken(token){
-		Cookies.set("token", token)
-		this.props.refetchApp();
 	}
 	render() {
 		return (
-			<Composed>
-			{ ({ login, loginWithGoogle }) => {
-				console.log(login);
+			<Mutation 
+				mutation={LOGIN_MUTATION}>
+			{ (login,{loading,error,data}) => {
+				let errors = []
+				if (error){
+					if (error.message === "GraphQL error: Invalid credentials"){
+						errors.push("Invalid credentials");
+					}
+				}
+				if (data && data.login.token){
+					Cookies.set("token",data.login.token)
+					this.props.refetchApp();
+				}
 				return (
-					<form className="login" onSubmit={async e => {
+					<form className="login" onSubmit={(e) => {
 						e.preventDefault();
-						try {
-							this.setState({errors:[],loading:true})
-							let res = await login({variables:{
-								email: this.email.value,
-								password: this.password.value
-							}});
-							this.loginWithToken(res.data.login.token)
-						} catch (error) {
-							if (error.message === "GraphQL error: Invalid credentials") {
-								this.setState({errors:["Invalid credentials"]})
-							}
-							let errors = error && error.graphQLErrors && error.graphQLErrors[0].name === "ValidationError" && error.graphQLErrors[0].data.errors
-							this.setState({ errors, loading:false })
-						}
+						login({variables:{
+							email: this.email.value,
+							password: this.password.value
+						}});
 					}}>
 				        <div className="login__container">
 			          <div className="login__content">
@@ -67,9 +60,8 @@ class Login extends React.Component {
 			              <div className="login__hero--left">
 			                <h1 className="bold text-center">Welcome back</h1>
 							{
-								this.state.errors && this.state.errors.map(error => <Alert style={{height:"70"}} red={true} message={error}/>)
+								errors.map(error => <Alert style={{height:"70"}} red={true} message={error}/>)
 							}
-										 
 			                <div className="input__wo-border">
 			                  <input ref={node => this.email = node} className="input first fmt" id="email" type="email" placeholder="Email" />
 			                  <input ref={node => this.password = node} className="input last fmt" id="password" type="password" placeholder="Password" />
@@ -77,7 +69,7 @@ class Login extends React.Component {
 			                  	<p className="login__rm light-gray text-right"><a href="#">Forgot your password</a></p>
 			                  </Link>
 								{
-									this.state.loading ? <center><Loading style={{ width: "50%" }} /></center>
+									loading ? <center><Loading style={{ width: "50%" }} /></center>
 										: <div>
 											<button className="button full">Login</button>
 											<br />
@@ -88,20 +80,7 @@ class Login extends React.Component {
 												<GoogleLogin
 													clientId="1039054242322-stv546o8fp15utap8tv7630rr4h8p9cl.apps.googleusercontent.com"
 													buttonText="Sign-in with google&nbsp;&nbsp;&nbsp;&nbsp;"
-													onSuccess={async ({accessToken}) => {
-														try {
-															this.setState({loading:true,errors:[]})
-															let res = await loginWithGoogle({
-																variables:{
-																	google_accessToken: accessToken 
-																}
-															})
-															this.loginWithToken(res.data.loginWithGoogle.token)
-														} catch (error) {
-															let errors = error && error.graphQLErrors && error.graphQLErrors[0].name === "ValidationError" && error.graphQLErrors[0].data.errors
-															this.setState({errors,loading: false})
-														}
-													}}
+													onSuccess={() => undefined}
 													onFailure={this.handleGoogleLoginResponse}
 													cookiePolicy={'single_host_origin'}
 												/>
@@ -127,7 +106,7 @@ class Login extends React.Component {
 			      </form>
 				)
 			}}
-			</Composed>
+			</Mutation>
 		);
 	}
 }

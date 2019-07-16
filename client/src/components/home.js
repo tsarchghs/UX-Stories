@@ -32,7 +32,6 @@ class _Home extends React.Component {
       reached_end: false,
       nothing_to_show: false,
       filterBy: filterBy,
-      jobs: [],
       show_email: true,
       email: undefined,
       appName_contains: "",
@@ -98,17 +97,6 @@ class _Home extends React.Component {
   }
 	async componentDidMount(){
     this.update();
-    let jobs = await this.props.client.query({
-      query: gql`
-        query {
-          jobs {
-            id
-            name
-          }
-        } 
-      `
-    })
-    this.setState({jobs:jobs.data.jobs});
 	}
   async loadMore() {
     this.setState({

@@ -42,13 +42,19 @@ class Invoices extends React.Component {
                                     {({loading,error,data}) => {
                                         if (loading) return loading;
                                         if (error) return error.message;
-                                        return JSON.stringify(data);
+                                        return (
+                                            <React.Fragment>
+                                                { 
+                                                    data.customer ? null :
+                                                    <p className="gray bold sbsm">Currently, you don’t have a credit card on file. You can <a href="#" className="pink">add a credit card</a> which allows you to easily purchase jobs.</p>
+                                                }
+                                            </React.Fragment>
+                                        )
                                     }}
                                 </Query>
-                                {/* <p className="gray bold sbsm">Currently, you don’t have a credit card on file. You can <a href="#" className="pink">add a credit card</a> which allows you to easily purchase jobs.</p> */}
                                 <a href="#" className="button">Update Card</a>
                                 <div className="table-content">
-                                    <h5 className="bold">Order History</h5>
+                                    <h5 className="bold">Invoices History</h5>
                                     <Query query={GET_INVOICES_QUERY}>
                                         {({loading,error,data}) => {
                                             if (loading) return "Loading";
@@ -77,6 +83,10 @@ class Invoices extends React.Component {
                                                                 <td className="td-blue"><a href={invoice.hosted_invoice_url} target="_blank" className="button">View</a></td>
                                                             </tr>
                                                         ))
+                                                    }
+                                                    {
+                                                        data.getLoggedInUser.invoices.length ? null
+                                                        : <center><p className="gray bold sbsm">No invoices to show</p></center>
                                                     }
                                                     </tbody>
                                                 </table>

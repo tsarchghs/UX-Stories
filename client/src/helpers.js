@@ -2,7 +2,7 @@ import gql from "graphql-tag";
 
 const if_user_call_func = (user,func,setState) => {
   console.log(user);  
-  if (user) func()
+  if (user && user.subscription && user.subscription.status) func()
   else setState({ currentModal:"PickMembershipModal"})
 }
 

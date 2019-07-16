@@ -139,6 +139,7 @@ const GET_LOGGED_IN_USER_QUERY = gql`
       full_name
       email
       role
+      google_accessToken
       subscription {
         id
         status
@@ -331,13 +332,17 @@ const JOBS_QUERY = gql`
 const SIGN_UP_MUTATION = gql`
   mutation SignUp(
     $full_name: String!, $email: String!, 
-    $password: String!,$job: ID!
+    $password: String!,$job: ID
+    $google_accessToken: String
+    $profile_photo: FileInput
   ) {
     signUp(
       full_name: $full_name,
       email: $email,
       password: $password,
+      google_accessToken: $google_accessToken,
       job: $job
+      profile_photo: $profile_photo
     ) {
       token
     }
@@ -532,37 +537,50 @@ const RENEW_SUBSCRIPTION_MUTATION = gql`
   }
 `
 
+const LOGIN_WITH_GOOGLE_MUTATION = gql`
+  mutation LoginWithGoogle(
+    $google_accessToken: String!
+  ) {
+      loginWithGoogle(
+        google_accessToken: $google_accessToken
+      ) {
+        token
+      }
+  }
+`
+
 export {
-    PAYMENT_MUTATION,
-    GET_CUSTOMER_INFO,
-    GET_INVOICES_QUERY,
-    CANCEL_SUBSCRIPTION_MUTATION,
-    RENEW_SUBSCRIPTION_MUTATION,
-    getObjectConnectionQuery,
-    LIBRARIES_QUERY,
-    APPS_QUERY,
-    UPDATE_ALGOLIA_INDEX_QUERY,
-    DELETE_ALGOLIA_INDEX_QUERY,
-    ADD_ALGOLIA_INDEX_QUERY,
-    DELETE_LIBRARY_MUTATION,
-    GET_LOGGED_IN_USER_QUERY,
-    LIBRARIES_QUERY_SHALLOW,
-    TOGGLE_STORY_LIBRARY_MUTATION,
-    RESET_PASSWORD_MUTATION,
-    VERIFY_FORGOT_PASSWORD_MUTATION,
-    APP_QUERY,
-    STORIES_QUERY,
-    STORY_QUERY,
-    JOBS_QUERY,
-    SIGN_UP_MUTATION,
-    LOGIN_MUTATION,
-    LIBRARY_QUERY,
-    FORGET_PASSWORD_MUTATION,
-    EDIT_PROFILE_MUTATION,
-    EDIT_LIBRARY_MUTATION,
-    CREATE_LIBRARY_MUTATION,
-    STORY_CATEGORIES_QUERY,
-    STORY_ELEMENTS_QUERY,
-    APP_VERSIONS_QUERY,
-    APP_CATEGORIES_QUERY
+  LOGIN_WITH_GOOGLE_MUTATION,
+  PAYMENT_MUTATION,
+  GET_CUSTOMER_INFO,
+  GET_INVOICES_QUERY,
+  CANCEL_SUBSCRIPTION_MUTATION,
+  RENEW_SUBSCRIPTION_MUTATION,
+  getObjectConnectionQuery,
+  LIBRARIES_QUERY,
+  APPS_QUERY,
+  UPDATE_ALGOLIA_INDEX_QUERY,
+  DELETE_ALGOLIA_INDEX_QUERY,
+  ADD_ALGOLIA_INDEX_QUERY,
+  DELETE_LIBRARY_MUTATION,
+  GET_LOGGED_IN_USER_QUERY,
+  LIBRARIES_QUERY_SHALLOW,
+  TOGGLE_STORY_LIBRARY_MUTATION,
+  RESET_PASSWORD_MUTATION,
+  VERIFY_FORGOT_PASSWORD_MUTATION,
+  APP_QUERY,
+  STORIES_QUERY,
+  STORY_QUERY,
+  JOBS_QUERY,
+  SIGN_UP_MUTATION,
+  LOGIN_MUTATION,
+  LIBRARY_QUERY,
+  FORGET_PASSWORD_MUTATION,
+  EDIT_PROFILE_MUTATION,
+  EDIT_LIBRARY_MUTATION,
+  CREATE_LIBRARY_MUTATION,
+  STORY_CATEGORIES_QUERY,
+  STORY_ELEMENTS_QUERY,
+  APP_VERSIONS_QUERY,
+  APP_CATEGORIES_QUERY
 }

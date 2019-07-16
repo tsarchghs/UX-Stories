@@ -1,20 +1,11 @@
 import React from "react";
-import Modal from 'react-modal';
 import { Link } from "react-router-dom";
+// import Modal from "react-animated-modal";
+import Modal from "react-responsive-modal";
 
 const customStyles = {
-  content: {
-    top: '370px',
-    left: '50%',
-    right: 'auto',
-    bottom: 'auto',
-    marginRight: '-50%',
-    transform: 'translate(-50%, -50%)',
-    width: "368px",
-    borderRadius: "6px",
-    outline: "none"
-  },
   overlay: {
+    paddingTop: "25%",
     backgroundColor: "rgba(10, 10, 10, 0.75)"
   }
 };
@@ -29,11 +20,11 @@ class PickMembershipModal extends React.Component {
 	render(){
     return (
       <Modal
-        isOpen={this.props.modalIsOpen}
-        onAfterOpen={this.props.afterOpenModal}
-        onRequestClose={this.props.closeModal}
-        style={customStyles}
+        open={this.props.modalIsOpen}
+        onClose={this.props.closeModal}
         contentLabel="Example Modal"
+        type="fadeIn"
+        styles={customStyles}
       >
         <div>
             <h3 className="modal__title">Yearly membership</h3>

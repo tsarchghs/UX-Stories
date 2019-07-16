@@ -50,16 +50,13 @@ class _App extends Component {
                         query={GET_LOGGED_IN_USER_QUERY}>
                         {({loading,error,data,refetch}) => {
                             if (error) return error.message
-                            {/* if (error) return <Loading style={{ margin: 140 }} /> */}
                             if (loading || !Object.keys(data).length) return <Loading style={{margin:140}}/>
                             var user = data.getLoggedInUser
-                            if (user && (!user.subscription || (user.subscription.status !== "active")) && this.props.location.pathname !== "/payment"){
-                                this.props.history.push("/payment")
-                            }
                             if (user && !user.logout){
-                                user.logout = () => {
+                                user.logout = async () => {
                                     Cookies.set("token","");
-                                    client.resetStore()
+                                    this.props.history.push("/")
+                                    await client.resetStore()
                                     refetch()
                                 }
                             }
