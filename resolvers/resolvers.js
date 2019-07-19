@@ -38,6 +38,7 @@ module.exports = {
 	Mutation: {
 		loginWithGoogle: authResolvers.loginWithGoogle,
 		payment: paymentResolvers.payment,
+		updateCard: paymentResolvers.updateCard,
 		cancelSubscription: paymentResolvers.cancelSubscription,
 		renewSubscription: paymentResolvers.renewSubscription,
 		addAlgoliaIndex: algoliaResolvers.addAlgoliaIndex,
