@@ -64,6 +64,9 @@ type Job {
 type Source {
   id: ID!
   last4: Int!
+  exp_month: Int!
+  exp_year: Int!
+  brand: String!
 }
 
 type Customer {
@@ -363,6 +366,7 @@ type Mutation {
     google_accessToken: String!
   ): AuthData!
   
+  updateCard(stripe_token: String!): Source!
   cancelSubscription: Subscription!
   renewSubscription: Subscription!
   payment(
