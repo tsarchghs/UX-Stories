@@ -42,8 +42,26 @@ const cancel_at_period_end = (bool) => {
     }
 }
 
+const updateCard = async (parent,args,context) => {
+    permissions.loginPermission(context, "MEMBER")
+    let new_source = await stripe.customers.createSource(context.user.customer_id, { source: args.stripe_token })
+    await stripe.customers.update(context.user.customer_id,{
+        "default_source": new_source.id
+    })
+    let allSources = await stripe.customers.listSources(context.user.customer_id)
+    console.log(allSources)
+    for (let x in allSources.data){
+        let source = allSources.data[x];
+        if (source.id !== new_source.id){
+            await stripe.customers.deleteSource(context.user.customer_id,source.id)
+        }
+    }
+    return new_source;
+}
+
 module.exports = {
     payment,
+    updateCard,
     cancelSubscription: cancel_at_period_end(true),
     renewSubscription: cancel_at_period_end(false)
 }
