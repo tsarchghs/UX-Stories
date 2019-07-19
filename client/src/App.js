@@ -111,7 +111,7 @@ class _App extends Component {
                                             return !user ? <Redirect to="/register" /> : <Elements><Payment user={user} /></Elements>
                                         }} />
                                         <Route path="/invoices" exact component={() => {
-                                            return !user ? <Redirect to="/login?success=invoices" /> : <Invoices user={user} />
+                                            return !user ? <Redirect to="/login?success=invoices" /> : <Elements><Invoices user={user} /></Elements>
                                         }} />
                                         
                                         <Route path="/login" exact component={()  => {
