@@ -69,6 +69,11 @@ const getLoggedInUser = async (parent,args,context,info) => {
 	},info);
 }
 
+const getDefaultSource = (sources,source_id) => {
+	for (var x in sources){
+		if (sources[x].id === source_id) return sources[x];
+	}
+}
 const User = {
 	subscription: async (parent,args,context) => {
 		if (!context.user.subscription_id){
@@ -97,10 +102,6 @@ const User = {
 		for (let x in invoices){
 			let invoice = invoices[x];
 			let charge = await stripe.charges.retrieve(invoice.charge)
-			console.log(JSON.stringify({
-				...invoice,
-				last4: charge.source.last4
-			}))
 			formatted.push({
 				...invoice,
 				last4: charge.source.last4
@@ -112,9 +113,10 @@ const User = {
 		let customer_id = context.user.customer_id;
 		if (!customer_id) return undefined;
 		let customer = await stripe.customers.retrieve(customer_id);
+		console.log(JSON.stringify(customer),555)
 		return {
 			...customer,
-			source: customer.sources.data[0]
+			source: getDefaultSource(customer.sources.data,customer.default_source)
 		}
 
 	}
