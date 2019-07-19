@@ -11,9 +11,17 @@ const StoryLinkType = yup.array().of(
     })
 )
 
-const profilePhotoSchema = yup.object().default(null).nullable().shape({
+const FileInputCreateWithBase64 = yup.object().default(null).nullable().shape({
     base64: yup.string().required(),
     mimetype: yup.string().required()
+})
+const FileInputCreateWithUrl = yup.object().default(null).nullable().shape({
+    url: yup.string().required()
+})
+
+const profilePhotoSchema = yup.object().default(null).nullable().shape({
+    createWithBase64: FileInputCreateWithBase64,
+    createWithUrl: FileInputCreateWithUrl
 })
 
 const nameOnlyRequired = yup.object().shape({

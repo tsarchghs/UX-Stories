@@ -5,6 +5,14 @@ var typeDefs = require("./prisma-schema").typeDefs;
 
 var models = [
   {
+    name: "Platform",
+    embedded: false
+  },
+  {
+    name: "AccountType",
+    embedded: false
+  },
+  {
     name: "File",
     embedded: false
   },
@@ -46,14 +54,6 @@ var models = [
   },
   {
     name: "Library",
-    embedded: false
-  },
-  {
-    name: "Platform",
-    embedded: false
-  },
-  {
-    name: "AccountType",
     embedded: false
   }
 ];

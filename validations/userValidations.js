@@ -6,7 +6,7 @@ const createUserSchema = yup.object().shape({
     full_name: yup.string().required().min(2),
     email: yup.string().required().email(),
     password: yup.string().required().min(6),
-    jobs: yup.string().required(), // "jobs" because that's how it is from formatted_data
+    jobs: yup.string(), // "jobs" because that's how it is from formatted_data
 })
 
 const editProfileSchema = yup.object().shape({

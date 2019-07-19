@@ -38,7 +38,7 @@ type User {
   email: String! @unique
   password: String!
   full_name: String!
-  job: Job!
+  job: Job
   role: AccountType!
   profile_photo: File
   customer_id: ID
@@ -47,6 +47,7 @@ type User {
   libraries: [Library!]!
   createdAt: DateTime! @createdAt
   updatedAt: DateTime! @updatedAt
+  google_accessToken: String
 }
 
 type AppVersion {

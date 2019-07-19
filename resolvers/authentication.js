@@ -8,7 +8,7 @@ const mailgun = require('mailgun-js')({
 });
 const { checkValidation, CreateValidationError } = require("../helpers.js");
 const { loginSchema, signUpSchema } = require("../validations/authValidations.js");
-
+const uuid = require("uuid");
 const saltRounds = 10;
 
 const createToken = (userId) => {
@@ -18,15 +18,27 @@ const createToken = (userId) => {
 	return token
 }
 
+const throwErrors = errors => {
+	let ERROR = CreateValidationError(errors);
+	throw new ERROR;
+}
+
 const login = async (root,args,context) => {
 	await checkValidation(loginSchema, args,false,"Invalid credentials");
+	let errors = []
 	const user = await context.db.query.user({where:{email:args.email}});
 	if (!user){
-		throw new Error("Invalid credentials");
+		errors.push("Invalid credentials")
+		throwErrors(errors)
+	}
+	if (user.google_accessToken){
+		errors.push("Please sign-in using google")
+		throwErrors(errors)
 	}
 	const validPassword = await bcrypt.compare(args.password,user.password);
-	if (!validPassword){
-		throw new Error("Invalid credentials");	
+	if (!validPassword && !user.google_accessToken){
+		errors.push("Invalid credentials")		
+		throwErrors(errors)
 	}
 	return {
 		userId: user.id,
@@ -35,29 +47,102 @@ const login = async (root,args,context) => {
 	};
 }
 
-const signUp = async (root,args,context) => {
-	var errors = await checkValidation(signUpSchema, args, false);
-	var hasLogo; 
-	var profile_photo;
-	hasLogo = args.profile_photo ? true : false
-	if (hasLogo){
-		profile_photo = await fileHandling.processUpload(args.profile_photo.base64,
-														args.profile_photo.mimetype,context);
+const loginWithGoogle = async (root,args,context) => {
+	let res = await fetch(`https://www.googleapis.com/plus/v1/people/me?access_token=${args.google_accessToken}`)
+	let data = await res.json()
+	let email = data.emails[0].value
+	let user = await context.db.query.user({where:{email}})
+	if (!user){
+		let res = await fetch(`https://www.googleapis.com/plus/v1/people/me?access_token=${args.google_accessToken}`)
+		let data = await res.json()
+		let email = data.emails[0].value
+		let userParams = {
+			email: email,
+			full_name: data.displayName,
+			password: uuid(),
+			profile_photo: {
+				create: {
+					filename: "undefined",
+					mimetype: "undefined",
+					encoding: "undefined",
+					url: data.image.url
+				}
+			},
+			role: "MEMBER",
+			libraries: {
+				create: {
+					name: "First Library",
+					custom_updatedAt: new Date()
+				}
+			},
+			google_accessToken: args.google_accessToken
+		}
+		user = await context.db.mutation.createUser({data: userParams});
 	}
-	const hashed_password = await bcrypt.hash(args.password,saltRounds);
-	var userParams = {
+	if (user.google_accessToken){
+		return {
+			userId: user.id,
+			token: createToken(user.id),
+			expiresIn: 1
+		}
+	} else {
+		errors = ["Account not connected with google, use email/password."]
+		let ERROR = CreateValidationError(errors);
+		throw new ERROR;
+	}
+}
+
+const connectIfUrlExists = async (context,file_data) => {
+	let file;
+	try {
+		file = await context.db.mutation.createFile({ data: file_data })
+	} catch (e) {
+		console.log(e)
+		if (e.message.indexOf("unique") !== -1){
+			file = await context.db.query.file({where:{url:file_data.url}})
+		}
+	}
+	return file
+} 
+
+const signUp = async (root,args,context) => {
+	let errors = await checkValidation(signUpSchema, args, false);
+	let profile_photo;
+	let withUrl = {
+		filename: "undefined", 
+		mimetype: "undefined", 
+		encoding: "undefined"	
+	}
+	if (args.profile_photo){
+		if (args.profile_photo.createWithBase64){
+			let base64 = args.profile_photo.createWithBase64.base64;
+			let mimetype = args.profile_photo.createWithBase64.mimetype;
+			profile_photo = await fileHandling.processUpload(base64,mimetype,context);
+		} else if (args.profile_photo.createWithUrl) {
+			withUrl.url = args.profile_photo.createWithUrl.url
+			profile_photo = await connectIfUrlExists(context,withUrl)
+		}
+	} else {
+		withUrl.url = "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQOo9ftjYQCU8HW1YByx0oAQdegRxO51mQN0tKKenGRnDZb-_D6"
+		profile_photo = await connectIfUrlExists(context,withUrl)
+	}
+	const hashed_password = args.google_accessToken ? uuid() : await bcrypt.hash(args.password,saltRounds);
+	let userParams = {
 		email: args.email,
 		full_name: args.full_name,
 		password: hashed_password,
 		role: "MEMBER",
-		job: {
-			connect:{id:args.job}
-		},
 		libraries: {
 			create: {
 				name: "First Library",
 				custom_updatedAt: new Date()
 			}
+		},
+		google_accessToken: args.google_accessToken
+	}
+	if (args.job){
+		userParams["job"] = {
+			connect: { id: args.job }
 		}
 	}
 	if (profile_photo){
@@ -65,22 +150,27 @@ const signUp = async (root,args,context) => {
 			connect: { id: profile_photo.id }
 		}
 	}
-	console.log(errors,123);
+	let user;
 	if (!errors.length){
 		try {
-			var user = await context.db.mutation.createUser({data:userParams});
+			user = await context.db.mutation.createUser({data:userParams});
 		} catch (e) {
 			if (e.message === "A unique constraint would be violated on User. Details: Field name = email"){
-				var errors = ["Email is already taken."]
+				errors = ["Email is already taken."]
+			}
+			if (args.google_accessToken){
+				errors = []
+				let res = await fetch(`https://www.googleapis.com/plus/v1/people/me?access_token=${args.google_accessToken}`)
+				let data = await res.json()
+				user = await context.db.query.user({ where: { email: data.emails[0].value } });
 			}
 		}
 	} else {
-		const user = await context.db.query.user({where:{email:args.email}});
+		user = await context.db.query.user({where:{email:args.email}});
 		if (user){
 			errors.push("Email is already taken.");
 		}
 	}
-	console.log(errors);
 	if (errors.length){
 		let ERROR = CreateValidationError(errors);
 		throw new ERROR;
@@ -121,7 +211,6 @@ const forgetPassword = async (root,args,context) => {
 	  subject: `UX-Stories: Forgot password`,
 	  text: `Here it is ${`${process.env.URI}/reset/${token}`}!`
 	};
-	console.log(data);
 	mailgun.messages().send(data,(err,body) => {
 		console.log(err,body);
 	});
@@ -151,7 +240,6 @@ const resetPassword = async (root,args,context) => {
 		if (err) return new Error("Invalid token");
 		return decoded
 	});
-	console.log(decoded);
 	if (decoded.message){
 		return {
 			success: false,
@@ -174,6 +262,7 @@ const resetPassword = async (root,args,context) => {
 
 module.exports = {
 	login,
+	loginWithGoogle,
 	signUp,
 	forgetPassword,
 	verifyForgotPassword,

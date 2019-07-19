@@ -36,6 +36,7 @@ module.exports = {
 		getObjectConnection: generalResolvers.getObjectConnection
 	},
 	Mutation: {
+		loginWithGoogle: authResolvers.loginWithGoogle,
 		payment: paymentResolvers.payment,
 		cancelSubscription: paymentResolvers.cancelSubscription,
 		renewSubscription: paymentResolvers.renewSubscription,

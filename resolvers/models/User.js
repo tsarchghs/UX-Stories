@@ -4,6 +4,7 @@ const bcrypt = require("bcrypt");
 const { checkValidation } = require("../../helpers");
 const { editProfileSchema } = require("../../validations/userValidations");
 const stripe = require('stripe')(process.env.stripe_secret_key);
+const fetch = require('node-fetch');
 
 const saltRounds = 10;
 
@@ -39,7 +40,7 @@ const editProfile = async (parent,args,context,info) => {
 		!args.job &&
 		!args.email &&
 		!args.password &&
-		!(args.profile_photo && args.profile_photo.base64 && args.profile_photo.mimetype)
+		!args.profile_photo
 	) {
 		throw new Error("At least one argument must be specified");
 	}
@@ -52,9 +53,8 @@ const editProfile = async (parent,args,context,info) => {
 		data["password"] = await bcrypt.hash(args.password,saltRounds);
 	}
 	if (args.profile_photo && args.profile_photo.base64 && args.profile_photo.mimetype){
-		const profile_image = await fileHandling.processUpload(args.profile_photo.base64,
-															args.profile_photo.mimetype,
-															context);
+		let photo_data = args.profile_photo.createWithBase64
+		const profile_image = await fileHandling.processUpload(photo_data.base64,photo_data.mimetype,context);
 		data["profile_photo"] = {connect:{id:profile_image.id}};
 	}
 	return await context.db.mutation.updateUser({data,where:{id:context.user.id}},info);
@@ -110,6 +110,7 @@ const User = {
 	},
 	customer: async (parent,args,context) => {
 		let customer_id = context.user.customer_id;
+		if (!customer_id) return undefined;
 		let customer = await stripe.customers.retrieve(customer_id);
 		return {
 			...customer,

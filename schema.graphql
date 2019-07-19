@@ -91,7 +91,8 @@ type User {
   email: String!
   password: String!
   full_name: String!
-  job: Job!
+  google_accessToken: String
+  job: Job
   role: AccountType!
   customer: Customer
   subscription: Subscription
@@ -152,9 +153,18 @@ type Library {
   name: String!
 }
 
-input FileInput {
+input FileInputCreateWithBase64 {
   base64: String! 
   mimetype: String!
+}
+
+input FileInputCreateWithUrl {
+  url: String!
+}
+
+input FileInput {
+  createWithBase64: FileInputCreateWithBase64
+  createWithUrl: FileInputCreateWithUrl 
 }
 
 input AppFilterInput {
@@ -349,6 +359,10 @@ type Query {
   countUsers: Int!
 }
 type Mutation {
+  loginWithGoogle(
+    google_accessToken: String!
+  ): AuthData!
+  
   cancelSubscription: Subscription!
   renewSubscription: Subscription!
   payment(
@@ -400,12 +414,14 @@ type Mutation {
     email: String!
     password: String!
   ): AuthData!
+  
   signUp(
     full_name: String!
     email: String!
     password: String!
-    job: ID!
+    job: ID
     profile_photo: FileInput
+    google_accessToken: String
   ): AuthData!
 
   verifyForgotPassword(
