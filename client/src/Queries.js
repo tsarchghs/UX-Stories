@@ -189,6 +189,9 @@ const GET_CUSTOMER_INFO = gql`
         source {
           id
           last4
+          exp_month
+          exp_year
+          brand
         }
       }
     }
@@ -549,7 +552,24 @@ const LOGIN_WITH_GOOGLE_MUTATION = gql`
   }
 `
 
+const UPDATE_CARD_MUTATION = gql`
+  mutation UpdateCard(
+    $stripe_token: String!
+  ){
+    updateCard(
+      stripe_token: $stripe_token
+    ){
+      id
+      last4
+      exp_month
+      exp_year
+      brand
+    }
+  }
+`
+
 export {
+  UPDATE_CARD_MUTATION,
   LOGIN_WITH_GOOGLE_MUTATION,
   PAYMENT_MUTATION,
   GET_CUSTOMER_INFO,
