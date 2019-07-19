@@ -1,13 +1,10 @@
 import React from "react";
 import Header from "./header";
 import AppLoading from "./appLoading";
-import gql from "graphql-tag";
 import { Link, withRouter } from "react-router-dom";
 import { debounce } from "lodash";
-import DropdownLoading from "./dropdownLoading";
 import AppCategoriesDropdown from "./appCategoriesDropdown";
 import { withApollo, Query, Mutation } from "react-apollo";
-import Cookies from "js-cookie";
 import { compose } from "recompose";
 import { appsIndexHelper } from "../algoliaClients";
 import { if_user_call_func } from "../helpers";
@@ -101,7 +98,7 @@ class _Home extends React.Component {
     this.update();
   }
   componentWillMount(){
-    appsIndexHelper.state.hitsPerPage = this.hitsPerPage
+    // appsIndexHelper.state.hitsPerPage = this.hitsPerPage
   }
   async loadMore() {
     this.setState({
