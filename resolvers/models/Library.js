@@ -1,9 +1,10 @@
 const permissions = require("../permissions");
 const { checkValidation } = require("../../helpers.js");
-const { librariesSchema, 
-		librarySchema, 
-		createLibrarySchema, 
-		editLibrarySchema 
+const { 
+	librariesSchema, 
+	librarySchema, 
+	createLibrarySchema, 
+	editLibrarySchema 
 } = require("../../validations/libraryValidations.js");
 
 const library = async (root,args,context,info) => {
@@ -117,8 +118,8 @@ const createLibrary = async (root,args,context,info) => {
 const editLibrary = async (root,args,context,info) => {
 	console.log(args);
 	await checkValidation(editLibrarySchema,args);
-	permissions.loginPermission(context,"MEMBER")
 	await permissions.libraryPermission(context,args.id)
+	permissions.loginPermission(context,"MEMBER")
 
 	let data = {}
 	if (args.name) data["name"] = args.name
@@ -133,8 +134,7 @@ const editLibrary = async (root,args,context,info) => {
 	}
 	data["custom_updatedAt"] = new Date()
 	const library = await context.db.mutation.updateLibrary({
-		where: { id: args.id},
-		data:data
+		where: { id: args.id}, data
 	},info)
 	return library
 }
