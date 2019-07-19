@@ -12,7 +12,7 @@ class SingleAppLoading extends React.Component {
 		            <div>
 		              <div className="container">
 		                <div className="secodary-header__content">
-		                  <CategoriesLoading/>
+		                  <CategoriesLoading style={{marginLeft:-75,marginTop:"0.5%"}}/>
 		                </div>
 		              </div>
               <div className="cards">
@@ -23,8 +23,7 @@ class SingleAppLoading extends React.Component {
 			      </div> */}
                   <div className="cards__content">
 									<center>
-                            <StoryThumbnailLoading/><StoryThumbnailLoading/><StoryThumbnailLoading/><StoryThumbnailLoading/>
-                            <StoryThumbnailLoading/><StoryThumbnailLoading/>
+
 									</center>
                   </div>
                 </div>
