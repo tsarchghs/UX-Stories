@@ -3,26 +3,24 @@ import { Mutation, withApollo } from "react-apollo";
 import gql from "graphql-tag";
 import Alert from "./alert";
 import ReactDOM from "react-dom";
-import Modal from 'react-modal';
+import Modal from "react-responsive-modal";
 import { LIBRARIES_QUERY, EDIT_LIBRARY_MUTATION } from "../Queries";
 import Loading from "./loading";
+import { toast } from 'react-toastify';
 
 const customStyles = {
-  content: {
-    top: '370px',
-    left: '50%',
-    right: 'auto',
+  modal: {
     bottom: 'auto',
-    marginRight: '-50%',
-    transform: 'translate(-50%, -50%)',
     width: "368px",
     borderRadius: "6px",
-    outline: "none"
+    outline: "none",
+    transform: "translate(0%, 179%)"
   },
   overlay: {
     backgroundColor: "rgba(10, 10, 10, 0.75)"
   }
 };
+
 
 class _EditLibraryModal extends React.Component {
 	constructor(props) {
@@ -34,11 +32,11 @@ class _EditLibraryModal extends React.Component {
 	render(){
     return (
       <Modal
-        isOpen={this.props.modalIsOpen}
-        onAfterOpen={this.props.afterOpenModal}
-        onRequestClose={this.props.closeModal}
-        style={customStyles}
-        contentLabel="Example Modal"
+        open={this.props.modalIsOpen}
+        onClose={this.props.closeModal}
+        styles={customStyles}
+        type="fadeIn"
+        animationDuration={250}
       >
         <div>
             <h3 className="modal__title">Edit library</h3>
@@ -75,6 +73,7 @@ class _EditLibraryModal extends React.Component {
                         console.log(e)
                       }
                       this.props.closeModal()
+                      toast.success("Updated library!")
 
                     }}>
                 <div>

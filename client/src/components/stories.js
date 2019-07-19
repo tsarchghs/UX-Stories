@@ -13,6 +13,7 @@ import { compose } from "recompose";
 import { storiesIndexHelper } from "../algoliaClients";
 import { if_user_call_func } from "../helpers";
 import PickMembershipModal from "./pickMembershipModal"; 
+import DropdownWrapper from "./wrappers/dropdownWrapper";
 
 const SKELETON = <div>
   <img style={{ borderRadius: 30, width: 250, height: 550, marginRight: 25, marginBottom: 10 }} src="data:image/png;base64,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" />
@@ -65,6 +66,9 @@ class _Stories extends React.Component {
     this.once = false
     this.searchNode = undefined
     this.hitsPerPage = 8
+    this.appCategoriesToggleButton = React.createRef()
+    this.storyCategoriesToggleButton = React.createRef()
+    this.storyElementsToggleButton = React.createRef()
   }
   componentWillUnmount(){
     storiesIndexHelper.setQuery("");
@@ -182,6 +186,7 @@ class _Stories extends React.Component {
         user={this.props.user}
         opened={this.state.currentDropdown === "profileDropdown"}
         toggleOpened={() => this.toggle("profileDropdown")}
+        closeDropdown={() => this.setState({currentDropdown: undefined})}
       />
         <PickMembershipModal
           modalIsOpen={this.state.currentModal === "PickMembershipModal"}
@@ -205,35 +210,53 @@ class _Stories extends React.Component {
                     }} type="text" placeholder="Search by story..." />
                   </div>      </div>
                 <div className="flex">
-        <button onClick={e => this.toggle("appCategoriesFilterOpen")} className="button white fbtn" aria-controls="first" data-is-focus="false" data-yeti-box="first" aria-haspopup="true" aria-expanded="false">Filter with Categories<img src="/assets/toolkit/images/shape.svg" alt /></button>        
-        <AppCategoriesDropdown 
-          filterBy={this.state.filterBy}
-          open={this.state.currentDropdown === "appCategoriesFilterOpen"}
-          style={{ top: "44px", left: "-198.25px" }}
-          handleAllFilterClick={e => this.handleFilterClick(e,{id:"all",name:"all"},"appCategory")}
-          handleFilterClick={(e,appCategory) => this.handleFilterClick(e,appCategory,"appCategory")}
-          use_name={true} 
-        />
+        <button ref={this.appCategoriesToggleButton} onClick={e => this.toggle("appCategoriesFilterOpen")} className="button white fbtn" aria-controls="first" data-is-focus="false" data-yeti-box="first" aria-haspopup="true" aria-expanded="false">Filter with Categories<img src="/assets/toolkit/images/shape.svg" alt /></button>        
+        <DropdownWrapper
+          toggleButton={this.appCategoriesToggleButton}
+          toggleDropdown={() => this.toggle("appCategoriesFilterOpen")}
+          displayed={this.state.currentDropdown === "appCategoriesFilterOpen"}
+        >
+          <AppCategoriesDropdown 
+            filterBy={this.state.filterBy}
+            open={this.state.currentDropdown === "appCategoriesFilterOpen"}
+            style={{ top: "44px", left: "-198.25px" }}
+            handleAllFilterClick={e => this.handleFilterClick(e,{id:"all",name:"all"},"appCategory")}
+            handleFilterClick={(e,appCategory) => this.handleFilterClick(e,appCategory,"appCategory")}
+            use_name={true} 
+          />
+        </DropdownWrapper>
 
-        <button onClick={e => this.toggle("storyCategoriesFilterOpen")} className="button white fbtn">Filter with Stories<img src="../../assets/toolkit/images/shape.svg" alt /></button>
-        <StoryCategoriesDropdown 
-          filterBy={this.state.filterBy}
-          state={this.state}
-          style={{ top: "43.8984px", left: "-173.367px" }}
-          open={this.state.currentDropdown === "storyCategoriesFilterOpen"}
-          handleFilterClick={(e,storyCategory) => this.handleFilterClick(e,storyCategory,"storyCategories")}
-          use_name={true}
-        />
+        <button ref={this.storyCategoriesToggleButton} onClick={e => this.toggle("storyCategoriesFilterOpen")} className="button white fbtn">Filter with Stories<img src="../../assets/toolkit/images/shape.svg" alt /></button>
+        <DropdownWrapper
+          toggleButton={this.storyCategoriesToggleButton}
+          toggleDropdown={() => this.toggle("storyCategoriesFilterOpen")}
+          displayed={this.state.currentDropdown === "storyCategoriesFilterOpen"}
+        >
+          <StoryCategoriesDropdown 
+            filterBy={this.state.filterBy}
+            state={this.state}
+            style={{ top: "43.8984px", left: "-173.367px" }}
+            open={this.state.currentDropdown === "storyCategoriesFilterOpen"}
+            handleFilterClick={(e,storyCategory) => this.handleFilterClick(e,storyCategory,"storyCategories")}
+            use_name={true}
+          />
+        </DropdownWrapper>
 
-        <button onClick={e => this.toggle("storyElementsFilterOpen")} className="button white fbtn">Filter with Elements<img src="../../assets/toolkit/images/shape.svg" alt /></button>
-        <StoryElementsDropdown
-          filterBy={this.state.filterBy}
-          open={this.state.currentDropdown === "storyElementsFilterOpen"}
-          style={{ top: "43.8984px", left: "-188.641px" }}
-          state={this.state}
-          handleFilterClick={(e,storyElement) => this.handleFilterClick(e,storyElement,"storyElements")}
-          use_name={true}
-        />
+        <button ref={this.storyElementsToggleButton} onClick={e => this.toggle("storyElementsFilterOpen")} className="button white fbtn">Filter with Elements<img src="../../assets/toolkit/images/shape.svg" alt /></button>
+        <DropdownWrapper
+          toggleButton={this.storyElementsToggleButton}
+          toggleDropdown={() => this.toggle("storyElementsFilterOpen")}
+          displayed={this.state.currentDropdown === "storyElementsFilterOpen"}
+        >
+          <StoryElementsDropdown
+            filterBy={this.state.filterBy}
+            open={this.state.currentDropdown === "storyElementsFilterOpen"}
+            style={{ top: "43.8984px", left: "-188.641px" }}
+            state={this.state}
+            handleFilterClick={(e,storyElement) => this.handleFilterClick(e,storyElement,"storyElements")}
+            use_name={true}
+          />
+        </DropdownWrapper>
 
                 </div>
               </div>

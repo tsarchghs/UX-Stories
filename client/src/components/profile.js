@@ -96,6 +96,7 @@ class Profile extends React.Component {
         user={this.props.user} 
         opened={this.state.currentDropdown === "profileDropdown"}
         toggleOpened={() => this.toggleDropDown("profileDropdown")}
+        closeDropdown={() => this.setState({currentDropdown:undefined})}
       />
         <div className="container">
           <div className="profile__content">

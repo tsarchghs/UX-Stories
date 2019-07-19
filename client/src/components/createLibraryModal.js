@@ -1,28 +1,23 @@
 import React from "react";
 import { Mutation, withApollo } from "react-apollo";
 import Alert from "./alert";
-import Modal from 'react-modal';
+import Modal from "react-responsive-modal";
 import { LIBRARIES_QUERY, CREATE_LIBRARY_MUTATION } from "../Queries";
 import Loading from "./loading";
+import { toast } from 'react-toastify';
 
 const customStyles = {
-	content: {
-		top: '279px',
-		left: '50%',
-		right: 'auto',
+	modal: {
 		bottom: 'auto',
-		marginRight: '-50%',
-		transform: 'translate(-50%, -50%)',
 		width: "368px",
 		borderRadius: "6px",
-		outline: "none"
+		outline: "none",
+		transform: "translate(2%, 154%)  "
 	},
 	overlay: {
 		backgroundColor: "rgba(10, 10, 10, 0.75)"
 	}
 };
-
-Modal.setAppElement('#root')
 
 class _CreateLibraryModal extends React.Component {
 	constructor(props) {
@@ -34,11 +29,11 @@ class _CreateLibraryModal extends React.Component {
 	render(){
 		return (
 			<Modal
-				isOpen={this.props.modalIsOpen}
-				onAfterOpen={this.props.afterOpenModal}
-				onRequestClose={this.props.closeModal}
-				style={customStyles}
-				contentLabel="Example Modal"
+				open={this.props.modalIsOpen}
+				onClose={this.props.closeModal}
+				styles={customStyles}
+				type="fadeIn"
+				animationDuration={250}
 			>	        
 				<h3 className="modal__title" style={{marginBottom:25}}>Create New library</h3>
 				<div>
@@ -63,6 +58,7 @@ class _CreateLibraryModal extends React.Component {
 									} catch (e) { console.log(e) }
 									this.setState({libraryName:""})
 									this.props.closeModal();
+									toast.success("Created library!")
 								}}>
 								<div>
 												{	
@@ -84,7 +80,7 @@ class _CreateLibraryModal extends React.Component {
 				</Mutation>
 				</div>
 				<button className="close-button" data-close aria-label="Close reveal" type="button">
-				<img src="../../assets/toolkit/images/006-error.svg" alt />
+				<img onClick={this.props.closeModal} src="../../assets/toolkit/images/006-error.svg" alt />
 				</button>
 				</Modal>
 		);

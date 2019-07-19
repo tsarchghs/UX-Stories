@@ -2,28 +2,23 @@ import React from "react";
 import { Query, Mutation, withApollo } from "react-apollo";
 import { handleUploadPhotoInput } from "../helpers";
 import Alert from "./alert";
-import Modal from 'react-modal';
 import { JOBS_QUERY, EDIT_PROFILE_MUTATION, GET_LOGGED_IN_USER_QUERY } from "../Queries";
 import Loading from "./loading";
+import Modal from "react-responsive-modal";
+import { toast } from 'react-toastify';
 
 const customStyles = {
-	content: {
-		top: '370px',
-		left: '50%',
-		right: 'auto',
+	modal: {
 		bottom: 'auto',
-		marginRight: '-50%',
-		transform: 'translate(-50%, -50%)',
 		width: "368px",
 		borderRadius: "6px",
-		outline: "none"
+		outline: "none",
+		transform: "translate(2%, 19%)"
 	},
 	overlay: {
 		backgroundColor: "rgba(10, 10, 10, 0.75)"
 	}
 };
-
-Modal.setAppElement('#root')
 
 class _EditProfileModal extends React.Component {
 	constructor(props) {
@@ -58,11 +53,11 @@ class _EditProfileModal extends React.Component {
 	render(){
 		return (
 			<Modal
-				isOpen={this.props.modalIsOpen}
-				onAfterOpen={this.props.afterOpenModal}
-				onRequestClose={this.props.closeModal}
-				style={customStyles}
-				contentLabel="Example Modal"
+				open={this.props.modalIsOpen}
+				onClose={this.props.closeModal}
+				styles={customStyles}
+				type="fadeIn"
+				animationDuration={250}
 			>
 		      <div id={this.props.id}>
 		      	<Query
@@ -117,6 +112,7 @@ class _EditProfileModal extends React.Component {
 										// })
 										this.props.closeAndUpdate && this.props.closeAndUpdate()
 										this.props.closeModal && this.props.closeModal()
+										toast.success("Updated profile!")
 									}}>
 								          <h3 className="modal__title">Edit profile</h3>
 								          {

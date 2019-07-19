@@ -16,6 +16,7 @@ import {
 } from "../Queries";
 import PickMembershipModal from "./pickMembershipModal";
 import E404 from "./E404";
+import { toast } from 'react-toastify';
 
 class SingleStory extends React.Component {
 	constructor(props) {
@@ -313,6 +314,11 @@ class SingleStory extends React.Component {
 																												await this.updateShallowLibrariesQueryCache(action,library);
 																												await this.updateLibrariesQueryCache(action,library);
 																												this.setState(this.state)
+																												if (action === "connect"){
+																													toast.success(`Saved story to library ${library.name}`)
+																												} else if (action === "disconnect"){
+																													toast.error(`Removed story to library ${library.name}`)
+																												}
 																											}
 																											let backgroundColor;
 																											if (loading) {

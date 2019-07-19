@@ -30,6 +30,15 @@ import { GET_LOGGED_IN_USER_QUERY } from "./Queries";
 import {StripeProvider,Elements} from 'react-stripe-elements';
 import Invoices from "./components/invoices";
 import E404 from "./components/E404";
+import { toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+import EventListener from 'react-event-listener';
+
+toast.configure({
+  autoClose: 5000,
+  draggable: true,
+  //etc you get the idea
+});
 
 class _App extends Component {
     constructor(props){
@@ -39,12 +48,33 @@ class _App extends Component {
             show_message: "",
             show_messages_register: []
         }
+        this.handleKeyDown = this.handleKeyDown.bind(this)
+        this.handleKeyUp = this.handleKeyUp.bind(this)
+        this.copiedToClipboardToastId = undefined
+        this.keysState = {
+
+        }
+    }
+    handleKeyDown(e){
+        this.keysState[e.key] = true
+        if (this.keysState["Control"] && this.keysState["c"]){
+            if (!this.copiedToClipboardToastId || !toast.isActive(this.copiedToClipboardToastId)){
+                this.copiedToClipboardToastId = toast.success("Copied to clipboard")
+            }
+        }
+    }
+    handleKeyUp(e){
+        this.keysState[e.key] = false
     }
     render(){
         return (
          <StripeProvider apiKey={false ? "pk_live_VzebAEDh33V8db6oZe4beNA6" : "pk_test_N1sdoxQTHRHokGxvtutLWw0x00HDZ2RDsi"}>
-
             <ApolloProvider client={client}>
+                    <EventListener
+                        target="window"
+                        onKeyDown={this.handleKeyDown}
+                        onKeyUp={this.handleKeyUp}
+                    />
                 {/* <script src={`${URI}/assets/toolkit/scripts/toolkit.js`}></script> */}
                     <Query 
                         query={GET_LOGGED_IN_USER_QUERY}>

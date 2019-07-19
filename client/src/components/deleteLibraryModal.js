@@ -4,6 +4,7 @@ import { Mutation, withApollo } from "react-apollo";
 import Alert from "./alert";
 import Loading from "./loading";
 import Modal from 'react-modal';
+import { toast } from 'react-toastify';
 
 const customStyles = {
     overlay: {
@@ -64,6 +65,7 @@ class _DeleteLibraryModal extends React.Component {
                                         data: currentCache
                                     })
                                     this.props.closeModal();
+                                    toast.error("Deleted library!")
                                 }
                                 return (
                                     <div>

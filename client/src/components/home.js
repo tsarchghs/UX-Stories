@@ -12,6 +12,7 @@ import { compose } from "recompose";
 import { appsIndexHelper } from "../algoliaClients";
 import { if_user_call_func } from "../helpers";
 import PickMembershipModal from "./pickMembershipModal"; 
+import DropdownWrapper from "./wrappers/dropdownWrapper";
 
 class _Home extends React.Component {
   constructor(props) {
@@ -42,6 +43,7 @@ class _Home extends React.Component {
     this.toggle = this.toggle.bind(this);
     this.update = debounce(this.update.bind(this),150);
     this.hitsPerPage = 4
+    this.appCategoryToggleButton = React.createRef()
   }
   filterCategory(appCategory) {
     if (!this.state.filterBy.appCategory || !(this.state.filterBy.appCategory.name === appCategory.name)){
@@ -97,7 +99,10 @@ class _Home extends React.Component {
   }
 	async componentDidMount(){
     this.update();
-	}
+  }
+  componentWillMount(){
+    appsIndexHelper.state.hitsPerPage = this.hitsPerPage
+  }
   async loadMore() {
     this.setState({
       show_skeleton:true
@@ -112,6 +117,7 @@ class _Home extends React.Component {
           user={this.props.user}
           opened={this.state.currentDropdown === "profileDropdown"}
           toggleOpened={() => this.toggle("profileDropdown")}
+          closeDropdown={() => this.setState({ currentDropdown: undefined })}
         />
         <PickMembershipModal
           modalIsOpen={this.state.currentModal === "PickMembershipModal"}
@@ -176,16 +182,23 @@ class _Home extends React.Component {
                 </div>			
               </div>
               <div className="flex">
-                <button style={{cursor:"pointer"}} onClick={e => this.toggle("appCategoryFilter")} className="button white fbtn">Filter with Categories<img src="/assets/toolkit/images/shape.svg" alt /></button>
-              <AppCategoriesDropdown 
-                filterBy={this.state.filterBy}
-                style={{ top: "43.8984px", left: "-198.188px"}}
-                open={this.state.currentDropdown === "appCategoryFilter"}
-                value={this.state.filterBy.appCategory}
-                handleAllFilterClick={() => this.filterCategory({id:"all",name:"all"})}
-                handleFilterClick={(e,appCategory) => this.filterCategory(appCategory)}
-                use_name={true}
-              />			
+                <button ref={this.appCategoryToggleButton} style={{cursor:"pointer"}} onClick={e => this.toggle("appCategoryFilter")} className="button white fbtn">Filter with Categories<img src="/assets/toolkit/images/shape.svg" alt /></button>
+                <DropdownWrapper
+                  toggleButton={this.appCategoryToggleButton}
+                  toggleDropdown={() => this.toggle("appCategoryFilter")}
+                  displayed={this.state.currentDropdown === "appCategoryFilter"}
+                >
+                  <AppCategoriesDropdown 
+                    filterBy={this.state.filterBy}
+                    style={{ top: "43.8984px", left: "-198.188px"}}
+                    open={this.state.currentDropdown === "appCategoryFilter"}
+                    value={this.state.filterBy.appCategory}
+                    handleAllFilterClick={() => this.filterCategory({id:"all",name:"all"})}
+                    handleFilterClick={(e,appCategory) => this.filterCategory(appCategory)}
+                    use_name={true}
+                  />			
+                
+                </DropdownWrapper>
                </div>
             </div>
           </div>

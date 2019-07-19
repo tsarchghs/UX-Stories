@@ -26,6 +26,7 @@ class Invoices extends React.Component {
                     user={this.props.user} 
                     opened={this.state.currentDropdown === "profileDropdown"}
                     toggleOpened={() => this.toggleDropDown("profileDropdown")}
+                    closeDropdown={() => this.setState({ currentDropdown: undefined })}
                 />
                 <div className="subscription">
                     <div className="subscription__container">
