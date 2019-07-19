@@ -3,3 +3,63 @@
 .blackOnHover:hover {
     color: #000 !important
 }
+
+.styles_closeButton__20ID4 {
+    display: none !important;
+}
+
+
+.creditcard {
+  width: 320px;
+  border-radius: 8px;
+  background-color: #c75875;
+  padding: 20px 20px;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: column;
+          flex-direction: column;
+  -webkit-box-pack: justify;
+      -ms-flex-pack: justify;
+          justify-content: space-between;
+  margin: 20px 0px 20px; }
+  @media screen and (max-width: 39.9375em) {
+    .creditcard {
+      width: 230px;
+      height: 160px; }
+      .creditcard p {
+        font-size: 14px; }
+      .creditcard .creditcard__number {
+        font-size: 20px; } }
+  .creditcard p {
+    font-family: Roboto;
+    font-size: 16px;
+    font-weight: 500;
+    color: #ffffff;
+    margin: 0; }
+
+.flex-column {
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: column;
+          flex-direction: column; }
+
+.creditcard__number {
+  font-size: 30px;
+  font-weight: 500;
+  color: #ffffff;
+  margin: 0;
+  font-family: 'Roboto'; }
+
+.creditcard__footer {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+  -webkit-box-pack: justify;
+      -ms-flex-pack: justify;
+          justify-content: space-between; }
