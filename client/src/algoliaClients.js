@@ -8,17 +8,29 @@ const searchClient = algoliasearch(
 );
 
 const appsIndexHelper = algoliasearchHelper(searchClient,"apps_index",{
-    facets: ["appCategory.name"],
+    facets: ["id","appCategory.name"],
     hitsPerPage: 4
 });
 
 const storiesIndexHelper = algoliasearchHelper(searchClient,"stories_index",{
-    facets: ["app.id","appVersions.name","app.appCategory.name","storyCategories.name","storyElements.name"],
+    facets: ["id","app.id","appVersions.name","app.appCategory.name","storyCategories.name","storyElements.name"],
     hitsPerPage: 8
+})
+
+const appsIndexHelper_singleApp = algoliasearchHelper(searchClient, "apps_index", {
+    facets: ["id"],
+    hitsPerPage: 1
+});
+
+const storiesIndexHelper_singleStory = algoliasearchHelper(searchClient, "stories_index", {
+    facets: ["id"],
+    hitsPerPage: 1
 })
 
 export {
     searchClient,
     appsIndexHelper,
-    storiesIndexHelper
+    storiesIndexHelper,
+    appsIndexHelper_singleApp,
+    storiesIndexHelper_singleStory
 };
