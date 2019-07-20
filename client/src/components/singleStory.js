@@ -17,6 +17,7 @@ import {
 import PickMembershipModal from "./pickMembershipModal";
 import E404 from "./E404";
 import { toast } from 'react-toastify';
+import { appsIndexHelper_singleApp, storiesIndexHelper_singleStory } from "../algoliaClients";
 
 class SingleStory extends React.Component {
 	constructor(props) {
@@ -29,11 +30,17 @@ class SingleStory extends React.Component {
 			savingStory: false,
 			story: undefined,
 			selectLibraryOpen: false,
-			not_found: false
+			not_found: false,
+			show_previous: this.props.location.state && this.props.location.state.index !== 0,
+			show_next: this.props.location.state && this.props.location.state.index !== this.props.location.state.stories.length - 1,
+			stories: this.props.location.state && this.props.location.state.stories,
+			index: this.props.location.state && this.props.location.state.index
 		}
 		this.story_id = undefined;
 		this.toggleSelectLibrary = this.toggleSelectLibrary.bind(this);
 		this.onCloseModal = this.onCloseModal.bind(this);
+		this.setDefaultStories = this.setDefaultStories.bind(this)
+		this.goToStoryMinus = this.goToStoryMinus.bind(this)
 		let param_id = this.props.match.params.id
 		if (param_id[param_id.length - 1] === "#") {
 			this.story_id = param_id.slice(0, param_id.length - 1);
@@ -48,28 +55,32 @@ class SingleStory extends React.Component {
 			return state;
 		})
 	}
+	async componentWillMount(){
+		storiesIndexHelper_singleStory.clearRefinements();
+		storiesIndexHelper_singleStory.state.facetsRefinements["id"] = [this.story_id]
+	}
 	async componentDidMount() {
-		console.log("MOUNTED",this.state.app)
-		if (!this.state.app) {
-			let data = await this.props.client.query({
-				query: STORY_QUERY,
-				variables: { id: this.story_id }
-			})
-			console.log(data.data.story);
-			if (!data.data.story){
+		storiesIndexHelper_singleStory.search()
+		storiesIndexHelper_singleStory.on("result", data => {
+			let story = data.hits[0];
+			if (!story){
 				this.setState({
 					not_found: true
 				})
 			} else {
 				this.setState({
-					app: data.data.story.app,
-					storyElements: data.data.story.storyElements,
-					storyCategories: data.data.story.storyCategories,
-					video: data.data.story.video.file,
-					story: data.data.story
+					app: story.app,
+					storyElements: story.storyElements,
+					storyCategories: story.storyCategories,
+					video: story.video.file,
+					story: story
+				},() => {
+					if (!this.props.location.state){
+						this.setDefaultStories()
+					}
 				})
 			}
-		}
+		})
 	}
 	onCloseModal(){
 		this.setState({ currentModal: undefined, selectLibraryOpen: true }, () => {
@@ -128,6 +139,48 @@ class SingleStory extends React.Component {
 				data: JSON.parse(JSON.stringify({ libraries: [...cache.libraries] }))
 			})
 		} catch (e) { console.log(e) }
+	}
+	goToStoryMinus(minus){
+		console.log(this.state)
+		if (this.state.stories && this.state.index !== undefined){
+			console.log(this.props.location.state)
+			let stories = this.state.stories;
+			let i = this.state.index - (minus);
+			console.log(i,9999)
+			this.props.history.push({
+				pathname: `/story/${stories[i].id}`,
+				state: {
+					from_story: true,
+					stories: this.state.stories,
+					index: i
+				}
+			})
+		}
+	}
+	setDefaultStories(){
+		console.log(55)
+		appsIndexHelper_singleApp.clearRefinements();
+		appsIndexHelper_singleApp.state.facetsRefinements["id"] = [this.state.app.id]
+		appsIndexHelper_singleApp.search()
+		appsIndexHelper_singleApp.on("result", data => {
+			let index;
+			let stories = data.hits[0].stories;
+			for (var x in stories) {
+				let story = stories[x];
+				if (story.id === this.story_id) {
+					index = x;
+					break;
+				}
+			}
+			console.log(index)
+			this.setState({
+				stories: stories,
+				show_previous: index !== 0,
+				show_next: index != stories.length - 1,
+				index
+			})
+			console.log(stories,index)
+		})
 	}
 	render() {
 		// let params = getQueryParams(window.location.href);
@@ -193,11 +246,20 @@ class SingleStory extends React.Component {
 								{
 									!this.state.video
 										? <img style={{ borderRadius: 25, width: 230 }} src="/assets/toolkit/images/loadingVideo.png" />
-										: <video style={{ borderRadius: 25 }} controls width="230" height="500" autoPlay>
-
-											<source style={{ borderRadius: 10 }} src={this.state.video.url}
-												type={this.state.video.mimetype} />
-										</video>
+										: <React.Fragment>
+											{
+												this.state.show_previous && 
+												<h2 onClick={() => this.goToStoryMinus(1)}>Previous</h2>
+											}
+											<video style={{ borderRadius: 25 }} controls width="230" height="500" autoPlay>
+												<source style={{ borderRadius: 10 }} src={this.state.video.url}
+													type={this.state.video.mimetype} />
+											</video>
+											{
+												this.state.show_next && 
+												<h2 onClick={() => this.goToStoryMinus(-1)}>Next</h2>
+											}
+										</React.Fragment>
 								}
 							</div>
 							<div className="inside-stories__info">
