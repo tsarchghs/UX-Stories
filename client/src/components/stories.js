@@ -114,7 +114,7 @@ class _Stories extends React.Component {
     })
   }
   componentWillMount(){
-    storiesIndexHelper.state.hitsPerPage = this.hitsPerPage
+    // storiesIndexHelper.state.hitsPerPage = this.hitsPerPage
   }
   async handleFilterClick(e,obj,type) {
     storiesIndexHelper.state.hitsPerPage = this.hitsPerPage
@@ -314,11 +314,14 @@ class _Stories extends React.Component {
                   :
                   
                   (
-                    this.state.stories.map(story =>
+                    this.state.stories.map((story,i) =>
                       <Link to={{
                         pathname: `/story/${story.id}`,
                         state:{
-                          filterBy: this.state.filterBy
+                          from_story: true,
+                          filterBy: this.state.filterBy,
+                          stories: this.state.stories,
+                          index: i
                         }
                       }}>
                       {
