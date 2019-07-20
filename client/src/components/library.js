@@ -202,12 +202,14 @@ class Library extends React.Component {
 													data.stories.length ? "" : <center>{"Nothing to show"}</center>   
 												}
 												{
-													data.stories.map(story => 
+													data.stories.map((story,i) => 
 														<Link to={{
 															pathname: `/story/${story.id}`,
 															state: {
 																from_library: true,
-																library_id: this.props.match.params.id
+																library_id: this.props.match.params.id,
+																stories: data.stories,
+																index: i
 															}
 														}} key={story.id}><img style={{borderRadius:30,width:300,height:600}} key={story.id} src={story.thumbnail.url} alt /></Link>
 													)

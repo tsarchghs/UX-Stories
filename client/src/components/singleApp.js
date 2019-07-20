@@ -92,8 +92,7 @@ class _SingleApp extends React.Component {
 
     storiesIndexHelper.search();
     storiesIndexHelper.on("result", data => {
-      var results = { data: { stories: data.hits } }
-      let stories = results.data.stories;
+      let stories = data.hits;
       this.setState(prevState => {
         let state = prevState;
         state.reached_end = stories.length < storiesIndexHelper.state.hitsPerPage
@@ -324,11 +323,11 @@ class _SingleApp extends React.Component {
                                   <div className="cards__content">
                                   <center>
                                       {
-                                        !this.state.stories ? null : this.state.stories.map(story => {
+                                        !this.state.stories ? null : this.state.stories.map((story,i) => {
                                           return (
                                             <Link to={{
                                               pathname: `/story/${story.id}`,
-                                              state: { from_app: this.app_id }
+                                              state: { from_app: this.app_id, stories: this.state.stories, index: i }
                                             }}>
                                               <img style={{ height: 450,width: 230, borderRadius: '25px' }} src={story.thumbnail.url} />
                                             </Link>

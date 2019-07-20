@@ -72,16 +72,21 @@ class _Home extends React.Component {
     // lesson learned. use refs next time
     appsIndexHelper.setQuery(this.state.appName_contains).search();
     appsIndexHelper.on("result",data => {
-      let appsData = { data : { apps: data._rawResults[0].hits } }
+      let apps = data._rawResults[0].hits;
+      for (var x in apps){
+        let app = apps[x];
+        app.stories = app.stories.slice(0,3)
+      }
+
       this.setState(prevState => {
         let state = prevState;
         if (!state.apps){
           state.apps = []  
         }
-        state.apps = appsData.data.apps
+        state.apps = apps
         state.reached_end = data.nbPages < 2 
         state.show_skeleton = false
-        state.nothing_to_show = appsData.data.apps.length === 0
+        state.nothing_to_show = apps.length === 0
         return prevState
       })
     })

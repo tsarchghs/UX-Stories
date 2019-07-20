@@ -32,7 +32,7 @@ class SingleStory extends React.Component {
 			selectLibraryOpen: false,
 			not_found: false,
 			show_previous: this.props.location.state && this.props.location.state.index !== 0,
-			show_next: this.props.location.state && this.props.location.state.index !== this.props.location.state.stories.length - 1,
+			show_next: this.props.location.state && this.props.location.state.stories && this.props.location.state.index !== this.props.location.state.stories.length - 1,
 			stories: this.props.location.state && this.props.location.state.stories,
 			index: this.props.location.state && this.props.location.state.index
 		}
@@ -62,6 +62,7 @@ class SingleStory extends React.Component {
 	async componentDidMount() {
 		storiesIndexHelper_singleStory.search()
 		storiesIndexHelper_singleStory.on("result", data => {
+			console.log(storiesIndexHelper_singleStory,data)
 			let story = data.hits[0];
 			if (!story){
 				this.setState({
@@ -147,13 +148,12 @@ class SingleStory extends React.Component {
 			let stories = this.state.stories;
 			let i = this.state.index - (minus);
 			console.log(i,9999)
+			let state = this.props.location.state || {};
+			state["stories"] = this.state.stories;
+			state["index"] = i;
 			this.props.history.push({
 				pathname: `/story/${stories[i].id}`,
-				state: {
-					from_story: true,
-					stories: this.state.stories,
-					index: i
-				}
+				state
 			})
 		}
 	}
