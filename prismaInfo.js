@@ -22,7 +22,7 @@ const appsInfo = `
             id
             name
         }
-        stories(first:3){
+        stories {
             id
             thumbnail {
                 id
@@ -40,9 +40,21 @@ const storiesInfo = `
         app {
             id
             name
+            description
+            logo {
+                id
+                url
+            }
             appCategory {
                 id
                 name
+            }
+        }
+        video {
+            id
+            file {
+                id 
+                url
             }
         }
         appVersions {
