@@ -15,7 +15,7 @@ import StoryCategoriesDropdown from "./storyCategoriesDropdown";
 import StoryElementsDropdown from "./storyElementsDropdown";
 import { compose } from "recompose";
 import { APP_QUERY } from "../Queries";
-import { storiesIndexHelper } from "../algoliaClients";
+import { storiesIndexHelper_singleApp } from "../algoliaClients";
 import PickMembershipModal from "./pickMembershipModal"; 
 
 
@@ -72,9 +72,9 @@ class _SingleApp extends React.Component {
     this.setState({
       app: app.data.app
     })
-    storiesIndexHelper.state.hitsPerPage = this.hitsPerPage
-    storiesIndexHelper.state.facetsRefinements = {}
-    storiesIndexHelper.toggleFacetRefinement("app.id", this.app_id);
+    storiesIndexHelper_singleApp.state.hitsPerPage = this.hitsPerPage
+    storiesIndexHelper_singleApp.state.facetsRefinements = {}
+    storiesIndexHelper_singleApp.toggleFacetRefinement("app.id", this.app_id);
     this.updateResults();
   }
   async updateResults(pagination){
@@ -87,15 +87,15 @@ class _SingleApp extends React.Component {
     let filters = { "storyCategories": [], "storyElements": [] };
     filters = insertActiveFilters(filters, this.state);
     if (pagination) {
-      storiesIndexHelper.state.hitsPerPage += this.hitsPerPage
+      storiesIndexHelper_singleApp.state.hitsPerPage += this.hitsPerPage
     }
 
-    storiesIndexHelper.search();
-    storiesIndexHelper.on("result", data => {
+    storiesIndexHelper_singleApp.search();
+    storiesIndexHelper_singleApp.on("result", data => {
       let stories = data.hits;
       this.setState(prevState => {
         let state = prevState;
-        state.reached_end = stories.length < storiesIndexHelper.state.hitsPerPage
+        state.reached_end = stories.length < storiesIndexHelper_singleApp.state.hitsPerPage
         if (pagination) {
           let new_stories = stories.slice(state.stories.length, 999)
           state.stories = state.stories.concat(new_stories);
@@ -108,19 +108,19 @@ class _SingleApp extends React.Component {
     })
   }
   componentWillUnmount() {
-    storiesIndexHelper.setQuery("");
-    storiesIndexHelper.clearRefinements()
+    storiesIndexHelper_singleApp.setQuery("");
+    storiesIndexHelper_singleApp.clearRefinements()
   }
   async handleFilterClick(e, obj,type) {
     this.skip = 0;
-    storiesIndexHelper.state.hitsPerPage = this.hitsPerPage
-    storiesIndexHelper.toggleFacetRefinement(`${type}.name`, obj.name);
+    storiesIndexHelper_singleApp.state.hitsPerPage = this.hitsPerPage
+    storiesIndexHelper_singleApp.toggleFacetRefinement(`${type}.name`, obj.name);
     this.setState((prevState) => {
       let state = prevState;
       state.show_loading = true;
         if (type === "appVersions"){
           state.filterBy.appVersions = {}
-          storiesIndexHelper.state.facetsRefinements["appVersions.name"] = []
+          storiesIndexHelper_singleApp.state.facetsRefinements["appVersions.name"] = []
         }
       state.filterBy[type] = {
         ...state.filterBy[type],
@@ -144,8 +144,8 @@ class _SingleApp extends React.Component {
       state.filterBy.storyElements = {}
       state.show_loading = true
       state.stories = undefined
-      storiesIndexHelper.state.facetsRefinements = {}
-      storiesIndexHelper.toggleFacetRefinement("app.id", this.app_id);
+      storiesIndexHelper_singleApp.state.facetsRefinements = {}
+      storiesIndexHelper_singleApp.toggleFacetRefinement("app.id", this.app_id);
       return state;
     },this.updateResults);
   }
@@ -163,12 +163,12 @@ class _SingleApp extends React.Component {
     this.setState(prevState => {
       let state = prevState;
       if (type === "appCategory") {
-        storiesIndexHelper.state.facetsRefinements["app.appCategory.name"] = []
+        storiesIndexHelper_singleApp.state.facetsRefinements["app.appCategory.name"] = []
         state.filterBy.appCategory = undefined
       } else {
-        let facets = storiesIndexHelper.state.facetsRefinements[`${type}.name`];
+        let facets = storiesIndexHelper_singleApp.state.facetsRefinements[`${type}.name`];
         let obj_name = obj
-        storiesIndexHelper.state.facetsRefinements[`${type}.name`] = facets.filter(x => x !== obj_name);
+        storiesIndexHelper_singleApp.state.facetsRefinements[`${type}.name`] = facets.filter(x => x !== obj_name);
         state.filterBy[type][obj] = false;
       }
       return state;

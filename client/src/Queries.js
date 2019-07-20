@@ -153,10 +153,6 @@ const GET_LOGGED_IN_USER_QUERY = gql`
         id
         url
       }   
-      libraries {
-          id
-          name
-      }
       subscription {
         id
         status

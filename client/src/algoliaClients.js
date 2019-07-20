@@ -18,7 +18,7 @@ const storiesIndexHelper = algoliasearchHelper(searchClient,"stories_index",{
 })
 
 const appsIndexHelper_singleApp = algoliasearchHelper(searchClient, "apps_index", {
-    facets: ["id","appCategory.name"],
+    facets: ["id", "appCategory.name"],
     hitsPerPage: 1
 });
 
@@ -27,10 +27,16 @@ const storiesIndexHelper_singleStory = algoliasearchHelper(searchClient, "storie
     hitsPerPage: 1
 })
 
+const storiesIndexHelper_singleApp = algoliasearchHelper(searchClient, "stories_index", {
+    facets: ["id", "app.id", "appVersions.name", "app.appCategory.name", "storyCategories.name", "storyElements.name"],
+    hitsPerPage: 6
+})
+
 export {
     searchClient,
     appsIndexHelper,
     storiesIndexHelper,
+    storiesIndexHelper_singleApp,
     appsIndexHelper_singleApp,
     storiesIndexHelper_singleStory
 };
