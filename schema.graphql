@@ -362,6 +362,11 @@ type Query {
   countUsers: Int!
 }
 type Mutation {
+  saveToLibrary(
+    story_id: ID!
+    library_id: ID!
+  ): Library!
+
   loginWithGoogle(
     google_accessToken: String!
   ): AuthData!
