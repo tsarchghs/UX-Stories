@@ -139,6 +139,17 @@ const editLibrary = async (root,args,context,info) => {
 	return library
 }
 
+const saveToLibrary = async (root,args,context,info) => {
+	return context.db.mutation.updateLibrary({
+		where: { id: args.library_id },
+		data: {
+			stories: {
+				connect: { id: args.story_id }
+			}
+		}
+	},info)
+}
+
 const deleteLibrary = async (root,args,context,info) => {
 	permissions.loginPermission(context,"MEMBER");
 	await permissions.libraryPermission(context, args.id)
@@ -153,5 +164,6 @@ module.exports = {
 	createLibrary,
 	editLibrary,
 	toggleStoryLibrary,
-	deleteLibrary
+	deleteLibrary,
+	saveToLibrary
 }

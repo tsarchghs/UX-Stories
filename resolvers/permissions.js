@@ -3,6 +3,7 @@
 module.exports = {
 	loginPermission: (context,role) => {	
 		if (!context.user) {
+			context.res.status(401)
 			throw new Error("You must be logged in");
 		}
 		if (role === "ADMIN" && (context.user.role === "MEMBER") ) {

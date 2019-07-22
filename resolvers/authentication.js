@@ -46,6 +46,18 @@ const login = async (root,args,context) => {
 		expiresIn: 1
 	};
 }
+const connectIfUrlExists = async (context,file_data) => {
+	let file;
+	try {
+		file = await context.db.mutation.createFile({ data: file_data })
+	} catch (e) {
+		console.log(e)
+		if (e.message.indexOf("unique") !== -1){
+			file = await context.db.query.file({where:{url:file_data.url}})
+		}
+	}
+	return file
+} 
 
 const loginWithGoogle = async (root,args,context) => {
 	let res = await fetch(`https://www.googleapis.com/plus/v1/people/me?access_token=${args.google_accessToken}`)
@@ -56,17 +68,19 @@ const loginWithGoogle = async (root,args,context) => {
 		let res = await fetch(`https://www.googleapis.com/plus/v1/people/me?access_token=${args.google_accessToken}`)
 		let data = await res.json()
 		let email = data.emails[0].value
+		let file_data = {
+			filename: "undefined",
+			mimetype: "undefined",
+			encoding: "undefined",
+			url: data.image.url
+		}
+		let file = await connectIfUrlExists(context, file_data);
 		let userParams = {
 			email: email,
 			full_name: data.displayName,
 			password: uuid(),
 			profile_photo: {
-				create: {
-					filename: "undefined",
-					mimetype: "undefined",
-					encoding: "undefined",
-					url: data.image.url
-				}
+				connect: { id: file.id }
 			},
 			role: "MEMBER",
 			libraries: {
@@ -92,18 +106,6 @@ const loginWithGoogle = async (root,args,context) => {
 	}
 }
 
-const connectIfUrlExists = async (context,file_data) => {
-	let file;
-	try {
-		file = await context.db.mutation.createFile({ data: file_data })
-	} catch (e) {
-		console.log(e)
-		if (e.message.indexOf("unique") !== -1){
-			file = await context.db.query.file({where:{url:file_data.url}})
-		}
-	}
-	return file
-} 
 
 const signUp = async (root,args,context) => {
 	let errors = await checkValidation(signUpSchema, args, false);

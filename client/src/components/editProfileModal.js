@@ -1,6 +1,6 @@
 import React from "react";
 import { Query, Mutation, withApollo } from "react-apollo";
-import { handleUploadPhotoInput } from "../helpers";
+import { handleUploadPhotoInput, getGraphqlErrors } from "../helpers";
 import Alert from "./alert";
 import { JOBS_QUERY, EDIT_PROFILE_MUTATION, GET_LOGGED_IN_USER_QUERY } from "../Queries";
 import Loading from "./loading";
@@ -69,6 +69,7 @@ class _EditProfileModal extends React.Component {
 		      			<Mutation
 		      				mutation={EDIT_PROFILE_MUTATION}>
 			      			{ (editProfile,{loading,error,data}) => {
+								let errors = getGraphqlErrors(error);
 								return (
 									<form id="edit_profile" onSubmit={async (e) => {
 										e.preventDefault();
@@ -132,7 +133,7 @@ class _EditProfileModal extends React.Component {
 								          	(
 								          		<div>
 														{
-															error && error.graphQLErrors && error.graphQLErrors[0].name === "ValidationError" && error.graphQLErrors[0].data.errors.map(error => <Alert style={{ height: 50 }} red={true} message={error} />)
+															errors && errors.map(error => <Alert style={{ height: 50 }} red={true} message={error} />)
 														}
 										          <div className="modal__content">
 										            <div className="modal__upload">

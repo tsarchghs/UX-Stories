@@ -4,7 +4,8 @@ import Loading from "./loading";
 import {
   getActiveFilters,
   insertActiveFilters,
-  if_user_call_func
+  if_user_call_func,
+  onAlgoliaError
 } from "../helpers";
 import E404 from "./E404";
 import SingleAppLoading from "./singleAppLoading";
@@ -56,6 +57,7 @@ class _SingleApp extends React.Component {
       this.app_id = this.props.match.params.id
     }
     this.hitsPerPage = 6
+    this.setState = this.setState.bind(this)
   } 
 	async componentDidMount(){
     let app = await this.props.client.query({
@@ -91,6 +93,7 @@ class _SingleApp extends React.Component {
     }
 
     storiesIndexHelper_singleApp.search();
+    onAlgoliaError(storiesIndexHelper_singleApp, this.setState, { show_loading: false })
     storiesIndexHelper_singleApp.on("result", data => {
       let stories = data.hits;
       this.setState(prevState => {

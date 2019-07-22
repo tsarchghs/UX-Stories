@@ -1,7 +1,6 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import Alert from "./alert";
-import gql from "graphql-tag";
 import { withApollo } from "react-apollo";
 import { FORGET_PASSWORD_MUTATION } from "../Queries";
 

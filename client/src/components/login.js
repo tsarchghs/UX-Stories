@@ -7,6 +7,7 @@ import Loading from "./loading";
 import { LOGIN_MUTATION, LOGIN_WITH_GOOGLE_MUTATION } from "../Queries";
 import GoogleLogin from 'react-google-login';
 import { adopt } from 'react-adopt'
+import { getGraphqlErrors } from "../helpers";
 
 
 const Composed = adopt({
@@ -24,8 +25,11 @@ class Login extends React.Component {
 		this.email = undefined;
 		this.password = undefined;
 		this.state = {
+			email: undefined,
+			password: undefined,
 			errors: []
 		}
+		this.focusOnEmailOnce = false;
 	}
 	loginWithToken(token){
 		Cookies.set("token", token)
@@ -35,22 +39,21 @@ class Login extends React.Component {
 		return (
 			<Composed>
 			{ ({ login, loginWithGoogle }) => {
-				console.log(login);
 				return (
 					<form className="login" onSubmit={async e => {
 						e.preventDefault();
 						try {
 							this.setState({errors:[],loading:true})
 							let res = await login({variables:{
-								email: this.email.value,
-								password: this.password.value
+								email: this.state.email,
+								password: this.state.password
 							}});
 							this.loginWithToken(res.data.login.token)
 						} catch (error) {
 							if (error.message === "GraphQL error: Invalid credentials") {
 								this.setState({errors:["Invalid credentials"]})
 							}
-							let errors = error && error.graphQLErrors && error.graphQLErrors[0].name === "ValidationError" && error.graphQLErrors[0].data.errors
+							let errors = getGraphqlErrors(error)
 							this.setState({ errors, loading:false })
 						}
 					}}>
@@ -71,8 +74,13 @@ class Login extends React.Component {
 							}
 										 
 			                <div className="input__wo-border">
-			                  <input ref={node => this.email = node} className="input first fmt" id="email" type="email" placeholder="Email" />
-			                  <input ref={node => this.password = node} className="input last fmt" id="password" type="password" placeholder="Password" />
+			                  <input ref={node => {
+								  if (node && !this.focusOnEmailOnce) {
+									  node.focus();
+									  this.focusOnEmailOnce = true;
+								  }
+							  }} onChange={e => this.setState({email:e.target.value})} value={this.state.email} className="input first fmt" type="email" placeholder="Email" required/>
+			                  <input onChange={e => this.setState({password:e.target.value})} value={this.state.password} className="input last fmt" type="password" placeholder="Password" required/>
 			                  <Link to="/forget_password">
 			                  	<p className="login__rm light-gray text-right"><a href="#">Forgot your password</a></p>
 			                  </Link>
@@ -98,7 +106,7 @@ class Login extends React.Component {
 															})
 															this.loginWithToken(res.data.loginWithGoogle.token)
 														} catch (error) {
-															let errors = error && error.graphQLErrors && error.graphQLErrors[0].name === "ValidationError" && error.graphQLErrors[0].data.errors
+															let errors = getGraphqlErrors(error)
 															this.setState({errors,loading: false})
 														}
 													}}

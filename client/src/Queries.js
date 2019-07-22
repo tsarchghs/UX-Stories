@@ -564,6 +564,20 @@ const UPDATE_CARD_MUTATION = gql`
   }
 `
 
+const SAVE_TO_LIBRARY_MUTATION = gql`
+  mutation SaveToLibrary(
+    $story_id: ID!
+    $library_id: ID!
+  ) {
+    saveToLibrary(
+      story_id: $story_id
+      library_id: $library_id
+    ) {
+      id
+    }
+  }
+`
+
 export {
   UPDATE_CARD_MUTATION,
   LOGIN_WITH_GOOGLE_MUTATION,
@@ -598,5 +612,6 @@ export {
   STORY_CATEGORIES_QUERY,
   STORY_ELEMENTS_QUERY,
   APP_VERSIONS_QUERY,
-  APP_CATEGORIES_QUERY
+  APP_CATEGORIES_QUERY,
+  SAVE_TO_LIBRARY_MUTATION
 }

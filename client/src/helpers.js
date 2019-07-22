@@ -1,4 +1,5 @@
 import gql from "graphql-tag";
+import { toast } from 'react-toastify';
 
 const if_user_call_func = (user,func,setState) => {
   console.log(user);  
@@ -148,6 +149,21 @@ const handleUploadPhotoInput = (element,isProfile=true) => {
     console.log("Failed to get dataurl");
   }
 }
+
+const getGraphqlErrors = (error) => {
+  return error && error.graphQLErrors && error.graphQLErrors[0] && error.graphQLErrors[0].name === "ValidationError" && error.graphQLErrors[0].data.errors
+}
+
+const onAlgoliaError = (indexHelpers,setState,obj) => {
+  console.log(indexHelpers,setState)
+  indexHelpers.on("error", e => {
+    setState(obj)
+    toast.error("Something unexcpected happened, please check your internet connection.",{
+      toastId: "ProbablyInternetError"
+    })
+  })
+}
+
 export {
 	getStories,
   handleUploadPhotoInput,
@@ -160,5 +176,7 @@ export {
   loadToolkit,
   loadJs,
   getAppVersions,
-  if_user_call_func
+  if_user_call_func,
+  getGraphqlErrors,
+  onAlgoliaError
 }

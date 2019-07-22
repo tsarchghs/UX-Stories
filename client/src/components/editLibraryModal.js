@@ -1,12 +1,11 @@
 import React from "react";
 import { Mutation, withApollo } from "react-apollo";
-import gql from "graphql-tag";
 import Alert from "./alert";
-import ReactDOM from "react-dom";
 import Modal from "react-responsive-modal";
 import { LIBRARIES_QUERY, EDIT_LIBRARY_MUTATION } from "../Queries";
 import Loading from "./loading";
 import { toast } from 'react-toastify';
+import { getGraphqlErrors } from "../helpers";
 
 const customStyles = {
   modal: {
@@ -45,6 +44,7 @@ class _EditLibraryModal extends React.Component {
               mutation={EDIT_LIBRARY_MUTATION}>
                 { (editLibrary,{loading,error,data}) => {
                   console.log(data,loading)
+                  let errors = getGraphqlErrors(error);
                   return (
                     <form onSubmit={async (e) => {
                       e.preventDefault();
@@ -78,7 +78,7 @@ class _EditLibraryModal extends React.Component {
                     }}>
                 <div>
                         {
-                          error && error.graphQLErrors && error.graphQLErrors[0] && error.graphQLErrors[0].name === "ValidationError" && error.graphQLErrors[0].data.errors.map(error => <Alert style={{ height: 50 }} red={true} message={error} />)
+                          errors && errors.map(error => <Alert style={{ height: 50 }} red={true} message={error} />)
                         }
                       <div>
                           <input value={this.props.name} onChange={this.props.onChange} className="input" type="text" placeholder="Library name" />

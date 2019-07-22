@@ -2,9 +2,10 @@ import React from "react";
 import { Mutation, withApollo } from "react-apollo";
 import Alert from "./alert";
 import Modal from "react-responsive-modal";
-import { LIBRARIES_QUERY, CREATE_LIBRARY_MUTATION } from "../Queries";
+import { LIBRARIES_QUERY, CREATE_LIBRARY_MUTATION, LIBRARIES_QUERY_SHALLOW } from "../Queries";
 import Loading from "./loading";
 import { toast } from 'react-toastify';
+import { getGraphqlErrors } from "../helpers";
 
 const customStyles = {
 	modal: {
@@ -40,6 +41,7 @@ class _CreateLibraryModal extends React.Component {
 				<Mutation
 					mutation={CREATE_LIBRARY_MUTATION}>
 					{ (createLibrary,{loading,error,data}) => {
+						let errors = getGraphqlErrors(error);
 						return (
 							<form onSubmit={async (e) => {
 									e.preventDefault();
@@ -50,19 +52,31 @@ class _CreateLibraryModal extends React.Component {
 									let data = res.data;
 									try {
 										let current_libraries = this.props.client.readQuery({ query: LIBRARIES_QUERY });
+										console.log(current_libraries);
 										current_libraries.libraries= [data.createLibrary].concat(current_libraries.libraries);
 										this.props.client.writeQuery({
 											query: LIBRARIES_QUERY,
 											data: current_libraries
 										})
 									} catch (e) { console.log(e) }
+
+									try {
+										let current_libraries = this.props.client.readQuery({query: LIBRARIES_QUERY_SHALLOW})
+										console.log(current_libraries);
+										current_libraries.libraries = [data.createLibrary].concat(current_libraries.libraries);
+										this.props.client.writeQuery({
+											query: LIBRARIES_QUERY_SHALLOW,
+											data: current_libraries
+										})
+									} catch (e) { console.log(e,99) }
+									
 									this.setState({libraryName:""})
 									this.props.closeModal();
 									toast.success("Created library!")
 								}}>
 								<div>
 												{	
-													error && error.graphQLErrors && error.graphQLErrors[0].name === "ValidationError" && error.graphQLErrors[0].data.errors.map(error => <Alert style={{ height: 50 }} red={true} message={error} />)
+													errors && errors.map(error => <Alert style={{ height: 50 }} red={true} message={error} />)
 												}
 								<div>
 													<input value={this.state.libraryName} onChange={e => this.setState({ libraryName: e.target.value })} className="input" type="text" placeholder="Library name" />

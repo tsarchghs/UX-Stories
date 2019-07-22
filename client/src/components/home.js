@@ -7,9 +7,10 @@ import AppCategoriesDropdown from "./appCategoriesDropdown";
 import { withApollo, Query, Mutation } from "react-apollo";
 import { compose } from "recompose";
 import { appsIndexHelper } from "../algoliaClients";
-import { if_user_call_func } from "../helpers";
+import { if_user_call_func, onAlgoliaError } from "../helpers";
 import PickMembershipModal from "./pickMembershipModal"; 
 import DropdownWrapper from "./wrappers/dropdownWrapper";
+import { URI } from "../configs";
 
 class _Home extends React.Component {
   constructor(props) {
@@ -41,6 +42,7 @@ class _Home extends React.Component {
     this.update = debounce(this.update.bind(this),150);
     this.hitsPerPage = 4
     this.appCategoryToggleButton = React.createRef()
+    this.setState = this.setState.bind(this)
   }
   filterCategory(appCategory) {
     if (!this.state.filterBy.appCategory || !(this.state.filterBy.appCategory.name === appCategory.name)){
@@ -71,6 +73,7 @@ class _Home extends React.Component {
     // quick hack to prevent error when user switches forth and back while update is being executed :'(
     // lesson learned. use refs next time
     appsIndexHelper.setQuery(this.state.appName_contains).search();
+    onAlgoliaError(appsIndexHelper,this.setState, { show_skeleton: false })
     appsIndexHelper.on("result",data => {
       let apps = data._rawResults[0].hits;
       for (var x in apps){
@@ -90,6 +93,7 @@ class _Home extends React.Component {
         return prevState
       })
     })
+    console.log(appsIndexHelper)
   }
   toggle(value) {
     this.setState(prevState => {
@@ -157,7 +161,7 @@ class _Home extends React.Component {
                 </div>
               </div>
             </div>
-            <div style={{ backgroundImage:"url(http://localhost:3000/assets/toolkit/images/homeimg.jpg)"}} className="home-hero__img" />
+            <div style={{ backgroundImage:`url(${URI}/assets/toolkit/images/homeimg.jpg)`}} className="home-hero__img" />
           </section>
         </div>
         <div className="secondary-header">

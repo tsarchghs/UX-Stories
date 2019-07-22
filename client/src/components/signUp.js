@@ -9,22 +9,31 @@ import {
 	SIGN_UP_MUTATION
 } from "../Queries"
 import GoogleLogin from 'react-google-login';
+import { getGraphqlErrors } from "../helpers";
 
 class _SignUp extends React.Component {
 	constructor(props) {
 		super(props);
 		this.state = {
 			jobs: undefined,
-			email: this.props.location.state && this.props.location.state.email
+			email: this.props.location.state && this.props.location.state.email ? this.props.location.state.email : "",
+			password: undefined,
+			job: undefined,
+			full_name: undefined,
+			password: undefined
 		}
 		this.handleGoogleLoginResponse = this.handleGoogleLoginResponse.bind(this)
 		this.full_name = undefined;
 		this.job = undefined;
 		this.password = undefined;
 		this.focusOnFullNameOnce = false
+		this.onChange = this.onChange.bind(this);
 	}
 	handleGoogleLoginResponse(res){
 		console.log(res)
+	}
+	onChange(e,key){
+		this.setState({[key]:e.target.value});
 	}
 	render() {
 		return (
@@ -64,14 +73,15 @@ class _SignUp extends React.Component {
 									}
 								})
 							}
+								let errors = getGraphqlErrors(error);
 							return (
 								<form className="login" onSubmit={(e) => {
 									e.preventDefault();
 									signUp({variables:{
-										full_name: this.full_name.value,
+										full_name: this.state.full_name,
 										email: this.state.email,
-										password: this.password.value,
-										job: this.job.value
+										password: this.state.password,
+										job: this.state.job
 									}})
 								}}>
 							        <div className="login__container">
@@ -87,30 +97,53 @@ class _SignUp extends React.Component {
 							              <div className="login__hero--left">
 							                <h1 className="bold text-center">Create your account</h1>
 												{
-														error && error.graphQLErrors && error.graphQLErrors[0] && error.graphQLErrors[0].name === "ValidationError" && error.graphQLErrors[0].data.errors.map(error => <Alert style={{ height: 50 }} red={true} message={error} />)
+														errors && errors.map(error => <Alert style={{ height: 50 }} red={true} message={error} />)
 												}
 														
 											{
 												jobsLoading ? <Loading /> :                  
 														<div className="input__wo-border">
-																<input ref={node => {
-																	this.full_name = node
-																	if (this.full_name && !this.focusOnFullNameOnce){
-																		this.full_name.focus()
-																		this.focusOnFullNameOnce = true
-																	} 
-																	
-																}} className="input first fmt" id="r_full_name" type="text" placeholder="First and your last name" />
+																<input 
+																	onChange={e => this.onChange(e, "full_name")}
+																	value={this.state.full_name}
+																	ref={node => {
+																		if (node && !this.focusOnFullNameOnce){
+																			node.focus();
+																			this.focusOnFullNameOnce = true;
+																		}
+																	}}
+																	className="input first fmt"
+																	type="text" 
+																	placeholder="First and your last name" 
+																	required
+																/>
 																<div className="select__div fmt wo-border">
-																<select ref={node => this.job = node} id="r_job">
+																<select 
+																	onChange={e => this.onChange(e, "job")}
+																	value={this.state.job}
+																>
 																	{
 																	jobs.map(job => <option id={job.name} value={job.id}>{job.name}</option>)
 																	}
 																</select>
 
 															</div>
-															<input onChange={e => this.setState({email:e.target.value})} value={this.state.email} className="input fmt" type="email" id="r_email" placeholder="Email" />
-															<input ref={node => this.password = node} className="input last fmt" type="password" id="r_password" placeholder="Password" />
+															<input 
+																onChange={e => this.onChange(e,"email")}
+																value={this.state.email}
+																className="input fmt" 
+																type="email" id="r_email" 
+																placeholder="Email" 
+																required
+															/>
+															<input 
+																onChange={e => this.onChange(e,"password")}
+																value={this.state.password}
+																className="input last fmt" 
+																type="password" 
+																placeholder="Password" 
+																required
+															/>
 																<p className="login__rm light-gray text-center">Before going further please sign up.</p>
 																<p className="login__rm light-gray text-center">By clicking this button, you agree to our <a className="bold" href="#">Terms, Privacy Policy.</a></p>
 															

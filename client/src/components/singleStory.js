@@ -18,6 +18,7 @@ import PickMembershipModal from "./pickMembershipModal";
 import E404 from "./E404";
 import { toast } from 'react-toastify';
 import { appsIndexHelper_singleApp, storiesIndexHelper_singleStory } from "../algoliaClients";
+import { updateShallowLibrariesQueryCache, updateLibrariesQueryCache } from "../cacheModification";
 
 class SingleStory extends React.Component {
 	constructor(props) {
@@ -87,59 +88,6 @@ class SingleStory extends React.Component {
 		this.setState({ currentModal: undefined, selectLibraryOpen: true }, () => {
 			this.setState({ selectLibraryOpen: true })
 		})
-	}
-	async updateLibrariesQueryCache(action,library){
-		try {
-			let cache2 = this.props.client.readQuery({
-				query: LIBRARIES_QUERY
-			})
-			console.log("cache2", cache2);
-			if (action === "connect") {
-				for (var x in cache2.libraries) {
-					let lib = cache2.libraries[x];
-					if (lib.id === library.id) {
-						lib.stories.push(this.state.story)
-						break;
-					}
-				}
-			} else if (action === "disconnect") {
-				for (var x in cache2.libraries) {
-					let lib = cache2.libraries[x];
-					if (lib.id === library.id) {
-						lib.stories = lib.stories.filter(story => story.id !== this.story_id)
-						break;
-					}
-				}
-			}
-			this.props.client.writeQuery({
-				query: LIBRARIES_QUERY,
-				data: JSON.parse(JSON.stringify({ libraries: [...cache2.libraries] }))
-			})
-		} catch (e) { console.log(e) }
-	}
-	async updateShallowLibrariesQueryCache(action,library){
-		try {
-			let cache = this.props.client.readQuery({
-				query: LIBRARIES_QUERY_SHALLOW,
-				variables: { libraryFilterInput: { containsStory: this.story_id } }
-			})
-			console.log("cache",this.props.client);
-			if (action === "connect") {
-				let new_library = {
-					__typename: "Library",
-					id: library.id,
-					name: library.name
-				}
-				cache.libraries.push(new_library);
-			} else if (action === "disconnect") {
-				cache.libraries = cache.libraries.filter(x => x.id !== library.id)
-			}
-			this.props.client.writeQuery({
-				query: LIBRARIES_QUERY_SHALLOW,
-				variables: { libraryFilterInput: { containsStory: this.story_id } },
-				data: JSON.parse(JSON.stringify({ libraries: [...cache.libraries] }))
-			})
-		} catch (e) { console.log(e) }
 	}
 	goToStoryMinus(minus){
 		console.log(this.state)
@@ -373,8 +321,20 @@ class SingleStory extends React.Component {
 																													}
 																												})
 																												let action = response.data.toggleStoryLibrary.action;
-																												await this.updateShallowLibrariesQueryCache(action,library);
-																												await this.updateLibrariesQueryCache(action,library);
+																												// await this.updateShallowLibrariesQueryCache(action,library);
+																												// await this.updateLibrariesQueryCache(action,library);
+																												updateShallowLibrariesQueryCache(
+																													this.props.client,
+																													action,
+																													library,
+																													this.state.story.id
+																												)
+																												updateLibrariesQueryCache(
+																													this.props.client,
+																													action,
+																													library,
+																													this.state.story
+																												)
 																												this.setState(this.state)
 																												if (action === "connect"){
 																													toast.success(`Saved story to library ${library.name}`)
