@@ -20,11 +20,12 @@ const server = new graphqlServer({
 	endpoint: "/graphql",
 	typeDefs: "./schema.graphql", 
 	resolvers,
-	context: async (req) => {
+	context: async (data) => {
+		console.log(Object.keys(data))
 		var user = undefined
-		var loggedIn = false
-		if (req.request.headers["authorization"]){
-			const token = req.request.headers["authorization"].split(" ")[1];
+		var loggedIn = false;
+		if (data.request.headers["authorization"]){
+			const token = data.request.headers["authorization"].split(" ")[1];
 			const decoded = await jwt.verify(token,process.env.jwt_secret,(err,decoded) => {
 				if (err) {
 					if (err.name === "JsonWebTokenError") {
@@ -41,7 +42,8 @@ const server = new graphqlServer({
 		}
 		if (user) user.password = null;
 		return {
-			req,
+			res: data.response,
+			req: data.request,
 			user: user,
 			loggedIn,
 			db: prismaDb
