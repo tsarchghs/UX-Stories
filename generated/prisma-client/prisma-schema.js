@@ -2563,6 +2563,8 @@ type User {
   createdAt: DateTime!
   updatedAt: DateTime!
   google_accessToken: String
+  facebook_accessToken: String
+  oauth_id: String
 }
 
 type UserConnection {
@@ -2584,6 +2586,8 @@ input UserCreateInput {
   apps: AppCreateManyWithoutCreatedByInput
   libraries: LibraryCreateManyWithoutCreatedByInput
   google_accessToken: String
+  facebook_accessToken: String
+  oauth_id: String
 }
 
 input UserCreateOneInput {
@@ -2613,6 +2617,8 @@ input UserCreateWithoutAppsInput {
   subscription_id: ID
   libraries: LibraryCreateManyWithoutCreatedByInput
   google_accessToken: String
+  facebook_accessToken: String
+  oauth_id: String
 }
 
 input UserCreateWithoutLibrariesInput {
@@ -2627,6 +2633,8 @@ input UserCreateWithoutLibrariesInput {
   subscription_id: ID
   apps: AppCreateManyWithoutCreatedByInput
   google_accessToken: String
+  facebook_accessToken: String
+  oauth_id: String
 }
 
 type UserEdge {
@@ -2655,6 +2663,10 @@ enum UserOrderByInput {
   updatedAt_DESC
   google_accessToken_ASC
   google_accessToken_DESC
+  facebook_accessToken_ASC
+  facebook_accessToken_DESC
+  oauth_id_ASC
+  oauth_id_DESC
 }
 
 type UserPreviousValues {
@@ -2668,6 +2680,8 @@ type UserPreviousValues {
   createdAt: DateTime!
   updatedAt: DateTime!
   google_accessToken: String
+  facebook_accessToken: String
+  oauth_id: String
 }
 
 type UserSubscriptionPayload {
@@ -2700,6 +2714,8 @@ input UserUpdateDataInput {
   apps: AppUpdateManyWithoutCreatedByInput
   libraries: LibraryUpdateManyWithoutCreatedByInput
   google_accessToken: String
+  facebook_accessToken: String
+  oauth_id: String
 }
 
 input UserUpdateInput {
@@ -2714,6 +2730,8 @@ input UserUpdateInput {
   apps: AppUpdateManyWithoutCreatedByInput
   libraries: LibraryUpdateManyWithoutCreatedByInput
   google_accessToken: String
+  facebook_accessToken: String
+  oauth_id: String
 }
 
 input UserUpdateManyMutationInput {
@@ -2724,6 +2742,8 @@ input UserUpdateManyMutationInput {
   customer_id: ID
   subscription_id: ID
   google_accessToken: String
+  facebook_accessToken: String
+  oauth_id: String
 }
 
 input UserUpdateOneRequiredInput {
@@ -2758,6 +2778,8 @@ input UserUpdateWithoutAppsDataInput {
   subscription_id: ID
   libraries: LibraryUpdateManyWithoutCreatedByInput
   google_accessToken: String
+  facebook_accessToken: String
+  oauth_id: String
 }
 
 input UserUpdateWithoutLibrariesDataInput {
@@ -2771,6 +2793,8 @@ input UserUpdateWithoutLibrariesDataInput {
   subscription_id: ID
   apps: AppUpdateManyWithoutCreatedByInput
   google_accessToken: String
+  facebook_accessToken: String
+  oauth_id: String
 }
 
 input UserUpsertNestedInput {
@@ -2915,6 +2939,34 @@ input UserWhereInput {
   google_accessToken_not_starts_with: String
   google_accessToken_ends_with: String
   google_accessToken_not_ends_with: String
+  facebook_accessToken: String
+  facebook_accessToken_not: String
+  facebook_accessToken_in: [String!]
+  facebook_accessToken_not_in: [String!]
+  facebook_accessToken_lt: String
+  facebook_accessToken_lte: String
+  facebook_accessToken_gt: String
+  facebook_accessToken_gte: String
+  facebook_accessToken_contains: String
+  facebook_accessToken_not_contains: String
+  facebook_accessToken_starts_with: String
+  facebook_accessToken_not_starts_with: String
+  facebook_accessToken_ends_with: String
+  facebook_accessToken_not_ends_with: String
+  oauth_id: String
+  oauth_id_not: String
+  oauth_id_in: [String!]
+  oauth_id_not_in: [String!]
+  oauth_id_lt: String
+  oauth_id_lte: String
+  oauth_id_gt: String
+  oauth_id_gte: String
+  oauth_id_contains: String
+  oauth_id_not_contains: String
+  oauth_id_starts_with: String
+  oauth_id_not_starts_with: String
+  oauth_id_ends_with: String
+  oauth_id_not_ends_with: String
   AND: [UserWhereInput!]
   OR: [UserWhereInput!]
   NOT: [UserWhereInput!]

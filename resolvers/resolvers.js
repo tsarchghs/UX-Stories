@@ -36,6 +36,7 @@ module.exports = {
 		getObjectConnection: generalResolvers.getObjectConnection
 	},
 	Mutation: {
+		loginWithFacebook: authResolvers.loginWithFacebook,
 		saveToLibrary: libraryResolvers.saveToLibrary,
 		loginWithGoogle: authResolvers.loginWithGoogle,
 		payment: paymentResolvers.payment,

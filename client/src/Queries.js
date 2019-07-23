@@ -333,13 +333,15 @@ const SIGN_UP_MUTATION = gql`
     $full_name: String!, $email: String!, 
     $password: String!,$job: ID
     $google_accessToken: String
+    $facebook_accessToken: String
     $profile_photo: FileInput
   ) {
     signUp(
-      full_name: $full_name,
-      email: $email,
-      password: $password,
-      google_accessToken: $google_accessToken,
+      full_name: $full_name
+      email: $email
+      password: $password
+      google_accessToken: $google_accessToken
+      facebook_accessToken: $facebook_accessToken
       job: $job
       profile_photo: $profile_photo
     ) {
@@ -578,7 +580,21 @@ const SAVE_TO_LIBRARY_MUTATION = gql`
   }
 `
 
+const LOGIN_WITH_FACEBOOK_MUTATION = gql`
+  mutation LoginWithFacebookMutation(
+    $facebook_accessToken: String!
+  ){
+    loginWithFacebook(
+      facebook_accessToken: $facebook_accessToken
+    ){
+      token
+    }
+  }
+`
+
+
 export {
+  LOGIN_WITH_FACEBOOK_MUTATION,
   UPDATE_CARD_MUTATION,
   LOGIN_WITH_GOOGLE_MUTATION,
   PAYMENT_MUTATION,

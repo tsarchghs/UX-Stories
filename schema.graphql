@@ -95,6 +95,7 @@ type User {
   password: String!
   full_name: String!
   google_accessToken: String
+  facebook_accessToken: String
   job: Job
   role: AccountType!
   customer: Customer
@@ -370,6 +371,10 @@ type Mutation {
   loginWithGoogle(
     google_accessToken: String!
   ): AuthData!
+
+  loginWithFacebook(
+    facebook_accessToken: String!
+  ): AuthData!
   
   updateCard(stripe_token: String!): Source!
   cancelSubscription: Subscription!
@@ -431,6 +436,8 @@ type Mutation {
     job: ID
     profile_photo: FileInput
     google_accessToken: String
+    oauth_id: String
+    facebook_accessToken: String
   ): AuthData!
 
   verifyForgotPassword(

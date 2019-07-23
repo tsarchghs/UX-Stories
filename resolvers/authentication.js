@@ -59,11 +59,12 @@ const connectIfUrlExists = async (context,file_data) => {
 	return file
 } 
 
+
 const loginWithGoogle = async (root,args,context) => {
 	let res = await fetch(`https://www.googleapis.com/plus/v1/people/me?access_token=${args.google_accessToken}`)
 	let data = await res.json()
-	let email = data.emails[0].value
-	let user = await context.db.query.user({where:{email}})
+	let users = await context.db.query.users({ where: { oauth_id: data.id }})
+	let user = users[0];
 	if (!user){
 		let res = await fetch(`https://www.googleapis.com/plus/v1/people/me?access_token=${args.google_accessToken}`)
 		let data = await res.json()
@@ -76,7 +77,7 @@ const loginWithGoogle = async (root,args,context) => {
 		}
 		let file = await connectIfUrlExists(context, file_data);
 		let userParams = {
-			email: email,
+			email,
 			full_name: data.displayName,
 			password: uuid(),
 			profile_photo: {
@@ -100,15 +101,87 @@ const loginWithGoogle = async (root,args,context) => {
 			expiresIn: 1
 		}
 	} else {
-		errors = ["Account not connected with google, use email/password."]
+		if (user.facebook_accessToken) errors = ["Already signed up with Facebook,Please sign in using Facebook."]
+		else errors = ["Account not connected with Google, use email/password."]
+		let ERROR = CreateValidationError(errors);
+		throw new ERROR;
+	}
+}
+
+const loginWithFacebook = async (root, args, context) => {
+	let res = await fetch(`https://graph.facebook.com/me?access_token=${args.facebook_accessToken}`)
+	let data = await res.json()
+	let users = await context.db.query.users({ where: { oauth_id: data.id } })
+	let user = users[0];
+	if (!user) {
+		let res = await fetch(`https://graph.facebook.com/me?access_token=${args.facebook_accessToken}`)
+		let data = await res.json()
+		let email = data.email
+		let file_data = {
+			filename: "undefined",
+			mimetype: "undefined",
+			encoding: "undefined",
+			url: data.profile.data.url
+		}
+		let file = await connectIfUrlExists(context, file_data);
+		let userParams = {
+			email: email,
+			full_name: data.displayName,
+			password: uuid(),
+			profile_photo: {
+				connect: { id: file.id }
+			},
+			role: "MEMBER",
+			libraries: {
+				create: {
+					name: "First Library",
+					custom_updatedAt: new Date()
+				}
+			},
+			google_accessToken: args.google_accessToken
+		}
+		user = await context.db.mutation.createUser({ data: userParams });
+	}
+	if (user.facebook_accessToken) {
+		return {
+			userId: user.id,
+			token: createToken(user.id),
+			expiresIn: 1
+		}
+	} else {
+		if (user.google_accessToken) errors = ["Already signed up with Google,Please sign in using Google."]
+		else errors = ["Account not connected with Facebook, use email/password."]
 		let ERROR = CreateValidationError(errors);
 		throw new ERROR;
 	}
 }
 
 
+const getAccessTokenInfo = async (args,token) => {
+	let url;
+	if (args.google_accessToken) url = `https://www.googleapis.com/plus/v1/people/me?access_token=${token}`
+	else url = `https://graph.facebook.com/me?access_token=${token}`
+	let res = await fetch(url);
+	let data = await res.json();
+	console.log(data,5111)
+	return data
+}
+
 const signUp = async (root,args,context) => {
+	let usedOAUTH = args.google_accessToken || args.facebook_accessToken;
+	if (usedOAUTH) {
+		if (args.google_accessToken) {
+			return await loginWithGoogle(undefined, { google_accessToken: args.google_accessToken },context)
+		} else {
+			return await loginWithFacebook(undefined, { facebook_accessToken: args.facebook_accessToken }, context);
+		}
+	}
+
 	let errors = await checkValidation(signUpSchema, args, false);
+	if (errors.length) {
+		let ERROR = CreateValidationError(errors);
+		throw new ERROR;
+	}
 	let profile_photo;
 	let withUrl = {
 		filename: "undefined", 
@@ -140,7 +213,7 @@ const signUp = async (root,args,context) => {
 				custom_updatedAt: new Date()
 			}
 		},
-		google_accessToken: args.google_accessToken
+		oauth_id:uuid()
 	}
 	if (args.job){
 		userParams["job"] = {
@@ -153,29 +226,14 @@ const signUp = async (root,args,context) => {
 		}
 	}
 	let user;
-	if (!errors.length){
-		try {
-			user = await context.db.mutation.createUser({data:userParams});
-		} catch (e) {
-			if (e.message === "A unique constraint would be violated on User. Details: Field name = email"){
-				errors = ["Email is already taken."]
-			}
-			if (args.google_accessToken){
-				errors = []
-				let res = await fetch(`https://www.googleapis.com/plus/v1/people/me?access_token=${args.google_accessToken}`)
-				let data = await res.json()
-				user = await context.db.query.user({ where: { email: data.emails[0].value } });
-			}
+	try {
+		user = await context.db.mutation.createUser({ data:userParams });
+	} catch (e) {
+		console.log(e.message, 9919492234)
+		if (e.message === "A unique constraint would be violated on User. Details: Field name = email") {
+			let ERROR = CreateValidationError(["Email is already taken."])
+			throw new ERROR;
 		}
-	} else {
-		user = await context.db.query.user({where:{email:args.email}});
-		if (user){
-			errors.push("Email is already taken.");
-		}
-	}
-	if (errors.length){
-		let ERROR = CreateValidationError(errors);
-		throw new ERROR;
 	}
 	return {
 		userId: user.id,
@@ -183,6 +241,7 @@ const signUp = async (root,args,context) => {
 		expiresIn: 1
 	};
 }
+
 let transporter = nodemailer.createTransport({
     host: 'smtp.gmail.com',
     port: 587,
@@ -265,6 +324,7 @@ const resetPassword = async (root,args,context) => {
 module.exports = {
 	login,
 	loginWithGoogle,
+	loginWithFacebook,
 	signUp,
 	forgetPassword,
 	verifyForgotPassword,

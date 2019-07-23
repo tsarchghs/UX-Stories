@@ -48,6 +48,8 @@ type User {
   createdAt: DateTime! @createdAt
   updatedAt: DateTime! @updatedAt
   google_accessToken: String
+  facebook_accessToken: String
+  oauth_id: String
 }
 
 type AppVersion {

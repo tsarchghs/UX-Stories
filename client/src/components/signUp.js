@@ -10,6 +10,7 @@ import {
 } from "../Queries"
 import GoogleLogin from 'react-google-login';
 import { getGraphqlErrors } from "../helpers";
+import FacebookLogin from 'react-facebook-login';
 
 class _SignUp extends React.Component {
 	constructor(props) {
@@ -56,8 +57,7 @@ class _SignUp extends React.Component {
 								this.props.refetchApp(callback);
 							}
 							let onSuccessGoogle = res => {
-								console.log(res)
-								console.log(res.accessToken)
+								console.log(res.id)
 								let basicProfile = res.getBasicProfile();
 								signUp({
 									variables: {
@@ -73,7 +73,23 @@ class _SignUp extends React.Component {
 									}
 								})
 							}
-								let errors = getGraphqlErrors(error);
+							let onSuccessFacebook = data => {
+								console.log(data)
+								signUp({
+									variables: {
+										full_name: data.name,
+										email: data.email,
+										password: "DOES_NOT_MATTER",
+										facebook_accessToken: data.accessToken,
+										profile_photo: {
+											createWithUrl: {
+												url: data.picture.data.url
+											}
+										}
+									}
+								})
+							}
+							let errors = getGraphqlErrors(error);
 							return (
 								<form className="login" onSubmit={(e) => {
 									e.preventDefault();
@@ -163,6 +179,15 @@ class _SignUp extends React.Component {
 																			onFailure={this.handleGoogleLoginResponse}
 																			cookiePolicy={'single_host_origin'}
 																		/>
+																		<div style={{marginTop:10}}>
+																			<FacebookLogin
+																				appId="2450303615182439"
+																				autoLoad={true}
+																				fields="name,email,picture"
+																				onClick={console.log}
+																				callback={onSuccessFacebook} 
+																			/>
+																		</div>
 																	</center>
 																</div>
 															}

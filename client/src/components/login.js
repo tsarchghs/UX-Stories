@@ -4,18 +4,22 @@ import Alert from "./alert";
 import { Mutation } from "react-apollo";
 import Cookies from "js-cookie";
 import Loading from "./loading";
-import { LOGIN_MUTATION, LOGIN_WITH_GOOGLE_MUTATION } from "../Queries";
+import { LOGIN_MUTATION, LOGIN_WITH_GOOGLE_MUTATION, LOGIN_WITH_FACEBOOK_MUTATION } from "../Queries";
 import GoogleLogin from 'react-google-login';
 import { adopt } from 'react-adopt'
 import { getGraphqlErrors } from "../helpers";
+import FacebookLogin from 'react-facebook-login';
 
 
 const Composed = adopt({
 	login: ({ refetchApp, render }) => (
 		<Mutation mutation={LOGIN_MUTATION} refetchApp={refetchApp}>{render}</Mutation>
 	),
-	loginWithGoogle: ({refetchApp,render}) => (
+	loginWithGoogle: ({ refetchApp, render }) => (
 		<Mutation mutation={LOGIN_WITH_GOOGLE_MUTATION} refetchApp={refetchApp}>{render}</Mutation>
+	),
+	loginWithFacebook: ({ refetchApp, render }) => (
+		<Mutation mutation={LOGIN_WITH_FACEBOOK_MUTATION} refetchApp={refetchApp}>{render}</Mutation>
 	)
 })
 
@@ -38,7 +42,7 @@ class Login extends React.Component {
 	render() {
 		return (
 			<Composed>
-			{ ({ login, loginWithGoogle }) => {
+			{ ({ login, loginWithGoogle, loginWithFacebook }) => {
 				return (
 					<form className="login" onSubmit={async e => {
 						e.preventDefault();
@@ -113,6 +117,28 @@ class Login extends React.Component {
 													onFailure={this.handleGoogleLoginResponse}
 													cookiePolicy={'single_host_origin'}
 												/>
+												<div style={{ marginTop: 10 }}>
+													<FacebookLogin
+														appId="2450303615182439"
+														autoLoad={true}
+														fields="name,email,picture"
+														onClick={console.log}
+														callback={async ({accessToken}) => {
+															try {
+																this.setState({ loading: true, errors: [] })
+																let res = await loginWithFacebook({
+																	variables: {
+																		facebook_accessToken: accessToken
+																	}
+																})
+																this.loginWithToken(res.data.loginWithFacebook.token)
+															} catch (error) {
+																let errors = getGraphqlErrors(error)
+																this.setState({ errors, loading: false })
+															}
+														}}
+													/>
+												</div>
 											</center>
 										</div>
 								}

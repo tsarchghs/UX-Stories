@@ -631,7 +631,11 @@ export type UserOrderByInput =
   | "updatedAt_ASC"
   | "updatedAt_DESC"
   | "google_accessToken_ASC"
-  | "google_accessToken_DESC";
+  | "google_accessToken_DESC"
+  | "facebook_accessToken_ASC"
+  | "facebook_accessToken_DESC"
+  | "oauth_id_ASC"
+  | "oauth_id_DESC";
 
 export type MutationType = "CREATED" | "UPDATED" | "DELETED";
 
@@ -953,6 +957,8 @@ export interface UserCreateWithoutLibrariesInput {
   subscription_id?: Maybe<ID_Input>;
   apps?: Maybe<AppCreateManyWithoutCreatedByInput>;
   google_accessToken?: Maybe<String>;
+  facebook_accessToken?: Maybe<String>;
+  oauth_id?: Maybe<String>;
 }
 
 export interface JobWhereInput {
@@ -1137,6 +1143,34 @@ export interface UserWhereInput {
   google_accessToken_not_starts_with?: Maybe<String>;
   google_accessToken_ends_with?: Maybe<String>;
   google_accessToken_not_ends_with?: Maybe<String>;
+  facebook_accessToken?: Maybe<String>;
+  facebook_accessToken_not?: Maybe<String>;
+  facebook_accessToken_in?: Maybe<String[] | String>;
+  facebook_accessToken_not_in?: Maybe<String[] | String>;
+  facebook_accessToken_lt?: Maybe<String>;
+  facebook_accessToken_lte?: Maybe<String>;
+  facebook_accessToken_gt?: Maybe<String>;
+  facebook_accessToken_gte?: Maybe<String>;
+  facebook_accessToken_contains?: Maybe<String>;
+  facebook_accessToken_not_contains?: Maybe<String>;
+  facebook_accessToken_starts_with?: Maybe<String>;
+  facebook_accessToken_not_starts_with?: Maybe<String>;
+  facebook_accessToken_ends_with?: Maybe<String>;
+  facebook_accessToken_not_ends_with?: Maybe<String>;
+  oauth_id?: Maybe<String>;
+  oauth_id_not?: Maybe<String>;
+  oauth_id_in?: Maybe<String[] | String>;
+  oauth_id_not_in?: Maybe<String[] | String>;
+  oauth_id_lt?: Maybe<String>;
+  oauth_id_lte?: Maybe<String>;
+  oauth_id_gt?: Maybe<String>;
+  oauth_id_gte?: Maybe<String>;
+  oauth_id_contains?: Maybe<String>;
+  oauth_id_not_contains?: Maybe<String>;
+  oauth_id_starts_with?: Maybe<String>;
+  oauth_id_not_starts_with?: Maybe<String>;
+  oauth_id_ends_with?: Maybe<String>;
+  oauth_id_not_ends_with?: Maybe<String>;
   AND?: Maybe<UserWhereInput[] | UserWhereInput>;
   OR?: Maybe<UserWhereInput[] | UserWhereInput>;
   NOT?: Maybe<UserWhereInput[] | UserWhereInput>;
@@ -1329,6 +1363,8 @@ export interface UserUpdateManyMutationInput {
   customer_id?: Maybe<ID_Input>;
   subscription_id?: Maybe<ID_Input>;
   google_accessToken?: Maybe<String>;
+  facebook_accessToken?: Maybe<String>;
+  oauth_id?: Maybe<String>;
 }
 
 export interface UserUpdateOneRequiredWithoutAppsInput {
@@ -1353,6 +1389,8 @@ export interface UserUpdateWithoutAppsDataInput {
   subscription_id?: Maybe<ID_Input>;
   libraries?: Maybe<LibraryUpdateManyWithoutCreatedByInput>;
   google_accessToken?: Maybe<String>;
+  facebook_accessToken?: Maybe<String>;
+  oauth_id?: Maybe<String>;
 }
 
 export type AppVersionWhereUniqueInput = AtLeastOne<{
@@ -1562,6 +1600,8 @@ export interface UserUpdateDataInput {
   apps?: Maybe<AppUpdateManyWithoutCreatedByInput>;
   libraries?: Maybe<LibraryUpdateManyWithoutCreatedByInput>;
   google_accessToken?: Maybe<String>;
+  facebook_accessToken?: Maybe<String>;
+  oauth_id?: Maybe<String>;
 }
 
 export interface JobUpdateInput {
@@ -2442,6 +2482,8 @@ export interface UserUpdateWithoutLibrariesDataInput {
   subscription_id?: Maybe<ID_Input>;
   apps?: Maybe<AppUpdateManyWithoutCreatedByInput>;
   google_accessToken?: Maybe<String>;
+  facebook_accessToken?: Maybe<String>;
+  oauth_id?: Maybe<String>;
 }
 
 export interface LibraryUpsertWithWhereUniqueWithoutCreatedByInput {
@@ -2467,6 +2509,8 @@ export interface UserCreateWithoutAppsInput {
   subscription_id?: Maybe<ID_Input>;
   libraries?: Maybe<LibraryCreateManyWithoutCreatedByInput>;
   google_accessToken?: Maybe<String>;
+  facebook_accessToken?: Maybe<String>;
+  oauth_id?: Maybe<String>;
 }
 
 export interface LibraryUpsertWithWhereUniqueWithoutStoriesInput {
@@ -2660,6 +2704,8 @@ export interface UserUpdateInput {
   apps?: Maybe<AppUpdateManyWithoutCreatedByInput>;
   libraries?: Maybe<LibraryUpdateManyWithoutCreatedByInput>;
   google_accessToken?: Maybe<String>;
+  facebook_accessToken?: Maybe<String>;
+  oauth_id?: Maybe<String>;
 }
 
 export interface StoryScalarWhereInput {
@@ -2844,6 +2890,8 @@ export interface UserCreateInput {
   apps?: Maybe<AppCreateManyWithoutCreatedByInput>;
   libraries?: Maybe<LibraryCreateManyWithoutCreatedByInput>;
   google_accessToken?: Maybe<String>;
+  facebook_accessToken?: Maybe<String>;
+  oauth_id?: Maybe<String>;
 }
 
 export interface AppVersionUpdateWithWhereUniqueWithoutStoriesInput {
@@ -4606,6 +4654,8 @@ export interface User {
   createdAt: DateTimeOutput;
   updatedAt: DateTimeOutput;
   google_accessToken?: String;
+  facebook_accessToken?: String;
+  oauth_id?: String;
 }
 
 export interface UserPromise extends Promise<User>, Fragmentable {
@@ -4639,6 +4689,8 @@ export interface UserPromise extends Promise<User>, Fragmentable {
   createdAt: () => Promise<DateTimeOutput>;
   updatedAt: () => Promise<DateTimeOutput>;
   google_accessToken: () => Promise<String>;
+  facebook_accessToken: () => Promise<String>;
+  oauth_id: () => Promise<String>;
 }
 
 export interface UserSubscription
@@ -4674,6 +4726,8 @@ export interface UserSubscription
   createdAt: () => Promise<AsyncIterator<DateTimeOutput>>;
   updatedAt: () => Promise<AsyncIterator<DateTimeOutput>>;
   google_accessToken: () => Promise<AsyncIterator<String>>;
+  facebook_accessToken: () => Promise<AsyncIterator<String>>;
+  oauth_id: () => Promise<AsyncIterator<String>>;
 }
 
 export interface UserNullablePromise
@@ -4709,6 +4763,8 @@ export interface UserNullablePromise
   createdAt: () => Promise<DateTimeOutput>;
   updatedAt: () => Promise<DateTimeOutput>;
   google_accessToken: () => Promise<String>;
+  facebook_accessToken: () => Promise<String>;
+  oauth_id: () => Promise<String>;
 }
 
 export interface StoryCategory {
@@ -4845,6 +4901,8 @@ export interface UserPreviousValues {
   createdAt: DateTimeOutput;
   updatedAt: DateTimeOutput;
   google_accessToken?: String;
+  facebook_accessToken?: String;
+  oauth_id?: String;
 }
 
 export interface UserPreviousValuesPromise
@@ -4860,6 +4918,8 @@ export interface UserPreviousValuesPromise
   createdAt: () => Promise<DateTimeOutput>;
   updatedAt: () => Promise<DateTimeOutput>;
   google_accessToken: () => Promise<String>;
+  facebook_accessToken: () => Promise<String>;
+  oauth_id: () => Promise<String>;
 }
 
 export interface UserPreviousValuesSubscription
@@ -4875,6 +4935,8 @@ export interface UserPreviousValuesSubscription
   createdAt: () => Promise<AsyncIterator<DateTimeOutput>>;
   updatedAt: () => Promise<AsyncIterator<DateTimeOutput>>;
   google_accessToken: () => Promise<AsyncIterator<String>>;
+  facebook_accessToken: () => Promise<AsyncIterator<String>>;
+  oauth_id: () => Promise<AsyncIterator<String>>;
 }
 
 export interface StoryElementPreviousValues {
