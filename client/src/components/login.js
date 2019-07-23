@@ -123,6 +123,7 @@ class Login extends React.Component {
 														autoLoad={true}
 														fields="name,email,picture"
 														onClick={console.log}
+														autoLoad={false}
 														callback={async ({accessToken}) => {
 															try {
 																this.setState({ loading: true, errors: [] })
