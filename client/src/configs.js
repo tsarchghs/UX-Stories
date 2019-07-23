@@ -1,5 +1,5 @@
 
-const URI = "http://localhost:4000";
+const URI = "http://uxstories.herokuapp.com";
 
 export {
     URI
