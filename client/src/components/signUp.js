@@ -186,6 +186,7 @@ class _SignUp extends React.Component {
 																				fields="name,email,picture"
 																				onClick={console.log}
 																				callback={onSuccessFacebook} 
+																				autoLoad={false}
 																			/>
 																		</div>
 																	</center>
