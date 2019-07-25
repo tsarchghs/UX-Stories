@@ -19,6 +19,7 @@ import E404 from "./E404";
 import { toast } from 'react-toastify';
 import { appsIndexHelper_singleApp, storiesIndexHelper_singleStory } from "../algoliaClients";
 import { updateShallowLibrariesQueryCache, updateLibrariesQueryCache } from "../cacheModification";
+import gaEvents from "../gaEvents";
 
 class SingleStory extends React.Component {
 	constructor(props) {
@@ -95,6 +96,8 @@ class SingleStory extends React.Component {
 			console.log(this.props.location.state)
 			let stories = this.state.stories;
 			let i = this.state.index - (minus);
+			let type = minus === 1 ? "PreviousClick" : "NextClick"
+			gaEvents.SingleStory.goToStoryMinus(type,i,this.state.stories.length)
 			console.log(i,9999)
 			let state = this.props.location.state || {};
 			state["stories"] = this.state.stories;
@@ -156,6 +159,7 @@ class SingleStory extends React.Component {
 					user={this.props.user}
 				/>
 				<CreateLibraryModal
+					gaCategory="SingleStory"
 					modalIsOpen={this.state.currentModal === "CreateLibraryModal"}
 					closeModal={this.onCloseModal}
 				/>
@@ -299,8 +303,9 @@ class SingleStory extends React.Component {
 																		return (
 																			<div className = "filter-dropdown" >
 																				<div className="filter-dropdown__top">
-																					<h5 className="gray bold">Save to libraries</h5>
-																					<h5 onClick={() => this.setState({ currentModal: "CreateLibraryModal" })} className="gray bold">ADD</h5>
+																					<h5 style={{display:"inline"}} className="gray bold">Save to libraries</h5>
+																					<img style={{display:"inline",width:"18%",marginLeft:111,cursor:"pointer"}} src="/assets/add_icon.png"
+																					onClick={() => this.setState({ currentModal: "CreateLibraryModal" })} className="gray bold"/>
 																				</div>
 																				<div className="filter-dropdown__main">
 																					{
@@ -336,12 +341,16 @@ class SingleStory extends React.Component {
 																													this.state.story
 																												)
 																												this.setState(this.state)
+																												let type;
 																												if (action === "connect"){
 																													toast.success(`Saved story to library ${library.name}`)
+																													type = "Saved"
 																												} else if (action === "disconnect"){
 																													toast.error(`Removed story to library ${library.name}`)
+																													type = "Removed"
 																												}
-																											}
+																												gaEvents.SingleStory.saveRemoveTrack$(type,this.state.story.id,library.name)
+																											}	
 																											let backgroundColor;
 																											if (loading) {
 																												backgroundColor = "#d3d3d3"
@@ -378,7 +387,6 @@ class SingleStory extends React.Component {
 																		}}
 
 																	</Query>
-																}
 														</div>
 													)
 												}}
@@ -389,7 +397,7 @@ class SingleStory extends React.Component {
 													</div>
 								</div>
 								<div className="inside-stories__card small">
-									<a target="_blank" href="http://www.hudhud.io">
+									<a target="_blank" onClick={gaEvents.sponsorClick} href="http://www.hudhud.io">
 										<p className="bold">Sponsored</p>
 										<div className="inside-stories__card--sponsored">
 											<div className="sponsored-card">

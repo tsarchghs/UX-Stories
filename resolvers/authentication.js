@@ -51,9 +51,10 @@ const connectIfUrlExists = async (context,file_data) => {
 	try {
 		file = await context.db.mutation.createFile({ data: file_data })
 	} catch (e) {
-		console.log(e)
 		if (e.message.indexOf("unique") !== -1){
 			file = await context.db.query.file({where:{url:file_data.url}})
+		} else {
+			console.log(e)
 		}
 	}
 	return file
@@ -90,7 +91,8 @@ const loginWithGoogle = async (root,args,context) => {
 					custom_updatedAt: new Date()
 				}
 			},
-			google_accessToken: args.google_accessToken
+			google_accessToken: args.google_accessToken,
+			oauth_id: data.id
 		}
 		user = await context.db.mutation.createUser({data: userParams});
 	}
@@ -138,7 +140,8 @@ const loginWithFacebook = async (root, args, context) => {
 					custom_updatedAt: new Date()
 				}
 			},
-			google_accessToken: args.google_accessToken
+			facebook_accessToken: args.facebook_accessToken,
+			oauth_id: data.id	
 		}
 		user = await context.db.mutation.createUser({ data: userParams });
 	}

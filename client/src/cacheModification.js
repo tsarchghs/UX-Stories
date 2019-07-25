@@ -1,6 +1,7 @@
 import {
     LIBRARIES_QUERY_SHALLOW,
-    LIBRARIES_QUERY
+    LIBRARIES_QUERY,
+    LIBRARY_QUERY
 } from "./Queries";
 
 const setTypename = (arr,val) => {

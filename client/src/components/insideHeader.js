@@ -8,7 +8,7 @@ class InsideHeader extends React.Component {
 	          <div className="container">
 	            <div className="header__content">
 	              <div className="logo">
-	                <a href="#"><img src="/assets/toolkit/images/logo.svg" alt /></a>
+	                <Link to="/"><img src="/assets/toolkit/images/logo.svg" alt /></Link>
 	              </div>				
 	              <Link to={{
 									pathname: this.props.back_to_path,

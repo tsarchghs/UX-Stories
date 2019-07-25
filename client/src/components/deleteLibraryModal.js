@@ -3,44 +3,45 @@ import { DELETE_LIBRARY_MUTATION, LIBRARIES_QUERY } from "../Queries";
 import { Mutation, withApollo } from "react-apollo";
 import Alert from "./alert";
 import Loading from "./loading";
-import Modal from 'react-modal';
+import Modal from "react-responsive-modal";
 import { toast } from 'react-toastify';
+import { getGraphqlErrors } from "../helpers";
+import gaEvents from "../gaEvents";
 
 const customStyles = {
-    overlay: {
-        'backgroundColor': 'rgba(10, 10, 10, 0.75)',
-        opacity: 1
-    },
-    content: {
-        top: '50%',
-        left: '50%',
-        right: '70%',
+    modal: {
         bottom: 'auto',
-        marginRight: '-50%',
-        transform: 'translate(-50%, -50%)',
+        width: "368px",
+        borderRadius: "6px",
+        outline: "none",
+        transform: "translate(2%, 154%)  "
+    },
+    overlay: {
+        backgroundColor: "rgba(10, 10, 10, 0.75)"
     }
 };
 
 // Make sure to bind modal to your appElement (http://reactcommunity.org/react-modal/accessibility/)
-Modal.setAppElement('#root')
 
 class _DeleteLibraryModal extends React.Component {
     constructor(props){
         super(props);
         this.state = {
-            error: undefined
+            error: "",
+            verification: ""
         }
-    }
-    componentWillUnmount(){
-        console.log("UNMMMM")
     }
     render(){
         return (
                 <Modal
-                    isOpen={this.props.modalIsOpen}
-                    onRequestClose={this.props.closeModal}
-                    style={customStyles}
-                    contentLabel="Example Modal"
+                    open={this.props.modalIsOpen}
+                    onClose={() => {
+                        this.props.closeModal()
+                        this.setState({error:"",verification:""})
+                    }}
+                    type="fadeIn"
+                    animationDuration={250}
+                    styles={customStyles}
                 >
                         <Mutation
                             mutation={DELETE_LIBRARY_MUTATION}
@@ -49,7 +50,11 @@ class _DeleteLibraryModal extends React.Component {
                                 let onSubmit = async e => {
                                     e.preventDefault();
                                     if (loading) return;
-                                    let res = await deleteLibrary({
+                                    if (this.state.verification !== "DELETE"){
+                                        this.setState({error:"Verification failed."})
+                                        return;
+                                    }
+                                    await deleteLibrary({
                                         variables:{
                                             id: this.props.id
                                         }
@@ -64,21 +69,41 @@ class _DeleteLibraryModal extends React.Component {
                                         query: LIBRARIES_QUERY,
                                         data: currentCache
                                     })
-                                    this.props.closeModal();
-                                    toast.error("Deleted library!")
+                                    gaEvents.deleteLibrary(this.props.gaCategory)
+                                    this.props.closeModal(true);
+                                    toast.error(`Deleted library ${this.props.name}!`)
                                 }
+                                let errors = getGraphqlErrors(error) || (this.state.error && [this.state.error])
                                 return (
                                     <div>
-                                        <div className="modal__header">
-                                            <h4>Delete {this.props.name}</h4>
-                                            <p className="gray">This will delete {this.props.name}={this.props.id} and cannot be undone</p>
+                                        <h3 className="modal__title">Enter 'DELETE' to delete library {this.props.name}</h3>
+                                        <div>
+                                            <form onSubmit={onSubmit}>
+                                                <div>
+                                                    {
+                                                        errors && errors.map(error => <Alert style={{ height: 50 }} red={true} message={error} />)
+                                                    }
+                                                    <div>
+                                                        <input 
+                                                            value={this.state.verification} 
+                                                            onChange={e => this.setState({verification: e.target.value})} 
+                                                            className="input" 
+                                                            type="text" 
+                                                            placeholder="Enter DELETE to verify." 
+                                                        />
+                                                    </div>
+                                                    <div className="text-right">
+                                                        {
+                                                            loading ? <Loading noCenter={true} style={{ width: 45, textAlign: "right" }} />
+                                                                : <button className="button">Delete</button>
+                                                        }
+                                                    </div>
+                                                </div>
+                                            </form>
                                         </div>
-                                        <div className="modal__footer">
-                                            <div className="modal__footer-buttons">
-                                                <a onClick={this.props.closeModal} className="button gray" data-close aria-label="Close modal">No I don’t want</a>
-                                                <a onClick={onSubmit} style={{ backgroundColor: "#F6534E" }} className="button red">Delete</a>
-                                            </div>
-                                        </div>
+                                        <button className="close-button" data-close aria-label="Close reveal" type="button">
+                                            <img onClick={this.props.closeModal} src="../../assets/toolkit/images/006-error.svg" alt />
+                                        </button>
                                     </div>
                                 )
                             } }

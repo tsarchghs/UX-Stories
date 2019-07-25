@@ -11,6 +11,8 @@ import { if_user_call_func, onAlgoliaError } from "../helpers";
 import PickMembershipModal from "./pickMembershipModal"; 
 import DropdownWrapper from "./wrappers/dropdownWrapper";
 import { URI } from "../configs";
+import LoadMoreButton from "./common/LoadMoreButton";
+import gaEvents from "../gaEvents";
 
 class _Home extends React.Component {
   constructor(props) {
@@ -20,7 +22,8 @@ class _Home extends React.Component {
     }
     if (this.props.location && this.props.location.state && this.props.location.state.filterBy) {
       filterBy = this.props.location.state.filterBy
-      if (filterBy.appCategory !== "all"){
+      console.log(filterBy)
+      if (filterBy.appCategory && filterBy.appCategory !== "all"){
         appsIndexHelper.toggleFacetRefinement("appCategory.name",filterBy.appCategory);
       }
     }
@@ -45,6 +48,7 @@ class _Home extends React.Component {
     this.setState = this.setState.bind(this)
   }
   filterCategory(appCategory) {
+    gaEvents.Home.filterCategory(appCategory)
     if (!this.state.filterBy.appCategory || !(this.state.filterBy.appCategory.name === appCategory.name)){
       this.setState(prevState => {
         let state = prevState;
@@ -106,10 +110,8 @@ class _Home extends React.Component {
 	async componentDidMount(){
     this.update();
   }
-  componentWillMount(){
-    // appsIndexHelper.state.hitsPerPage = this.hitsPerPage
-  }
   async loadMore() {
+    gaEvents.loadMore("AppsPage")
     this.setState({
       show_skeleton:true
     })
@@ -289,7 +291,7 @@ class _Home extends React.Component {
         {
           !this.state.reached_end
           ? <center>
-              <button onClick={() => if_user_call_func(this.props.user,this.loadMore,this.setState.bind(this))}>Load more</button>
+              <LoadMoreButton onClick={() => if_user_call_func(this.props.user, this.loadMore, this.setState.bind(this))}/>
             </center>
           : ""
         }

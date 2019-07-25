@@ -68,3 +68,7 @@
 .kep-login-facebook {
   height: 52px !important;
 }
+
+.apps__content {
+  margin-bottom: -3%;
+}

@@ -1,6 +1,7 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import DropdownWrapper from "./wrappers/dropdownWrapper";
+import Offline from "./OnlineDetector/Offline";
 
 class Header extends React.Component {
 	constructor(props){
@@ -12,6 +13,7 @@ class Header extends React.Component {
 		let pathname = location[location.length-1]
 		return (
 	        <div className="header back__header">
+			<Offline>You are offline.</Offline>
 	          <div className="container">
 	            <div className="header__content">
 		              <div className="logo">
@@ -22,7 +24,6 @@ class Header extends React.Component {
 		                <h5 className="light-gray"><a href="#">Jobs</a></h5>
 		              </div>        <div className="profile-nav">
 		                <p className="light-gray"><a href="#">About</a></p>
-		                <p className="light-gray"><a href="#">Contact</a></p>	
 							<Link to="/payment">
 								{        
 									!this.props.user ? "" : <p className="light-gray blackOnHover" style={pathname.indexOf("payment") !== -1 ? {

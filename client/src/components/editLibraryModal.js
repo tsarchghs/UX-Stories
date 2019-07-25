@@ -6,6 +6,7 @@ import { LIBRARIES_QUERY, EDIT_LIBRARY_MUTATION } from "../Queries";
 import Loading from "./loading";
 import { toast } from 'react-toastify';
 import { getGraphqlErrors } from "../helpers";
+import gaEvents from "../gaEvents";
 
 const customStyles = {
   modal: {
@@ -72,6 +73,8 @@ class _EditLibraryModal extends React.Component {
                       } catch (e) { 
                         console.log(e)
                       }
+                      console.log(data.editLibrary)
+                      gaEvents.editLibrary(this.props.gaCategory)
                       this.props.closeModal()
                       toast.success("Updated library!")
 

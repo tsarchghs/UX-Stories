@@ -164,6 +164,10 @@ const onAlgoliaError = (indexHelpers,setState,obj) => {
   })
 }
 
+const setInspectLetUser = ({userId,email}) => {
+  window.__insp.push([userId,email])
+}
+
 export {
 	getStories,
   handleUploadPhotoInput,
@@ -178,5 +182,6 @@ export {
   getAppVersions,
   if_user_call_func,
   getGraphqlErrors,
-  onAlgoliaError
+  onAlgoliaError,
+  setInspectLetUser
 }

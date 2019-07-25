@@ -66,6 +66,7 @@ class Profile extends React.Component {
       <ApolloProvider client={this.props.client}>
       <div>
         <EditProfileModal
+          gaCategory="Profile"
           user={this.props.user}
           modalIsOpen={this.state.currentModal === "EditProfileModal"}
           refetchApp={this.props.refetchApp}
@@ -75,10 +76,12 @@ class Profile extends React.Component {
           }}
         />
         <CreateLibraryModal
+          gaCategory="Profile"
           modalIsOpen={this.state.currentModal === "CreateLibraryModal"}
           closeModal={this.closeModal}
         />
         <EditLibraryModal
+          gaCategory="Profile"
           modalIsOpen={this.state.currentModal === "EditLibraryModal"}
           closeModal={this.closeModal}
           id={this.state.editLibrary.id}
@@ -86,11 +89,11 @@ class Profile extends React.Component {
           onChange={(e) => this.updateLibraryNameOnChange("editLibrary",e)}
         />
         <DeleteLibraryModal
+            gaCategory="Profile"
             modalIsOpen={this.state.currentModal === "DeleteLibraryModal"}
             closeModal={this.closeModal}
             id={this.state.deleteLibrary.id}
             name={this.state.deleteLibrary.name}
-            onChange={(e) => this.updateLibraryNameOnChange("deleteLibrary", e)}
         />
       <Header 
         user={this.props.user} 
@@ -144,15 +147,8 @@ class Profile extends React.Component {
                   query={LIBRARIES_QUERY}
                   >
                   { ({loading,error,data,refetch,networkStatus}) => {
-                    this.refetchLibraries = refetch;
                     if (error) return <p>{error.message}</p>
-                    var data_or_cache = data
-                    if (!data.libraries){
-                      try {
-                        var data_or_cache = this.props.client.readQuery({query:LIBRARIES_QUERY});
-                      } catch (e) {}
-                    }
-                    let libraries = data_or_cache.libraries ? data_or_cache.libraries : []
+                    let libraries = data && data.libraries ? data.libraries : []
                     return (
                         <div className="libraries__content">
                           {

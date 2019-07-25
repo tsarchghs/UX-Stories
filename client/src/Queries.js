@@ -279,6 +279,27 @@ const STORIES_QUERY = gql`
   }
 `
 
+const STORIES_QUERY_WITH_APP = gql`
+  query Stories(
+    $storiesFilterInput: StoriesFilterInput
+  ) {
+    stories(
+      storiesFilterInput: $storiesFilterInput
+    ) {
+      id
+      app {
+        id
+        name
+        description
+      }
+      thumbnail {
+        id
+        url
+      }
+    }
+  }
+`
+
 const STORY_QUERY = gql`
   query Story(
     $id: ID!
@@ -629,5 +650,6 @@ export {
   STORY_ELEMENTS_QUERY,
   APP_VERSIONS_QUERY,
   APP_CATEGORIES_QUERY,
-  SAVE_TO_LIBRARY_MUTATION
+  SAVE_TO_LIBRARY_MUTATION,
+  STORIES_QUERY_WITH_APP
 }

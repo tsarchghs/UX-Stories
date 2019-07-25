@@ -52,7 +52,7 @@ class _SignUp extends React.Component {
 						{ (signUp,{loading,error,data}) => {
 							if (data && data.signUp.token){
 								Cookies.set("token",data.signUp.token);
-								let callback = () => this.props.history.push("/")
+								let callback = () => this.props.history.push("/payment")
 								loading = true; 
 								this.props.refetchApp(callback);
 							}

@@ -6,6 +6,7 @@ import { LIBRARIES_QUERY, CREATE_LIBRARY_MUTATION, LIBRARIES_QUERY_SHALLOW } fro
 import Loading from "./loading";
 import { toast } from 'react-toastify';
 import { getGraphqlErrors } from "../helpers";
+import gaEvents from "../gaEvents";
 
 const customStyles = {
 	modal: {
@@ -69,10 +70,10 @@ class _CreateLibraryModal extends React.Component {
 											data: current_libraries
 										})
 									} catch (e) { console.log(e,99) }
-									
+									gaEvents.createLibrary(this.props.gaCategory)
+									toast.success(`Created library ${this.state.libraryName}!`)
 									this.setState({libraryName:""})
 									this.props.closeModal();
-									toast.success("Created library!")
 								}}>
 								<div>
 												{	

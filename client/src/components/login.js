@@ -7,9 +7,8 @@ import Loading from "./loading";
 import { LOGIN_MUTATION, LOGIN_WITH_GOOGLE_MUTATION, LOGIN_WITH_FACEBOOK_MUTATION } from "../Queries";
 import GoogleLogin from 'react-google-login';
 import { adopt } from 'react-adopt'
-import { getGraphqlErrors } from "../helpers";
+import { getGraphqlErrors,setInspectLetUser } from "../helpers";
 import FacebookLogin from 'react-facebook-login';
-
 
 const Composed = adopt({
 	login: ({ refetchApp, render }) => (
@@ -52,6 +51,8 @@ class Login extends React.Component {
 								email: this.state.email,
 								password: this.state.password
 							}});
+							let { userId } = res.data.login;
+							setInspectLetUser({userId,email:userId})
 							this.loginWithToken(res.data.login.token)
 						} catch (error) {
 							if (error.message === "GraphQL error: Invalid credentials") {
@@ -108,6 +109,8 @@ class Login extends React.Component {
 																	google_accessToken: accessToken 
 																}
 															})
+															let { userId } = res.data.loginWithGoogle;
+															setInspectLetUser({userId,email:userId})
 															this.loginWithToken(res.data.loginWithGoogle.token)
 														} catch (error) {
 															let errors = getGraphqlErrors(error)
@@ -132,6 +135,8 @@ class Login extends React.Component {
 																		facebook_accessToken: accessToken
 																	}
 																})
+																let { userId } = res.data.loginWithFacebook;
+																setInspectLetUser({userId,email:userId})
 																this.loginWithToken(res.data.loginWithFacebook.token)
 															} catch (error) {
 																let errors = getGraphqlErrors(error)
