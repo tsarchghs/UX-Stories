@@ -5,15 +5,23 @@ import { toast } from 'react-toastify';
 import { withRouter } from "react-router-dom";
 import { updateShallowLibrariesQueryCache, updateLibrariesQueryCache } from "../cacheModification";
 import { compose } from "recompose";
+import PickMembershipModal from "./pickMembershipModal"; 
 
 class _StoryItem extends React.Component {
     constructor(props){
         super(props)
+        this.state = {
+            currentModal: undefined
+        }
         
     }
     render(){
         return (
             <React.Fragment>
+                <PickMembershipModal
+                    modalIsOpen={this.state.currentModal === "PickMembershipModal"}
+                    closeModal={(e) => this.setState({ currentModal: undefined })}
+                />
                 <div className="card" style={{backgroundImage:`url('${this.props.story.thumbnail.url}')`}}>
                     <div className="card_layer">
                         <h3 className="card_layer_child">{this.props.story.app.name}</h3>
@@ -27,6 +35,8 @@ class _StoryItem extends React.Component {
                         <div className="card_layer_child dropup">
                         <button class="dropbtn button full save_to_library">Save to library</button>
                         <div className="dropup-content">
+                        {
+                            this.props.user && 
                             <Query query={LIBRARIES_QUERY_SHALLOW}>
                                 {({ loading, error, data }) => {
                                     if (loading) return "Loading";
@@ -69,6 +79,10 @@ class _StoryItem extends React.Component {
                                         })
                                     }}
                                 </Query>
+                        }
+                        {
+                            !this.props.user &&  <a onClick={() => this.setState({currentModal:"PickMembershipModal"})}>Welcome Library</a>
+                        }
                                 </div>
                             </div>
                         </div>
