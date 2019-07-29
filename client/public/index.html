@@ -23,27 +23,57 @@
       Learn how to configure a non-root public URL by running `npm run build`.
     -->
     <title>UX-Stories</title>
-    <link rel="stylesheet" href="../assets/toolkit/styles/toolkit.css" />
-    <link rel="stylesheet" href="/assets/404Style.css" />
-  <!-- /toolkit styles -->
-  <script src="/assets/toolkit/scripts/jquery.min.js"></script>
-    <script src="https://js.stripe.com/v3/"></script>
-  <!-- toolkit scripts -->
-  <link rel="stylesheet" type="text/css" href="/assets/multiselect/styles/multiselect.css">
-  <link rel="stylesheet" type="text/css" href="/assets/multiselect/multiselect.min.js">
-    <link rel="stylesheet" href="/assets/deleteLibraryModal.css">
-    <link rel="stylesheet" href="/assets/extra.css">
 
+    <script src="https://js.stripe.com/v3/"></script>
+    <script>
+      // Get HTML head element 
+        let urls1 = [
+          "/assets/multiselect/styles/multiselect.css",
+          "/assets/multiselect/multiselect.min.js",
+          "/assets/admin/assets/vendor/bootstrap/css/bootstrap.min.css",
+          "/assets/admin/assets/vendor/fonts/circular-std/style.css",
+          "/assets/admin/assets/libs/css/style.css",
+          "/assets/admin/assets/vendor/fonts/fontawesome/css/fontawesome-all.css"
+        ]
+        let urls2 = [
+          "../assets/toolkit/styles/toolkit.css",
+          "/assets/404Style.css",
+          "/assets/toolkit/scripts/jquery.min.js",
+          "/assets/extra.css"
+        ]
+        var head = document.getElementsByTagName('HEAD')[0];
+        let loadUrls = urls => {
+          for (var x in urls) {
+            url = urls[x];
+            var link = document.createElement('link');
+
+            // set the attributes for link element  
+            link.rel = 'stylesheet';
+
+            link.type = 'text/css';
+
+            link.href = url;
+
+            // Append link element to HTML head 
+            head.appendChild(link);
+          }
+        }
+        if (window.location.href.indexOf("admin") !== -1) loadUrls(urls1)
+        else loadUrls(urls2) 
+        // Create new link Element 
+    </script>
 </head>
 <script type="text/javascript">
-  (function () {
-    window.__insp = window.__insp || [];
-    __insp.push(['wid', 1645464907]);
-    var ldinsp = function () {
-      if (typeof window.__inspld != "undefined") return; window.__inspld = 1; var insp = document.createElement('script'); insp.type = 'text/javascript'; insp.async = true; insp.id = "inspsync"; insp.src = ('https:' == document.location.protocol ? 'https' : 'http') + '://cdn.inspectlet.com/inspectlet.js?wid=1645464907&r=' + Math.floor(new Date().getTime() / 3600000); var x = document.getElementsByTagName('script')[0]; x.parentNode.insertBefore(insp, x);
-    };
-    setTimeout(ldinsp, 0);
-  })();
+  if (window.location.href.indexOf("localhost") === -1){
+    (function () {
+      window.__insp = window.__insp || [];
+      __insp.push(['wid', 1645464907]);
+      var ldinsp = function () {
+        if (typeof window.__inspld != "undefined") return; window.__inspld = 1; var insp = document.createElement('script'); insp.type = 'text/javascript'; insp.async = true; insp.id = "inspsync"; insp.src = ('https:' == document.location.protocol ? 'https' : 'http') + '://cdn.inspectlet.com/inspectlet.js?wid=1645464907&r=' + Math.floor(new Date().getTime() / 3600000); var x = document.getElementsByTagName('script')[0]; x.parentNode.insertBefore(insp, x);
+      };
+      setTimeout(ldinsp, 0);
+    })();
+  }
 </script>
   <body>
     <noscript>You need to enable JavaScript to run this app.</noscript>

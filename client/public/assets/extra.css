@@ -72,3 +72,7 @@
 .apps__content {
   margin-bottom: -3%;
 }
+
+.filter-dropdown {
+  z-index: 1;
+}
