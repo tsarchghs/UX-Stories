@@ -41,7 +41,7 @@ module.exports = {
     },
     getMemoryUsage: {
         subscribe: (parent,args, { pubsub }) => {
-            args.everyMs = 1000;
+            args.everyMs = 2500;
             setInterval(() => {
                 let freeMemory = os.freemem() / 1048576;
                 let totalMemory = os.totalmem() / 1048576;

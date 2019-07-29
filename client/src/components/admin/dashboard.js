@@ -1,8 +1,15 @@
 import React from "react";
 import Header from "./header";
 import LeftSidebar from "./leftSidebar";
-import { Query } from "react-apollo";
+import { Query, Subscription } from "react-apollo";
 import gql from "graphql-tag";
+import { 
+	GET_MEMORY_USAGE_SUBSCRIPTION, 
+	GET_MEMWATCH_LEAK_SUBSCRIPTION,
+	GET_MEMWATCH_STATS_SUBSCRIPTION 
+} from "../../Queries";
+import MemoryUsagePie from "./monitor/MemoryUsagePie";
+import MemoryUsageLine from "./monitor/MemoryUsageLine";
 
 class Dashboard extends React.Component {
 	render(){
@@ -138,6 +145,29 @@ class Dashboard extends React.Component {
 		                  {/* ============================================================== */}
 		                </div>
 		              </div>
+					  <div id="memory-usage-charts">
+						<MemoryUsagePie/>
+						<MemoryUsageLine/>
+					  </div>
+						<br/>
+						<Subscription
+							subscription={GET_MEMWATCH_LEAK_SUBSCRIPTION}
+						>
+							{({ data, loading, error }) => {
+								if (loading) return loading;
+								if (error) return error.message;
+								return JSON.stringify(data)
+							}}
+						</Subscription>
+						<Subscription
+							subscription={GET_MEMWATCH_STATS_SUBSCRIPTION}
+						>
+							{({ data, loading, error }) => {
+								if (loading) return loading;
+								if (error) return error.message;
+								return JSON.stringify(data)
+							}}
+						</Subscription>
 		              {/* ============================================================== */}
 		            </div>
 		          </div>

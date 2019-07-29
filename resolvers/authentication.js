@@ -62,12 +62,13 @@ const connectIfUrlExists = async (context,file_data) => {
 
 
 const loginWithGoogle = async (root,args,context) => {
-	let res = await fetch(`https://www.googleapis.com/plus/v1/people/me?access_token=${args.google_accessToken}`)
+	let res = await fetch(`https://www.googleapis.com/plus/v1/people/me?access_token=${args.google_accessToken}&scope=openid%20profile%20email`)
 	let data = await res.json()
+	console.log(data)
 	let users = await context.db.query.users({ where: { oauth_id: data.id }})
 	let user = users[0];
 	if (!user){
-		let res = await fetch(`https://www.googleapis.com/plus/v1/people/me?access_token=${args.google_accessToken}`)
+		let res = await fetch(`https://www.googleapis.com/plus/v1/people/me?access_token=${args.google_accessToken}&scope=openid%20profile%20email`)
 		let data = await res.json()
 		let email = data.emails[0].value
 		let file_data = {
@@ -112,12 +113,13 @@ const loginWithGoogle = async (root,args,context) => {
 }
 
 const loginWithFacebook = async (root, args, context) => {
-	let res = await fetch(`https://graph.facebook.com/me?access_token=${args.facebook_accessToken}`)
+	let res = await fetch(`https://graph.facebook.com/me?access_token=${args.facebook_accessToken}&fields=name%2Cemail%2Cpicture`)
 	let data = await res.json()
 	let users = await context.db.query.users({ where: { oauth_id: data.id } })
 	let user = users[0];
+	console.log(user,555)
 	if (!user) {
-		let res = await fetch(`https://graph.facebook.com/me?access_token=${args.facebook_accessToken}`)
+		let res = await fetch(`https://graph.facebook.com/me?access_token=${args.facebook_accessToken}&fields=name%2Cemail%2Cpicture`)
 		let data = await res.json()
 		console.log(data)
 		let email = data.email
@@ -133,7 +135,7 @@ const loginWithFacebook = async (root, args, context) => {
 		}
 		let userParams = {
 			email: email,
-			full_name: data.displayName,
+			full_name: data.name,
 			password: uuid(),
 			role: "MEMBER",
 			libraries: {

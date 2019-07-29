@@ -7,7 +7,9 @@
     "algoliasearch": "^3.32.1",
     "algoliasearch-helper": "^2.28.0",
     "apollo-boost": "^0.3.1",
+    "apollo-link-ws": "^1.0.18",
     "bootstrap": "^4.3.1",
+    "chart.js": "^2.8.0",
     "graphql": "^14.1.1",
     "install": "^0.12.2",
     "instantsearch.js": "^3.4.0",
@@ -19,6 +21,7 @@
     "react": "^16.8.4",
     "react-animated-modal": "^1.1.1",
     "react-apollo": "^2.5.2",
+    "react-chartjs-2": "^2.7.6",
     "react-dom": "^16.8.4",
     "react-event-listener": "^0.6.6",
     "react-facebook-login": "^4.1.1",
@@ -31,6 +34,7 @@
     "react-scripts": "2.1.8",
     "react-toastify": "^5.3.2",
     "recompose": "^0.30.0",
+    "subscriptions-transport-ws": "^0.9.16",
     "uuid": "^3.3.2"
   },
   "scripts": {

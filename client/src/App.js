@@ -178,7 +178,7 @@ class _App extends Component {
                                             }} />
 
                                             <Route path="/admin" component={() => {
-                                                if (user.role !== "ADMIN"){
+                                                if (!user || user.role !== "ADMIN"){
                                                     window.location.href = "/"
                                                 }
                                                 return (

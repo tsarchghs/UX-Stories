@@ -1,6 +1,5 @@
 require('dotenv').config()
 const { GraphQLServer, PubSub } = require("graphql-yoga");
-
 const resolvers = require("./resolvers/resolvers");
 const { static } = require("express");
 const path = require("path");
@@ -9,7 +8,7 @@ const jwt = require("jsonwebtoken");
 const { formatError } = require("apollo-errors");
 const fs = require("fs");
 const prismaDb = require("./prismaDb");
-
+const cors = require("cors");
 // soft algolia sync script
 // require("./algolia/init")();
 
@@ -52,6 +51,8 @@ const server = new GraphQLServer({
 		}
 	}
 });
+
+server.express.use(cors())
 
 // the __dirname is the current directory from where the script is running
 server.express.use('/static', static(path.join(__dirname, 'public')))

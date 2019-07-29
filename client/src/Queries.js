@@ -629,8 +629,45 @@ const LOGIN_WITH_FACEBOOK_MUTATION = gql`
   }
 `
 
+const GET_MEMORY_USAGE_SUBSCRIPTION = gql`
+  subscription GetMemoryUsage {
+    getMemoryUsage {
+      freeMemory
+      totalMemory
+    }
+  }
+`
+
+const GET_MEMWATCH_LEAK_SUBSCRIPTION = gql`
+  subscription GetMemwatchLeak {
+    getMemwatchLeak {
+      start
+      end
+      growth
+      reason
+    }
+  }
+`
+
+const GET_MEMWATCH_STATS_SUBSCRIPTION = gql`
+  subscription GetMemwatchStats {
+    getMemwatchStats {
+      num_full_gc
+      num_inc_gc
+      heap_compactions
+      estimated_base
+      current_base
+      min
+      max
+      usage_trend
+    }
+  }
+`
 
 export {
+  GET_MEMWATCH_STATS_SUBSCRIPTION,
+  GET_MEMWATCH_LEAK_SUBSCRIPTION,
+  GET_MEMORY_USAGE_SUBSCRIPTION,
   LOGIN_WITH_FACEBOOK_MUTATION,
   UPDATE_CARD_MUTATION,
   LOGIN_WITH_GOOGLE_MUTATION,
