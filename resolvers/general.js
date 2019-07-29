@@ -155,24 +155,6 @@ const updateObject = async (parent, args, context) => {
 			}
 		});
 
-		console.log(formatted_data);
-		console.log(Object.keys(formatted_data));
-		// validate from formatted_data
-
-		// if (args.mutation_type === "createApp") {
-		// 	await checkValidation(createAppSchema, formatted_data)
-		// } else if (args.mutation_type === "createStory") {
-		// 	await checkValidation(createStorySchema, formatted_data)
-		// } else if (args.mutation_type === "createUser") {
-		// 	await checkValidation(createUserSchema, formatted_data)
-		// } else {
-		// 	await checkValidation(nameOnlyRequired, formatted_data);
-		// }
-
-		//
-
-
-
 		if (!field_info) {
 			throw new Error(`field_info arg missing info for ${x}`)
 		}

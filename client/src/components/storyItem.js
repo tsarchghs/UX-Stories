@@ -22,17 +22,17 @@ class _StoryItem extends React.Component {
                     modalIsOpen={this.state.currentModal === "PickMembershipModal"}
                     closeModal={(e) => this.setState({ currentModal: undefined })}
                 />
-                <div className="card" style={{backgroundImage:`url('${this.props.story.thumbnail.url}')`}}>
-                    <div className="card_layer">
-                        <h3 className="card_layer_child">{this.props.story.app.name}</h3>
-                        <h6 className="card_layer_child">{this.props.story.app.description}</h6>
+                <div className="card2" style={{backgroundImage:`url('${this.props.story.thumbnail.url}')`}}>
+                    <div className="card2_layer">
+                        <h3 className="card2_layer_child">{this.props.story.app.name}</h3>
+                        <h6 className="card2_layer_child">{this.props.story.app.description}</h6>
                             <img onClick={e => {
                                 this.props.history.push({
                                     pathname: `/story/${this.props.story.id}`,
                                     state: this.props.state                                
                                 })
-                            }} className="card_layer_child play_button" src="https://i0.wp.com/thorncliffe.com/wp-content/uploads/2017/05/video-play-icon.png?ssl=1" />
-                        <div className="card_layer_child dropup">
+                            }} className="card2_layer_child play_button" src="https://i0.wp.com/thorncliffe.com/wp-content/uploads/2017/05/video-play-icon.png?ssl=1" />
+                        <div className="card2_layer_child dropup">
                         <button class="dropbtn button full save_to_library">Save to library</button>
                         <div className="dropup-content">
                         {

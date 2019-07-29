@@ -62,6 +62,7 @@ const editProfile = async (parent,args,context,info) => {
 
 const getLoggedInUser = async (parent,args,context,info) => {
 	if (!context.user){
+		console.log(undefined)
 		return undefined;
 	}
 	return await context.db.query.user({

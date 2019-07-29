@@ -27,7 +27,12 @@ class AdminListPage extends React.Component {
 					value_str: ""
 				}
 			],
-			onSearch: undefined
+			onSearch: undefined,
+			refetchTable: undefined
+		}
+		this.skipBy = {
+			key: "skip",
+			value_int: 0
 		}
 		this.update = debounce(this.update.bind(this),150);
 		this.setOnSearch = this.setOnSearch.bind(this);
@@ -47,6 +52,16 @@ class AdminListPage extends React.Component {
 	render(){
 		let create_url = this.props.location.pathname + "#create";
 		let showCreate = this.props.location.hash === "#create"
+
+		let showFields = []
+		this.props.fields.map(field => !field.hideTable ? showFields.push(field) : null);
+		let get_obj_connection_variables = {
+			connection_type: this.props.connection_type,
+			fields: showFields.map(field => field.fetch ? field.fetch : field),
+			filterBy: this.state.filterBy.concat([this.skipBy]),
+			where: this.state.where
+		}
+
 		return (
 			<div>
 		      <div className="dashboard-wrapper">
@@ -104,23 +119,27 @@ class AdminListPage extends React.Component {
 		                {
 		                	showCreate
 		                	? <CreateObject 
+								get_obj_connection_variables={get_obj_connection_variables}
 		                		fields={this.props.fields}
 		                		typename={this.props.typename}
 		                		location={this.props.location}
 		                		typename={this.props.typename}
 		                		mutation_type={this.props.mutation_type}
-												afterCreate={this.props.afterCreate}
+								afterCreate={this.props.afterCreate}
 		                	/>
 		                	: <Table 
 			                	connection_type={this.props.connection_type}
+								get_obj_connection_variables={get_obj_connection_variables}
+								skipBy={this.skipBy}
 			                	fields={this.props.fields}
 			                	filterBy={this.state.filterBy}
 			                	where={this.state.where}
 			                	delete_type={this.props.delete_type}
+								deleteObjectFields={this.props.deleteObjectFields}
 			                	first={this.props.first}
-												typename_url_friendly={this.props.typename_url_friendly}
+								typename_url_friendly={this.props.typename_url_friendly}
 			                	setOnSearch={this.setOnSearch}
-												afterDelete={this.props.afterDelete}
+								afterDelete={this.props.afterDelete}
 			                />
 		                }
 		              </div>

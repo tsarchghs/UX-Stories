@@ -12,9 +12,15 @@ const jobResolvers = require("./models/Job");
 const generalResolvers = require("./general");
 const algoliaResolvers = require("./algolia");
 const paymentResolvers = require("./payment");
-
+const monitorResolvers = require("./monitor/");
 
 module.exports = {
+	Subscription: {
+		getSystemCpuUsage: monitorResolvers.getSystemCpuUsage,
+		getMemwatchStats: monitorResolvers.getMemwatchStats,
+		getMemwatchLeak: monitorResolvers.getMemwatchLeak,
+		getMemoryUsage: monitorResolvers.getMemoryUsage
+	},
 	Query: {
 		getLoggedInUser: userResolvers.getLoggedInUser,
 		countApps: appResolvers.countApps,

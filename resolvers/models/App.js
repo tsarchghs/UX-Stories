@@ -11,11 +11,18 @@ const countApps = async (root,args,context) => {
 }
 
 const app = async (root,args,context,info) => {
-	return await context.db.query.app({
-		where: {
-			id: args.id
-		}
-	},info)
+	if (args.contains_story){
+		let apps = await context.db.query.apps({
+			where: { stories_some: { id: args.contains_story }}
+		})
+		return apps[0];
+	} else {
+		return await context.db.query.app({
+			where: {
+				id: args.id
+			}
+		},info)
+	}
 }
 
 const apps = async (root,args,context,info) => {

@@ -6,7 +6,7 @@ import Alert from "../../alert";
 import gql from "graphql-tag";
 import { handleUploadPhotoInput } from "../../../helpers";
 import $ from "jquery";
-
+import { getObjectConnectionQuery } from "../../../Queries";
 const CreateObjectMutation = gql`
 	mutation CreateObject(
 		$data: JSON_OBJECT_Input!
@@ -72,12 +72,18 @@ class CreateObject extends React.Component {
 					                			data: { repr },
 					                			mutation_type: this.props.mutation_type,
 					                			fields_info: { repr: JSON.stringify(this.props.fields) }
-					                		}
+					                		},
+											refetchQueries: [
+												{
+													query: getObjectConnectionQuery,
+													variables: this.props.get_obj_connection_variables
+												}
+											]
 					                	})
-														if (this.props.afterCreate){
-															let obj = JSON.parse(res.data.createObject.repr);
-															this.props.afterCreate(obj.id)
-														}
+										if (this.props.afterCreate){
+											let obj = JSON.parse(res.data.createObject.repr);
+											this.props.afterCreate(obj.id)
+										}
 					                }}>
 						                <div className="row">
 						                  <div className="col-md-8">

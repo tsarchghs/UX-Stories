@@ -74,7 +74,7 @@ type Customer {
   source: Source!
 }
 
-type Subscription {
+type _Subscription {
   id: ID!
   cancel_at_period_end: Boolean!
   status: SUBSCRIPTION_STATUS!
@@ -99,7 +99,7 @@ type User {
   job: Job
   role: AccountType!
   customer: Customer
-  subscription: Subscription
+  subscription: _Subscription
   profile_photo: File
   apps: [App!]!
   libraries: [Library!]!
@@ -310,9 +310,56 @@ type ToggleStoryInfo {
   library: Library!
 }
 
+type MemoryUsage {
+  freeMemory: Float!
+  totalMemory: Float!
+}
+
+type MemwatchLeak {
+  start: String
+  end: String
+  growth: Int
+  reason: String
+}
+
+type MemwatchStats {
+  num_full_gc: Int
+  num_inc_gc: Int
+  heap_compactions: Int
+  estimated_base: Int
+  current_base: Int
+  min: Int
+  max: Int
+  usage_trend: Int
+}
+
+type CPU_INFO_TIMES {
+  user: Int!
+  nice: Int!
+  sys: Int!
+  idle: Int!
+  irq: Int!
+}
+
+type CPU_INFO {
+  core: Int!
+  model: String!
+  speed: Int!
+  times: CPU_INFO_TIMES!
+  percent: Float!
+}
+
+type Subscription {
+  getMemwatchStats: MemwatchStats!
+  getMemwatchLeak: MemwatchLeak! 
+  getMemoryUsage: MemoryUsage!
+  getSystemCpuUsage: CPU_INFO!
+}
+
+
 type Query {
   getLoggedInUser: User
-  app(id: ID!,stories_first: Int): App
+  app(id: ID,stories_first: Int,contains_story: ID): App
   apps(appFilterInput: AppFilterInput): [App!]!
   appVersions(
     app: ID

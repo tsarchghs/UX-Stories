@@ -165,7 +165,9 @@ const onAlgoliaError = (indexHelpers,setState,obj) => {
 }
 
 const setInspectLetUser = ({userId,email}) => {
-  window.__insp.push([userId,email])
+  if (window.location.href.indexOf("localhost") === -1){
+    window.__insp.push([userId,email])
+  }
 }
 
 export {

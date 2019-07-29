@@ -1,5 +1,6 @@
 require('dotenv').config()
-const graphqlServer = require("graphql-yoga").GraphQLServer;
+const { GraphQLServer, PubSub } = require("graphql-yoga");
+
 const resolvers = require("./resolvers/resolvers");
 const { static } = require("express");
 const path = require("path");
@@ -16,15 +17,15 @@ if (!fs.existsSync("./public/file")){
 	fs.mkdirSync("./public/file");
 }
 
-const server = new graphqlServer({
+let pubsub = new PubSub();
+const server = new GraphQLServer({
 	endpoint: "/graphql",
 	typeDefs: "./schema.graphql", 
 	resolvers,
 	context: async (data) => {
-		console.log(Object.keys(data))
 		var user = undefined
 		var loggedIn = false;
-		if (data.request.headers["authorization"]){
+		if (data.request && data.request.headers["authorization"]){
 			const token = data.request.headers["authorization"].split(" ")[1];
 			const decoded = await jwt.verify(token,process.env.jwt_secret,(err,decoded) => {
 				if (err) {
@@ -46,7 +47,8 @@ const server = new graphqlServer({
 			req: data.request,
 			user: user,
 			loggedIn,
-			db: prismaDb
+			db: prismaDb,
+			pubsub
 		}
 	}
 });
@@ -56,8 +58,9 @@ server.express.use('/static', static(path.join(__dirname, 'public')))
 if (process.env.PRODUCTION){
 	server.express.use(static(path.join(__dirname, './client/build')));
 
-	server.express.get('/*', function (req, res) {
-	  res.sendFile(path.join(__dirname, './client/build', 'index.html'));
+	server.express.get('/*', async (req, res) => {
+		// let filePath = path.resolve(__dirname, 'client/build', 'index.html');
+		res.sendFile(path.join(__dirname, './client/build', 'index.html'));
 	});
 }
 

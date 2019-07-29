@@ -8,14 +8,12 @@ import { getObjectConnectionQuery } from "../../../Queries";
 class _Table extends React.Component {
 	constructor(props){
 		super(props);
-		this.skipBy =  { 
-			key: "skip",
-			value_int: 0
+		this.state = {
+			loading: false
 		}
 		this.refs = {}
 		this.last_skip_value = undefined;
 		this.deleted = 0;
-		this.refetch = undefined
 		this.passOnSearch = false;
 	}
 	render(){
@@ -24,31 +22,30 @@ class _Table extends React.Component {
 		let get_obj_connection_variables = {
 			connection_type: this.props.connection_type,
 			fields: showFields.map(field => field.fetch ? field.fetch : field),
-			filterBy: this.props.filterBy.concat([this.skipBy]),
+			filterBy: this.props.filterBy.concat([this.props.skipBy]),
 			where: this.props.where
 		}
 		return (
 		<Query 
         	query={getObjectConnectionQuery}
-        	notifyOnNetworkStatusChange={false}
-				variables={get_obj_connection_variables}
+			variables={this.props.get_obj_connection_variables}
         >
         	{ ({loading,error,data,fetchMore,refetch,networkStatus,updateQuery}) => {	
-        		if (!this.refetch) {
-        			this.refetch = refetch;
-        		}
+				if (this.state.loading) loading = true;
         		if (!this.passOnSearch){
 	        		let onSearch = (val) => {
+						this.setState({loading:true})
 	        			let variables= {
 			        		connection_type: this.props.connection_type,
 			        		fields: showFields.map(field => field.fetch ? field.fetch : field),
-			        		filterBy: this.props.filterBy.concat([this.skipBy]),
+			        		filterBy: this.props.filterBy.concat([this.props.skipBy]),
 			        		where: this.props.where
 	    				};
 	    				let getContainsItem = undefined;
 	    				variables.where.map(item => item.key.indexOf("_contains") ? (getContainsItem = item) : null);
 	    				getContainsItem.value_str = val
 	        			if (!val){
+							this.setState({ loading: false })	    
 	        				refetch(variables); // :'(
 	        				return;
 	        			}
@@ -58,7 +55,8 @@ class _Table extends React.Component {
 	    							variables
 	    						})
 	    						updateQuery((prev, options) => {
-	    							return objs
+									this.setState({ loading: false })	    							
+									return objs
 	    						})
 	    						return;
 	    				} catch (e){
@@ -72,6 +70,7 @@ class _Table extends React.Component {
 	        						variables,
 	        						data: fetchMoreResult
 	        					})
+								this.setState({ loading: false })	    
 	        					return fetchMoreResult
 	        				}
 	        			})
@@ -81,6 +80,9 @@ class _Table extends React.Component {
         			this.passOnSearch = true;
         		}
         		let onLoadMore = () => {
+					console.log(this.loading,919)
+					if (this.loading) return;
+					this.loading = true;
         			let objects = JSON.parse(data.getObjectConnection.nodes.repr);
         			let skipBy = {
         				key: "skip",
@@ -100,6 +102,7 @@ class _Table extends React.Component {
             				let prevNodes = JSON.parse(prev.getObjectConnection.nodes.repr)
             				let combined_nodes = prevNodes.concat(fetchMoreResultNodes);
             				fetchMoreResult.getObjectConnection.nodes.repr = JSON.stringify(combined_nodes);
+							this.loading = false;
             				return fetchMoreResult;
             			}
         			})
@@ -202,13 +205,13 @@ class _Table extends React.Component {
 					                              			let data = await deleteObject({
 					                              				variables:{
 					                              					delete_type: this.props.delete_type,
-					                              					fields: ["id"],
+					                              					fields: this.props.deleteObjectFields ||  ["id"],
 					                              					id: object.id
 					                              				}
 					                              			})
 																							if (this.props.afterDelete){
 																								console.log(object.id,"ID");
-																								this.props.afterDelete(object.id);
+																								this.props.afterDelete(object.id,data);
 																							}
 					                              			this.deleted++;
 				                              				// this.refs[object.id].innerHTML = ""

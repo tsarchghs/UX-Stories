@@ -1,4 +1,11 @@
-endpoint: https://eu1.prisma.sh/gjergj-kadriu-c6f550/stories/dev
+# endpoint: https://eu1.prisma.sh/gjergj-kadriu-c6f550/stories/dev
+# datamodel: datamodel.prisma
+
+# generate:
+#   - generator: javascript-client
+#     output: ./generated/prisma-client/
+
+endpoint: http://localhost:4466/
 datamodel: datamodel.prisma
 
 generate:

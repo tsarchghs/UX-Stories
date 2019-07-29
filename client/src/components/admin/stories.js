@@ -5,11 +5,13 @@ import AdminListPage from "./general/AdminListPage";
 import gql from "graphql-tag";
 import UpdateObject from "./general/UpdateObject";
 import {
+	APP_QUERY_SHALLOW,
 	ADD_ALGOLIA_INDEX_QUERY,
 	UPDATE_ALGOLIA_INDEX_QUERY,
 	DELETE_ALGOLIA_INDEX_QUERY
 } from "../../Queries";
 import { algoliaSync } from "./helpers";
+import apolloClient from "../../apolloClient"
 
 let fields = [
 	"id",
@@ -76,17 +78,32 @@ class AdminStories extends React.Component {
 		        <Header user={this.props.user}/>
 		        <LeftSidebar/>
 		        <AdminListPage
-		          typename="story"
-		          typename_plural="stories"
-							typename_url_friendly="story"
-		          connection_type="storiesConnection"
-		          search_by="id_contains"
-		          delete_type="deleteStory"
-		          mutation_type="createStory"
-				  afterDelete={obj_id => algoliaSync(obj_id, "stories_index", DELETE_ALGOLIA_INDEX_QUERY)}
-				  afterCreate={obj_id => algoliaSync(obj_id, "stories_index", ADD_ALGOLIA_INDEX_QUERY)}
-		          fields={fields}
-		          first={5}
+					typename="story"
+					typename_plural="stories"
+					typename_url_friendly="story"
+					connection_type="storiesConnection"
+					search_by="id_contains"
+					delete_type="deleteStory"
+					mutation_type="createStory"
+					deleteObjectFields={["id","app { id }"]}
+					afterDelete={async (obj_id,res) => {
+						let obj = JSON.parse(res.data.deleteObject.repr)
+						algoliaSync(obj.app.id, "apps_index", UPDATE_ALGOLIA_INDEX_QUERY)
+						algoliaSync(obj_id, "stories_index", DELETE_ALGOLIA_INDEX_QUERY)
+					}}
+					afterCreate={async obj_id => {
+						let res = await apolloClient.query({
+							query: APP_QUERY_SHALLOW,
+							variables: {
+								contains_story: obj_id
+							}
+						})
+						console.log(res)
+						algoliaSync(res.data.app.id, "apps_index", UPDATE_ALGOLIA_INDEX_QUERY)
+						algoliaSync(obj_id, "stories_index", ADD_ALGOLIA_INDEX_QUERY)
+					}}
+					fields={fields}
+					first={5}
 		        />
 	       </div>
 		);

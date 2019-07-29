@@ -69,14 +69,14 @@ const updateLibrariesQueryCache = async (client,action,library,story) => {
                     }
                     if (exists) return;
                     console.log(story,999)
-                    story.__typename = "Story";
-                    story.app.appCategory.__typename = "AppCategory";
-                    story.video.__typename = "Video";
-                    story.thumbnail.__typename = "Thumbnail"
-                    story.video.file.__typename = "File";
-                    story.appVersions = setTypename(story.appVersions,"AppVersion")
-                    story.storyCategories = setTypename(story.storyCategories,"StoryCategory")
-                    story.storyElements = setTypename(story.storyElements, "StoryElement")
+                    // story.__typename = "Story";
+                    // story.app.appCategory.__typename = "AppCategory";
+                    // story.video.__typename = "Video";
+                    // story.thumbnail.__typename = "Thumbnail"
+                    // story.video.file.__typename = "File";
+                    // story.appVersions = setTypename(story.appVersions,"AppVersion")
+                    // story.storyCategories = setTypename(story.storyCategories,"StoryCategory")
+                    // story.storyElements = setTypename(story.storyElements, "StoryElement")
 
 
                     lib.stories.push(story)

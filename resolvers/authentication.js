@@ -92,7 +92,8 @@ const loginWithGoogle = async (root,args,context) => {
 				}
 			},
 			google_accessToken: args.google_accessToken,
-			oauth_id: data.id
+			oauth_id: data.id,
+			job: { connect: { id: process.env.DEFAULT_JOB_ID } }
 		}
 		user = await context.db.mutation.createUser({data: userParams});
 	}
@@ -118,21 +119,22 @@ const loginWithFacebook = async (root, args, context) => {
 	if (!user) {
 		let res = await fetch(`https://graph.facebook.com/me?access_token=${args.facebook_accessToken}`)
 		let data = await res.json()
+		console.log(data)
 		let email = data.email
-		let file_data = {
-			filename: "undefined",
-			mimetype: "undefined",
-			encoding: "undefined",
-			url: data.profile.data.url
+		let file;
+		if (data.profile){
+			let file_data = {
+				filename: "undefined",
+				mimetype: "undefined",
+				encoding: "undefined",
+				url: data.profile.data.url
+			}
+			file = await connectIfUrlExists(context, file_data);
 		}
-		let file = await connectIfUrlExists(context, file_data);
 		let userParams = {
 			email: email,
 			full_name: data.displayName,
 			password: uuid(),
-			profile_photo: {
-				connect: { id: file.id }
-			},
 			role: "MEMBER",
 			libraries: {
 				create: {
@@ -141,8 +143,10 @@ const loginWithFacebook = async (root, args, context) => {
 				}
 			},
 			facebook_accessToken: args.facebook_accessToken,
-			oauth_id: data.id	
+			oauth_id: data.id,
+			job: { connect: { id: process.env.DEFAULT_JOB_ID } }
 		}
+		if (file ) userParams["profile_photo"] = { connect: { id: file.id }}
 		user = await context.db.mutation.createUser({ data: userParams });
 	}
 	if (user.facebook_accessToken) {
@@ -216,7 +220,8 @@ const signUp = async (root,args,context) => {
 				custom_updatedAt: new Date()
 			}
 		},
-		oauth_id:uuid()
+		oauth_id:uuid(),
+		job: { connect: { id: process.env.DEFAULT_JOB_ID }}
 	}
 	if (args.job){
 		userParams["job"] = {

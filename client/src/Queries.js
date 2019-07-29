@@ -238,10 +238,12 @@ const VERIFY_FORGOT_PASSWORD_MUTATION = gql`
 
 const APP_QUERY = gql`
   query App(
-    $id: ID!
+    $id: ID
+    $contains_story: ID 
   ){
     app(
       id: $id
+      contains_story: $contains_story
     ){
       id
       name
@@ -259,6 +261,20 @@ const APP_QUERY = gql`
         id
         url
       }
+    }
+  }
+`
+
+const APP_QUERY_SHALLOW = gql`
+  query App(
+    $id: ID
+    $contains_story: ID 
+  ){
+    app(
+      id: $id
+      contains_story: $contains_story
+    ){
+      id
     }
   }
 `
@@ -651,5 +667,6 @@ export {
   APP_VERSIONS_QUERY,
   APP_CATEGORIES_QUERY,
   SAVE_TO_LIBRARY_MUTATION,
-  STORIES_QUERY_WITH_APP
+  STORIES_QUERY_WITH_APP,
+  APP_QUERY_SHALLOW
 }

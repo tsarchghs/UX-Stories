@@ -23,9 +23,7 @@ class Header extends React.Component {
             <a className="navbar-brand" href="../index.html" src="/assets/toolkit/images/logo.svg"><img src="/assets/toolkit/images/logo.svg" /></a>
             <div className="collapse navbar-collapse" id="navbarSupportedContent">
               <ul className="navbar-nav ml-auto navbar-right-top">
-                <Link to="/">
-                  <p style={{marginTop:12}} className="btn btn-primary float-right">Visit as user</p>
-                </Link>
+                <p onClick={e => window.location.href = "/"} style={{marginTop:12}} className="btn btn-primary float-right">Visit as user</p>
                 <li className="nav-item dropdown nav-user">
                   <p style={{cursor:"pointer"}} onClick={this.toggleShow} className="nav-link nav-user-img" id="navbarDropdownMenuLink2" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><img src={`${this.props.user && this.props.user.profile_photo ? this.props.user.profile_photo.url : "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQOo9ftjYQCU8HW1YByx0oAQdegRxO51mQN0tKKenGRnDZb-_D6"}`} alt className="user-avatar-md rounded-circle" /></p>
                   <div className={`dropdown-menu dropdown-menu-right nav-user-dropdown ${this.state.show ? "show":""}`} aria-labelledby="navbarDropdownMenuLink2">
@@ -35,7 +33,7 @@ class Header extends React.Component {
                       <span className="status" /><span className="ml-2">Available</span>
                     </div>
                     <Link to="/profile">
-                      <p className="dropdown-item" href="#"><i className="fas fa-user mr-2" />Account</p>
+                      <p onClick={e => window.location.href = "/"} className="dropdown-item" href="#"><i className="fas fa-user mr-2" />Account</p>
                     </Link>
                     <Link to="/admin/settings">
                       <p className="dropdown-item" href="#"><i className="fas fa-cog mr-2" />Setting</p>
