@@ -223,7 +223,7 @@ const signUp = async (root,args,context) => {
 			}
 		},
 		oauth_id:uuid(),
-		job: { connect: { id: process.env.DEFAULT_JOB_ID }}
+		job: { connect: { id: args.job }}
 	}
 	if (args.job){
 		userParams["job"] = {

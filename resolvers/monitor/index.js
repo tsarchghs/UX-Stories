@@ -12,7 +12,7 @@ module.exports = {
         subscribe: (parent, args, { pubsub }) => {
             memwatch.on('stats', stats => {
                 console.log(stats)
-                pubsub.publish(GET_MEMWATCH_LEAK, { getMemwatchStats: stats })
+                pubsub.publish(GET_MEMWATCH_STATS, { getMemwatchStats: stats })
             })
             return pubsub.asyncIterator(GET_MEMWATCH_STATS)
         }
@@ -28,8 +28,7 @@ module.exports = {
     },
     getSystemCpuUsage: {
         subscribe: (parent, args, { pubsub }) => {
-            console.log(123)
-            args.everyMs = 1000;
+            args.everyMs = 5000;
             setInterval(() => {
                 let cb = cpu => {
                     pubsub.publish(CHANNEL_GET_SYSTEM_CPU_USAGE, { getSystemCpuUsage: cpu });

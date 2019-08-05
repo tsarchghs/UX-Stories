@@ -48,16 +48,6 @@ const fields = [
 		primitive: true,
 		queryName: "role",
 		options: ["MEMBER","ADMIN"]
-	},
-	{
-		type: "job",
-		show: "Job",
-		show_plural: "Jobs",
-		fetch: "job { id name }",
-		queryName: "jobs",
-		create_queryName: "job",
-		update_queryName: "job",
-		query: gql`query { jobs { id name } }`
 	}
 ]
 class Users extends React.Component {

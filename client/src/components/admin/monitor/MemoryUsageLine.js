@@ -11,7 +11,7 @@ class MemoryUsageLine extends React.Component {
             labels: [],
             datasets: [
                 {
-                    label: 'My First dataset',
+                    label: 'Memory Usage',
                     fill: false,
                     lineTension: 0.1,
                     backgroundColor: 'rgba(75,192,192,0.4)',
@@ -49,13 +49,13 @@ class MemoryUsageLine extends React.Component {
                     let lastData = currentData.length ? currentData[currentData.length - 1] : 0;
                     if (
                         this.allowUpdate && (
-                            Math.abs(lastData-(totalMemory-freeMemory)) > 100 || 
+                            Math.abs(lastData - (totalMemory - freeMemory)) > 50 ||
                             this.chartData.labels.length < 10
                         )
-                        
+
                     ) {
                         this.allowUpdate = false;
-                        if (this.chartData.labels.length > 10){
+                        if (this.chartData.labels.length > 10) {
                             this.chartData.labels.shift();
                             this.chartData.datasets[0].data.shift();
                         }
@@ -67,6 +67,7 @@ class MemoryUsageLine extends React.Component {
                         this.chartReference && this.chartReference.chartInstance.update()
                     }
                     return (
+                        <div style={{ width: "50%", height: "50%", marginTop: 40}}>
                             <Line 
                                 options={{
                                     events: ["click"],
@@ -74,15 +75,17 @@ class MemoryUsageLine extends React.Component {
                                         yAxes: [{
                                             display: true,
                                             ticks: {
-                                                beginAtZero: true ,
+                                                beginAtZero: true,
                                                 suggestedMax: totalMemory
                                             }
                                         }]
                                     }
                                 }}
                                 ref={(reference) => this.chartReference = reference}
-                                data={this.chartData} 
+                                data={this.chartData}
                             />
+                            Updated only when difference between last stats is x > 50
+                        </div>
                     )
                 }}
             </Subscription>

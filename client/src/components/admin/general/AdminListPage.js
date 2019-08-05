@@ -10,6 +10,9 @@ import CreateObject from "./CreateObject";
 class AdminListPage extends React.Component {
 	constructor(props){
 		super(props);
+		if (this.props.location){
+			console.log(this.props.location.state)
+		}
 		this.state = {
 			filterBy: [
 				{

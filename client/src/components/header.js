@@ -1,9 +1,10 @@
 import React from "react";
-import { Link } from "react-router-dom";
+import { Link, withRouter } from "react-router-dom";
 import DropdownWrapper from "./wrappers/dropdownWrapper";
 import Offline from "./OnlineDetector/Offline";
+import { if_user_call_func } from "../helpers";
 
-class Header extends React.Component {
+class _Header extends React.Component {
 	constructor(props){
 		super(props)
 		this.profile_img = React.createRef()
@@ -65,8 +66,13 @@ class Header extends React.Component {
 									</div>
 									<hr />
 									<div className="profile-nav__dropdown--list">
-										<p className="bold">
-										<Link to="/invoices">Invoices</Link></p>
+										<div onClick={() => if_user_call_func(this.props.user, () => {
+											this.props.history.push("/invoices")
+										}, this.setState.bind(this))}>
+											<p className="bold">
+												Invoices
+											</p>
+										</div>
 										<p className="bold"><a href="#">Become Contributor</a></p>
 										<hr />
 										<p className="bold"><a href="#">About</a></p>
@@ -90,4 +96,4 @@ class Header extends React.Component {
 	}
 }
 
-export default Header;
+export default withRouter(_Header);

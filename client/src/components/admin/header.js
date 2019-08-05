@@ -32,9 +32,7 @@ class Header extends React.Component {
                         {this.props.user.full_name}</h5>
                       <span className="status" /><span className="ml-2">Available</span>
                     </div>
-                    <Link to="/profile">
-                      <p onClick={e => window.location.href = "/"} className="dropdown-item" href="#"><i className="fas fa-user mr-2" />Account</p>
-                    </Link>
+                    <p onClick={e => window.location.href = "/"} className="dropdown-item" href="#"><i className="fas fa-user mr-2" />Account</p>
                     <Link to="/admin/settings">
                       <p className="dropdown-item" href="#"><i className="fas fa-cog mr-2" />Setting</p>
                     </Link>

@@ -57,6 +57,7 @@ const editProfile = async (parent,args,context,info) => {
 		const profile_image = await fileHandling.processUpload(photo_data.base64,photo_data.mimetype,context);
 		data["profile_photo"] = {connect:{id:profile_image.id}};
 	}
+	//todo email
 	return await context.db.mutation.updateUser({data,where:{id:context.user.id}},info);
 }
 
@@ -76,7 +77,7 @@ const getDefaultSource = (sources,source_id) => {
 	}
 }
 const User = {
-	subscription: async (parent,args,context) => {
+	_subscription: async (parent,args,context) => {
 		if (!context.user.subscription_id){
 			return undefined
 		}

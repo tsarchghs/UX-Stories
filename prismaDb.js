@@ -6,5 +6,6 @@ const prismaDb = new Prisma({
 	endpoint:"http://localhost:4466/",
 	debug: false
 })
+console.log(prismaDb.mutation.executeRaw)
 
 module.exports = prismaDb

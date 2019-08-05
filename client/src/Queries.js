@@ -140,7 +140,7 @@ const GET_LOGGED_IN_USER_QUERY = gql`
       email
       role
       google_accessToken
-      subscription {
+      _subscription {
         id
         status
         cancel_at_period_end
@@ -153,7 +153,7 @@ const GET_LOGGED_IN_USER_QUERY = gql`
         id
         url
       }   
-      subscription {
+      _subscription {
         id
         status
       }
@@ -441,6 +441,10 @@ const EDIT_PROFILE_MUTATION = gql`
         password: $password 
       ) {
         id
+        job {
+          id
+          name
+        }
         profile_photo {
           id
           url
@@ -664,7 +668,43 @@ const GET_MEMWATCH_STATS_SUBSCRIPTION = gql`
   }
 `
 
+const GET_SYSTEM_CPU_USAGE_SUBSCRIPTION = gql`
+  subscription GetSystemCpuUsage  {
+    getSystemCpuUsage {
+			core
+      model
+      speed
+      percent
+      times {
+				irq
+        idle
+        nice
+        user
+        sys
+      }
+    }
+  }
+`
+
+const CREATE_PAGE_VIEW_MUTATION = gql`
+  mutation CreatePageView(
+    $user: ID
+    $pathname: String!
+    $agent: String!
+  ){
+    createPageView(
+      user: $user
+      pathname: $pathname
+      agent: $agent
+    ){
+      id
+    }
+  }
+`
+
 export {
+  CREATE_PAGE_VIEW_MUTATION,
+  GET_SYSTEM_CPU_USAGE_SUBSCRIPTION,
   GET_MEMWATCH_STATS_SUBSCRIPTION,
   GET_MEMWATCH_LEAK_SUBSCRIPTION,
   GET_MEMORY_USAGE_SUBSCRIPTION,

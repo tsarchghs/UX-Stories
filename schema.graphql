@@ -99,11 +99,12 @@ type User {
   job: Job
   role: AccountType!
   customer: Customer
-  subscription: _Subscription
+  _subscription: _Subscription
   profile_photo: File
   apps: [App!]!
   libraries: [Library!]!
   invoices: [Invoice!]!
+  pageViews: [PageView!]!
 }
 
 type AppVersion {
@@ -318,19 +319,19 @@ type MemoryUsage {
 type MemwatchLeak {
   start: String
   end: String
-  growth: Int
+  growth: Float
   reason: String
 }
 
 type MemwatchStats {
-  num_full_gc: Int
-  num_inc_gc: Int
-  heap_compactions: Int
-  estimated_base: Int
-  current_base: Int
-  min: Int
-  max: Int
-  usage_trend: Int
+  num_full_gc: Float
+  num_inc_gc: Float
+  heap_compactions: Float
+  estimated_base: Float
+  current_base: Float
+  min: Float
+  max: Float
+  usage_trend: Float
 }
 
 type CPU_INFO_TIMES {
@@ -349,6 +350,15 @@ type CPU_INFO {
   percent: Float!
 }
 
+type PageView {
+  id: ID!
+  user: User!
+  pathname: String!
+  agent: String!
+  createdAt: String!
+  updatedAt: String!
+}
+
 type Subscription {
   getMemwatchStats: MemwatchStats!
   getMemwatchLeak: MemwatchLeak! 
@@ -365,6 +375,11 @@ type Query {
     app: ID
   ): [AppVersion!]!
   appCategories: [AppCategory!]!
+
+  pageViews(
+    user: ID
+    pathname: String
+  ): [PageView!]!
 
   getObject(
     id: ID!
@@ -424,11 +439,11 @@ type Mutation {
   ): AuthData!
   
   updateCard(stripe_token: String!): Source!
-  cancelSubscription: Subscription!
-  renewSubscription: Subscription!
+  cancelSubscription: _Subscription!
+  renewSubscription: _Subscription!
   payment(
     stripe_token: String!
-  ): Subscription!
+  ): _Subscription!
 
   updateAlgoliaIndex(
     indexName: String!
@@ -519,6 +534,12 @@ type Mutation {
     appCategory: String!
     company: String!
   ): App!
+
+  createPageView(
+    user: ID
+    pathname: String!
+    agent: String!
+  ): PageView
 
   editApp(
     id: ID!

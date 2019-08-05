@@ -3,9 +3,12 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "@amcharts/amcharts3-react": "^3.1.0",
     "@coreui/react": "^2.5.1",
     "algoliasearch": "^3.32.1",
     "algoliasearch-helper": "^2.28.0",
+    "anychart": "^8.6.0",
+    "anychart-react": "^1.4.1",
     "apollo-boost": "^0.3.1",
     "apollo-link-ws": "^1.0.18",
     "bootstrap": "^4.3.1",

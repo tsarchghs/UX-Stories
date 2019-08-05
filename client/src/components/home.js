@@ -26,26 +26,34 @@ class _Home extends React.Component {
       if (filterBy.appCategory && filterBy.appCategory !== "all"){
         appsIndexHelper.toggleFacetRefinement("appCategory.name",filterBy.appCategory);
       }
-    }
-    this.state = {
-      appCategories:undefined,
-      apps: undefined,
-      show_skeleton: true,
-      reached_end: false,
-      nothing_to_show: false,
-      filterBy: filterBy,
-      show_email: true,
-      email: undefined,
-      appName_contains: "",
-      currentModal: undefined
+      this.state = this.props.location.state.savedState
+      console.log(this.state,911)
+    } else {
+      this.state = {
+        appCategories:undefined,
+        apps: undefined,
+        show_skeleton: true,
+        reached_end: false,
+        nothing_to_show: false,
+        filterBy,
+        show_email: true,
+        email: undefined,
+        appName_contains: "",
+        currentModal: undefined,
+        scrollPos: {
+          scrollX: window.scrollX,
+          scrollY: window.scrollY
+        },
+        hitsPerPage: 4
+      }
     }
     this.skip = 0;
     this.loadMore = this.loadMore.bind(this);
     this.toggle = this.toggle.bind(this);
     this.update = debounce(this.update.bind(this),150);
-    this.hitsPerPage = 4
     this.appCategoryToggleButton = React.createRef()
     this.setState = this.setState.bind(this)
+    this.onScroll = this.onScroll.bind(this)
   }
   filterCategory(appCategory) {
     gaEvents.Home.filterCategory(appCategory)
@@ -53,7 +61,7 @@ class _Home extends React.Component {
       this.setState(prevState => {
         let state = prevState;
         state.filterBy.appCategory = appCategory.name
-        appsIndexHelper.state.hitsPerPage = this.hitsPerPage
+        appsIndexHelper.state.hitsPerPage = this.state.hitsPerPage
         this.setState({apps:undefined,show_skeleton:true})
         appsIndexHelper.state.facetsRefinements["appCategory.name"] = []
         if (appCategory.name !== "all"){
@@ -64,6 +72,7 @@ class _Home extends React.Component {
     }
   }
   componentWillUnmount(){
+    window.removeEventListener('scroll', this.onScroll)
     appsIndexHelper.setQuery("");
     appsIndexHelper.clearRefinements()
   }
@@ -107,7 +116,22 @@ class _Home extends React.Component {
       return prevState;
     })
   }
+  onScroll(){
+    this.setState({
+        scrollPos: {
+          scrollX: window.scrollX,
+          scrollY: window.scrollY
+        }
+    })
+  }
 	async componentDidMount(){
+    window.addEventListener('scroll', this.onScroll)
+    if (this.props.location && this.props.location.state && this.props.location.state.savedState){
+      window.scrollTo(
+        this.props.location.state.savedState.scrollPos.scrollX,
+        this.props.location.state.savedState.scrollPos.scrollY 
+      )
+    }
     this.update();
   }
   async loadMore() {
@@ -115,7 +139,7 @@ class _Home extends React.Component {
     this.setState({
       show_skeleton:true
     })
-    appsIndexHelper.state.hitsPerPage += this.hitsPerPage;
+    appsIndexHelper.state.hitsPerPage += this.state.hitsPerPage;
     this.update();
   }
 	render() {
@@ -226,7 +250,9 @@ class _Home extends React.Component {
                 let to = {
                   pathname: `/app/${app.id}`,
                   state: {
-                    filterBy: this.state.filterBy
+                    filterBy: this.state.filterBy,
+                    savedState: this.state,
+                    hitsPerPage: this.state.hitsPerPage
                   }
                 }
                 return (

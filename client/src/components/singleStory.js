@@ -24,6 +24,7 @@ import gaEvents from "../gaEvents";
 class SingleStory extends React.Component {
 	constructor(props) {
 		super(props);
+		console.log(this.props.location)
 		this.state = {
 			app: props.app ? props.app : undefined,
 			storyCategories: undefined,
@@ -78,8 +79,10 @@ class SingleStory extends React.Component {
 					video: story.video.file,
 					story: story
 				},() => {
-					if (!this.props.location.state){
+					if (!this.props.location.state || !this.props.location.state.stories){
 						this.setDefaultStories()
+					} else {
+						console.log(this.props.location.state,123512)
 					}
 				})
 			}
@@ -144,10 +147,10 @@ class SingleStory extends React.Component {
 		if (this.props.location.state){
 			if (this.props.location.state.from_app){
 				back_to_path = `/app/${this.props.location.state.from_app}`
-			} else if (this.props.location.state.from_library){
+			} else if (this.props.location.state.library_id){
 				back_to_path = `/library/${this.props.location.state.library_id}`
 			} 
-			state["filterBy"] = this.props.location.state.filterBy
+			state = this.props.location.state;
 		}
 		if (this.state.not_found) return <E404/>
 		return (

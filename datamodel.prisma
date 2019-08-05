@@ -33,6 +33,15 @@ type Job {
   updatedAt: DateTime! @updatedAt
 }
 
+type PageView {
+  id: ID! @unique @id
+  user: User
+  pathname: String!
+  agent: String!
+  createdAt: DateTime! @createdAt
+  updatedAt: DateTime! @updatedAt
+}
+
 type User {
   id: ID! @unique @id
   email: String! @unique
@@ -50,6 +59,7 @@ type User {
   google_accessToken: String
   facebook_accessToken: String
   oauth_id: String
+  pageViews: [PageView!]!
 }
 
 type AppVersion {

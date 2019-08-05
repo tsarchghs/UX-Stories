@@ -9,6 +9,8 @@ const { formatError } = require("apollo-errors");
 const fs = require("fs");
 const prismaDb = require("./prismaDb");
 const cors = require("cors");
+const Sentry = require("./sentryClient");
+const middlewares = require("./middlewares/index")
 // soft algolia sync script
 // require("./algolia/init")();
 
@@ -21,6 +23,7 @@ const server = new GraphQLServer({
 	endpoint: "/graphql",
 	typeDefs: "./schema.graphql", 
 	resolvers,
+	middlewares,
 	context: async (data) => {
 		var user = undefined
 		var loggedIn = false;
@@ -54,6 +57,10 @@ const server = new GraphQLServer({
 
 server.express.use(cors())
 
+
+server.express.use(Sentry.Handlers.requestHandler());
+
+
 // the __dirname is the current directory from where the script is running
 server.express.use('/static', static(path.join(__dirname, 'public')))
 if (process.env.PRODUCTION){
@@ -71,5 +78,7 @@ server.express.use(bodyParser.json({limit:"1000mb"}))
 const options = {
 	formatError
 };
+
+server.express.use(Sentry.Handlers.errorHandler());
 
 server.start(options,() => console.log("Running on port 4000"));

@@ -12,6 +12,7 @@ const jobResolvers = require("./models/Job");
 const generalResolvers = require("./general");
 const algoliaResolvers = require("./algolia");
 const paymentResolvers = require("./payment");
+const pageViewResolvers = require("./models/PageView");
 const monitorResolvers = require("./monitor/");
 
 module.exports = {
@@ -22,6 +23,7 @@ module.exports = {
 		getMemoryUsage: monitorResolvers.getMemoryUsage
 	},
 	Query: {
+		pageViews: pageViewResolvers.pageViews,
 		getLoggedInUser: userResolvers.getLoggedInUser,
 		countApps: appResolvers.countApps,
 		app: appResolvers.app,
@@ -43,6 +45,7 @@ module.exports = {
 	},
 	Mutation: {
 		loginWithFacebook: authResolvers.loginWithFacebook,
+		createPageView: pageViewResolvers.createPageView,
 		saveToLibrary: libraryResolvers.saveToLibrary,
 		loginWithGoogle: authResolvers.loginWithGoogle,
 		payment: paymentResolvers.payment,

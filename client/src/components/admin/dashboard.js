@@ -3,13 +3,11 @@ import Header from "./header";
 import LeftSidebar from "./leftSidebar";
 import { Query, Subscription } from "react-apollo";
 import gql from "graphql-tag";
-import { 
-	GET_MEMORY_USAGE_SUBSCRIPTION, 
-	GET_MEMWATCH_LEAK_SUBSCRIPTION,
-	GET_MEMWATCH_STATS_SUBSCRIPTION 
-} from "../../Queries";
 import MemoryUsagePie from "./monitor/MemoryUsagePie";
 import MemoryUsageLine from "./monitor/MemoryUsageLine";
+import SystemCpuUsageBar from "./monitor/SystemCpuUsageBar";
+import LeakReportTable from "./monitor/LeakReportTable";
+import StatsReportTable from "./monitor/StatsReportTable";
 
 class Dashboard extends React.Component {
 	render(){
@@ -145,29 +143,20 @@ class Dashboard extends React.Component {
 		                  {/* ============================================================== */}
 		                </div>
 		              </div>
-					  <div id="memory-usage-charts">
+					  <div className="row" style={{
+						  marginBottom: 25
+					  }}>
 						<MemoryUsagePie/>
 						<MemoryUsageLine/>
 					  </div>
+					  <div className="row">
+						<LeakReportTable/>
+						<StatsReportTable/>
+					  </div>
+					  <div>
+						<SystemCpuUsageBar/>
+					  </div>
 						<br/>
-						<Subscription
-							subscription={GET_MEMWATCH_LEAK_SUBSCRIPTION}
-						>
-							{({ data, loading, error }) => {
-								if (loading) return loading;
-								if (error) return error.message;
-								return JSON.stringify(data)
-							}}
-						</Subscription>
-						<Subscription
-							subscription={GET_MEMWATCH_STATS_SUBSCRIPTION}
-						>
-							{({ data, loading, error }) => {
-								if (loading) return loading;
-								if (error) return error.message;
-								return JSON.stringify(data)
-							}}
-						</Subscription>
 		              {/* ============================================================== */}
 		            </div>
 		          </div>

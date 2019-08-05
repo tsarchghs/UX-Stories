@@ -3,7 +3,7 @@ import { toast } from 'react-toastify';
 
 const if_user_call_func = (user,func,setState) => {
   console.log(user);  
-  if (user && user.subscription && user.subscription.status) func()
+  if (user && user._subscription && user._subscription.status) func()
   else setState({ currentModal:"PickMembershipModal"})
 }
 

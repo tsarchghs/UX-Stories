@@ -48,8 +48,8 @@ class MemoryUsagePie extends React.Component {
                         })
                     }
                     return (
-                        <div>
-                            <h2>Pie Example - {freeMemory}/{totalMemory}</h2>
+                        <div style={{width: "50%", height: "50%"}}>
+                            <h2>Memory Usage - {Math.round(totalMemory - freeMemory)}MB/{Math.round(totalMemory)}MB</h2>
                             <Pie data={this.state.chartData} />
                         </div>
                     )

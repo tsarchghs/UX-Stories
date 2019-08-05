@@ -25,8 +25,7 @@ import { StoryElements, UpdateStoryElement } from "./components/admin/storyEleme
 import { AppCategories, UpdateAppCategory } from "./components/admin/appCategories";
 import { Jobs, UpdateJob } from "./components/admin/jobs";
 import client from "./apolloClient";
-import { URI } from "./configs";
-import { GET_LOGGED_IN_USER_QUERY } from "./Queries";
+import { GET_LOGGED_IN_USER_QUERY, CREATE_PAGE_VIEW_MUTATION } from "./Queries";
 import {StripeProvider,Elements} from 'react-stripe-elements';
 import Invoices from "./components/invoices";
 import E404 from "./components/E404";
@@ -34,6 +33,7 @@ import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import EventListener from 'react-event-listener';
 import Detector from "./components/OnlineDetector/Detector";
+import InitialSelectJobModal from "./components/initialSelectJobModal"
 import ReactGA from "react-ga";
 
 toast.configure({
@@ -42,6 +42,27 @@ toast.configure({
   //etc you get the idea
 });
 
+const sendPageView = () => {
+    let userId;
+    try {
+        let cache = client.readQuery({
+            query: GET_LOGGED_IN_USER_QUERY
+        })
+        if (cache.getLoggedInUser) {
+            userId = cache.getLoggedInUser.id;
+        }
+    } catch (e) {
+        console.log(e);
+    }
+    client.mutate({
+        mutation: CREATE_PAGE_VIEW_MUTATION,
+        variables: {
+            user: userId,
+            agent: navigator.userAgent,
+            pathname: window.location.pathname
+        }
+    })
+}
 
 class _App extends Component {
     constructor(props){
@@ -65,9 +86,11 @@ class _App extends Component {
         }
     }
     componentDidMount(){
+        sendPageView();
         ReactGA.initialize('UA-144461921-1');
         ReactGA.pageview(window.location.pathname);
         this.props.history.listen(() => {
+            sendPageView();
             ReactGA.pageview(window.location.pathname + window.location.search);
             ReactGA.event({
                 category: "RouteChange",
@@ -101,6 +124,11 @@ class _App extends Component {
                                     }
                                     return (
                                         <div>
+                                            <InitialSelectJobModal
+                                                modalIsOpen={user && !user.job}
+                                                closeModal={() => null}
+                                                user={user}
+                                            />
                                             <Switch>
                                                 <Route path="/" exact component={() => {
                                                     return <Home refetchApp={refetch} user={user}/>

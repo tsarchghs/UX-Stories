@@ -40,9 +40,9 @@ class _SignUp extends React.Component {
 		return (
 			  <Query 
 			  	query={JOBS_QUERY}>
-				{ ({loading,error,data}) => {
+				{ ({loading,error,data:jobsData}) => {
 					if (error) return <p>{error.message}</p>
-					let jobs = data.jobs;
+					let jobs = jobsData.jobs;
 					let jobsLoading = loading
 
 					return (
@@ -97,7 +97,7 @@ class _SignUp extends React.Component {
 										full_name: this.state.full_name,
 										email: this.state.email,
 										password: this.state.password,
-										job: this.state.job
+										job: this.state.job || jobsData.jobs[0].id
 									}})
 								}}>
 							        <div className="login__container">
@@ -139,7 +139,7 @@ class _SignUp extends React.Component {
 																	value={this.state.job}
 																>
 																	{
-																	jobs.map(job => <option id={job.name} value={job.id}>{job.name}</option>)
+																		jobs.map(job => <option id={job.name} value={job.id}>{job.name}</option>)
 																	}
 																</select>
 

@@ -25,6 +25,10 @@ var models = [
     embedded: false
   },
   {
+    name: "PageView",
+    embedded: false
+  },
+  {
     name: "User",
     embedded: false
   },

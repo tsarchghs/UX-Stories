@@ -40,7 +40,7 @@ class _Payment extends React.Component {
     }
     render(){
         let type = {};
-        let subscription = this.props.user.subscription;
+        let subscription = this.props.user._subscription;
         if (!subscription) type = { show: "complete", mutation: PAYMENT_MUTATION }
         else if (subscription.status === "canceled" || subscription.cancel_at_period_end) type = { show: "renew", mutation: RENEW_SUBSCRIPTION_MUTATION }
         else if (subscription.status === "active") type = { show: "cancel", mutation: CANCEL_SUBSCRIPTION_MUTATION }
@@ -92,7 +92,7 @@ class _Payment extends React.Component {
                                                     query: GET_LOGGED_IN_USER_QUERY
                                                 })
                                                 let deep_clone = JSON.parse(JSON.stringify(cache))
-                                                deep_clone.getLoggedInUser.subscription = res.data.payment;
+                                                deep_clone.getLoggedInUser._subscription = res.data.payment;
                                                 this.props.client.writeQuery({
                                                     query: GET_LOGGED_IN_USER_QUERY,
                                                     data: deep_clone

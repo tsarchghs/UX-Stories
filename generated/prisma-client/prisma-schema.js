@@ -32,6 +32,10 @@ type AggregateLibrary {
   count: Int!
 }
 
+type AggregatePageView {
+  count: Int!
+}
+
 type AggregateStory {
   count: Int!
 }
@@ -1546,6 +1550,12 @@ type Mutation {
   upsertLibrary(where: LibraryWhereUniqueInput!, create: LibraryCreateInput!, update: LibraryUpdateInput!): Library!
   deleteLibrary(where: LibraryWhereUniqueInput!): Library
   deleteManyLibraries(where: LibraryWhereInput): BatchPayload!
+  createPageView(data: PageViewCreateInput!): PageView!
+  updatePageView(data: PageViewUpdateInput!, where: PageViewWhereUniqueInput!): PageView
+  updateManyPageViews(data: PageViewUpdateManyMutationInput!, where: PageViewWhereInput): BatchPayload!
+  upsertPageView(where: PageViewWhereUniqueInput!, create: PageViewCreateInput!, update: PageViewUpdateInput!): PageView!
+  deletePageView(where: PageViewWhereUniqueInput!): PageView
+  deleteManyPageViews(where: PageViewWhereInput): BatchPayload!
   createStory(data: StoryCreateInput!): Story!
   updateStory(data: StoryUpdateInput!, where: StoryWhereUniqueInput!): Story
   upsertStory(where: StoryWhereUniqueInput!, create: StoryCreateInput!, update: StoryUpdateInput!): Story!
@@ -1593,6 +1603,265 @@ type PageInfo {
   endCursor: String
 }
 
+type PageView {
+  id: ID!
+  user: User
+  pathname: String!
+  agent: String!
+  createdAt: DateTime!
+  updatedAt: DateTime!
+}
+
+type PageViewConnection {
+  pageInfo: PageInfo!
+  edges: [PageViewEdge]!
+  aggregate: AggregatePageView!
+}
+
+input PageViewCreateInput {
+  id: ID
+  user: UserCreateOneWithoutPageViewsInput
+  pathname: String!
+  agent: String!
+}
+
+input PageViewCreateManyWithoutUserInput {
+  create: [PageViewCreateWithoutUserInput!]
+  connect: [PageViewWhereUniqueInput!]
+}
+
+input PageViewCreateWithoutUserInput {
+  id: ID
+  pathname: String!
+  agent: String!
+}
+
+type PageViewEdge {
+  node: PageView!
+  cursor: String!
+}
+
+enum PageViewOrderByInput {
+  id_ASC
+  id_DESC
+  pathname_ASC
+  pathname_DESC
+  agent_ASC
+  agent_DESC
+  createdAt_ASC
+  createdAt_DESC
+  updatedAt_ASC
+  updatedAt_DESC
+}
+
+type PageViewPreviousValues {
+  id: ID!
+  pathname: String!
+  agent: String!
+  createdAt: DateTime!
+  updatedAt: DateTime!
+}
+
+input PageViewScalarWhereInput {
+  id: ID
+  id_not: ID
+  id_in: [ID!]
+  id_not_in: [ID!]
+  id_lt: ID
+  id_lte: ID
+  id_gt: ID
+  id_gte: ID
+  id_contains: ID
+  id_not_contains: ID
+  id_starts_with: ID
+  id_not_starts_with: ID
+  id_ends_with: ID
+  id_not_ends_with: ID
+  pathname: String
+  pathname_not: String
+  pathname_in: [String!]
+  pathname_not_in: [String!]
+  pathname_lt: String
+  pathname_lte: String
+  pathname_gt: String
+  pathname_gte: String
+  pathname_contains: String
+  pathname_not_contains: String
+  pathname_starts_with: String
+  pathname_not_starts_with: String
+  pathname_ends_with: String
+  pathname_not_ends_with: String
+  agent: String
+  agent_not: String
+  agent_in: [String!]
+  agent_not_in: [String!]
+  agent_lt: String
+  agent_lte: String
+  agent_gt: String
+  agent_gte: String
+  agent_contains: String
+  agent_not_contains: String
+  agent_starts_with: String
+  agent_not_starts_with: String
+  agent_ends_with: String
+  agent_not_ends_with: String
+  createdAt: DateTime
+  createdAt_not: DateTime
+  createdAt_in: [DateTime!]
+  createdAt_not_in: [DateTime!]
+  createdAt_lt: DateTime
+  createdAt_lte: DateTime
+  createdAt_gt: DateTime
+  createdAt_gte: DateTime
+  updatedAt: DateTime
+  updatedAt_not: DateTime
+  updatedAt_in: [DateTime!]
+  updatedAt_not_in: [DateTime!]
+  updatedAt_lt: DateTime
+  updatedAt_lte: DateTime
+  updatedAt_gt: DateTime
+  updatedAt_gte: DateTime
+  AND: [PageViewScalarWhereInput!]
+  OR: [PageViewScalarWhereInput!]
+  NOT: [PageViewScalarWhereInput!]
+}
+
+type PageViewSubscriptionPayload {
+  mutation: MutationType!
+  node: PageView
+  updatedFields: [String!]
+  previousValues: PageViewPreviousValues
+}
+
+input PageViewSubscriptionWhereInput {
+  mutation_in: [MutationType!]
+  updatedFields_contains: String
+  updatedFields_contains_every: [String!]
+  updatedFields_contains_some: [String!]
+  node: PageViewWhereInput
+  AND: [PageViewSubscriptionWhereInput!]
+  OR: [PageViewSubscriptionWhereInput!]
+  NOT: [PageViewSubscriptionWhereInput!]
+}
+
+input PageViewUpdateInput {
+  user: UserUpdateOneWithoutPageViewsInput
+  pathname: String
+  agent: String
+}
+
+input PageViewUpdateManyDataInput {
+  pathname: String
+  agent: String
+}
+
+input PageViewUpdateManyMutationInput {
+  pathname: String
+  agent: String
+}
+
+input PageViewUpdateManyWithoutUserInput {
+  create: [PageViewCreateWithoutUserInput!]
+  delete: [PageViewWhereUniqueInput!]
+  connect: [PageViewWhereUniqueInput!]
+  set: [PageViewWhereUniqueInput!]
+  disconnect: [PageViewWhereUniqueInput!]
+  update: [PageViewUpdateWithWhereUniqueWithoutUserInput!]
+  upsert: [PageViewUpsertWithWhereUniqueWithoutUserInput!]
+  deleteMany: [PageViewScalarWhereInput!]
+  updateMany: [PageViewUpdateManyWithWhereNestedInput!]
+}
+
+input PageViewUpdateManyWithWhereNestedInput {
+  where: PageViewScalarWhereInput!
+  data: PageViewUpdateManyDataInput!
+}
+
+input PageViewUpdateWithoutUserDataInput {
+  pathname: String
+  agent: String
+}
+
+input PageViewUpdateWithWhereUniqueWithoutUserInput {
+  where: PageViewWhereUniqueInput!
+  data: PageViewUpdateWithoutUserDataInput!
+}
+
+input PageViewUpsertWithWhereUniqueWithoutUserInput {
+  where: PageViewWhereUniqueInput!
+  update: PageViewUpdateWithoutUserDataInput!
+  create: PageViewCreateWithoutUserInput!
+}
+
+input PageViewWhereInput {
+  id: ID
+  id_not: ID
+  id_in: [ID!]
+  id_not_in: [ID!]
+  id_lt: ID
+  id_lte: ID
+  id_gt: ID
+  id_gte: ID
+  id_contains: ID
+  id_not_contains: ID
+  id_starts_with: ID
+  id_not_starts_with: ID
+  id_ends_with: ID
+  id_not_ends_with: ID
+  user: UserWhereInput
+  pathname: String
+  pathname_not: String
+  pathname_in: [String!]
+  pathname_not_in: [String!]
+  pathname_lt: String
+  pathname_lte: String
+  pathname_gt: String
+  pathname_gte: String
+  pathname_contains: String
+  pathname_not_contains: String
+  pathname_starts_with: String
+  pathname_not_starts_with: String
+  pathname_ends_with: String
+  pathname_not_ends_with: String
+  agent: String
+  agent_not: String
+  agent_in: [String!]
+  agent_not_in: [String!]
+  agent_lt: String
+  agent_lte: String
+  agent_gt: String
+  agent_gte: String
+  agent_contains: String
+  agent_not_contains: String
+  agent_starts_with: String
+  agent_not_starts_with: String
+  agent_ends_with: String
+  agent_not_ends_with: String
+  createdAt: DateTime
+  createdAt_not: DateTime
+  createdAt_in: [DateTime!]
+  createdAt_not_in: [DateTime!]
+  createdAt_lt: DateTime
+  createdAt_lte: DateTime
+  createdAt_gt: DateTime
+  createdAt_gte: DateTime
+  updatedAt: DateTime
+  updatedAt_not: DateTime
+  updatedAt_in: [DateTime!]
+  updatedAt_not_in: [DateTime!]
+  updatedAt_lt: DateTime
+  updatedAt_lte: DateTime
+  updatedAt_gt: DateTime
+  updatedAt_gte: DateTime
+  AND: [PageViewWhereInput!]
+  OR: [PageViewWhereInput!]
+  NOT: [PageViewWhereInput!]
+}
+
+input PageViewWhereUniqueInput {
+  id: ID
+}
+
 enum Platform {
   IOS
   ANDROID
@@ -1617,6 +1886,9 @@ type Query {
   library(where: LibraryWhereUniqueInput!): Library
   libraries(where: LibraryWhereInput, orderBy: LibraryOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Library]!
   librariesConnection(where: LibraryWhereInput, orderBy: LibraryOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): LibraryConnection!
+  pageView(where: PageViewWhereUniqueInput!): PageView
+  pageViews(where: PageViewWhereInput, orderBy: PageViewOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [PageView]!
+  pageViewsConnection(where: PageViewWhereInput, orderBy: PageViewOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): PageViewConnection!
   story(where: StoryWhereUniqueInput!): Story
   stories(where: StoryWhereInput, orderBy: StoryOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Story]!
   storiesConnection(where: StoryWhereInput, orderBy: StoryOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): StoryConnection!
@@ -2541,6 +2813,7 @@ type Subscription {
   file(where: FileSubscriptionWhereInput): FileSubscriptionPayload
   job(where: JobSubscriptionWhereInput): JobSubscriptionPayload
   library(where: LibrarySubscriptionWhereInput): LibrarySubscriptionPayload
+  pageView(where: PageViewSubscriptionWhereInput): PageViewSubscriptionPayload
   story(where: StorySubscriptionWhereInput): StorySubscriptionPayload
   storyCategory(where: StoryCategorySubscriptionWhereInput): StoryCategorySubscriptionPayload
   storyElement(where: StoryElementSubscriptionWhereInput): StoryElementSubscriptionPayload
@@ -2565,6 +2838,7 @@ type User {
   google_accessToken: String
   facebook_accessToken: String
   oauth_id: String
+  pageViews(where: PageViewWhereInput, orderBy: PageViewOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [PageView!]
 }
 
 type UserConnection {
@@ -2588,6 +2862,7 @@ input UserCreateInput {
   google_accessToken: String
   facebook_accessToken: String
   oauth_id: String
+  pageViews: PageViewCreateManyWithoutUserInput
 }
 
 input UserCreateOneInput {
@@ -2605,6 +2880,11 @@ input UserCreateOneWithoutLibrariesInput {
   connect: UserWhereUniqueInput
 }
 
+input UserCreateOneWithoutPageViewsInput {
+  create: UserCreateWithoutPageViewsInput
+  connect: UserWhereUniqueInput
+}
+
 input UserCreateWithoutAppsInput {
   id: ID
   email: String!
@@ -2619,6 +2899,7 @@ input UserCreateWithoutAppsInput {
   google_accessToken: String
   facebook_accessToken: String
   oauth_id: String
+  pageViews: PageViewCreateManyWithoutUserInput
 }
 
 input UserCreateWithoutLibrariesInput {
@@ -2632,6 +2913,24 @@ input UserCreateWithoutLibrariesInput {
   customer_id: ID
   subscription_id: ID
   apps: AppCreateManyWithoutCreatedByInput
+  google_accessToken: String
+  facebook_accessToken: String
+  oauth_id: String
+  pageViews: PageViewCreateManyWithoutUserInput
+}
+
+input UserCreateWithoutPageViewsInput {
+  id: ID
+  email: String!
+  password: String!
+  full_name: String!
+  job: JobCreateOneInput
+  role: AccountType!
+  profile_photo: FileCreateOneInput
+  customer_id: ID
+  subscription_id: ID
+  apps: AppCreateManyWithoutCreatedByInput
+  libraries: LibraryCreateManyWithoutCreatedByInput
   google_accessToken: String
   facebook_accessToken: String
   oauth_id: String
@@ -2716,6 +3015,7 @@ input UserUpdateDataInput {
   google_accessToken: String
   facebook_accessToken: String
   oauth_id: String
+  pageViews: PageViewUpdateManyWithoutUserInput
 }
 
 input UserUpdateInput {
@@ -2732,6 +3032,7 @@ input UserUpdateInput {
   google_accessToken: String
   facebook_accessToken: String
   oauth_id: String
+  pageViews: PageViewUpdateManyWithoutUserInput
 }
 
 input UserUpdateManyMutationInput {
@@ -2767,6 +3068,15 @@ input UserUpdateOneRequiredWithoutLibrariesInput {
   connect: UserWhereUniqueInput
 }
 
+input UserUpdateOneWithoutPageViewsInput {
+  create: UserCreateWithoutPageViewsInput
+  update: UserUpdateWithoutPageViewsDataInput
+  upsert: UserUpsertWithoutPageViewsInput
+  delete: Boolean
+  disconnect: Boolean
+  connect: UserWhereUniqueInput
+}
+
 input UserUpdateWithoutAppsDataInput {
   email: String
   password: String
@@ -2780,6 +3090,7 @@ input UserUpdateWithoutAppsDataInput {
   google_accessToken: String
   facebook_accessToken: String
   oauth_id: String
+  pageViews: PageViewUpdateManyWithoutUserInput
 }
 
 input UserUpdateWithoutLibrariesDataInput {
@@ -2792,6 +3103,23 @@ input UserUpdateWithoutLibrariesDataInput {
   customer_id: ID
   subscription_id: ID
   apps: AppUpdateManyWithoutCreatedByInput
+  google_accessToken: String
+  facebook_accessToken: String
+  oauth_id: String
+  pageViews: PageViewUpdateManyWithoutUserInput
+}
+
+input UserUpdateWithoutPageViewsDataInput {
+  email: String
+  password: String
+  full_name: String
+  job: JobUpdateOneInput
+  role: AccountType
+  profile_photo: FileUpdateOneInput
+  customer_id: ID
+  subscription_id: ID
+  apps: AppUpdateManyWithoutCreatedByInput
+  libraries: LibraryUpdateManyWithoutCreatedByInput
   google_accessToken: String
   facebook_accessToken: String
   oauth_id: String
@@ -2810,6 +3138,11 @@ input UserUpsertWithoutAppsInput {
 input UserUpsertWithoutLibrariesInput {
   update: UserUpdateWithoutLibrariesDataInput!
   create: UserCreateWithoutLibrariesInput!
+}
+
+input UserUpsertWithoutPageViewsInput {
+  update: UserUpdateWithoutPageViewsDataInput!
+  create: UserCreateWithoutPageViewsInput!
 }
 
 input UserWhereInput {
@@ -2967,6 +3300,9 @@ input UserWhereInput {
   oauth_id_not_starts_with: String
   oauth_id_ends_with: String
   oauth_id_not_ends_with: String
+  pageViews_every: PageViewWhereInput
+  pageViews_some: PageViewWhereInput
+  pageViews_none: PageViewWhereInput
   AND: [UserWhereInput!]
   OR: [UserWhereInput!]
   NOT: [UserWhereInput!]

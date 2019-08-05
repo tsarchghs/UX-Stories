@@ -19,19 +19,27 @@ import gaEvents from "../gaEvents";
 class Library extends React.Component {
 	constructor(props){
 		super(props);
-		this.state = {
-			queryVariables: {},
-			library: undefined,
-		    storyCategories: undefined,
-		    storyElements: undefined,
-		    filterBy: {
-		        storyCategories: {},
-		        storyElements: {}
-	      	},
-			show404: false,
-			library: {},
-			editLibrary: {},
-			deleteLibrary: {}
+		if (this.props.location.state && this.props.location.state.savedState){
+			this.state = this.props.location.state.savedState;
+		} else {
+			this.state = {
+				queryVariables: {},
+				library: undefined,
+				storyCategories: undefined,
+				storyElements: undefined,
+				filterBy: {
+					storyCategories: {},
+					storyElements: {}
+				  },
+				show404: false,
+				library: {},
+				editLibrary: {},
+				deleteLibrary: {},
+				scrollPos: {
+					scrollX: window.scrollX,
+					scrollY: window.scrollY,
+				}
+			}
 		}
 		this.toggle = this.toggle.bind(this);
 		this.all_stories = undefined;
@@ -41,8 +49,19 @@ class Library extends React.Component {
 		this.updateLibraryNameOnChange = this.updateLibraryNameOnChange.bind(this)
 		this.openLibraryModal = this.openLibraryModal.bind(this)
 		this.closeModal = this.closeModal.bind(this)
+		this.onScroll = this.onScroll.bind(this)
+	}
+	onScroll() {
+		console.log(414)
+		this.setState({
+			scrollPos: {
+				scrollX: window.scrollX,
+				scrollY: window.scrollY
+			}
+		})
 	}
 	async componentWillUnmount() {
+		window.removeEventListener('scroll', this.onScroll)
 		this.setState(prevState => {
 			let state = prevState;
 			state.library.stories = this.all_stories;
@@ -107,6 +126,15 @@ class Library extends React.Component {
 			},
 			currentModal: modalName
 		})
+	}
+	componentDidMount(){
+		window.addEventListener('scroll', this.onScroll)
+		if (this.props.location.state) {
+			window.scrollTo(
+				this.props.location.state.savedState.scrollPos.scrollX,
+				this.props.location.state.savedState.scrollPos.scrollY
+			)
+		}
 	}
 	render() {
 		if (this.state.show404) return <E404 />
@@ -242,10 +270,10 @@ class Library extends React.Component {
 										<Query
 											query={STORIES_QUERY_WITH_APP}
 											variables={variables}
-											fetchPolicy="network-only"
+											fetchPolicy="cache-and-network"
 										>
 											{({loading,error,data}) => {
-												if (loading) return <Loading style={{width:250}}/>
+												if (!Object.keys(data).length) return <Loading style={{width:250}}/>
 												if (error) return error.message;
 												return (
 													<div className="cards">
@@ -262,8 +290,9 @@ class Library extends React.Component {
 																		data.stories.map((story, i) =>
 																			<StoryItem
 																				state={{
-																					from_library: true,
+																					library_id: this.props.match.params.id,
 																					filterBy: this.state.filterBy,
+																					savedState: this.state,
 																					stories: data.stories,
 																					index: i
 																				}}

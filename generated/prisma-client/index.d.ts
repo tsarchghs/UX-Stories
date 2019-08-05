@@ -22,6 +22,7 @@ export interface Exists {
   file: (where?: FileWhereInput) => Promise<boolean>;
   job: (where?: JobWhereInput) => Promise<boolean>;
   library: (where?: LibraryWhereInput) => Promise<boolean>;
+  pageView: (where?: PageViewWhereInput) => Promise<boolean>;
   story: (where?: StoryWhereInput) => Promise<boolean>;
   storyCategory: (where?: StoryCategoryWhereInput) => Promise<boolean>;
   storyElement: (where?: StoryElementWhereInput) => Promise<boolean>;
@@ -164,6 +165,25 @@ export interface Prisma {
     first?: Int;
     last?: Int;
   }) => LibraryConnectionPromise;
+  pageView: (where: PageViewWhereUniqueInput) => PageViewNullablePromise;
+  pageViews: (args?: {
+    where?: PageViewWhereInput;
+    orderBy?: PageViewOrderByInput;
+    skip?: Int;
+    after?: String;
+    before?: String;
+    first?: Int;
+    last?: Int;
+  }) => FragmentableArray<PageView>;
+  pageViewsConnection: (args?: {
+    where?: PageViewWhereInput;
+    orderBy?: PageViewOrderByInput;
+    skip?: Int;
+    after?: String;
+    before?: String;
+    first?: Int;
+    last?: Int;
+  }) => PageViewConnectionPromise;
   story: (where: StoryWhereUniqueInput) => StoryNullablePromise;
   stories: (args?: {
     where?: StoryWhereInput;
@@ -367,6 +387,22 @@ export interface Prisma {
   }) => LibraryPromise;
   deleteLibrary: (where: LibraryWhereUniqueInput) => LibraryPromise;
   deleteManyLibraries: (where?: LibraryWhereInput) => BatchPayloadPromise;
+  createPageView: (data: PageViewCreateInput) => PageViewPromise;
+  updatePageView: (args: {
+    data: PageViewUpdateInput;
+    where: PageViewWhereUniqueInput;
+  }) => PageViewPromise;
+  updateManyPageViews: (args: {
+    data: PageViewUpdateManyMutationInput;
+    where?: PageViewWhereInput;
+  }) => BatchPayloadPromise;
+  upsertPageView: (args: {
+    where: PageViewWhereUniqueInput;
+    create: PageViewCreateInput;
+    update: PageViewUpdateInput;
+  }) => PageViewPromise;
+  deletePageView: (where: PageViewWhereUniqueInput) => PageViewPromise;
+  deleteManyPageViews: (where?: PageViewWhereInput) => BatchPayloadPromise;
   createStory: (data: StoryCreateInput) => StoryPromise;
   updateStory: (args: {
     data: StoryUpdateInput;
@@ -474,6 +510,9 @@ export interface Subscription {
   library: (
     where?: LibrarySubscriptionWhereInput
   ) => LibrarySubscriptionPayloadSubscription;
+  pageView: (
+    where?: PageViewSubscriptionWhereInput
+  ) => PageViewSubscriptionPayloadSubscription;
   story: (
     where?: StorySubscriptionWhereInput
   ) => StorySubscriptionPayloadSubscription;
@@ -499,11 +538,13 @@ export interface ClientConstructor<T> {
  * Types
  */
 
-export type AppCategoryOrderByInput =
+export type PageViewOrderByInput =
   | "id_ASC"
   | "id_DESC"
-  | "name_ASC"
-  | "name_DESC"
+  | "pathname_ASC"
+  | "pathname_DESC"
+  | "agent_ASC"
+  | "agent_DESC"
   | "createdAt_ASC"
   | "createdAt_DESC"
   | "updatedAt_ASC"
@@ -639,22 +680,174 @@ export type UserOrderByInput =
 
 export type MutationType = "CREATED" | "UPDATED" | "DELETED";
 
+export type AppCategoryOrderByInput =
+  | "id_ASC"
+  | "id_DESC"
+  | "name_ASC"
+  | "name_DESC"
+  | "createdAt_ASC"
+  | "createdAt_DESC"
+  | "updatedAt_ASC"
+  | "updatedAt_DESC";
+
 export type AccountType = "MEMBER" | "ADMIN";
 
-export interface UserUpdateOneRequiredInput {
-  create?: Maybe<UserCreateInput>;
-  update?: Maybe<UserUpdateDataInput>;
-  upsert?: Maybe<UserUpsertNestedInput>;
-  connect?: Maybe<UserWhereUniqueInput>;
+export interface AppCategoryUpdateOneRequiredInput {
+  create?: Maybe<AppCategoryCreateInput>;
+  update?: Maybe<AppCategoryUpdateDataInput>;
+  upsert?: Maybe<AppCategoryUpsertNestedInput>;
+  connect?: Maybe<AppCategoryWhereUniqueInput>;
 }
 
 export type AppWhereUniqueInput = AtLeastOne<{
   id: Maybe<ID_Input>;
 }>;
 
-export interface StoryUpdateWithWhereUniqueNestedInput {
-  where: StoryWhereUniqueInput;
-  data: StoryUpdateDataInput;
+export interface AppVersionUpdateWithWhereUniqueNestedInput {
+  where: AppVersionWhereUniqueInput;
+  data: AppVersionUpdateDataInput;
+}
+
+export interface StoryElementWhereInput {
+  id?: Maybe<ID_Input>;
+  id_not?: Maybe<ID_Input>;
+  id_in?: Maybe<ID_Input[] | ID_Input>;
+  id_not_in?: Maybe<ID_Input[] | ID_Input>;
+  id_lt?: Maybe<ID_Input>;
+  id_lte?: Maybe<ID_Input>;
+  id_gt?: Maybe<ID_Input>;
+  id_gte?: Maybe<ID_Input>;
+  id_contains?: Maybe<ID_Input>;
+  id_not_contains?: Maybe<ID_Input>;
+  id_starts_with?: Maybe<ID_Input>;
+  id_not_starts_with?: Maybe<ID_Input>;
+  id_ends_with?: Maybe<ID_Input>;
+  id_not_ends_with?: Maybe<ID_Input>;
+  name?: Maybe<String>;
+  name_not?: Maybe<String>;
+  name_in?: Maybe<String[] | String>;
+  name_not_in?: Maybe<String[] | String>;
+  name_lt?: Maybe<String>;
+  name_lte?: Maybe<String>;
+  name_gt?: Maybe<String>;
+  name_gte?: Maybe<String>;
+  name_contains?: Maybe<String>;
+  name_not_contains?: Maybe<String>;
+  name_starts_with?: Maybe<String>;
+  name_not_starts_with?: Maybe<String>;
+  name_ends_with?: Maybe<String>;
+  name_not_ends_with?: Maybe<String>;
+  createdAt?: Maybe<DateTimeInput>;
+  createdAt_not?: Maybe<DateTimeInput>;
+  createdAt_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  createdAt_not_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  createdAt_lt?: Maybe<DateTimeInput>;
+  createdAt_lte?: Maybe<DateTimeInput>;
+  createdAt_gt?: Maybe<DateTimeInput>;
+  createdAt_gte?: Maybe<DateTimeInput>;
+  updatedAt?: Maybe<DateTimeInput>;
+  updatedAt_not?: Maybe<DateTimeInput>;
+  updatedAt_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  updatedAt_not_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  updatedAt_lt?: Maybe<DateTimeInput>;
+  updatedAt_lte?: Maybe<DateTimeInput>;
+  updatedAt_gt?: Maybe<DateTimeInput>;
+  updatedAt_gte?: Maybe<DateTimeInput>;
+  stories_every?: Maybe<StoryWhereInput>;
+  stories_some?: Maybe<StoryWhereInput>;
+  stories_none?: Maybe<StoryWhereInput>;
+  AND?: Maybe<StoryElementWhereInput[] | StoryElementWhereInput>;
+  OR?: Maybe<StoryElementWhereInput[] | StoryElementWhereInput>;
+  NOT?: Maybe<StoryElementWhereInput[] | StoryElementWhereInput>;
+}
+
+export interface AppVersionUpdateDataInput {
+  name?: Maybe<String>;
+  stories?: Maybe<StoryUpdateManyWithoutAppVersionsInput>;
+}
+
+export interface PageViewWhereInput {
+  id?: Maybe<ID_Input>;
+  id_not?: Maybe<ID_Input>;
+  id_in?: Maybe<ID_Input[] | ID_Input>;
+  id_not_in?: Maybe<ID_Input[] | ID_Input>;
+  id_lt?: Maybe<ID_Input>;
+  id_lte?: Maybe<ID_Input>;
+  id_gt?: Maybe<ID_Input>;
+  id_gte?: Maybe<ID_Input>;
+  id_contains?: Maybe<ID_Input>;
+  id_not_contains?: Maybe<ID_Input>;
+  id_starts_with?: Maybe<ID_Input>;
+  id_not_starts_with?: Maybe<ID_Input>;
+  id_ends_with?: Maybe<ID_Input>;
+  id_not_ends_with?: Maybe<ID_Input>;
+  user?: Maybe<UserWhereInput>;
+  pathname?: Maybe<String>;
+  pathname_not?: Maybe<String>;
+  pathname_in?: Maybe<String[] | String>;
+  pathname_not_in?: Maybe<String[] | String>;
+  pathname_lt?: Maybe<String>;
+  pathname_lte?: Maybe<String>;
+  pathname_gt?: Maybe<String>;
+  pathname_gte?: Maybe<String>;
+  pathname_contains?: Maybe<String>;
+  pathname_not_contains?: Maybe<String>;
+  pathname_starts_with?: Maybe<String>;
+  pathname_not_starts_with?: Maybe<String>;
+  pathname_ends_with?: Maybe<String>;
+  pathname_not_ends_with?: Maybe<String>;
+  agent?: Maybe<String>;
+  agent_not?: Maybe<String>;
+  agent_in?: Maybe<String[] | String>;
+  agent_not_in?: Maybe<String[] | String>;
+  agent_lt?: Maybe<String>;
+  agent_lte?: Maybe<String>;
+  agent_gt?: Maybe<String>;
+  agent_gte?: Maybe<String>;
+  agent_contains?: Maybe<String>;
+  agent_not_contains?: Maybe<String>;
+  agent_starts_with?: Maybe<String>;
+  agent_not_starts_with?: Maybe<String>;
+  agent_ends_with?: Maybe<String>;
+  agent_not_ends_with?: Maybe<String>;
+  createdAt?: Maybe<DateTimeInput>;
+  createdAt_not?: Maybe<DateTimeInput>;
+  createdAt_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  createdAt_not_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  createdAt_lt?: Maybe<DateTimeInput>;
+  createdAt_lte?: Maybe<DateTimeInput>;
+  createdAt_gt?: Maybe<DateTimeInput>;
+  createdAt_gte?: Maybe<DateTimeInput>;
+  updatedAt?: Maybe<DateTimeInput>;
+  updatedAt_not?: Maybe<DateTimeInput>;
+  updatedAt_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  updatedAt_not_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  updatedAt_lt?: Maybe<DateTimeInput>;
+  updatedAt_lte?: Maybe<DateTimeInput>;
+  updatedAt_gt?: Maybe<DateTimeInput>;
+  updatedAt_gte?: Maybe<DateTimeInput>;
+  AND?: Maybe<PageViewWhereInput[] | PageViewWhereInput>;
+  OR?: Maybe<PageViewWhereInput[] | PageViewWhereInput>;
+  NOT?: Maybe<PageViewWhereInput[] | PageViewWhereInput>;
+}
+
+export interface StoryUpdateManyWithoutAppVersionsInput {
+  create?: Maybe<
+    StoryCreateWithoutAppVersionsInput[] | StoryCreateWithoutAppVersionsInput
+  >;
+  delete?: Maybe<StoryWhereUniqueInput[] | StoryWhereUniqueInput>;
+  connect?: Maybe<StoryWhereUniqueInput[] | StoryWhereUniqueInput>;
+  set?: Maybe<StoryWhereUniqueInput[] | StoryWhereUniqueInput>;
+  disconnect?: Maybe<StoryWhereUniqueInput[] | StoryWhereUniqueInput>;
+  update?: Maybe<
+    | StoryUpdateWithWhereUniqueWithoutAppVersionsInput[]
+    | StoryUpdateWithWhereUniqueWithoutAppVersionsInput
+  >;
+  upsert?: Maybe<
+    | StoryUpsertWithWhereUniqueWithoutAppVersionsInput[]
+    | StoryUpsertWithWhereUniqueWithoutAppVersionsInput
+  >;
+  deleteMany?: Maybe<StoryScalarWhereInput[] | StoryScalarWhereInput>;
 }
 
 export interface StoryCategoryWhereInput {
@@ -710,18 +903,35 @@ export interface StoryCategoryWhereInput {
   NOT?: Maybe<StoryCategoryWhereInput[] | StoryCategoryWhereInput>;
 }
 
-export interface StoryUpdateDataInput {
-  createdBy?: Maybe<UserUpdateOneRequiredInput>;
-  app?: Maybe<AppUpdateOneRequiredWithoutStoriesInput>;
-  appVersions?: Maybe<AppVersionUpdateManyWithoutStoriesInput>;
-  storyCategories?: Maybe<StoryCategoryUpdateManyWithoutStoriesInput>;
-  storyElements?: Maybe<StoryElementUpdateManyWithoutStoriesInput>;
-  libraries?: Maybe<LibraryUpdateManyWithoutStoriesInput>;
-  video?: Maybe<VideoUpdateOneRequiredInput>;
-  thumbnail?: Maybe<FileUpdateOneRequiredInput>;
+export interface PageViewCreateManyWithoutUserInput {
+  create?: Maybe<
+    PageViewCreateWithoutUserInput[] | PageViewCreateWithoutUserInput
+  >;
+  connect?: Maybe<PageViewWhereUniqueInput[] | PageViewWhereUniqueInput>;
 }
 
-export interface VideoWhereInput {
+export interface AppCategoryUpdateInput {
+  name?: Maybe<String>;
+  stories?: Maybe<StoryUpdateManyInput>;
+}
+
+export interface PageViewCreateWithoutUserInput {
+  id?: Maybe<ID_Input>;
+  pathname: String;
+  agent: String;
+}
+
+export interface StoryUpdateWithWhereUniqueWithoutAppVersionsInput {
+  where: StoryWhereUniqueInput;
+  data: StoryUpdateWithoutAppVersionsDataInput;
+}
+
+export interface VideoCreateOneInput {
+  create?: Maybe<VideoCreateInput>;
+  connect?: Maybe<VideoWhereUniqueInput>;
+}
+
+export interface LibraryWhereInput {
   id?: Maybe<ID_Input>;
   id_not?: Maybe<ID_Input>;
   id_in?: Maybe<ID_Input[] | ID_Input>;
@@ -736,50 +946,10 @@ export interface VideoWhereInput {
   id_not_starts_with?: Maybe<ID_Input>;
   id_ends_with?: Maybe<ID_Input>;
   id_not_ends_with?: Maybe<ID_Input>;
-  file?: Maybe<FileWhereInput>;
-  createdAt?: Maybe<DateTimeInput>;
-  createdAt_not?: Maybe<DateTimeInput>;
-  createdAt_in?: Maybe<DateTimeInput[] | DateTimeInput>;
-  createdAt_not_in?: Maybe<DateTimeInput[] | DateTimeInput>;
-  createdAt_lt?: Maybe<DateTimeInput>;
-  createdAt_lte?: Maybe<DateTimeInput>;
-  createdAt_gt?: Maybe<DateTimeInput>;
-  createdAt_gte?: Maybe<DateTimeInput>;
-  updatedAt?: Maybe<DateTimeInput>;
-  updatedAt_not?: Maybe<DateTimeInput>;
-  updatedAt_in?: Maybe<DateTimeInput[] | DateTimeInput>;
-  updatedAt_not_in?: Maybe<DateTimeInput[] | DateTimeInput>;
-  updatedAt_lt?: Maybe<DateTimeInput>;
-  updatedAt_lte?: Maybe<DateTimeInput>;
-  updatedAt_gt?: Maybe<DateTimeInput>;
-  updatedAt_gte?: Maybe<DateTimeInput>;
-  AND?: Maybe<VideoWhereInput[] | VideoWhereInput>;
-  OR?: Maybe<VideoWhereInput[] | VideoWhereInput>;
-  NOT?: Maybe<VideoWhereInput[] | VideoWhereInput>;
-}
-
-export interface AppUpdateOneRequiredWithoutStoriesInput {
-  create?: Maybe<AppCreateWithoutStoriesInput>;
-  update?: Maybe<AppUpdateWithoutStoriesDataInput>;
-  upsert?: Maybe<AppUpsertWithoutStoriesInput>;
-  connect?: Maybe<AppWhereUniqueInput>;
-}
-
-export interface AppVersionWhereInput {
-  id?: Maybe<ID_Input>;
-  id_not?: Maybe<ID_Input>;
-  id_in?: Maybe<ID_Input[] | ID_Input>;
-  id_not_in?: Maybe<ID_Input[] | ID_Input>;
-  id_lt?: Maybe<ID_Input>;
-  id_lte?: Maybe<ID_Input>;
-  id_gt?: Maybe<ID_Input>;
-  id_gte?: Maybe<ID_Input>;
-  id_contains?: Maybe<ID_Input>;
-  id_not_contains?: Maybe<ID_Input>;
-  id_starts_with?: Maybe<ID_Input>;
-  id_not_starts_with?: Maybe<ID_Input>;
-  id_ends_with?: Maybe<ID_Input>;
-  id_not_ends_with?: Maybe<ID_Input>;
+  createdBy?: Maybe<UserWhereInput>;
+  stories_every?: Maybe<StoryWhereInput>;
+  stories_some?: Maybe<StoryWhereInput>;
+  stories_none?: Maybe<StoryWhereInput>;
   name?: Maybe<String>;
   name_not?: Maybe<String>;
   name_in?: Maybe<String[] | String>;
@@ -794,9 +964,14 @@ export interface AppVersionWhereInput {
   name_not_starts_with?: Maybe<String>;
   name_ends_with?: Maybe<String>;
   name_not_ends_with?: Maybe<String>;
-  stories_every?: Maybe<StoryWhereInput>;
-  stories_some?: Maybe<StoryWhereInput>;
-  stories_none?: Maybe<StoryWhereInput>;
+  custom_updatedAt?: Maybe<DateTimeInput>;
+  custom_updatedAt_not?: Maybe<DateTimeInput>;
+  custom_updatedAt_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  custom_updatedAt_not_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  custom_updatedAt_lt?: Maybe<DateTimeInput>;
+  custom_updatedAt_lte?: Maybe<DateTimeInput>;
+  custom_updatedAt_gt?: Maybe<DateTimeInput>;
+  custom_updatedAt_gte?: Maybe<DateTimeInput>;
   createdAt?: Maybe<DateTimeInput>;
   createdAt_not?: Maybe<DateTimeInput>;
   createdAt_in?: Maybe<DateTimeInput[] | DateTimeInput>;
@@ -813,44 +988,14 @@ export interface AppVersionWhereInput {
   updatedAt_lte?: Maybe<DateTimeInput>;
   updatedAt_gt?: Maybe<DateTimeInput>;
   updatedAt_gte?: Maybe<DateTimeInput>;
-  AND?: Maybe<AppVersionWhereInput[] | AppVersionWhereInput>;
-  OR?: Maybe<AppVersionWhereInput[] | AppVersionWhereInput>;
-  NOT?: Maybe<AppVersionWhereInput[] | AppVersionWhereInput>;
+  AND?: Maybe<LibraryWhereInput[] | LibraryWhereInput>;
+  OR?: Maybe<LibraryWhereInput[] | LibraryWhereInput>;
+  NOT?: Maybe<LibraryWhereInput[] | LibraryWhereInput>;
 }
 
-export interface LibraryCreateManyWithoutStoriesInput {
-  create?: Maybe<
-    LibraryCreateWithoutStoriesInput[] | LibraryCreateWithoutStoriesInput
-  >;
-  connect?: Maybe<LibraryWhereUniqueInput[] | LibraryWhereUniqueInput>;
-}
-
-export interface UserUpsertNestedInput {
-  update: UserUpdateDataInput;
-  create: UserCreateInput;
-}
-
-export interface LibraryCreateWithoutStoriesInput {
+export interface VideoCreateInput {
   id?: Maybe<ID_Input>;
-  createdBy: UserCreateOneWithoutLibrariesInput;
-  name: String;
-  custom_updatedAt: DateTimeInput;
-}
-
-export interface AppUpdateWithoutStoriesDataInput {
-  createdBy?: Maybe<UserUpdateOneRequiredWithoutAppsInput>;
-  appCategory?: Maybe<AppCategoryUpdateOneRequiredInput>;
-  appVersions?: Maybe<AppVersionUpdateManyInput>;
-  name?: Maybe<String>;
-  description?: Maybe<String>;
-  company?: Maybe<String>;
-  logo?: Maybe<FileUpdateOneRequiredInput>;
-  platform?: Maybe<Platform>;
-}
-
-export interface UserCreateOneWithoutLibrariesInput {
-  create?: Maybe<UserCreateWithoutLibrariesInput>;
-  connect?: Maybe<UserWhereUniqueInput>;
+  file: FileCreateOneInput;
 }
 
 export interface FileWhereInput {
@@ -945,20 +1090,11 @@ export interface FileWhereInput {
   NOT?: Maybe<FileWhereInput[] | FileWhereInput>;
 }
 
-export interface UserCreateWithoutLibrariesInput {
-  id?: Maybe<ID_Input>;
-  email: String;
-  password: String;
-  full_name: String;
-  job?: Maybe<JobCreateOneInput>;
-  role: AccountType;
-  profile_photo?: Maybe<FileCreateOneInput>;
-  customer_id?: Maybe<ID_Input>;
-  subscription_id?: Maybe<ID_Input>;
-  apps?: Maybe<AppCreateManyWithoutCreatedByInput>;
-  google_accessToken?: Maybe<String>;
-  facebook_accessToken?: Maybe<String>;
-  oauth_id?: Maybe<String>;
+export interface AppVersionCreateManyWithoutStoriesInput {
+  create?: Maybe<
+    AppVersionCreateWithoutStoriesInput[] | AppVersionCreateWithoutStoriesInput
+  >;
+  connect?: Maybe<AppVersionWhereUniqueInput[] | AppVersionWhereUniqueInput>;
 }
 
 export interface JobWhereInput {
@@ -1011,9 +1147,9 @@ export interface JobWhereInput {
   NOT?: Maybe<JobWhereInput[] | JobWhereInput>;
 }
 
-export interface VideoCreateOneInput {
-  create?: Maybe<VideoCreateInput>;
-  connect?: Maybe<VideoWhereUniqueInput>;
+export interface AppVersionCreateWithoutStoriesInput {
+  id?: Maybe<ID_Input>;
+  name: String;
 }
 
 export interface UserWhereInput {
@@ -1171,14 +1307,2120 @@ export interface UserWhereInput {
   oauth_id_not_starts_with?: Maybe<String>;
   oauth_id_ends_with?: Maybe<String>;
   oauth_id_not_ends_with?: Maybe<String>;
+  pageViews_every?: Maybe<PageViewWhereInput>;
+  pageViews_some?: Maybe<PageViewWhereInput>;
+  pageViews_none?: Maybe<PageViewWhereInput>;
   AND?: Maybe<UserWhereInput[] | UserWhereInput>;
   OR?: Maybe<UserWhereInput[] | UserWhereInput>;
   NOT?: Maybe<UserWhereInput[] | UserWhereInput>;
 }
 
-export interface VideoCreateInput {
+export interface StoryCreateManyWithoutAppInput {
+  create?: Maybe<StoryCreateWithoutAppInput[] | StoryCreateWithoutAppInput>;
+  connect?: Maybe<StoryWhereUniqueInput[] | StoryWhereUniqueInput>;
+}
+
+export interface PageViewSubscriptionWhereInput {
+  mutation_in?: Maybe<MutationType[] | MutationType>;
+  updatedFields_contains?: Maybe<String>;
+  updatedFields_contains_every?: Maybe<String[] | String>;
+  updatedFields_contains_some?: Maybe<String[] | String>;
+  node?: Maybe<PageViewWhereInput>;
+  AND?: Maybe<
+    PageViewSubscriptionWhereInput[] | PageViewSubscriptionWhereInput
+  >;
+  OR?: Maybe<PageViewSubscriptionWhereInput[] | PageViewSubscriptionWhereInput>;
+  NOT?: Maybe<
+    PageViewSubscriptionWhereInput[] | PageViewSubscriptionWhereInput
+  >;
+}
+
+export interface StoryCreateWithoutAppInput {
   id?: Maybe<ID_Input>;
-  file: FileCreateOneInput;
+  createdBy: UserCreateOneInput;
+  appVersions?: Maybe<AppVersionCreateManyWithoutStoriesInput>;
+  storyCategories?: Maybe<StoryCategoryCreateManyWithoutStoriesInput>;
+  storyElements?: Maybe<StoryElementCreateManyWithoutStoriesInput>;
+  libraries?: Maybe<LibraryCreateManyWithoutStoriesInput>;
+  video: VideoCreateOneInput;
+  thumbnail: FileCreateOneInput;
+}
+
+export interface LibrarySubscriptionWhereInput {
+  mutation_in?: Maybe<MutationType[] | MutationType>;
+  updatedFields_contains?: Maybe<String>;
+  updatedFields_contains_every?: Maybe<String[] | String>;
+  updatedFields_contains_some?: Maybe<String[] | String>;
+  node?: Maybe<LibraryWhereInput>;
+  AND?: Maybe<LibrarySubscriptionWhereInput[] | LibrarySubscriptionWhereInput>;
+  OR?: Maybe<LibrarySubscriptionWhereInput[] | LibrarySubscriptionWhereInput>;
+  NOT?: Maybe<LibrarySubscriptionWhereInput[] | LibrarySubscriptionWhereInput>;
+}
+
+export interface AppUpdateInput {
+  createdBy?: Maybe<UserUpdateOneRequiredWithoutAppsInput>;
+  appCategory?: Maybe<AppCategoryUpdateOneRequiredInput>;
+  appVersions?: Maybe<AppVersionUpdateManyInput>;
+  stories?: Maybe<StoryUpdateManyWithoutAppInput>;
+  name?: Maybe<String>;
+  description?: Maybe<String>;
+  company?: Maybe<String>;
+  logo?: Maybe<FileUpdateOneRequiredInput>;
+  platform?: Maybe<Platform>;
+}
+
+export interface FileSubscriptionWhereInput {
+  mutation_in?: Maybe<MutationType[] | MutationType>;
+  updatedFields_contains?: Maybe<String>;
+  updatedFields_contains_every?: Maybe<String[] | String>;
+  updatedFields_contains_some?: Maybe<String[] | String>;
+  node?: Maybe<FileWhereInput>;
+  AND?: Maybe<FileSubscriptionWhereInput[] | FileSubscriptionWhereInput>;
+  OR?: Maybe<FileSubscriptionWhereInput[] | FileSubscriptionWhereInput>;
+  NOT?: Maybe<FileSubscriptionWhereInput[] | FileSubscriptionWhereInput>;
+}
+
+export interface UserUpdateOneRequiredWithoutAppsInput {
+  create?: Maybe<UserCreateWithoutAppsInput>;
+  update?: Maybe<UserUpdateWithoutAppsDataInput>;
+  upsert?: Maybe<UserUpsertWithoutAppsInput>;
+  connect?: Maybe<UserWhereUniqueInput>;
+}
+
+export interface AppCategorySubscriptionWhereInput {
+  mutation_in?: Maybe<MutationType[] | MutationType>;
+  updatedFields_contains?: Maybe<String>;
+  updatedFields_contains_every?: Maybe<String[] | String>;
+  updatedFields_contains_some?: Maybe<String[] | String>;
+  node?: Maybe<AppCategoryWhereInput>;
+  AND?: Maybe<
+    AppCategorySubscriptionWhereInput[] | AppCategorySubscriptionWhereInput
+  >;
+  OR?: Maybe<
+    AppCategorySubscriptionWhereInput[] | AppCategorySubscriptionWhereInput
+  >;
+  NOT?: Maybe<
+    AppCategorySubscriptionWhereInput[] | AppCategorySubscriptionWhereInput
+  >;
+}
+
+export interface UserUpdateWithoutAppsDataInput {
+  email?: Maybe<String>;
+  password?: Maybe<String>;
+  full_name?: Maybe<String>;
+  job?: Maybe<JobUpdateOneInput>;
+  role?: Maybe<AccountType>;
+  profile_photo?: Maybe<FileUpdateOneInput>;
+  customer_id?: Maybe<ID_Input>;
+  subscription_id?: Maybe<ID_Input>;
+  libraries?: Maybe<LibraryUpdateManyWithoutCreatedByInput>;
+  google_accessToken?: Maybe<String>;
+  facebook_accessToken?: Maybe<String>;
+  oauth_id?: Maybe<String>;
+  pageViews?: Maybe<PageViewUpdateManyWithoutUserInput>;
+}
+
+export interface VideoUpdateInput {
+  file?: Maybe<FileUpdateOneRequiredInput>;
+}
+
+export interface JobUpdateOneInput {
+  create?: Maybe<JobCreateInput>;
+  update?: Maybe<JobUpdateDataInput>;
+  upsert?: Maybe<JobUpsertNestedInput>;
+  delete?: Maybe<Boolean>;
+  disconnect?: Maybe<Boolean>;
+  connect?: Maybe<JobWhereUniqueInput>;
+}
+
+export interface UserUpdateManyMutationInput {
+  email?: Maybe<String>;
+  password?: Maybe<String>;
+  full_name?: Maybe<String>;
+  role?: Maybe<AccountType>;
+  customer_id?: Maybe<ID_Input>;
+  subscription_id?: Maybe<ID_Input>;
+  google_accessToken?: Maybe<String>;
+  facebook_accessToken?: Maybe<String>;
+  oauth_id?: Maybe<String>;
+}
+
+export interface JobUpdateDataInput {
+  name?: Maybe<String>;
+}
+
+export interface StoryElementUpdateManyMutationInput {
+  name?: Maybe<String>;
+}
+
+export interface JobUpsertNestedInput {
+  update: JobUpdateDataInput;
+  create: JobCreateInput;
+}
+
+export type AppVersionWhereUniqueInput = AtLeastOne<{
+  id: Maybe<ID_Input>;
+  name?: Maybe<String>;
+}>;
+
+export interface FileUpdateOneInput {
+  create?: Maybe<FileCreateInput>;
+  update?: Maybe<FileUpdateDataInput>;
+  upsert?: Maybe<FileUpsertNestedInput>;
+  delete?: Maybe<Boolean>;
+  disconnect?: Maybe<Boolean>;
+  connect?: Maybe<FileWhereUniqueInput>;
+}
+
+export interface StoryUpdateWithWhereUniqueWithoutStoryElementsInput {
+  where: StoryWhereUniqueInput;
+  data: StoryUpdateWithoutStoryElementsDataInput;
+}
+
+export interface FileUpdateDataInput {
+  filename?: Maybe<String>;
+  mimetype?: Maybe<String>;
+  encoding?: Maybe<String>;
+  url?: Maybe<String>;
+}
+
+export type FileWhereUniqueInput = AtLeastOne<{
+  id: Maybe<ID_Input>;
+  url?: Maybe<String>;
+}>;
+
+export interface FileUpsertNestedInput {
+  update: FileUpdateDataInput;
+  create: FileCreateInput;
+}
+
+export interface StoryCreateWithoutStoryElementsInput {
+  id?: Maybe<ID_Input>;
+  createdBy: UserCreateOneInput;
+  app: AppCreateOneWithoutStoriesInput;
+  appVersions?: Maybe<AppVersionCreateManyWithoutStoriesInput>;
+  storyCategories?: Maybe<StoryCategoryCreateManyWithoutStoriesInput>;
+  libraries?: Maybe<LibraryCreateManyWithoutStoriesInput>;
+  video: VideoCreateOneInput;
+  thumbnail: FileCreateOneInput;
+}
+
+export interface LibraryUpdateManyWithoutCreatedByInput {
+  create?: Maybe<
+    LibraryCreateWithoutCreatedByInput[] | LibraryCreateWithoutCreatedByInput
+  >;
+  delete?: Maybe<LibraryWhereUniqueInput[] | LibraryWhereUniqueInput>;
+  connect?: Maybe<LibraryWhereUniqueInput[] | LibraryWhereUniqueInput>;
+  set?: Maybe<LibraryWhereUniqueInput[] | LibraryWhereUniqueInput>;
+  disconnect?: Maybe<LibraryWhereUniqueInput[] | LibraryWhereUniqueInput>;
+  update?: Maybe<
+    | LibraryUpdateWithWhereUniqueWithoutCreatedByInput[]
+    | LibraryUpdateWithWhereUniqueWithoutCreatedByInput
+  >;
+  upsert?: Maybe<
+    | LibraryUpsertWithWhereUniqueWithoutCreatedByInput[]
+    | LibraryUpsertWithWhereUniqueWithoutCreatedByInput
+  >;
+  deleteMany?: Maybe<LibraryScalarWhereInput[] | LibraryScalarWhereInput>;
+  updateMany?: Maybe<
+    | LibraryUpdateManyWithWhereNestedInput[]
+    | LibraryUpdateManyWithWhereNestedInput
+  >;
+}
+
+export interface StoryElementCreateInput {
+  id?: Maybe<ID_Input>;
+  name: String;
+  stories?: Maybe<StoryCreateManyWithoutStoryElementsInput>;
+}
+
+export interface LibraryUpdateWithWhereUniqueWithoutCreatedByInput {
+  where: LibraryWhereUniqueInput;
+  data: LibraryUpdateWithoutCreatedByDataInput;
+}
+
+export interface StoryCategoryUpdateManyMutationInput {
+  name?: Maybe<String>;
+}
+
+export interface LibraryUpdateWithoutCreatedByDataInput {
+  stories?: Maybe<StoryUpdateManyWithoutLibrariesInput>;
+  name?: Maybe<String>;
+  custom_updatedAt?: Maybe<DateTimeInput>;
+}
+
+export interface StoryUpdateWithoutStoryCategoriesDataInput {
+  createdBy?: Maybe<UserUpdateOneRequiredInput>;
+  app?: Maybe<AppUpdateOneRequiredWithoutStoriesInput>;
+  appVersions?: Maybe<AppVersionUpdateManyWithoutStoriesInput>;
+  storyElements?: Maybe<StoryElementUpdateManyWithoutStoriesInput>;
+  libraries?: Maybe<LibraryUpdateManyWithoutStoriesInput>;
+  video?: Maybe<VideoUpdateOneRequiredInput>;
+  thumbnail?: Maybe<FileUpdateOneRequiredInput>;
+}
+
+export interface StoryUpdateManyWithoutLibrariesInput {
+  create?: Maybe<
+    StoryCreateWithoutLibrariesInput[] | StoryCreateWithoutLibrariesInput
+  >;
+  delete?: Maybe<StoryWhereUniqueInput[] | StoryWhereUniqueInput>;
+  connect?: Maybe<StoryWhereUniqueInput[] | StoryWhereUniqueInput>;
+  set?: Maybe<StoryWhereUniqueInput[] | StoryWhereUniqueInput>;
+  disconnect?: Maybe<StoryWhereUniqueInput[] | StoryWhereUniqueInput>;
+  update?: Maybe<
+    | StoryUpdateWithWhereUniqueWithoutLibrariesInput[]
+    | StoryUpdateWithWhereUniqueWithoutLibrariesInput
+  >;
+  upsert?: Maybe<
+    | StoryUpsertWithWhereUniqueWithoutLibrariesInput[]
+    | StoryUpsertWithWhereUniqueWithoutLibrariesInput
+  >;
+  deleteMany?: Maybe<StoryScalarWhereInput[] | StoryScalarWhereInput>;
+}
+
+export type LibraryWhereUniqueInput = AtLeastOne<{
+  id: Maybe<ID_Input>;
+}>;
+
+export interface StoryUpdateWithWhereUniqueWithoutLibrariesInput {
+  where: StoryWhereUniqueInput;
+  data: StoryUpdateWithoutLibrariesDataInput;
+}
+
+export interface StoryCategoryUpdateInput {
+  name?: Maybe<String>;
+  stories?: Maybe<StoryUpdateManyWithoutStoryCategoriesInput>;
+}
+
+export interface StoryUpdateWithoutLibrariesDataInput {
+  createdBy?: Maybe<UserUpdateOneRequiredInput>;
+  app?: Maybe<AppUpdateOneRequiredWithoutStoriesInput>;
+  appVersions?: Maybe<AppVersionUpdateManyWithoutStoriesInput>;
+  storyCategories?: Maybe<StoryCategoryUpdateManyWithoutStoriesInput>;
+  storyElements?: Maybe<StoryElementUpdateManyWithoutStoriesInput>;
+  video?: Maybe<VideoUpdateOneRequiredInput>;
+  thumbnail?: Maybe<FileUpdateOneRequiredInput>;
+}
+
+export type PageViewWhereUniqueInput = AtLeastOne<{
+  id: Maybe<ID_Input>;
+}>;
+
+export interface UserUpdateOneRequiredInput {
+  create?: Maybe<UserCreateInput>;
+  update?: Maybe<UserUpdateDataInput>;
+  upsert?: Maybe<UserUpsertNestedInput>;
+  connect?: Maybe<UserWhereUniqueInput>;
+}
+
+export interface StoryCategoryCreateInput {
+  id?: Maybe<ID_Input>;
+  name: String;
+  stories?: Maybe<StoryCreateManyWithoutStoryCategoriesInput>;
+}
+
+export interface UserUpdateDataInput {
+  email?: Maybe<String>;
+  password?: Maybe<String>;
+  full_name?: Maybe<String>;
+  job?: Maybe<JobUpdateOneInput>;
+  role?: Maybe<AccountType>;
+  profile_photo?: Maybe<FileUpdateOneInput>;
+  customer_id?: Maybe<ID_Input>;
+  subscription_id?: Maybe<ID_Input>;
+  apps?: Maybe<AppUpdateManyWithoutCreatedByInput>;
+  libraries?: Maybe<LibraryUpdateManyWithoutCreatedByInput>;
+  google_accessToken?: Maybe<String>;
+  facebook_accessToken?: Maybe<String>;
+  oauth_id?: Maybe<String>;
+  pageViews?: Maybe<PageViewUpdateManyWithoutUserInput>;
+}
+
+export type StoryWhereUniqueInput = AtLeastOne<{
+  id: Maybe<ID_Input>;
+}>;
+
+export interface AppUpdateManyWithoutCreatedByInput {
+  create?: Maybe<
+    AppCreateWithoutCreatedByInput[] | AppCreateWithoutCreatedByInput
+  >;
+  delete?: Maybe<AppWhereUniqueInput[] | AppWhereUniqueInput>;
+  connect?: Maybe<AppWhereUniqueInput[] | AppWhereUniqueInput>;
+  set?: Maybe<AppWhereUniqueInput[] | AppWhereUniqueInput>;
+  disconnect?: Maybe<AppWhereUniqueInput[] | AppWhereUniqueInput>;
+  update?: Maybe<
+    | AppUpdateWithWhereUniqueWithoutCreatedByInput[]
+    | AppUpdateWithWhereUniqueWithoutCreatedByInput
+  >;
+  upsert?: Maybe<
+    | AppUpsertWithWhereUniqueWithoutCreatedByInput[]
+    | AppUpsertWithWhereUniqueWithoutCreatedByInput
+  >;
+  deleteMany?: Maybe<AppScalarWhereInput[] | AppScalarWhereInput>;
+  updateMany?: Maybe<
+    AppUpdateManyWithWhereNestedInput[] | AppUpdateManyWithWhereNestedInput
+  >;
+}
+
+export interface UserUpsertWithoutPageViewsInput {
+  update: UserUpdateWithoutPageViewsDataInput;
+  create: UserCreateWithoutPageViewsInput;
+}
+
+export interface AppUpdateWithWhereUniqueWithoutCreatedByInput {
+  where: AppWhereUniqueInput;
+  data: AppUpdateWithoutCreatedByDataInput;
+}
+
+export type StoryCategoryWhereUniqueInput = AtLeastOne<{
+  id: Maybe<ID_Input>;
+  name?: Maybe<String>;
+}>;
+
+export interface AppUpdateWithoutCreatedByDataInput {
+  appCategory?: Maybe<AppCategoryUpdateOneRequiredInput>;
+  appVersions?: Maybe<AppVersionUpdateManyInput>;
+  stories?: Maybe<StoryUpdateManyWithoutAppInput>;
+  name?: Maybe<String>;
+  description?: Maybe<String>;
+  company?: Maybe<String>;
+  logo?: Maybe<FileUpdateOneRequiredInput>;
+  platform?: Maybe<Platform>;
+}
+
+export interface PageViewUpdateInput {
+  user?: Maybe<UserUpdateOneWithoutPageViewsInput>;
+  pathname?: Maybe<String>;
+  agent?: Maybe<String>;
+}
+
+export interface AppCategoryUpdateManyMutationInput {
+  name?: Maybe<String>;
+}
+
+export type StoryElementWhereUniqueInput = AtLeastOne<{
+  id: Maybe<ID_Input>;
+  name?: Maybe<String>;
+}>;
+
+export interface AppCategoryUpdateDataInput {
+  name?: Maybe<String>;
+  stories?: Maybe<StoryUpdateManyInput>;
+}
+
+export interface PageViewCreateInput {
+  id?: Maybe<ID_Input>;
+  user?: Maybe<UserCreateOneWithoutPageViewsInput>;
+  pathname: String;
+  agent: String;
+}
+
+export interface StoryUpdateManyInput {
+  create?: Maybe<StoryCreateInput[] | StoryCreateInput>;
+  update?: Maybe<
+    | StoryUpdateWithWhereUniqueNestedInput[]
+    | StoryUpdateWithWhereUniqueNestedInput
+  >;
+  upsert?: Maybe<
+    | StoryUpsertWithWhereUniqueNestedInput[]
+    | StoryUpsertWithWhereUniqueNestedInput
+  >;
+  delete?: Maybe<StoryWhereUniqueInput[] | StoryWhereUniqueInput>;
+  connect?: Maybe<StoryWhereUniqueInput[] | StoryWhereUniqueInput>;
+  set?: Maybe<StoryWhereUniqueInput[] | StoryWhereUniqueInput>;
+  disconnect?: Maybe<StoryWhereUniqueInput[] | StoryWhereUniqueInput>;
+  deleteMany?: Maybe<StoryScalarWhereInput[] | StoryScalarWhereInput>;
+}
+
+export type UserWhereUniqueInput = AtLeastOne<{
+  id: Maybe<ID_Input>;
+  email?: Maybe<String>;
+}>;
+
+export interface StoryUpdateWithWhereUniqueNestedInput {
+  where: StoryWhereUniqueInput;
+  data: StoryUpdateDataInput;
+}
+
+export interface LibraryCreateInput {
+  id?: Maybe<ID_Input>;
+  createdBy: UserCreateOneWithoutLibrariesInput;
+  stories?: Maybe<StoryCreateManyWithoutLibrariesInput>;
+  name: String;
+  custom_updatedAt: DateTimeInput;
+}
+
+export interface StoryUpdateDataInput {
+  createdBy?: Maybe<UserUpdateOneRequiredInput>;
+  app?: Maybe<AppUpdateOneRequiredWithoutStoriesInput>;
+  appVersions?: Maybe<AppVersionUpdateManyWithoutStoriesInput>;
+  storyCategories?: Maybe<StoryCategoryUpdateManyWithoutStoriesInput>;
+  storyElements?: Maybe<StoryElementUpdateManyWithoutStoriesInput>;
+  libraries?: Maybe<LibraryUpdateManyWithoutStoriesInput>;
+  video?: Maybe<VideoUpdateOneRequiredInput>;
+  thumbnail?: Maybe<FileUpdateOneRequiredInput>;
+}
+
+export interface JobUpdateInput {
+  name?: Maybe<String>;
+}
+
+export interface AppUpdateOneRequiredWithoutStoriesInput {
+  create?: Maybe<AppCreateWithoutStoriesInput>;
+  update?: Maybe<AppUpdateWithoutStoriesDataInput>;
+  upsert?: Maybe<AppUpsertWithoutStoriesInput>;
+  connect?: Maybe<AppWhereUniqueInput>;
+}
+
+export interface FileUpdateManyMutationInput {
+  filename?: Maybe<String>;
+  mimetype?: Maybe<String>;
+  encoding?: Maybe<String>;
+  url?: Maybe<String>;
+}
+
+export interface AppUpdateWithoutStoriesDataInput {
+  createdBy?: Maybe<UserUpdateOneRequiredWithoutAppsInput>;
+  appCategory?: Maybe<AppCategoryUpdateOneRequiredInput>;
+  appVersions?: Maybe<AppVersionUpdateManyInput>;
+  name?: Maybe<String>;
+  description?: Maybe<String>;
+  company?: Maybe<String>;
+  logo?: Maybe<FileUpdateOneRequiredInput>;
+  platform?: Maybe<Platform>;
+}
+
+export interface AppVersionUpdateManyMutationInput {
+  name?: Maybe<String>;
+}
+
+export interface AppVersionUpdateManyInput {
+  create?: Maybe<AppVersionCreateInput[] | AppVersionCreateInput>;
+  update?: Maybe<
+    | AppVersionUpdateWithWhereUniqueNestedInput[]
+    | AppVersionUpdateWithWhereUniqueNestedInput
+  >;
+  upsert?: Maybe<
+    | AppVersionUpsertWithWhereUniqueNestedInput[]
+    | AppVersionUpsertWithWhereUniqueNestedInput
+  >;
+  delete?: Maybe<AppVersionWhereUniqueInput[] | AppVersionWhereUniqueInput>;
+  connect?: Maybe<AppVersionWhereUniqueInput[] | AppVersionWhereUniqueInput>;
+  set?: Maybe<AppVersionWhereUniqueInput[] | AppVersionWhereUniqueInput>;
+  disconnect?: Maybe<AppVersionWhereUniqueInput[] | AppVersionWhereUniqueInput>;
+  deleteMany?: Maybe<AppVersionScalarWhereInput[] | AppVersionScalarWhereInput>;
+  updateMany?: Maybe<
+    | AppVersionUpdateManyWithWhereNestedInput[]
+    | AppVersionUpdateManyWithWhereNestedInput
+  >;
+}
+
+export interface UserCreateOneWithoutAppsInput {
+  create?: Maybe<UserCreateWithoutAppsInput>;
+  connect?: Maybe<UserWhereUniqueInput>;
+}
+
+export interface VideoWhereInput {
+  id?: Maybe<ID_Input>;
+  id_not?: Maybe<ID_Input>;
+  id_in?: Maybe<ID_Input[] | ID_Input>;
+  id_not_in?: Maybe<ID_Input[] | ID_Input>;
+  id_lt?: Maybe<ID_Input>;
+  id_lte?: Maybe<ID_Input>;
+  id_gt?: Maybe<ID_Input>;
+  id_gte?: Maybe<ID_Input>;
+  id_contains?: Maybe<ID_Input>;
+  id_not_contains?: Maybe<ID_Input>;
+  id_starts_with?: Maybe<ID_Input>;
+  id_not_starts_with?: Maybe<ID_Input>;
+  id_ends_with?: Maybe<ID_Input>;
+  id_not_ends_with?: Maybe<ID_Input>;
+  file?: Maybe<FileWhereInput>;
+  createdAt?: Maybe<DateTimeInput>;
+  createdAt_not?: Maybe<DateTimeInput>;
+  createdAt_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  createdAt_not_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  createdAt_lt?: Maybe<DateTimeInput>;
+  createdAt_lte?: Maybe<DateTimeInput>;
+  createdAt_gt?: Maybe<DateTimeInput>;
+  createdAt_gte?: Maybe<DateTimeInput>;
+  updatedAt?: Maybe<DateTimeInput>;
+  updatedAt_not?: Maybe<DateTimeInput>;
+  updatedAt_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  updatedAt_not_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  updatedAt_lt?: Maybe<DateTimeInput>;
+  updatedAt_lte?: Maybe<DateTimeInput>;
+  updatedAt_gt?: Maybe<DateTimeInput>;
+  updatedAt_gte?: Maybe<DateTimeInput>;
+  AND?: Maybe<VideoWhereInput[] | VideoWhereInput>;
+  OR?: Maybe<VideoWhereInput[] | VideoWhereInput>;
+  NOT?: Maybe<VideoWhereInput[] | VideoWhereInput>;
+}
+
+export interface JobCreateOneInput {
+  create?: Maybe<JobCreateInput>;
+  connect?: Maybe<JobWhereUniqueInput>;
+}
+
+export interface AppCategoryWhereInput {
+  id?: Maybe<ID_Input>;
+  id_not?: Maybe<ID_Input>;
+  id_in?: Maybe<ID_Input[] | ID_Input>;
+  id_not_in?: Maybe<ID_Input[] | ID_Input>;
+  id_lt?: Maybe<ID_Input>;
+  id_lte?: Maybe<ID_Input>;
+  id_gt?: Maybe<ID_Input>;
+  id_gte?: Maybe<ID_Input>;
+  id_contains?: Maybe<ID_Input>;
+  id_not_contains?: Maybe<ID_Input>;
+  id_starts_with?: Maybe<ID_Input>;
+  id_not_starts_with?: Maybe<ID_Input>;
+  id_ends_with?: Maybe<ID_Input>;
+  id_not_ends_with?: Maybe<ID_Input>;
+  name?: Maybe<String>;
+  name_not?: Maybe<String>;
+  name_in?: Maybe<String[] | String>;
+  name_not_in?: Maybe<String[] | String>;
+  name_lt?: Maybe<String>;
+  name_lte?: Maybe<String>;
+  name_gt?: Maybe<String>;
+  name_gte?: Maybe<String>;
+  name_contains?: Maybe<String>;
+  name_not_contains?: Maybe<String>;
+  name_starts_with?: Maybe<String>;
+  name_not_starts_with?: Maybe<String>;
+  name_ends_with?: Maybe<String>;
+  name_not_ends_with?: Maybe<String>;
+  stories_every?: Maybe<StoryWhereInput>;
+  stories_some?: Maybe<StoryWhereInput>;
+  stories_none?: Maybe<StoryWhereInput>;
+  createdAt?: Maybe<DateTimeInput>;
+  createdAt_not?: Maybe<DateTimeInput>;
+  createdAt_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  createdAt_not_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  createdAt_lt?: Maybe<DateTimeInput>;
+  createdAt_lte?: Maybe<DateTimeInput>;
+  createdAt_gt?: Maybe<DateTimeInput>;
+  createdAt_gte?: Maybe<DateTimeInput>;
+  updatedAt?: Maybe<DateTimeInput>;
+  updatedAt_not?: Maybe<DateTimeInput>;
+  updatedAt_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  updatedAt_not_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  updatedAt_lt?: Maybe<DateTimeInput>;
+  updatedAt_lte?: Maybe<DateTimeInput>;
+  updatedAt_gt?: Maybe<DateTimeInput>;
+  updatedAt_gte?: Maybe<DateTimeInput>;
+  AND?: Maybe<AppCategoryWhereInput[] | AppCategoryWhereInput>;
+  OR?: Maybe<AppCategoryWhereInput[] | AppCategoryWhereInput>;
+  NOT?: Maybe<AppCategoryWhereInput[] | AppCategoryWhereInput>;
+}
+
+export interface FileCreateOneInput {
+  create?: Maybe<FileCreateInput>;
+  connect?: Maybe<FileWhereUniqueInput>;
+}
+
+export interface AppVersionWhereInput {
+  id?: Maybe<ID_Input>;
+  id_not?: Maybe<ID_Input>;
+  id_in?: Maybe<ID_Input[] | ID_Input>;
+  id_not_in?: Maybe<ID_Input[] | ID_Input>;
+  id_lt?: Maybe<ID_Input>;
+  id_lte?: Maybe<ID_Input>;
+  id_gt?: Maybe<ID_Input>;
+  id_gte?: Maybe<ID_Input>;
+  id_contains?: Maybe<ID_Input>;
+  id_not_contains?: Maybe<ID_Input>;
+  id_starts_with?: Maybe<ID_Input>;
+  id_not_starts_with?: Maybe<ID_Input>;
+  id_ends_with?: Maybe<ID_Input>;
+  id_not_ends_with?: Maybe<ID_Input>;
+  name?: Maybe<String>;
+  name_not?: Maybe<String>;
+  name_in?: Maybe<String[] | String>;
+  name_not_in?: Maybe<String[] | String>;
+  name_lt?: Maybe<String>;
+  name_lte?: Maybe<String>;
+  name_gt?: Maybe<String>;
+  name_gte?: Maybe<String>;
+  name_contains?: Maybe<String>;
+  name_not_contains?: Maybe<String>;
+  name_starts_with?: Maybe<String>;
+  name_not_starts_with?: Maybe<String>;
+  name_ends_with?: Maybe<String>;
+  name_not_ends_with?: Maybe<String>;
+  stories_every?: Maybe<StoryWhereInput>;
+  stories_some?: Maybe<StoryWhereInput>;
+  stories_none?: Maybe<StoryWhereInput>;
+  createdAt?: Maybe<DateTimeInput>;
+  createdAt_not?: Maybe<DateTimeInput>;
+  createdAt_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  createdAt_not_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  createdAt_lt?: Maybe<DateTimeInput>;
+  createdAt_lte?: Maybe<DateTimeInput>;
+  createdAt_gt?: Maybe<DateTimeInput>;
+  createdAt_gte?: Maybe<DateTimeInput>;
+  updatedAt?: Maybe<DateTimeInput>;
+  updatedAt_not?: Maybe<DateTimeInput>;
+  updatedAt_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  updatedAt_not_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  updatedAt_lt?: Maybe<DateTimeInput>;
+  updatedAt_lte?: Maybe<DateTimeInput>;
+  updatedAt_gt?: Maybe<DateTimeInput>;
+  updatedAt_gte?: Maybe<DateTimeInput>;
+  AND?: Maybe<AppVersionWhereInput[] | AppVersionWhereInput>;
+  OR?: Maybe<AppVersionWhereInput[] | AppVersionWhereInput>;
+  NOT?: Maybe<AppVersionWhereInput[] | AppVersionWhereInput>;
+}
+
+export interface LibraryCreateManyWithoutCreatedByInput {
+  create?: Maybe<
+    LibraryCreateWithoutCreatedByInput[] | LibraryCreateWithoutCreatedByInput
+  >;
+  connect?: Maybe<LibraryWhereUniqueInput[] | LibraryWhereUniqueInput>;
+}
+
+export interface StoryWhereInput {
+  id?: Maybe<ID_Input>;
+  id_not?: Maybe<ID_Input>;
+  id_in?: Maybe<ID_Input[] | ID_Input>;
+  id_not_in?: Maybe<ID_Input[] | ID_Input>;
+  id_lt?: Maybe<ID_Input>;
+  id_lte?: Maybe<ID_Input>;
+  id_gt?: Maybe<ID_Input>;
+  id_gte?: Maybe<ID_Input>;
+  id_contains?: Maybe<ID_Input>;
+  id_not_contains?: Maybe<ID_Input>;
+  id_starts_with?: Maybe<ID_Input>;
+  id_not_starts_with?: Maybe<ID_Input>;
+  id_ends_with?: Maybe<ID_Input>;
+  id_not_ends_with?: Maybe<ID_Input>;
+  createdBy?: Maybe<UserWhereInput>;
+  app?: Maybe<AppWhereInput>;
+  appVersions_every?: Maybe<AppVersionWhereInput>;
+  appVersions_some?: Maybe<AppVersionWhereInput>;
+  appVersions_none?: Maybe<AppVersionWhereInput>;
+  storyCategories_every?: Maybe<StoryCategoryWhereInput>;
+  storyCategories_some?: Maybe<StoryCategoryWhereInput>;
+  storyCategories_none?: Maybe<StoryCategoryWhereInput>;
+  storyElements_every?: Maybe<StoryElementWhereInput>;
+  storyElements_some?: Maybe<StoryElementWhereInput>;
+  storyElements_none?: Maybe<StoryElementWhereInput>;
+  libraries_every?: Maybe<LibraryWhereInput>;
+  libraries_some?: Maybe<LibraryWhereInput>;
+  libraries_none?: Maybe<LibraryWhereInput>;
+  video?: Maybe<VideoWhereInput>;
+  thumbnail?: Maybe<FileWhereInput>;
+  createdAt?: Maybe<DateTimeInput>;
+  createdAt_not?: Maybe<DateTimeInput>;
+  createdAt_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  createdAt_not_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  createdAt_lt?: Maybe<DateTimeInput>;
+  createdAt_lte?: Maybe<DateTimeInput>;
+  createdAt_gt?: Maybe<DateTimeInput>;
+  createdAt_gte?: Maybe<DateTimeInput>;
+  updatedAt?: Maybe<DateTimeInput>;
+  updatedAt_not?: Maybe<DateTimeInput>;
+  updatedAt_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  updatedAt_not_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  updatedAt_lt?: Maybe<DateTimeInput>;
+  updatedAt_lte?: Maybe<DateTimeInput>;
+  updatedAt_gt?: Maybe<DateTimeInput>;
+  updatedAt_gte?: Maybe<DateTimeInput>;
+  AND?: Maybe<StoryWhereInput[] | StoryWhereInput>;
+  OR?: Maybe<StoryWhereInput[] | StoryWhereInput>;
+  NOT?: Maybe<StoryWhereInput[] | StoryWhereInput>;
+}
+
+export interface StoryCreateManyWithoutLibrariesInput {
+  create?: Maybe<
+    StoryCreateWithoutLibrariesInput[] | StoryCreateWithoutLibrariesInput
+  >;
+  connect?: Maybe<StoryWhereUniqueInput[] | StoryWhereUniqueInput>;
+}
+
+export interface StoryUpdateWithoutAppVersionsDataInput {
+  createdBy?: Maybe<UserUpdateOneRequiredInput>;
+  app?: Maybe<AppUpdateOneRequiredWithoutStoriesInput>;
+  storyCategories?: Maybe<StoryCategoryUpdateManyWithoutStoriesInput>;
+  storyElements?: Maybe<StoryElementUpdateManyWithoutStoriesInput>;
+  libraries?: Maybe<LibraryUpdateManyWithoutStoriesInput>;
+  video?: Maybe<VideoUpdateOneRequiredInput>;
+  thumbnail?: Maybe<FileUpdateOneRequiredInput>;
+}
+
+export interface UserCreateOneInput {
+  create?: Maybe<UserCreateInput>;
+  connect?: Maybe<UserWhereUniqueInput>;
+}
+
+export interface StoryCategoryUpdateManyWithoutStoriesInput {
+  create?: Maybe<
+    | StoryCategoryCreateWithoutStoriesInput[]
+    | StoryCategoryCreateWithoutStoriesInput
+  >;
+  delete?: Maybe<
+    StoryCategoryWhereUniqueInput[] | StoryCategoryWhereUniqueInput
+  >;
+  connect?: Maybe<
+    StoryCategoryWhereUniqueInput[] | StoryCategoryWhereUniqueInput
+  >;
+  set?: Maybe<StoryCategoryWhereUniqueInput[] | StoryCategoryWhereUniqueInput>;
+  disconnect?: Maybe<
+    StoryCategoryWhereUniqueInput[] | StoryCategoryWhereUniqueInput
+  >;
+  update?: Maybe<
+    | StoryCategoryUpdateWithWhereUniqueWithoutStoriesInput[]
+    | StoryCategoryUpdateWithWhereUniqueWithoutStoriesInput
+  >;
+  upsert?: Maybe<
+    | StoryCategoryUpsertWithWhereUniqueWithoutStoriesInput[]
+    | StoryCategoryUpsertWithWhereUniqueWithoutStoriesInput
+  >;
+  deleteMany?: Maybe<
+    StoryCategoryScalarWhereInput[] | StoryCategoryScalarWhereInput
+  >;
+  updateMany?: Maybe<
+    | StoryCategoryUpdateManyWithWhereNestedInput[]
+    | StoryCategoryUpdateManyWithWhereNestedInput
+  >;
+}
+
+export interface AppCreateManyWithoutCreatedByInput {
+  create?: Maybe<
+    AppCreateWithoutCreatedByInput[] | AppCreateWithoutCreatedByInput
+  >;
+  connect?: Maybe<AppWhereUniqueInput[] | AppWhereUniqueInput>;
+}
+
+export interface StoryCategoryUpdateWithWhereUniqueWithoutStoriesInput {
+  where: StoryCategoryWhereUniqueInput;
+  data: StoryCategoryUpdateWithoutStoriesDataInput;
+}
+
+export interface AppCategoryCreateOneInput {
+  create?: Maybe<AppCategoryCreateInput>;
+  connect?: Maybe<AppCategoryWhereUniqueInput>;
+}
+
+export interface StoryCategoryUpdateWithoutStoriesDataInput {
+  name?: Maybe<String>;
+}
+
+export interface StoryCreateManyInput {
+  create?: Maybe<StoryCreateInput[] | StoryCreateInput>;
+  connect?: Maybe<StoryWhereUniqueInput[] | StoryWhereUniqueInput>;
+}
+
+export interface StoryCategoryUpsertWithWhereUniqueWithoutStoriesInput {
+  where: StoryCategoryWhereUniqueInput;
+  update: StoryCategoryUpdateWithoutStoriesDataInput;
+  create: StoryCategoryCreateWithoutStoriesInput;
+}
+
+export interface AppCreateOneWithoutStoriesInput {
+  create?: Maybe<AppCreateWithoutStoriesInput>;
+  connect?: Maybe<AppWhereUniqueInput>;
+}
+
+export interface StoryCategoryScalarWhereInput {
+  id?: Maybe<ID_Input>;
+  id_not?: Maybe<ID_Input>;
+  id_in?: Maybe<ID_Input[] | ID_Input>;
+  id_not_in?: Maybe<ID_Input[] | ID_Input>;
+  id_lt?: Maybe<ID_Input>;
+  id_lte?: Maybe<ID_Input>;
+  id_gt?: Maybe<ID_Input>;
+  id_gte?: Maybe<ID_Input>;
+  id_contains?: Maybe<ID_Input>;
+  id_not_contains?: Maybe<ID_Input>;
+  id_starts_with?: Maybe<ID_Input>;
+  id_not_starts_with?: Maybe<ID_Input>;
+  id_ends_with?: Maybe<ID_Input>;
+  id_not_ends_with?: Maybe<ID_Input>;
+  name?: Maybe<String>;
+  name_not?: Maybe<String>;
+  name_in?: Maybe<String[] | String>;
+  name_not_in?: Maybe<String[] | String>;
+  name_lt?: Maybe<String>;
+  name_lte?: Maybe<String>;
+  name_gt?: Maybe<String>;
+  name_gte?: Maybe<String>;
+  name_contains?: Maybe<String>;
+  name_not_contains?: Maybe<String>;
+  name_starts_with?: Maybe<String>;
+  name_not_starts_with?: Maybe<String>;
+  name_ends_with?: Maybe<String>;
+  name_not_ends_with?: Maybe<String>;
+  createdAt?: Maybe<DateTimeInput>;
+  createdAt_not?: Maybe<DateTimeInput>;
+  createdAt_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  createdAt_not_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  createdAt_lt?: Maybe<DateTimeInput>;
+  createdAt_lte?: Maybe<DateTimeInput>;
+  createdAt_gt?: Maybe<DateTimeInput>;
+  createdAt_gte?: Maybe<DateTimeInput>;
+  updatedAt?: Maybe<DateTimeInput>;
+  updatedAt_not?: Maybe<DateTimeInput>;
+  updatedAt_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  updatedAt_not_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  updatedAt_lt?: Maybe<DateTimeInput>;
+  updatedAt_lte?: Maybe<DateTimeInput>;
+  updatedAt_gt?: Maybe<DateTimeInput>;
+  updatedAt_gte?: Maybe<DateTimeInput>;
+  AND?: Maybe<StoryCategoryScalarWhereInput[] | StoryCategoryScalarWhereInput>;
+  OR?: Maybe<StoryCategoryScalarWhereInput[] | StoryCategoryScalarWhereInput>;
+  NOT?: Maybe<StoryCategoryScalarWhereInput[] | StoryCategoryScalarWhereInput>;
+}
+
+export interface AppVersionCreateManyInput {
+  create?: Maybe<AppVersionCreateInput[] | AppVersionCreateInput>;
+  connect?: Maybe<AppVersionWhereUniqueInput[] | AppVersionWhereUniqueInput>;
+}
+
+export interface StoryCategoryUpdateManyWithWhereNestedInput {
+  where: StoryCategoryScalarWhereInput;
+  data: StoryCategoryUpdateManyDataInput;
+}
+
+export interface StoryCreateManyWithoutAppVersionsInput {
+  create?: Maybe<
+    StoryCreateWithoutAppVersionsInput[] | StoryCreateWithoutAppVersionsInput
+  >;
+  connect?: Maybe<StoryWhereUniqueInput[] | StoryWhereUniqueInput>;
+}
+
+export interface StoryCategoryUpdateManyDataInput {
+  name?: Maybe<String>;
+}
+
+export interface StoryCategoryCreateManyWithoutStoriesInput {
+  create?: Maybe<
+    | StoryCategoryCreateWithoutStoriesInput[]
+    | StoryCategoryCreateWithoutStoriesInput
+  >;
+  connect?: Maybe<
+    StoryCategoryWhereUniqueInput[] | StoryCategoryWhereUniqueInput
+  >;
+}
+
+export interface StoryElementUpdateManyWithoutStoriesInput {
+  create?: Maybe<
+    | StoryElementCreateWithoutStoriesInput[]
+    | StoryElementCreateWithoutStoriesInput
+  >;
+  delete?: Maybe<StoryElementWhereUniqueInput[] | StoryElementWhereUniqueInput>;
+  connect?: Maybe<
+    StoryElementWhereUniqueInput[] | StoryElementWhereUniqueInput
+  >;
+  set?: Maybe<StoryElementWhereUniqueInput[] | StoryElementWhereUniqueInput>;
+  disconnect?: Maybe<
+    StoryElementWhereUniqueInput[] | StoryElementWhereUniqueInput
+  >;
+  update?: Maybe<
+    | StoryElementUpdateWithWhereUniqueWithoutStoriesInput[]
+    | StoryElementUpdateWithWhereUniqueWithoutStoriesInput
+  >;
+  upsert?: Maybe<
+    | StoryElementUpsertWithWhereUniqueWithoutStoriesInput[]
+    | StoryElementUpsertWithWhereUniqueWithoutStoriesInput
+  >;
+  deleteMany?: Maybe<
+    StoryElementScalarWhereInput[] | StoryElementScalarWhereInput
+  >;
+  updateMany?: Maybe<
+    | StoryElementUpdateManyWithWhereNestedInput[]
+    | StoryElementUpdateManyWithWhereNestedInput
+  >;
+}
+
+export interface StoryElementCreateManyWithoutStoriesInput {
+  create?: Maybe<
+    | StoryElementCreateWithoutStoriesInput[]
+    | StoryElementCreateWithoutStoriesInput
+  >;
+  connect?: Maybe<
+    StoryElementWhereUniqueInput[] | StoryElementWhereUniqueInput
+  >;
+}
+
+export interface StoryElementUpdateWithWhereUniqueWithoutStoriesInput {
+  where: StoryElementWhereUniqueInput;
+  data: StoryElementUpdateWithoutStoriesDataInput;
+}
+
+export interface LibraryCreateManyWithoutStoriesInput {
+  create?: Maybe<
+    LibraryCreateWithoutStoriesInput[] | LibraryCreateWithoutStoriesInput
+  >;
+  connect?: Maybe<LibraryWhereUniqueInput[] | LibraryWhereUniqueInput>;
+}
+
+export interface StoryElementUpdateWithoutStoriesDataInput {
+  name?: Maybe<String>;
+}
+
+export interface UserCreateOneWithoutLibrariesInput {
+  create?: Maybe<UserCreateWithoutLibrariesInput>;
+  connect?: Maybe<UserWhereUniqueInput>;
+}
+
+export interface StoryElementUpsertWithWhereUniqueWithoutStoriesInput {
+  where: StoryElementWhereUniqueInput;
+  update: StoryElementUpdateWithoutStoriesDataInput;
+  create: StoryElementCreateWithoutStoriesInput;
+}
+
+export interface VideoSubscriptionWhereInput {
+  mutation_in?: Maybe<MutationType[] | MutationType>;
+  updatedFields_contains?: Maybe<String>;
+  updatedFields_contains_every?: Maybe<String[] | String>;
+  updatedFields_contains_some?: Maybe<String[] | String>;
+  node?: Maybe<VideoWhereInput>;
+  AND?: Maybe<VideoSubscriptionWhereInput[] | VideoSubscriptionWhereInput>;
+  OR?: Maybe<VideoSubscriptionWhereInput[] | VideoSubscriptionWhereInput>;
+  NOT?: Maybe<VideoSubscriptionWhereInput[] | VideoSubscriptionWhereInput>;
+}
+
+export interface StoryElementScalarWhereInput {
+  id?: Maybe<ID_Input>;
+  id_not?: Maybe<ID_Input>;
+  id_in?: Maybe<ID_Input[] | ID_Input>;
+  id_not_in?: Maybe<ID_Input[] | ID_Input>;
+  id_lt?: Maybe<ID_Input>;
+  id_lte?: Maybe<ID_Input>;
+  id_gt?: Maybe<ID_Input>;
+  id_gte?: Maybe<ID_Input>;
+  id_contains?: Maybe<ID_Input>;
+  id_not_contains?: Maybe<ID_Input>;
+  id_starts_with?: Maybe<ID_Input>;
+  id_not_starts_with?: Maybe<ID_Input>;
+  id_ends_with?: Maybe<ID_Input>;
+  id_not_ends_with?: Maybe<ID_Input>;
+  name?: Maybe<String>;
+  name_not?: Maybe<String>;
+  name_in?: Maybe<String[] | String>;
+  name_not_in?: Maybe<String[] | String>;
+  name_lt?: Maybe<String>;
+  name_lte?: Maybe<String>;
+  name_gt?: Maybe<String>;
+  name_gte?: Maybe<String>;
+  name_contains?: Maybe<String>;
+  name_not_contains?: Maybe<String>;
+  name_starts_with?: Maybe<String>;
+  name_not_starts_with?: Maybe<String>;
+  name_ends_with?: Maybe<String>;
+  name_not_ends_with?: Maybe<String>;
+  createdAt?: Maybe<DateTimeInput>;
+  createdAt_not?: Maybe<DateTimeInput>;
+  createdAt_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  createdAt_not_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  createdAt_lt?: Maybe<DateTimeInput>;
+  createdAt_lte?: Maybe<DateTimeInput>;
+  createdAt_gt?: Maybe<DateTimeInput>;
+  createdAt_gte?: Maybe<DateTimeInput>;
+  updatedAt?: Maybe<DateTimeInput>;
+  updatedAt_not?: Maybe<DateTimeInput>;
+  updatedAt_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  updatedAt_not_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  updatedAt_lt?: Maybe<DateTimeInput>;
+  updatedAt_lte?: Maybe<DateTimeInput>;
+  updatedAt_gt?: Maybe<DateTimeInput>;
+  updatedAt_gte?: Maybe<DateTimeInput>;
+  AND?: Maybe<StoryElementScalarWhereInput[] | StoryElementScalarWhereInput>;
+  OR?: Maybe<StoryElementScalarWhereInput[] | StoryElementScalarWhereInput>;
+  NOT?: Maybe<StoryElementScalarWhereInput[] | StoryElementScalarWhereInput>;
+}
+
+export interface StoryElementSubscriptionWhereInput {
+  mutation_in?: Maybe<MutationType[] | MutationType>;
+  updatedFields_contains?: Maybe<String>;
+  updatedFields_contains_every?: Maybe<String[] | String>;
+  updatedFields_contains_some?: Maybe<String[] | String>;
+  node?: Maybe<StoryElementWhereInput>;
+  AND?: Maybe<
+    StoryElementSubscriptionWhereInput[] | StoryElementSubscriptionWhereInput
+  >;
+  OR?: Maybe<
+    StoryElementSubscriptionWhereInput[] | StoryElementSubscriptionWhereInput
+  >;
+  NOT?: Maybe<
+    StoryElementSubscriptionWhereInput[] | StoryElementSubscriptionWhereInput
+  >;
+}
+
+export interface StoryElementUpdateManyWithWhereNestedInput {
+  where: StoryElementScalarWhereInput;
+  data: StoryElementUpdateManyDataInput;
+}
+
+export interface StorySubscriptionWhereInput {
+  mutation_in?: Maybe<MutationType[] | MutationType>;
+  updatedFields_contains?: Maybe<String>;
+  updatedFields_contains_every?: Maybe<String[] | String>;
+  updatedFields_contains_some?: Maybe<String[] | String>;
+  node?: Maybe<StoryWhereInput>;
+  AND?: Maybe<StorySubscriptionWhereInput[] | StorySubscriptionWhereInput>;
+  OR?: Maybe<StorySubscriptionWhereInput[] | StorySubscriptionWhereInput>;
+  NOT?: Maybe<StorySubscriptionWhereInput[] | StorySubscriptionWhereInput>;
+}
+
+export interface StoryElementUpdateManyDataInput {
+  name?: Maybe<String>;
+}
+
+export interface JobSubscriptionWhereInput {
+  mutation_in?: Maybe<MutationType[] | MutationType>;
+  updatedFields_contains?: Maybe<String>;
+  updatedFields_contains_every?: Maybe<String[] | String>;
+  updatedFields_contains_some?: Maybe<String[] | String>;
+  node?: Maybe<JobWhereInput>;
+  AND?: Maybe<JobSubscriptionWhereInput[] | JobSubscriptionWhereInput>;
+  OR?: Maybe<JobSubscriptionWhereInput[] | JobSubscriptionWhereInput>;
+  NOT?: Maybe<JobSubscriptionWhereInput[] | JobSubscriptionWhereInput>;
+}
+
+export interface LibraryUpdateManyWithoutStoriesInput {
+  create?: Maybe<
+    LibraryCreateWithoutStoriesInput[] | LibraryCreateWithoutStoriesInput
+  >;
+  delete?: Maybe<LibraryWhereUniqueInput[] | LibraryWhereUniqueInput>;
+  connect?: Maybe<LibraryWhereUniqueInput[] | LibraryWhereUniqueInput>;
+  set?: Maybe<LibraryWhereUniqueInput[] | LibraryWhereUniqueInput>;
+  disconnect?: Maybe<LibraryWhereUniqueInput[] | LibraryWhereUniqueInput>;
+  update?: Maybe<
+    | LibraryUpdateWithWhereUniqueWithoutStoriesInput[]
+    | LibraryUpdateWithWhereUniqueWithoutStoriesInput
+  >;
+  upsert?: Maybe<
+    | LibraryUpsertWithWhereUniqueWithoutStoriesInput[]
+    | LibraryUpsertWithWhereUniqueWithoutStoriesInput
+  >;
+  deleteMany?: Maybe<LibraryScalarWhereInput[] | LibraryScalarWhereInput>;
+  updateMany?: Maybe<
+    | LibraryUpdateManyWithWhereNestedInput[]
+    | LibraryUpdateManyWithWhereNestedInput
+  >;
+}
+
+export interface AppSubscriptionWhereInput {
+  mutation_in?: Maybe<MutationType[] | MutationType>;
+  updatedFields_contains?: Maybe<String>;
+  updatedFields_contains_every?: Maybe<String[] | String>;
+  updatedFields_contains_some?: Maybe<String[] | String>;
+  node?: Maybe<AppWhereInput>;
+  AND?: Maybe<AppSubscriptionWhereInput[] | AppSubscriptionWhereInput>;
+  OR?: Maybe<AppSubscriptionWhereInput[] | AppSubscriptionWhereInput>;
+  NOT?: Maybe<AppSubscriptionWhereInput[] | AppSubscriptionWhereInput>;
+}
+
+export interface LibraryUpdateWithWhereUniqueWithoutStoriesInput {
+  where: LibraryWhereUniqueInput;
+  data: LibraryUpdateWithoutStoriesDataInput;
+}
+
+export interface UserUpdateInput {
+  email?: Maybe<String>;
+  password?: Maybe<String>;
+  full_name?: Maybe<String>;
+  job?: Maybe<JobUpdateOneInput>;
+  role?: Maybe<AccountType>;
+  profile_photo?: Maybe<FileUpdateOneInput>;
+  customer_id?: Maybe<ID_Input>;
+  subscription_id?: Maybe<ID_Input>;
+  apps?: Maybe<AppUpdateManyWithoutCreatedByInput>;
+  libraries?: Maybe<LibraryUpdateManyWithoutCreatedByInput>;
+  google_accessToken?: Maybe<String>;
+  facebook_accessToken?: Maybe<String>;
+  oauth_id?: Maybe<String>;
+  pageViews?: Maybe<PageViewUpdateManyWithoutUserInput>;
+}
+
+export interface LibraryUpdateWithoutStoriesDataInput {
+  createdBy?: Maybe<UserUpdateOneRequiredWithoutLibrariesInput>;
+  name?: Maybe<String>;
+  custom_updatedAt?: Maybe<DateTimeInput>;
+}
+
+export interface StoryUpdateWithoutStoryElementsDataInput {
+  createdBy?: Maybe<UserUpdateOneRequiredInput>;
+  app?: Maybe<AppUpdateOneRequiredWithoutStoriesInput>;
+  appVersions?: Maybe<AppVersionUpdateManyWithoutStoriesInput>;
+  storyCategories?: Maybe<StoryCategoryUpdateManyWithoutStoriesInput>;
+  libraries?: Maybe<LibraryUpdateManyWithoutStoriesInput>;
+  video?: Maybe<VideoUpdateOneRequiredInput>;
+  thumbnail?: Maybe<FileUpdateOneRequiredInput>;
+}
+
+export interface UserUpdateOneRequiredWithoutLibrariesInput {
+  create?: Maybe<UserCreateWithoutLibrariesInput>;
+  update?: Maybe<UserUpdateWithoutLibrariesDataInput>;
+  upsert?: Maybe<UserUpsertWithoutLibrariesInput>;
+  connect?: Maybe<UserWhereUniqueInput>;
+}
+
+export interface StoryElementUpdateInput {
+  name?: Maybe<String>;
+  stories?: Maybe<StoryUpdateManyWithoutStoryElementsInput>;
+}
+
+export interface UserUpdateWithoutLibrariesDataInput {
+  email?: Maybe<String>;
+  password?: Maybe<String>;
+  full_name?: Maybe<String>;
+  job?: Maybe<JobUpdateOneInput>;
+  role?: Maybe<AccountType>;
+  profile_photo?: Maybe<FileUpdateOneInput>;
+  customer_id?: Maybe<ID_Input>;
+  subscription_id?: Maybe<ID_Input>;
+  apps?: Maybe<AppUpdateManyWithoutCreatedByInput>;
+  google_accessToken?: Maybe<String>;
+  facebook_accessToken?: Maybe<String>;
+  oauth_id?: Maybe<String>;
+  pageViews?: Maybe<PageViewUpdateManyWithoutUserInput>;
+}
+
+export type JobWhereUniqueInput = AtLeastOne<{
+  id: Maybe<ID_Input>;
+  name?: Maybe<String>;
+}>;
+
+export interface PageViewUpdateManyWithoutUserInput {
+  create?: Maybe<
+    PageViewCreateWithoutUserInput[] | PageViewCreateWithoutUserInput
+  >;
+  delete?: Maybe<PageViewWhereUniqueInput[] | PageViewWhereUniqueInput>;
+  connect?: Maybe<PageViewWhereUniqueInput[] | PageViewWhereUniqueInput>;
+  set?: Maybe<PageViewWhereUniqueInput[] | PageViewWhereUniqueInput>;
+  disconnect?: Maybe<PageViewWhereUniqueInput[] | PageViewWhereUniqueInput>;
+  update?: Maybe<
+    | PageViewUpdateWithWhereUniqueWithoutUserInput[]
+    | PageViewUpdateWithWhereUniqueWithoutUserInput
+  >;
+  upsert?: Maybe<
+    | PageViewUpsertWithWhereUniqueWithoutUserInput[]
+    | PageViewUpsertWithWhereUniqueWithoutUserInput
+  >;
+  deleteMany?: Maybe<PageViewScalarWhereInput[] | PageViewScalarWhereInput>;
+  updateMany?: Maybe<
+    | PageViewUpdateManyWithWhereNestedInput[]
+    | PageViewUpdateManyWithWhereNestedInput
+  >;
+}
+
+export interface StoryUpdateWithWhereUniqueWithoutStoryCategoriesInput {
+  where: StoryWhereUniqueInput;
+  data: StoryUpdateWithoutStoryCategoriesDataInput;
+}
+
+export interface PageViewUpdateWithWhereUniqueWithoutUserInput {
+  where: PageViewWhereUniqueInput;
+  data: PageViewUpdateWithoutUserDataInput;
+}
+
+export interface StoryCreateWithoutStoryCategoriesInput {
+  id?: Maybe<ID_Input>;
+  createdBy: UserCreateOneInput;
+  app: AppCreateOneWithoutStoriesInput;
+  appVersions?: Maybe<AppVersionCreateManyWithoutStoriesInput>;
+  storyElements?: Maybe<StoryElementCreateManyWithoutStoriesInput>;
+  libraries?: Maybe<LibraryCreateManyWithoutStoriesInput>;
+  video: VideoCreateOneInput;
+  thumbnail: FileCreateOneInput;
+}
+
+export interface PageViewUpdateWithoutUserDataInput {
+  pathname?: Maybe<String>;
+  agent?: Maybe<String>;
+}
+
+export interface StoryUpdateInput {
+  createdBy?: Maybe<UserUpdateOneRequiredInput>;
+  app?: Maybe<AppUpdateOneRequiredWithoutStoriesInput>;
+  appVersions?: Maybe<AppVersionUpdateManyWithoutStoriesInput>;
+  storyCategories?: Maybe<StoryCategoryUpdateManyWithoutStoriesInput>;
+  storyElements?: Maybe<StoryElementUpdateManyWithoutStoriesInput>;
+  libraries?: Maybe<LibraryUpdateManyWithoutStoriesInput>;
+  video?: Maybe<VideoUpdateOneRequiredInput>;
+  thumbnail?: Maybe<FileUpdateOneRequiredInput>;
+}
+
+export interface PageViewUpsertWithWhereUniqueWithoutUserInput {
+  where: PageViewWhereUniqueInput;
+  update: PageViewUpdateWithoutUserDataInput;
+  create: PageViewCreateWithoutUserInput;
+}
+
+export interface UserUpdateWithoutPageViewsDataInput {
+  email?: Maybe<String>;
+  password?: Maybe<String>;
+  full_name?: Maybe<String>;
+  job?: Maybe<JobUpdateOneInput>;
+  role?: Maybe<AccountType>;
+  profile_photo?: Maybe<FileUpdateOneInput>;
+  customer_id?: Maybe<ID_Input>;
+  subscription_id?: Maybe<ID_Input>;
+  apps?: Maybe<AppUpdateManyWithoutCreatedByInput>;
+  libraries?: Maybe<LibraryUpdateManyWithoutCreatedByInput>;
+  google_accessToken?: Maybe<String>;
+  facebook_accessToken?: Maybe<String>;
+  oauth_id?: Maybe<String>;
+}
+
+export interface PageViewScalarWhereInput {
+  id?: Maybe<ID_Input>;
+  id_not?: Maybe<ID_Input>;
+  id_in?: Maybe<ID_Input[] | ID_Input>;
+  id_not_in?: Maybe<ID_Input[] | ID_Input>;
+  id_lt?: Maybe<ID_Input>;
+  id_lte?: Maybe<ID_Input>;
+  id_gt?: Maybe<ID_Input>;
+  id_gte?: Maybe<ID_Input>;
+  id_contains?: Maybe<ID_Input>;
+  id_not_contains?: Maybe<ID_Input>;
+  id_starts_with?: Maybe<ID_Input>;
+  id_not_starts_with?: Maybe<ID_Input>;
+  id_ends_with?: Maybe<ID_Input>;
+  id_not_ends_with?: Maybe<ID_Input>;
+  pathname?: Maybe<String>;
+  pathname_not?: Maybe<String>;
+  pathname_in?: Maybe<String[] | String>;
+  pathname_not_in?: Maybe<String[] | String>;
+  pathname_lt?: Maybe<String>;
+  pathname_lte?: Maybe<String>;
+  pathname_gt?: Maybe<String>;
+  pathname_gte?: Maybe<String>;
+  pathname_contains?: Maybe<String>;
+  pathname_not_contains?: Maybe<String>;
+  pathname_starts_with?: Maybe<String>;
+  pathname_not_starts_with?: Maybe<String>;
+  pathname_ends_with?: Maybe<String>;
+  pathname_not_ends_with?: Maybe<String>;
+  agent?: Maybe<String>;
+  agent_not?: Maybe<String>;
+  agent_in?: Maybe<String[] | String>;
+  agent_not_in?: Maybe<String[] | String>;
+  agent_lt?: Maybe<String>;
+  agent_lte?: Maybe<String>;
+  agent_gt?: Maybe<String>;
+  agent_gte?: Maybe<String>;
+  agent_contains?: Maybe<String>;
+  agent_not_contains?: Maybe<String>;
+  agent_starts_with?: Maybe<String>;
+  agent_not_starts_with?: Maybe<String>;
+  agent_ends_with?: Maybe<String>;
+  agent_not_ends_with?: Maybe<String>;
+  createdAt?: Maybe<DateTimeInput>;
+  createdAt_not?: Maybe<DateTimeInput>;
+  createdAt_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  createdAt_not_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  createdAt_lt?: Maybe<DateTimeInput>;
+  createdAt_lte?: Maybe<DateTimeInput>;
+  createdAt_gt?: Maybe<DateTimeInput>;
+  createdAt_gte?: Maybe<DateTimeInput>;
+  updatedAt?: Maybe<DateTimeInput>;
+  updatedAt_not?: Maybe<DateTimeInput>;
+  updatedAt_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  updatedAt_not_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  updatedAt_lt?: Maybe<DateTimeInput>;
+  updatedAt_lte?: Maybe<DateTimeInput>;
+  updatedAt_gt?: Maybe<DateTimeInput>;
+  updatedAt_gte?: Maybe<DateTimeInput>;
+  AND?: Maybe<PageViewScalarWhereInput[] | PageViewScalarWhereInput>;
+  OR?: Maybe<PageViewScalarWhereInput[] | PageViewScalarWhereInput>;
+  NOT?: Maybe<PageViewScalarWhereInput[] | PageViewScalarWhereInput>;
+}
+
+export interface UserCreateWithoutPageViewsInput {
+  id?: Maybe<ID_Input>;
+  email: String;
+  password: String;
+  full_name: String;
+  job?: Maybe<JobCreateOneInput>;
+  role: AccountType;
+  profile_photo?: Maybe<FileCreateOneInput>;
+  customer_id?: Maybe<ID_Input>;
+  subscription_id?: Maybe<ID_Input>;
+  apps?: Maybe<AppCreateManyWithoutCreatedByInput>;
+  libraries?: Maybe<LibraryCreateManyWithoutCreatedByInput>;
+  google_accessToken?: Maybe<String>;
+  facebook_accessToken?: Maybe<String>;
+  oauth_id?: Maybe<String>;
+}
+
+export interface PageViewUpdateManyWithWhereNestedInput {
+  where: PageViewScalarWhereInput;
+  data: PageViewUpdateManyDataInput;
+}
+
+export interface LibraryUpdateManyMutationInput {
+  name?: Maybe<String>;
+  custom_updatedAt?: Maybe<DateTimeInput>;
+}
+
+export interface PageViewUpdateManyDataInput {
+  pathname?: Maybe<String>;
+  agent?: Maybe<String>;
+}
+
+export interface JobUpdateManyMutationInput {
+  name?: Maybe<String>;
+}
+
+export interface UserUpsertWithoutLibrariesInput {
+  update: UserUpdateWithoutLibrariesDataInput;
+  create: UserCreateWithoutLibrariesInput;
+}
+
+export interface FileUpdateInput {
+  filename?: Maybe<String>;
+  mimetype?: Maybe<String>;
+  encoding?: Maybe<String>;
+  url?: Maybe<String>;
+}
+
+export interface LibraryUpsertWithWhereUniqueWithoutStoriesInput {
+  where: LibraryWhereUniqueInput;
+  update: LibraryUpdateWithoutStoriesDataInput;
+  create: LibraryCreateWithoutStoriesInput;
+}
+
+export interface AppCreateInput {
+  id?: Maybe<ID_Input>;
+  createdBy: UserCreateOneWithoutAppsInput;
+  appCategory: AppCategoryCreateOneInput;
+  appVersions?: Maybe<AppVersionCreateManyInput>;
+  stories?: Maybe<StoryCreateManyWithoutAppInput>;
+  name: String;
+  description?: Maybe<String>;
+  company: String;
+  logo: FileCreateOneInput;
+  platform: Platform;
+}
+
+export interface LibraryScalarWhereInput {
+  id?: Maybe<ID_Input>;
+  id_not?: Maybe<ID_Input>;
+  id_in?: Maybe<ID_Input[] | ID_Input>;
+  id_not_in?: Maybe<ID_Input[] | ID_Input>;
+  id_lt?: Maybe<ID_Input>;
+  id_lte?: Maybe<ID_Input>;
+  id_gt?: Maybe<ID_Input>;
+  id_gte?: Maybe<ID_Input>;
+  id_contains?: Maybe<ID_Input>;
+  id_not_contains?: Maybe<ID_Input>;
+  id_starts_with?: Maybe<ID_Input>;
+  id_not_starts_with?: Maybe<ID_Input>;
+  id_ends_with?: Maybe<ID_Input>;
+  id_not_ends_with?: Maybe<ID_Input>;
+  name?: Maybe<String>;
+  name_not?: Maybe<String>;
+  name_in?: Maybe<String[] | String>;
+  name_not_in?: Maybe<String[] | String>;
+  name_lt?: Maybe<String>;
+  name_lte?: Maybe<String>;
+  name_gt?: Maybe<String>;
+  name_gte?: Maybe<String>;
+  name_contains?: Maybe<String>;
+  name_not_contains?: Maybe<String>;
+  name_starts_with?: Maybe<String>;
+  name_not_starts_with?: Maybe<String>;
+  name_ends_with?: Maybe<String>;
+  name_not_ends_with?: Maybe<String>;
+  custom_updatedAt?: Maybe<DateTimeInput>;
+  custom_updatedAt_not?: Maybe<DateTimeInput>;
+  custom_updatedAt_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  custom_updatedAt_not_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  custom_updatedAt_lt?: Maybe<DateTimeInput>;
+  custom_updatedAt_lte?: Maybe<DateTimeInput>;
+  custom_updatedAt_gt?: Maybe<DateTimeInput>;
+  custom_updatedAt_gte?: Maybe<DateTimeInput>;
+  createdAt?: Maybe<DateTimeInput>;
+  createdAt_not?: Maybe<DateTimeInput>;
+  createdAt_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  createdAt_not_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  createdAt_lt?: Maybe<DateTimeInput>;
+  createdAt_lte?: Maybe<DateTimeInput>;
+  createdAt_gt?: Maybe<DateTimeInput>;
+  createdAt_gte?: Maybe<DateTimeInput>;
+  updatedAt?: Maybe<DateTimeInput>;
+  updatedAt_not?: Maybe<DateTimeInput>;
+  updatedAt_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  updatedAt_not_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  updatedAt_lt?: Maybe<DateTimeInput>;
+  updatedAt_lte?: Maybe<DateTimeInput>;
+  updatedAt_gt?: Maybe<DateTimeInput>;
+  updatedAt_gte?: Maybe<DateTimeInput>;
+  AND?: Maybe<LibraryScalarWhereInput[] | LibraryScalarWhereInput>;
+  OR?: Maybe<LibraryScalarWhereInput[] | LibraryScalarWhereInput>;
+  NOT?: Maybe<LibraryScalarWhereInput[] | LibraryScalarWhereInput>;
+}
+
+export interface JobCreateInput {
+  id?: Maybe<ID_Input>;
+  name: String;
+}
+
+export interface LibraryUpdateManyWithWhereNestedInput {
+  where: LibraryScalarWhereInput;
+  data: LibraryUpdateManyDataInput;
+}
+
+export interface LibraryCreateWithoutCreatedByInput {
+  id?: Maybe<ID_Input>;
+  stories?: Maybe<StoryCreateManyWithoutLibrariesInput>;
+  name: String;
+  custom_updatedAt: DateTimeInput;
+}
+
+export interface LibraryUpdateManyDataInput {
+  name?: Maybe<String>;
+  custom_updatedAt?: Maybe<DateTimeInput>;
+}
+
+export interface UserCreateInput {
+  id?: Maybe<ID_Input>;
+  email: String;
+  password: String;
+  full_name: String;
+  job?: Maybe<JobCreateOneInput>;
+  role: AccountType;
+  profile_photo?: Maybe<FileCreateOneInput>;
+  customer_id?: Maybe<ID_Input>;
+  subscription_id?: Maybe<ID_Input>;
+  apps?: Maybe<AppCreateManyWithoutCreatedByInput>;
+  libraries?: Maybe<LibraryCreateManyWithoutCreatedByInput>;
+  google_accessToken?: Maybe<String>;
+  facebook_accessToken?: Maybe<String>;
+  oauth_id?: Maybe<String>;
+  pageViews?: Maybe<PageViewCreateManyWithoutUserInput>;
+}
+
+export interface VideoUpdateOneRequiredInput {
+  create?: Maybe<VideoCreateInput>;
+  update?: Maybe<VideoUpdateDataInput>;
+  upsert?: Maybe<VideoUpsertNestedInput>;
+  connect?: Maybe<VideoWhereUniqueInput>;
+}
+
+export interface AppCategoryCreateInput {
+  id?: Maybe<ID_Input>;
+  name: String;
+  stories?: Maybe<StoryCreateManyInput>;
+}
+
+export interface VideoUpdateDataInput {
+  file?: Maybe<FileUpdateOneRequiredInput>;
+}
+
+export interface AppCreateWithoutStoriesInput {
+  id?: Maybe<ID_Input>;
+  createdBy: UserCreateOneWithoutAppsInput;
+  appCategory: AppCategoryCreateOneInput;
+  appVersions?: Maybe<AppVersionCreateManyInput>;
+  name: String;
+  description?: Maybe<String>;
+  company: String;
+  logo: FileCreateOneInput;
+  platform: Platform;
+}
+
+export interface FileUpdateOneRequiredInput {
+  create?: Maybe<FileCreateInput>;
+  update?: Maybe<FileUpdateDataInput>;
+  upsert?: Maybe<FileUpsertNestedInput>;
+  connect?: Maybe<FileWhereUniqueInput>;
+}
+
+export interface StoryCreateWithoutAppVersionsInput {
+  id?: Maybe<ID_Input>;
+  createdBy: UserCreateOneInput;
+  app: AppCreateOneWithoutStoriesInput;
+  storyCategories?: Maybe<StoryCategoryCreateManyWithoutStoriesInput>;
+  storyElements?: Maybe<StoryElementCreateManyWithoutStoriesInput>;
+  libraries?: Maybe<LibraryCreateManyWithoutStoriesInput>;
+  video: VideoCreateOneInput;
+  thumbnail: FileCreateOneInput;
+}
+
+export interface VideoUpsertNestedInput {
+  update: VideoUpdateDataInput;
+  create: VideoCreateInput;
+}
+
+export interface StoryElementCreateWithoutStoriesInput {
+  id?: Maybe<ID_Input>;
+  name: String;
+}
+
+export interface StoryUpsertWithWhereUniqueWithoutAppVersionsInput {
+  where: StoryWhereUniqueInput;
+  update: StoryUpdateWithoutAppVersionsDataInput;
+  create: StoryCreateWithoutAppVersionsInput;
+}
+
+export interface UserCreateWithoutLibrariesInput {
+  id?: Maybe<ID_Input>;
+  email: String;
+  password: String;
+  full_name: String;
+  job?: Maybe<JobCreateOneInput>;
+  role: AccountType;
+  profile_photo?: Maybe<FileCreateOneInput>;
+  customer_id?: Maybe<ID_Input>;
+  subscription_id?: Maybe<ID_Input>;
+  apps?: Maybe<AppCreateManyWithoutCreatedByInput>;
+  google_accessToken?: Maybe<String>;
+  facebook_accessToken?: Maybe<String>;
+  oauth_id?: Maybe<String>;
+  pageViews?: Maybe<PageViewCreateManyWithoutUserInput>;
+}
+
+export interface StoryScalarWhereInput {
+  id?: Maybe<ID_Input>;
+  id_not?: Maybe<ID_Input>;
+  id_in?: Maybe<ID_Input[] | ID_Input>;
+  id_not_in?: Maybe<ID_Input[] | ID_Input>;
+  id_lt?: Maybe<ID_Input>;
+  id_lte?: Maybe<ID_Input>;
+  id_gt?: Maybe<ID_Input>;
+  id_gte?: Maybe<ID_Input>;
+  id_contains?: Maybe<ID_Input>;
+  id_not_contains?: Maybe<ID_Input>;
+  id_starts_with?: Maybe<ID_Input>;
+  id_not_starts_with?: Maybe<ID_Input>;
+  id_ends_with?: Maybe<ID_Input>;
+  id_not_ends_with?: Maybe<ID_Input>;
+  createdAt?: Maybe<DateTimeInput>;
+  createdAt_not?: Maybe<DateTimeInput>;
+  createdAt_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  createdAt_not_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  createdAt_lt?: Maybe<DateTimeInput>;
+  createdAt_lte?: Maybe<DateTimeInput>;
+  createdAt_gt?: Maybe<DateTimeInput>;
+  createdAt_gte?: Maybe<DateTimeInput>;
+  updatedAt?: Maybe<DateTimeInput>;
+  updatedAt_not?: Maybe<DateTimeInput>;
+  updatedAt_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  updatedAt_not_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  updatedAt_lt?: Maybe<DateTimeInput>;
+  updatedAt_lte?: Maybe<DateTimeInput>;
+  updatedAt_gt?: Maybe<DateTimeInput>;
+  updatedAt_gte?: Maybe<DateTimeInput>;
+  AND?: Maybe<StoryScalarWhereInput[] | StoryScalarWhereInput>;
+  OR?: Maybe<StoryScalarWhereInput[] | StoryScalarWhereInput>;
+  NOT?: Maybe<StoryScalarWhereInput[] | StoryScalarWhereInput>;
+}
+
+export interface StoryCategorySubscriptionWhereInput {
+  mutation_in?: Maybe<MutationType[] | MutationType>;
+  updatedFields_contains?: Maybe<String>;
+  updatedFields_contains_every?: Maybe<String[] | String>;
+  updatedFields_contains_some?: Maybe<String[] | String>;
+  node?: Maybe<StoryCategoryWhereInput>;
+  AND?: Maybe<
+    StoryCategorySubscriptionWhereInput[] | StoryCategorySubscriptionWhereInput
+  >;
+  OR?: Maybe<
+    StoryCategorySubscriptionWhereInput[] | StoryCategorySubscriptionWhereInput
+  >;
+  NOT?: Maybe<
+    StoryCategorySubscriptionWhereInput[] | StoryCategorySubscriptionWhereInput
+  >;
+}
+
+export interface AppVersionUpsertWithWhereUniqueNestedInput {
+  where: AppVersionWhereUniqueInput;
+  update: AppVersionUpdateDataInput;
+  create: AppVersionCreateInput;
+}
+
+export interface AppVersionSubscriptionWhereInput {
+  mutation_in?: Maybe<MutationType[] | MutationType>;
+  updatedFields_contains?: Maybe<String>;
+  updatedFields_contains_every?: Maybe<String[] | String>;
+  updatedFields_contains_some?: Maybe<String[] | String>;
+  node?: Maybe<AppVersionWhereInput>;
+  AND?: Maybe<
+    AppVersionSubscriptionWhereInput[] | AppVersionSubscriptionWhereInput
+  >;
+  OR?: Maybe<
+    AppVersionSubscriptionWhereInput[] | AppVersionSubscriptionWhereInput
+  >;
+  NOT?: Maybe<
+    AppVersionSubscriptionWhereInput[] | AppVersionSubscriptionWhereInput
+  >;
+}
+
+export interface AppVersionScalarWhereInput {
+  id?: Maybe<ID_Input>;
+  id_not?: Maybe<ID_Input>;
+  id_in?: Maybe<ID_Input[] | ID_Input>;
+  id_not_in?: Maybe<ID_Input[] | ID_Input>;
+  id_lt?: Maybe<ID_Input>;
+  id_lte?: Maybe<ID_Input>;
+  id_gt?: Maybe<ID_Input>;
+  id_gte?: Maybe<ID_Input>;
+  id_contains?: Maybe<ID_Input>;
+  id_not_contains?: Maybe<ID_Input>;
+  id_starts_with?: Maybe<ID_Input>;
+  id_not_starts_with?: Maybe<ID_Input>;
+  id_ends_with?: Maybe<ID_Input>;
+  id_not_ends_with?: Maybe<ID_Input>;
+  name?: Maybe<String>;
+  name_not?: Maybe<String>;
+  name_in?: Maybe<String[] | String>;
+  name_not_in?: Maybe<String[] | String>;
+  name_lt?: Maybe<String>;
+  name_lte?: Maybe<String>;
+  name_gt?: Maybe<String>;
+  name_gte?: Maybe<String>;
+  name_contains?: Maybe<String>;
+  name_not_contains?: Maybe<String>;
+  name_starts_with?: Maybe<String>;
+  name_not_starts_with?: Maybe<String>;
+  name_ends_with?: Maybe<String>;
+  name_not_ends_with?: Maybe<String>;
+  createdAt?: Maybe<DateTimeInput>;
+  createdAt_not?: Maybe<DateTimeInput>;
+  createdAt_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  createdAt_not_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  createdAt_lt?: Maybe<DateTimeInput>;
+  createdAt_lte?: Maybe<DateTimeInput>;
+  createdAt_gt?: Maybe<DateTimeInput>;
+  createdAt_gte?: Maybe<DateTimeInput>;
+  updatedAt?: Maybe<DateTimeInput>;
+  updatedAt_not?: Maybe<DateTimeInput>;
+  updatedAt_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  updatedAt_not_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  updatedAt_lt?: Maybe<DateTimeInput>;
+  updatedAt_lte?: Maybe<DateTimeInput>;
+  updatedAt_gt?: Maybe<DateTimeInput>;
+  updatedAt_gte?: Maybe<DateTimeInput>;
+  AND?: Maybe<AppVersionScalarWhereInput[] | AppVersionScalarWhereInput>;
+  OR?: Maybe<AppVersionScalarWhereInput[] | AppVersionScalarWhereInput>;
+  NOT?: Maybe<AppVersionScalarWhereInput[] | AppVersionScalarWhereInput>;
+}
+
+export interface StoryUpsertWithWhereUniqueWithoutStoryElementsInput {
+  where: StoryWhereUniqueInput;
+  update: StoryUpdateWithoutStoryElementsDataInput;
+  create: StoryCreateWithoutStoryElementsInput;
+}
+
+export interface AppVersionUpdateManyWithWhereNestedInput {
+  where: AppVersionScalarWhereInput;
+  data: AppVersionUpdateManyDataInput;
+}
+
+export interface StoryCreateManyWithoutStoryElementsInput {
+  create?: Maybe<
+    | StoryCreateWithoutStoryElementsInput[]
+    | StoryCreateWithoutStoryElementsInput
+  >;
+  connect?: Maybe<StoryWhereUniqueInput[] | StoryWhereUniqueInput>;
+}
+
+export interface AppVersionUpdateManyDataInput {
+  name?: Maybe<String>;
+}
+
+export interface StoryUpdateManyWithoutStoryCategoriesInput {
+  create?: Maybe<
+    | StoryCreateWithoutStoryCategoriesInput[]
+    | StoryCreateWithoutStoryCategoriesInput
+  >;
+  delete?: Maybe<StoryWhereUniqueInput[] | StoryWhereUniqueInput>;
+  connect?: Maybe<StoryWhereUniqueInput[] | StoryWhereUniqueInput>;
+  set?: Maybe<StoryWhereUniqueInput[] | StoryWhereUniqueInput>;
+  disconnect?: Maybe<StoryWhereUniqueInput[] | StoryWhereUniqueInput>;
+  update?: Maybe<
+    | StoryUpdateWithWhereUniqueWithoutStoryCategoriesInput[]
+    | StoryUpdateWithWhereUniqueWithoutStoryCategoriesInput
+  >;
+  upsert?: Maybe<
+    | StoryUpsertWithWhereUniqueWithoutStoryCategoriesInput[]
+    | StoryUpsertWithWhereUniqueWithoutStoryCategoriesInput
+  >;
+  deleteMany?: Maybe<StoryScalarWhereInput[] | StoryScalarWhereInput>;
+}
+
+export interface AppUpsertWithoutStoriesInput {
+  update: AppUpdateWithoutStoriesDataInput;
+  create: AppCreateWithoutStoriesInput;
+}
+
+export interface PageViewUpdateManyMutationInput {
+  pathname?: Maybe<String>;
+  agent?: Maybe<String>;
+}
+
+export interface AppVersionUpdateManyWithoutStoriesInput {
+  create?: Maybe<
+    AppVersionCreateWithoutStoriesInput[] | AppVersionCreateWithoutStoriesInput
+  >;
+  delete?: Maybe<AppVersionWhereUniqueInput[] | AppVersionWhereUniqueInput>;
+  connect?: Maybe<AppVersionWhereUniqueInput[] | AppVersionWhereUniqueInput>;
+  set?: Maybe<AppVersionWhereUniqueInput[] | AppVersionWhereUniqueInput>;
+  disconnect?: Maybe<AppVersionWhereUniqueInput[] | AppVersionWhereUniqueInput>;
+  update?: Maybe<
+    | AppVersionUpdateWithWhereUniqueWithoutStoriesInput[]
+    | AppVersionUpdateWithWhereUniqueWithoutStoriesInput
+  >;
+  upsert?: Maybe<
+    | AppVersionUpsertWithWhereUniqueWithoutStoriesInput[]
+    | AppVersionUpsertWithWhereUniqueWithoutStoriesInput
+  >;
+  deleteMany?: Maybe<AppVersionScalarWhereInput[] | AppVersionScalarWhereInput>;
+  updateMany?: Maybe<
+    | AppVersionUpdateManyWithWhereNestedInput[]
+    | AppVersionUpdateManyWithWhereNestedInput
+  >;
+}
+
+export interface UserCreateOneWithoutPageViewsInput {
+  create?: Maybe<UserCreateWithoutPageViewsInput>;
+  connect?: Maybe<UserWhereUniqueInput>;
+}
+
+export interface AppVersionUpdateWithWhereUniqueWithoutStoriesInput {
+  where: AppVersionWhereUniqueInput;
+  data: AppVersionUpdateWithoutStoriesDataInput;
+}
+
+export type VideoWhereUniqueInput = AtLeastOne<{
+  id: Maybe<ID_Input>;
+}>;
+
+export interface AppVersionUpdateWithoutStoriesDataInput {
+  name?: Maybe<String>;
+}
+
+export interface UserCreateWithoutAppsInput {
+  id?: Maybe<ID_Input>;
+  email: String;
+  password: String;
+  full_name: String;
+  job?: Maybe<JobCreateOneInput>;
+  role: AccountType;
+  profile_photo?: Maybe<FileCreateOneInput>;
+  customer_id?: Maybe<ID_Input>;
+  subscription_id?: Maybe<ID_Input>;
+  libraries?: Maybe<LibraryCreateManyWithoutCreatedByInput>;
+  google_accessToken?: Maybe<String>;
+  facebook_accessToken?: Maybe<String>;
+  oauth_id?: Maybe<String>;
+  pageViews?: Maybe<PageViewCreateManyWithoutUserInput>;
+}
+
+export interface AppVersionUpsertWithWhereUniqueWithoutStoriesInput {
+  where: AppVersionWhereUniqueInput;
+  update: AppVersionUpdateWithoutStoriesDataInput;
+  create: AppVersionCreateWithoutStoriesInput;
+}
+
+export interface StoryCreateWithoutLibrariesInput {
+  id?: Maybe<ID_Input>;
+  createdBy: UserCreateOneInput;
+  app: AppCreateOneWithoutStoriesInput;
+  appVersions?: Maybe<AppVersionCreateManyWithoutStoriesInput>;
+  storyCategories?: Maybe<StoryCategoryCreateManyWithoutStoriesInput>;
+  storyElements?: Maybe<StoryElementCreateManyWithoutStoriesInput>;
+  video: VideoCreateOneInput;
+  thumbnail: FileCreateOneInput;
+}
+
+export interface StoryUpsertWithWhereUniqueNestedInput {
+  where: StoryWhereUniqueInput;
+  update: StoryUpdateDataInput;
+  create: StoryCreateInput;
+}
+
+export interface StoryCreateInput {
+  id?: Maybe<ID_Input>;
+  createdBy: UserCreateOneInput;
+  app: AppCreateOneWithoutStoriesInput;
+  appVersions?: Maybe<AppVersionCreateManyWithoutStoriesInput>;
+  storyCategories?: Maybe<StoryCategoryCreateManyWithoutStoriesInput>;
+  storyElements?: Maybe<StoryElementCreateManyWithoutStoriesInput>;
+  libraries?: Maybe<LibraryCreateManyWithoutStoriesInput>;
+  video: VideoCreateOneInput;
+  thumbnail: FileCreateOneInput;
+}
+
+export interface AppCategoryUpsertNestedInput {
+  update: AppCategoryUpdateDataInput;
+  create: AppCategoryCreateInput;
+}
+
+export interface StoryCategoryCreateWithoutStoriesInput {
+  id?: Maybe<ID_Input>;
+  name: String;
+}
+
+export interface StoryUpdateManyWithoutAppInput {
+  create?: Maybe<StoryCreateWithoutAppInput[] | StoryCreateWithoutAppInput>;
+  delete?: Maybe<StoryWhereUniqueInput[] | StoryWhereUniqueInput>;
+  connect?: Maybe<StoryWhereUniqueInput[] | StoryWhereUniqueInput>;
+  set?: Maybe<StoryWhereUniqueInput[] | StoryWhereUniqueInput>;
+  disconnect?: Maybe<StoryWhereUniqueInput[] | StoryWhereUniqueInput>;
+  update?: Maybe<
+    | StoryUpdateWithWhereUniqueWithoutAppInput[]
+    | StoryUpdateWithWhereUniqueWithoutAppInput
+  >;
+  upsert?: Maybe<
+    | StoryUpsertWithWhereUniqueWithoutAppInput[]
+    | StoryUpsertWithWhereUniqueWithoutAppInput
+  >;
+  deleteMany?: Maybe<StoryScalarWhereInput[] | StoryScalarWhereInput>;
+}
+
+export interface UserSubscriptionWhereInput {
+  mutation_in?: Maybe<MutationType[] | MutationType>;
+  updatedFields_contains?: Maybe<String>;
+  updatedFields_contains_every?: Maybe<String[] | String>;
+  updatedFields_contains_some?: Maybe<String[] | String>;
+  node?: Maybe<UserWhereInput>;
+  AND?: Maybe<UserSubscriptionWhereInput[] | UserSubscriptionWhereInput>;
+  OR?: Maybe<UserSubscriptionWhereInput[] | UserSubscriptionWhereInput>;
+  NOT?: Maybe<UserSubscriptionWhereInput[] | UserSubscriptionWhereInput>;
+}
+
+export interface StoryUpdateWithWhereUniqueWithoutAppInput {
+  where: StoryWhereUniqueInput;
+  data: StoryUpdateWithoutAppDataInput;
+}
+
+export type AppCategoryWhereUniqueInput = AtLeastOne<{
+  id: Maybe<ID_Input>;
+  name?: Maybe<String>;
+}>;
+
+export interface StoryUpdateWithoutAppDataInput {
+  createdBy?: Maybe<UserUpdateOneRequiredInput>;
+  appVersions?: Maybe<AppVersionUpdateManyWithoutStoriesInput>;
+  storyCategories?: Maybe<StoryCategoryUpdateManyWithoutStoriesInput>;
+  storyElements?: Maybe<StoryElementUpdateManyWithoutStoriesInput>;
+  libraries?: Maybe<LibraryUpdateManyWithoutStoriesInput>;
+  video?: Maybe<VideoUpdateOneRequiredInput>;
+  thumbnail?: Maybe<FileUpdateOneRequiredInput>;
+}
+
+export interface StoryUpsertWithWhereUniqueWithoutStoryCategoriesInput {
+  where: StoryWhereUniqueInput;
+  update: StoryUpdateWithoutStoryCategoriesDataInput;
+  create: StoryCreateWithoutStoryCategoriesInput;
+}
+
+export interface StoryUpsertWithWhereUniqueWithoutAppInput {
+  where: StoryWhereUniqueInput;
+  update: StoryUpdateWithoutAppDataInput;
+  create: StoryCreateWithoutAppInput;
+}
+
+export interface UserUpdateOneWithoutPageViewsInput {
+  create?: Maybe<UserCreateWithoutPageViewsInput>;
+  update?: Maybe<UserUpdateWithoutPageViewsDataInput>;
+  upsert?: Maybe<UserUpsertWithoutPageViewsInput>;
+  delete?: Maybe<Boolean>;
+  disconnect?: Maybe<Boolean>;
+  connect?: Maybe<UserWhereUniqueInput>;
+}
+
+export interface AppUpsertWithWhereUniqueWithoutCreatedByInput {
+  where: AppWhereUniqueInput;
+  update: AppUpdateWithoutCreatedByDataInput;
+  create: AppCreateWithoutCreatedByInput;
+}
+
+export interface AppVersionUpdateInput {
+  name?: Maybe<String>;
+  stories?: Maybe<StoryUpdateManyWithoutAppVersionsInput>;
+}
+
+export interface AppScalarWhereInput {
+  id?: Maybe<ID_Input>;
+  id_not?: Maybe<ID_Input>;
+  id_in?: Maybe<ID_Input[] | ID_Input>;
+  id_not_in?: Maybe<ID_Input[] | ID_Input>;
+  id_lt?: Maybe<ID_Input>;
+  id_lte?: Maybe<ID_Input>;
+  id_gt?: Maybe<ID_Input>;
+  id_gte?: Maybe<ID_Input>;
+  id_contains?: Maybe<ID_Input>;
+  id_not_contains?: Maybe<ID_Input>;
+  id_starts_with?: Maybe<ID_Input>;
+  id_not_starts_with?: Maybe<ID_Input>;
+  id_ends_with?: Maybe<ID_Input>;
+  id_not_ends_with?: Maybe<ID_Input>;
+  name?: Maybe<String>;
+  name_not?: Maybe<String>;
+  name_in?: Maybe<String[] | String>;
+  name_not_in?: Maybe<String[] | String>;
+  name_lt?: Maybe<String>;
+  name_lte?: Maybe<String>;
+  name_gt?: Maybe<String>;
+  name_gte?: Maybe<String>;
+  name_contains?: Maybe<String>;
+  name_not_contains?: Maybe<String>;
+  name_starts_with?: Maybe<String>;
+  name_not_starts_with?: Maybe<String>;
+  name_ends_with?: Maybe<String>;
+  name_not_ends_with?: Maybe<String>;
+  description?: Maybe<String>;
+  description_not?: Maybe<String>;
+  description_in?: Maybe<String[] | String>;
+  description_not_in?: Maybe<String[] | String>;
+  description_lt?: Maybe<String>;
+  description_lte?: Maybe<String>;
+  description_gt?: Maybe<String>;
+  description_gte?: Maybe<String>;
+  description_contains?: Maybe<String>;
+  description_not_contains?: Maybe<String>;
+  description_starts_with?: Maybe<String>;
+  description_not_starts_with?: Maybe<String>;
+  description_ends_with?: Maybe<String>;
+  description_not_ends_with?: Maybe<String>;
+  company?: Maybe<String>;
+  company_not?: Maybe<String>;
+  company_in?: Maybe<String[] | String>;
+  company_not_in?: Maybe<String[] | String>;
+  company_lt?: Maybe<String>;
+  company_lte?: Maybe<String>;
+  company_gt?: Maybe<String>;
+  company_gte?: Maybe<String>;
+  company_contains?: Maybe<String>;
+  company_not_contains?: Maybe<String>;
+  company_starts_with?: Maybe<String>;
+  company_not_starts_with?: Maybe<String>;
+  company_ends_with?: Maybe<String>;
+  company_not_ends_with?: Maybe<String>;
+  platform?: Maybe<Platform>;
+  platform_not?: Maybe<Platform>;
+  platform_in?: Maybe<Platform[] | Platform>;
+  platform_not_in?: Maybe<Platform[] | Platform>;
+  createdAt?: Maybe<DateTimeInput>;
+  createdAt_not?: Maybe<DateTimeInput>;
+  createdAt_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  createdAt_not_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  createdAt_lt?: Maybe<DateTimeInput>;
+  createdAt_lte?: Maybe<DateTimeInput>;
+  createdAt_gt?: Maybe<DateTimeInput>;
+  createdAt_gte?: Maybe<DateTimeInput>;
+  updatedAt?: Maybe<DateTimeInput>;
+  updatedAt_not?: Maybe<DateTimeInput>;
+  updatedAt_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  updatedAt_not_in?: Maybe<DateTimeInput[] | DateTimeInput>;
+  updatedAt_lt?: Maybe<DateTimeInput>;
+  updatedAt_lte?: Maybe<DateTimeInput>;
+  updatedAt_gt?: Maybe<DateTimeInput>;
+  updatedAt_gte?: Maybe<DateTimeInput>;
+  AND?: Maybe<AppScalarWhereInput[] | AppScalarWhereInput>;
+  OR?: Maybe<AppScalarWhereInput[] | AppScalarWhereInput>;
+  NOT?: Maybe<AppScalarWhereInput[] | AppScalarWhereInput>;
+}
+
+export interface AppCreateWithoutCreatedByInput {
+  id?: Maybe<ID_Input>;
+  appCategory: AppCategoryCreateOneInput;
+  appVersions?: Maybe<AppVersionCreateManyInput>;
+  stories?: Maybe<StoryCreateManyWithoutAppInput>;
+  name: String;
+  description?: Maybe<String>;
+  company: String;
+  logo: FileCreateOneInput;
+  platform: Platform;
+}
+
+export interface AppUpdateManyWithWhereNestedInput {
+  where: AppScalarWhereInput;
+  data: AppUpdateManyDataInput;
+}
+
+export interface LibraryCreateWithoutStoriesInput {
+  id?: Maybe<ID_Input>;
+  createdBy: UserCreateOneWithoutLibrariesInput;
+  name: String;
+  custom_updatedAt: DateTimeInput;
+}
+
+export interface AppUpdateManyDataInput {
+  name?: Maybe<String>;
+  description?: Maybe<String>;
+  company?: Maybe<String>;
+  platform?: Maybe<Platform>;
+}
+
+export interface StoryUpdateManyWithoutStoryElementsInput {
+  create?: Maybe<
+    | StoryCreateWithoutStoryElementsInput[]
+    | StoryCreateWithoutStoryElementsInput
+  >;
+  delete?: Maybe<StoryWhereUniqueInput[] | StoryWhereUniqueInput>;
+  connect?: Maybe<StoryWhereUniqueInput[] | StoryWhereUniqueInput>;
+  set?: Maybe<StoryWhereUniqueInput[] | StoryWhereUniqueInput>;
+  disconnect?: Maybe<StoryWhereUniqueInput[] | StoryWhereUniqueInput>;
+  update?: Maybe<
+    | StoryUpdateWithWhereUniqueWithoutStoryElementsInput[]
+    | StoryUpdateWithWhereUniqueWithoutStoryElementsInput
+  >;
+  upsert?: Maybe<
+    | StoryUpsertWithWhereUniqueWithoutStoryElementsInput[]
+    | StoryUpsertWithWhereUniqueWithoutStoryElementsInput
+  >;
+  deleteMany?: Maybe<StoryScalarWhereInput[] | StoryScalarWhereInput>;
+}
+
+export interface UserUpsertNestedInput {
+  update: UserUpdateDataInput;
+  create: UserCreateInput;
+}
+
+export interface LibraryUpdateInput {
+  createdBy?: Maybe<UserUpdateOneRequiredWithoutLibrariesInput>;
+  stories?: Maybe<StoryUpdateManyWithoutLibrariesInput>;
+  name?: Maybe<String>;
+  custom_updatedAt?: Maybe<DateTimeInput>;
+}
+
+export interface AppUpdateManyMutationInput {
+  name?: Maybe<String>;
+  description?: Maybe<String>;
+  company?: Maybe<String>;
+  platform?: Maybe<Platform>;
+}
+
+export interface UserUpsertWithoutAppsInput {
+  update: UserUpdateWithoutAppsDataInput;
+  create: UserCreateWithoutAppsInput;
+}
+
+export interface LibraryUpsertWithWhereUniqueWithoutCreatedByInput {
+  where: LibraryWhereUniqueInput;
+  update: LibraryUpdateWithoutCreatedByDataInput;
+  create: LibraryCreateWithoutCreatedByInput;
+}
+
+export interface StoryUpsertWithWhereUniqueWithoutLibrariesInput {
+  where: StoryWhereUniqueInput;
+  update: StoryUpdateWithoutLibrariesDataInput;
+  create: StoryCreateWithoutLibrariesInput;
+}
+
+export interface FileCreateInput {
+  id?: Maybe<ID_Input>;
+  filename: String;
+  mimetype: String;
+  encoding: String;
+  url: String;
+}
+
+export interface StoryCreateManyWithoutStoryCategoriesInput {
+  create?: Maybe<
+    | StoryCreateWithoutStoryCategoriesInput[]
+    | StoryCreateWithoutStoryCategoriesInput
+  >;
+  connect?: Maybe<StoryWhereUniqueInput[] | StoryWhereUniqueInput>;
 }
 
 export interface AppWhereInput {
@@ -1272,1911 +3514,10 @@ export interface AppWhereInput {
   NOT?: Maybe<AppWhereInput[] | AppWhereInput>;
 }
 
-export interface AppVersionCreateManyWithoutStoriesInput {
-  create?: Maybe<
-    AppVersionCreateWithoutStoriesInput[] | AppVersionCreateWithoutStoriesInput
-  >;
-  connect?: Maybe<AppVersionWhereUniqueInput[] | AppVersionWhereUniqueInput>;
-}
-
-export interface LibrarySubscriptionWhereInput {
-  mutation_in?: Maybe<MutationType[] | MutationType>;
-  updatedFields_contains?: Maybe<String>;
-  updatedFields_contains_every?: Maybe<String[] | String>;
-  updatedFields_contains_some?: Maybe<String[] | String>;
-  node?: Maybe<LibraryWhereInput>;
-  AND?: Maybe<LibrarySubscriptionWhereInput[] | LibrarySubscriptionWhereInput>;
-  OR?: Maybe<LibrarySubscriptionWhereInput[] | LibrarySubscriptionWhereInput>;
-  NOT?: Maybe<LibrarySubscriptionWhereInput[] | LibrarySubscriptionWhereInput>;
-}
-
-export interface AppVersionCreateWithoutStoriesInput {
-  id?: Maybe<ID_Input>;
-  name: String;
-}
-
-export interface FileSubscriptionWhereInput {
-  mutation_in?: Maybe<MutationType[] | MutationType>;
-  updatedFields_contains?: Maybe<String>;
-  updatedFields_contains_every?: Maybe<String[] | String>;
-  updatedFields_contains_some?: Maybe<String[] | String>;
-  node?: Maybe<FileWhereInput>;
-  AND?: Maybe<FileSubscriptionWhereInput[] | FileSubscriptionWhereInput>;
-  OR?: Maybe<FileSubscriptionWhereInput[] | FileSubscriptionWhereInput>;
-  NOT?: Maybe<FileSubscriptionWhereInput[] | FileSubscriptionWhereInput>;
-}
-
-export interface StoryCreateManyWithoutAppInput {
-  create?: Maybe<StoryCreateWithoutAppInput[] | StoryCreateWithoutAppInput>;
-  connect?: Maybe<StoryWhereUniqueInput[] | StoryWhereUniqueInput>;
-}
-
-export interface AppCategorySubscriptionWhereInput {
-  mutation_in?: Maybe<MutationType[] | MutationType>;
-  updatedFields_contains?: Maybe<String>;
-  updatedFields_contains_every?: Maybe<String[] | String>;
-  updatedFields_contains_some?: Maybe<String[] | String>;
-  node?: Maybe<AppCategoryWhereInput>;
-  AND?: Maybe<
-    AppCategorySubscriptionWhereInput[] | AppCategorySubscriptionWhereInput
-  >;
-  OR?: Maybe<
-    AppCategorySubscriptionWhereInput[] | AppCategorySubscriptionWhereInput
-  >;
-  NOT?: Maybe<
-    AppCategorySubscriptionWhereInput[] | AppCategorySubscriptionWhereInput
-  >;
-}
-
-export interface StoryCreateWithoutAppInput {
-  id?: Maybe<ID_Input>;
-  createdBy: UserCreateOneInput;
-  appVersions?: Maybe<AppVersionCreateManyWithoutStoriesInput>;
-  storyCategories?: Maybe<StoryCategoryCreateManyWithoutStoriesInput>;
-  storyElements?: Maybe<StoryElementCreateManyWithoutStoriesInput>;
-  libraries?: Maybe<LibraryCreateManyWithoutStoriesInput>;
-  video: VideoCreateOneInput;
-  thumbnail: FileCreateOneInput;
-}
-
-export interface VideoUpdateInput {
-  file?: Maybe<FileUpdateOneRequiredInput>;
-}
-
-export interface AppUpdateInput {
-  createdBy?: Maybe<UserUpdateOneRequiredWithoutAppsInput>;
-  appCategory?: Maybe<AppCategoryUpdateOneRequiredInput>;
-  appVersions?: Maybe<AppVersionUpdateManyInput>;
-  stories?: Maybe<StoryUpdateManyWithoutAppInput>;
-  name?: Maybe<String>;
-  description?: Maybe<String>;
-  company?: Maybe<String>;
-  logo?: Maybe<FileUpdateOneRequiredInput>;
-  platform?: Maybe<Platform>;
-}
-
-export interface UserUpdateManyMutationInput {
-  email?: Maybe<String>;
-  password?: Maybe<String>;
-  full_name?: Maybe<String>;
-  role?: Maybe<AccountType>;
-  customer_id?: Maybe<ID_Input>;
-  subscription_id?: Maybe<ID_Input>;
-  google_accessToken?: Maybe<String>;
-  facebook_accessToken?: Maybe<String>;
-  oauth_id?: Maybe<String>;
-}
-
-export interface UserUpdateOneRequiredWithoutAppsInput {
-  create?: Maybe<UserCreateWithoutAppsInput>;
-  update?: Maybe<UserUpdateWithoutAppsDataInput>;
-  upsert?: Maybe<UserUpsertWithoutAppsInput>;
-  connect?: Maybe<UserWhereUniqueInput>;
-}
-
-export interface StoryElementUpdateManyMutationInput {
-  name?: Maybe<String>;
-}
-
-export interface UserUpdateWithoutAppsDataInput {
-  email?: Maybe<String>;
-  password?: Maybe<String>;
-  full_name?: Maybe<String>;
-  job?: Maybe<JobUpdateOneInput>;
-  role?: Maybe<AccountType>;
-  profile_photo?: Maybe<FileUpdateOneInput>;
-  customer_id?: Maybe<ID_Input>;
-  subscription_id?: Maybe<ID_Input>;
-  libraries?: Maybe<LibraryUpdateManyWithoutCreatedByInput>;
-  google_accessToken?: Maybe<String>;
-  facebook_accessToken?: Maybe<String>;
-  oauth_id?: Maybe<String>;
-}
-
-export type AppVersionWhereUniqueInput = AtLeastOne<{
-  id: Maybe<ID_Input>;
-  name?: Maybe<String>;
-}>;
-
-export interface JobUpdateOneInput {
-  create?: Maybe<JobCreateInput>;
-  update?: Maybe<JobUpdateDataInput>;
-  upsert?: Maybe<JobUpsertNestedInput>;
-  delete?: Maybe<Boolean>;
-  disconnect?: Maybe<Boolean>;
-  connect?: Maybe<JobWhereUniqueInput>;
-}
-
-export interface StoryUpdateWithWhereUniqueWithoutStoryElementsInput {
-  where: StoryWhereUniqueInput;
-  data: StoryUpdateWithoutStoryElementsDataInput;
-}
-
-export interface JobUpdateDataInput {
-  name?: Maybe<String>;
-}
-
-export type FileWhereUniqueInput = AtLeastOne<{
-  id: Maybe<ID_Input>;
-  url?: Maybe<String>;
-}>;
-
-export interface JobUpsertNestedInput {
-  update: JobUpdateDataInput;
-  create: JobCreateInput;
-}
-
-export interface StoryCreateWithoutStoryElementsInput {
-  id?: Maybe<ID_Input>;
-  createdBy: UserCreateOneInput;
-  app: AppCreateOneWithoutStoriesInput;
-  appVersions?: Maybe<AppVersionCreateManyWithoutStoriesInput>;
-  storyCategories?: Maybe<StoryCategoryCreateManyWithoutStoriesInput>;
-  libraries?: Maybe<LibraryCreateManyWithoutStoriesInput>;
-  video: VideoCreateOneInput;
-  thumbnail: FileCreateOneInput;
-}
-
-export interface FileUpdateOneInput {
-  create?: Maybe<FileCreateInput>;
-  update?: Maybe<FileUpdateDataInput>;
-  upsert?: Maybe<FileUpsertNestedInput>;
-  delete?: Maybe<Boolean>;
-  disconnect?: Maybe<Boolean>;
-  connect?: Maybe<FileWhereUniqueInput>;
-}
-
-export interface StoryElementCreateInput {
-  id?: Maybe<ID_Input>;
-  name: String;
-  stories?: Maybe<StoryCreateManyWithoutStoryElementsInput>;
-}
-
-export interface FileUpdateDataInput {
-  filename?: Maybe<String>;
-  mimetype?: Maybe<String>;
-  encoding?: Maybe<String>;
-  url?: Maybe<String>;
-}
-
-export interface StoryCategoryUpdateManyMutationInput {
-  name?: Maybe<String>;
-}
-
-export interface FileUpsertNestedInput {
-  update: FileUpdateDataInput;
-  create: FileCreateInput;
-}
-
-export interface StoryUpdateWithoutStoryCategoriesDataInput {
-  createdBy?: Maybe<UserUpdateOneRequiredInput>;
-  app?: Maybe<AppUpdateOneRequiredWithoutStoriesInput>;
-  appVersions?: Maybe<AppVersionUpdateManyWithoutStoriesInput>;
-  storyElements?: Maybe<StoryElementUpdateManyWithoutStoriesInput>;
-  libraries?: Maybe<LibraryUpdateManyWithoutStoriesInput>;
-  video?: Maybe<VideoUpdateOneRequiredInput>;
-  thumbnail?: Maybe<FileUpdateOneRequiredInput>;
-}
-
-export interface LibraryUpdateManyWithoutCreatedByInput {
-  create?: Maybe<
-    LibraryCreateWithoutCreatedByInput[] | LibraryCreateWithoutCreatedByInput
-  >;
-  delete?: Maybe<LibraryWhereUniqueInput[] | LibraryWhereUniqueInput>;
-  connect?: Maybe<LibraryWhereUniqueInput[] | LibraryWhereUniqueInput>;
-  set?: Maybe<LibraryWhereUniqueInput[] | LibraryWhereUniqueInput>;
-  disconnect?: Maybe<LibraryWhereUniqueInput[] | LibraryWhereUniqueInput>;
-  update?: Maybe<
-    | LibraryUpdateWithWhereUniqueWithoutCreatedByInput[]
-    | LibraryUpdateWithWhereUniqueWithoutCreatedByInput
-  >;
-  upsert?: Maybe<
-    | LibraryUpsertWithWhereUniqueWithoutCreatedByInput[]
-    | LibraryUpsertWithWhereUniqueWithoutCreatedByInput
-  >;
-  deleteMany?: Maybe<LibraryScalarWhereInput[] | LibraryScalarWhereInput>;
-  updateMany?: Maybe<
-    | LibraryUpdateManyWithWhereNestedInput[]
-    | LibraryUpdateManyWithWhereNestedInput
-  >;
-}
-
-export type LibraryWhereUniqueInput = AtLeastOne<{
-  id: Maybe<ID_Input>;
-}>;
-
-export interface LibraryUpdateWithWhereUniqueWithoutCreatedByInput {
-  where: LibraryWhereUniqueInput;
-  data: LibraryUpdateWithoutCreatedByDataInput;
-}
-
-export interface StoryCategoryUpdateInput {
-  name?: Maybe<String>;
-  stories?: Maybe<StoryUpdateManyWithoutStoryCategoriesInput>;
-}
-
-export interface LibraryUpdateWithoutCreatedByDataInput {
-  stories?: Maybe<StoryUpdateManyWithoutLibrariesInput>;
-  name?: Maybe<String>;
-  custom_updatedAt?: Maybe<DateTimeInput>;
-}
-
-export type StoryWhereUniqueInput = AtLeastOne<{
-  id: Maybe<ID_Input>;
-}>;
-
-export interface StoryUpdateManyWithoutLibrariesInput {
-  create?: Maybe<
-    StoryCreateWithoutLibrariesInput[] | StoryCreateWithoutLibrariesInput
-  >;
-  delete?: Maybe<StoryWhereUniqueInput[] | StoryWhereUniqueInput>;
-  connect?: Maybe<StoryWhereUniqueInput[] | StoryWhereUniqueInput>;
-  set?: Maybe<StoryWhereUniqueInput[] | StoryWhereUniqueInput>;
-  disconnect?: Maybe<StoryWhereUniqueInput[] | StoryWhereUniqueInput>;
-  update?: Maybe<
-    | StoryUpdateWithWhereUniqueWithoutLibrariesInput[]
-    | StoryUpdateWithWhereUniqueWithoutLibrariesInput
-  >;
-  upsert?: Maybe<
-    | StoryUpsertWithWhereUniqueWithoutLibrariesInput[]
-    | StoryUpsertWithWhereUniqueWithoutLibrariesInput
-  >;
-  deleteMany?: Maybe<StoryScalarWhereInput[] | StoryScalarWhereInput>;
-}
-
-export interface StoryCategoryCreateInput {
-  id?: Maybe<ID_Input>;
-  name: String;
-  stories?: Maybe<StoryCreateManyWithoutStoryCategoriesInput>;
-}
-
-export interface StoryUpdateWithWhereUniqueWithoutLibrariesInput {
-  where: StoryWhereUniqueInput;
-  data: StoryUpdateWithoutLibrariesDataInput;
-}
-
-export type StoryCategoryWhereUniqueInput = AtLeastOne<{
-  id: Maybe<ID_Input>;
-  name?: Maybe<String>;
-}>;
-
-export interface StoryUpdateWithoutLibrariesDataInput {
-  createdBy?: Maybe<UserUpdateOneRequiredInput>;
-  app?: Maybe<AppUpdateOneRequiredWithoutStoriesInput>;
-  appVersions?: Maybe<AppVersionUpdateManyWithoutStoriesInput>;
-  storyCategories?: Maybe<StoryCategoryUpdateManyWithoutStoriesInput>;
-  storyElements?: Maybe<StoryElementUpdateManyWithoutStoriesInput>;
-  video?: Maybe<VideoUpdateOneRequiredInput>;
-  thumbnail?: Maybe<FileUpdateOneRequiredInput>;
-}
-
-export interface LibraryUpdateInput {
-  createdBy?: Maybe<UserUpdateOneRequiredWithoutLibrariesInput>;
-  stories?: Maybe<StoryUpdateManyWithoutLibrariesInput>;
-  name?: Maybe<String>;
-  custom_updatedAt?: Maybe<DateTimeInput>;
-}
-
-export interface StoryUpsertWithWhereUniqueWithoutLibrariesInput {
-  where: StoryWhereUniqueInput;
-  update: StoryUpdateWithoutLibrariesDataInput;
-  create: StoryCreateWithoutLibrariesInput;
-}
-
-export type StoryElementWhereUniqueInput = AtLeastOne<{
-  id: Maybe<ID_Input>;
-  name?: Maybe<String>;
-}>;
-
-export interface UserUpdateDataInput {
-  email?: Maybe<String>;
-  password?: Maybe<String>;
-  full_name?: Maybe<String>;
-  job?: Maybe<JobUpdateOneInput>;
-  role?: Maybe<AccountType>;
-  profile_photo?: Maybe<FileUpdateOneInput>;
-  customer_id?: Maybe<ID_Input>;
-  subscription_id?: Maybe<ID_Input>;
-  apps?: Maybe<AppUpdateManyWithoutCreatedByInput>;
-  libraries?: Maybe<LibraryUpdateManyWithoutCreatedByInput>;
-  google_accessToken?: Maybe<String>;
-  facebook_accessToken?: Maybe<String>;
-  oauth_id?: Maybe<String>;
-}
-
-export interface JobUpdateInput {
-  name?: Maybe<String>;
-}
-
-export interface AppUpdateManyWithoutCreatedByInput {
-  create?: Maybe<
-    AppCreateWithoutCreatedByInput[] | AppCreateWithoutCreatedByInput
-  >;
-  delete?: Maybe<AppWhereUniqueInput[] | AppWhereUniqueInput>;
-  connect?: Maybe<AppWhereUniqueInput[] | AppWhereUniqueInput>;
-  set?: Maybe<AppWhereUniqueInput[] | AppWhereUniqueInput>;
-  disconnect?: Maybe<AppWhereUniqueInput[] | AppWhereUniqueInput>;
-  update?: Maybe<
-    | AppUpdateWithWhereUniqueWithoutCreatedByInput[]
-    | AppUpdateWithWhereUniqueWithoutCreatedByInput
-  >;
-  upsert?: Maybe<
-    | AppUpsertWithWhereUniqueWithoutCreatedByInput[]
-    | AppUpsertWithWhereUniqueWithoutCreatedByInput
-  >;
-  deleteMany?: Maybe<AppScalarWhereInput[] | AppScalarWhereInput>;
-  updateMany?: Maybe<
-    AppUpdateManyWithWhereNestedInput[] | AppUpdateManyWithWhereNestedInput
-  >;
-}
-
-export type UserWhereUniqueInput = AtLeastOne<{
-  id: Maybe<ID_Input>;
-  email?: Maybe<String>;
-}>;
-
-export interface AppUpdateWithWhereUniqueWithoutCreatedByInput {
-  where: AppWhereUniqueInput;
-  data: AppUpdateWithoutCreatedByDataInput;
-}
-
-export interface AppVersionUpdateManyMutationInput {
-  name?: Maybe<String>;
-}
-
-export interface AppUpdateWithoutCreatedByDataInput {
-  appCategory?: Maybe<AppCategoryUpdateOneRequiredInput>;
-  appVersions?: Maybe<AppVersionUpdateManyInput>;
-  stories?: Maybe<StoryUpdateManyWithoutAppInput>;
-  name?: Maybe<String>;
-  description?: Maybe<String>;
-  company?: Maybe<String>;
-  logo?: Maybe<FileUpdateOneRequiredInput>;
-  platform?: Maybe<Platform>;
-}
-
-export interface AppCategoryUpdateManyMutationInput {
-  name?: Maybe<String>;
-}
-
-export interface AppCategoryUpdateOneRequiredInput {
-  create?: Maybe<AppCategoryCreateInput>;
-  update?: Maybe<AppCategoryUpdateDataInput>;
-  upsert?: Maybe<AppCategoryUpsertNestedInput>;
-  connect?: Maybe<AppCategoryWhereUniqueInput>;
-}
-
-export interface AppCategoryUpdateInput {
-  name?: Maybe<String>;
-  stories?: Maybe<StoryUpdateManyInput>;
-}
-
-export interface AppCategoryUpdateDataInput {
-  name?: Maybe<String>;
-  stories?: Maybe<StoryUpdateManyInput>;
-}
-
-export interface UserUpsertWithoutAppsInput {
-  update: UserUpdateWithoutAppsDataInput;
-  create: UserCreateWithoutAppsInput;
-}
-
-export interface StoryUpdateManyInput {
-  create?: Maybe<StoryCreateInput[] | StoryCreateInput>;
-  update?: Maybe<
-    | StoryUpdateWithWhereUniqueNestedInput[]
-    | StoryUpdateWithWhereUniqueNestedInput
-  >;
-  upsert?: Maybe<
-    | StoryUpsertWithWhereUniqueNestedInput[]
-    | StoryUpsertWithWhereUniqueNestedInput
-  >;
-  delete?: Maybe<StoryWhereUniqueInput[] | StoryWhereUniqueInput>;
-  connect?: Maybe<StoryWhereUniqueInput[] | StoryWhereUniqueInput>;
-  set?: Maybe<StoryWhereUniqueInput[] | StoryWhereUniqueInput>;
-  disconnect?: Maybe<StoryWhereUniqueInput[] | StoryWhereUniqueInput>;
-  deleteMany?: Maybe<StoryScalarWhereInput[] | StoryScalarWhereInput>;
-}
-
-export interface UserCreateOneWithoutAppsInput {
-  create?: Maybe<UserCreateWithoutAppsInput>;
-  connect?: Maybe<UserWhereUniqueInput>;
-}
-
-export interface StoryElementWhereInput {
-  id?: Maybe<ID_Input>;
-  id_not?: Maybe<ID_Input>;
-  id_in?: Maybe<ID_Input[] | ID_Input>;
-  id_not_in?: Maybe<ID_Input[] | ID_Input>;
-  id_lt?: Maybe<ID_Input>;
-  id_lte?: Maybe<ID_Input>;
-  id_gt?: Maybe<ID_Input>;
-  id_gte?: Maybe<ID_Input>;
-  id_contains?: Maybe<ID_Input>;
-  id_not_contains?: Maybe<ID_Input>;
-  id_starts_with?: Maybe<ID_Input>;
-  id_not_starts_with?: Maybe<ID_Input>;
-  id_ends_with?: Maybe<ID_Input>;
-  id_not_ends_with?: Maybe<ID_Input>;
-  name?: Maybe<String>;
-  name_not?: Maybe<String>;
-  name_in?: Maybe<String[] | String>;
-  name_not_in?: Maybe<String[] | String>;
-  name_lt?: Maybe<String>;
-  name_lte?: Maybe<String>;
-  name_gt?: Maybe<String>;
-  name_gte?: Maybe<String>;
-  name_contains?: Maybe<String>;
-  name_not_contains?: Maybe<String>;
-  name_starts_with?: Maybe<String>;
-  name_not_starts_with?: Maybe<String>;
-  name_ends_with?: Maybe<String>;
-  name_not_ends_with?: Maybe<String>;
-  createdAt?: Maybe<DateTimeInput>;
-  createdAt_not?: Maybe<DateTimeInput>;
-  createdAt_in?: Maybe<DateTimeInput[] | DateTimeInput>;
-  createdAt_not_in?: Maybe<DateTimeInput[] | DateTimeInput>;
-  createdAt_lt?: Maybe<DateTimeInput>;
-  createdAt_lte?: Maybe<DateTimeInput>;
-  createdAt_gt?: Maybe<DateTimeInput>;
-  createdAt_gte?: Maybe<DateTimeInput>;
-  updatedAt?: Maybe<DateTimeInput>;
-  updatedAt_not?: Maybe<DateTimeInput>;
-  updatedAt_in?: Maybe<DateTimeInput[] | DateTimeInput>;
-  updatedAt_not_in?: Maybe<DateTimeInput[] | DateTimeInput>;
-  updatedAt_lt?: Maybe<DateTimeInput>;
-  updatedAt_lte?: Maybe<DateTimeInput>;
-  updatedAt_gt?: Maybe<DateTimeInput>;
-  updatedAt_gte?: Maybe<DateTimeInput>;
-  stories_every?: Maybe<StoryWhereInput>;
-  stories_some?: Maybe<StoryWhereInput>;
-  stories_none?: Maybe<StoryWhereInput>;
-  AND?: Maybe<StoryElementWhereInput[] | StoryElementWhereInput>;
-  OR?: Maybe<StoryElementWhereInput[] | StoryElementWhereInput>;
-  NOT?: Maybe<StoryElementWhereInput[] | StoryElementWhereInput>;
-}
-
-export interface JobCreateOneInput {
-  create?: Maybe<JobCreateInput>;
-  connect?: Maybe<JobWhereUniqueInput>;
-}
-
-export interface AppCategoryWhereInput {
-  id?: Maybe<ID_Input>;
-  id_not?: Maybe<ID_Input>;
-  id_in?: Maybe<ID_Input[] | ID_Input>;
-  id_not_in?: Maybe<ID_Input[] | ID_Input>;
-  id_lt?: Maybe<ID_Input>;
-  id_lte?: Maybe<ID_Input>;
-  id_gt?: Maybe<ID_Input>;
-  id_gte?: Maybe<ID_Input>;
-  id_contains?: Maybe<ID_Input>;
-  id_not_contains?: Maybe<ID_Input>;
-  id_starts_with?: Maybe<ID_Input>;
-  id_not_starts_with?: Maybe<ID_Input>;
-  id_ends_with?: Maybe<ID_Input>;
-  id_not_ends_with?: Maybe<ID_Input>;
-  name?: Maybe<String>;
-  name_not?: Maybe<String>;
-  name_in?: Maybe<String[] | String>;
-  name_not_in?: Maybe<String[] | String>;
-  name_lt?: Maybe<String>;
-  name_lte?: Maybe<String>;
-  name_gt?: Maybe<String>;
-  name_gte?: Maybe<String>;
-  name_contains?: Maybe<String>;
-  name_not_contains?: Maybe<String>;
-  name_starts_with?: Maybe<String>;
-  name_not_starts_with?: Maybe<String>;
-  name_ends_with?: Maybe<String>;
-  name_not_ends_with?: Maybe<String>;
-  stories_every?: Maybe<StoryWhereInput>;
-  stories_some?: Maybe<StoryWhereInput>;
-  stories_none?: Maybe<StoryWhereInput>;
-  createdAt?: Maybe<DateTimeInput>;
-  createdAt_not?: Maybe<DateTimeInput>;
-  createdAt_in?: Maybe<DateTimeInput[] | DateTimeInput>;
-  createdAt_not_in?: Maybe<DateTimeInput[] | DateTimeInput>;
-  createdAt_lt?: Maybe<DateTimeInput>;
-  createdAt_lte?: Maybe<DateTimeInput>;
-  createdAt_gt?: Maybe<DateTimeInput>;
-  createdAt_gte?: Maybe<DateTimeInput>;
-  updatedAt?: Maybe<DateTimeInput>;
-  updatedAt_not?: Maybe<DateTimeInput>;
-  updatedAt_in?: Maybe<DateTimeInput[] | DateTimeInput>;
-  updatedAt_not_in?: Maybe<DateTimeInput[] | DateTimeInput>;
-  updatedAt_lt?: Maybe<DateTimeInput>;
-  updatedAt_lte?: Maybe<DateTimeInput>;
-  updatedAt_gt?: Maybe<DateTimeInput>;
-  updatedAt_gte?: Maybe<DateTimeInput>;
-  AND?: Maybe<AppCategoryWhereInput[] | AppCategoryWhereInput>;
-  OR?: Maybe<AppCategoryWhereInput[] | AppCategoryWhereInput>;
-  NOT?: Maybe<AppCategoryWhereInput[] | AppCategoryWhereInput>;
-}
-
-export interface FileCreateOneInput {
-  create?: Maybe<FileCreateInput>;
-  connect?: Maybe<FileWhereUniqueInput>;
-}
-
-export interface StoryWhereInput {
-  id?: Maybe<ID_Input>;
-  id_not?: Maybe<ID_Input>;
-  id_in?: Maybe<ID_Input[] | ID_Input>;
-  id_not_in?: Maybe<ID_Input[] | ID_Input>;
-  id_lt?: Maybe<ID_Input>;
-  id_lte?: Maybe<ID_Input>;
-  id_gt?: Maybe<ID_Input>;
-  id_gte?: Maybe<ID_Input>;
-  id_contains?: Maybe<ID_Input>;
-  id_not_contains?: Maybe<ID_Input>;
-  id_starts_with?: Maybe<ID_Input>;
-  id_not_starts_with?: Maybe<ID_Input>;
-  id_ends_with?: Maybe<ID_Input>;
-  id_not_ends_with?: Maybe<ID_Input>;
-  createdBy?: Maybe<UserWhereInput>;
-  app?: Maybe<AppWhereInput>;
-  appVersions_every?: Maybe<AppVersionWhereInput>;
-  appVersions_some?: Maybe<AppVersionWhereInput>;
-  appVersions_none?: Maybe<AppVersionWhereInput>;
-  storyCategories_every?: Maybe<StoryCategoryWhereInput>;
-  storyCategories_some?: Maybe<StoryCategoryWhereInput>;
-  storyCategories_none?: Maybe<StoryCategoryWhereInput>;
-  storyElements_every?: Maybe<StoryElementWhereInput>;
-  storyElements_some?: Maybe<StoryElementWhereInput>;
-  storyElements_none?: Maybe<StoryElementWhereInput>;
-  libraries_every?: Maybe<LibraryWhereInput>;
-  libraries_some?: Maybe<LibraryWhereInput>;
-  libraries_none?: Maybe<LibraryWhereInput>;
-  video?: Maybe<VideoWhereInput>;
-  thumbnail?: Maybe<FileWhereInput>;
-  createdAt?: Maybe<DateTimeInput>;
-  createdAt_not?: Maybe<DateTimeInput>;
-  createdAt_in?: Maybe<DateTimeInput[] | DateTimeInput>;
-  createdAt_not_in?: Maybe<DateTimeInput[] | DateTimeInput>;
-  createdAt_lt?: Maybe<DateTimeInput>;
-  createdAt_lte?: Maybe<DateTimeInput>;
-  createdAt_gt?: Maybe<DateTimeInput>;
-  createdAt_gte?: Maybe<DateTimeInput>;
-  updatedAt?: Maybe<DateTimeInput>;
-  updatedAt_not?: Maybe<DateTimeInput>;
-  updatedAt_in?: Maybe<DateTimeInput[] | DateTimeInput>;
-  updatedAt_not_in?: Maybe<DateTimeInput[] | DateTimeInput>;
-  updatedAt_lt?: Maybe<DateTimeInput>;
-  updatedAt_lte?: Maybe<DateTimeInput>;
-  updatedAt_gt?: Maybe<DateTimeInput>;
-  updatedAt_gte?: Maybe<DateTimeInput>;
-  AND?: Maybe<StoryWhereInput[] | StoryWhereInput>;
-  OR?: Maybe<StoryWhereInput[] | StoryWhereInput>;
-  NOT?: Maybe<StoryWhereInput[] | StoryWhereInput>;
-}
-
-export interface LibraryCreateManyWithoutCreatedByInput {
-  create?: Maybe<
-    LibraryCreateWithoutCreatedByInput[] | LibraryCreateWithoutCreatedByInput
-  >;
-  connect?: Maybe<LibraryWhereUniqueInput[] | LibraryWhereUniqueInput>;
-}
-
-export interface LibraryWhereInput {
-  id?: Maybe<ID_Input>;
-  id_not?: Maybe<ID_Input>;
-  id_in?: Maybe<ID_Input[] | ID_Input>;
-  id_not_in?: Maybe<ID_Input[] | ID_Input>;
-  id_lt?: Maybe<ID_Input>;
-  id_lte?: Maybe<ID_Input>;
-  id_gt?: Maybe<ID_Input>;
-  id_gte?: Maybe<ID_Input>;
-  id_contains?: Maybe<ID_Input>;
-  id_not_contains?: Maybe<ID_Input>;
-  id_starts_with?: Maybe<ID_Input>;
-  id_not_starts_with?: Maybe<ID_Input>;
-  id_ends_with?: Maybe<ID_Input>;
-  id_not_ends_with?: Maybe<ID_Input>;
-  createdBy?: Maybe<UserWhereInput>;
-  stories_every?: Maybe<StoryWhereInput>;
-  stories_some?: Maybe<StoryWhereInput>;
-  stories_none?: Maybe<StoryWhereInput>;
-  name?: Maybe<String>;
-  name_not?: Maybe<String>;
-  name_in?: Maybe<String[] | String>;
-  name_not_in?: Maybe<String[] | String>;
-  name_lt?: Maybe<String>;
-  name_lte?: Maybe<String>;
-  name_gt?: Maybe<String>;
-  name_gte?: Maybe<String>;
-  name_contains?: Maybe<String>;
-  name_not_contains?: Maybe<String>;
-  name_starts_with?: Maybe<String>;
-  name_not_starts_with?: Maybe<String>;
-  name_ends_with?: Maybe<String>;
-  name_not_ends_with?: Maybe<String>;
-  custom_updatedAt?: Maybe<DateTimeInput>;
-  custom_updatedAt_not?: Maybe<DateTimeInput>;
-  custom_updatedAt_in?: Maybe<DateTimeInput[] | DateTimeInput>;
-  custom_updatedAt_not_in?: Maybe<DateTimeInput[] | DateTimeInput>;
-  custom_updatedAt_lt?: Maybe<DateTimeInput>;
-  custom_updatedAt_lte?: Maybe<DateTimeInput>;
-  custom_updatedAt_gt?: Maybe<DateTimeInput>;
-  custom_updatedAt_gte?: Maybe<DateTimeInput>;
-  createdAt?: Maybe<DateTimeInput>;
-  createdAt_not?: Maybe<DateTimeInput>;
-  createdAt_in?: Maybe<DateTimeInput[] | DateTimeInput>;
-  createdAt_not_in?: Maybe<DateTimeInput[] | DateTimeInput>;
-  createdAt_lt?: Maybe<DateTimeInput>;
-  createdAt_lte?: Maybe<DateTimeInput>;
-  createdAt_gt?: Maybe<DateTimeInput>;
-  createdAt_gte?: Maybe<DateTimeInput>;
-  updatedAt?: Maybe<DateTimeInput>;
-  updatedAt_not?: Maybe<DateTimeInput>;
-  updatedAt_in?: Maybe<DateTimeInput[] | DateTimeInput>;
-  updatedAt_not_in?: Maybe<DateTimeInput[] | DateTimeInput>;
-  updatedAt_lt?: Maybe<DateTimeInput>;
-  updatedAt_lte?: Maybe<DateTimeInput>;
-  updatedAt_gt?: Maybe<DateTimeInput>;
-  updatedAt_gte?: Maybe<DateTimeInput>;
-  AND?: Maybe<LibraryWhereInput[] | LibraryWhereInput>;
-  OR?: Maybe<LibraryWhereInput[] | LibraryWhereInput>;
-  NOT?: Maybe<LibraryWhereInput[] | LibraryWhereInput>;
-}
-
-export interface StoryCreateManyWithoutLibrariesInput {
-  create?: Maybe<
-    StoryCreateWithoutLibrariesInput[] | StoryCreateWithoutLibrariesInput
-  >;
-  connect?: Maybe<StoryWhereUniqueInput[] | StoryWhereUniqueInput>;
-}
-
-export interface AppVersionUpdateManyInput {
-  create?: Maybe<AppVersionCreateInput[] | AppVersionCreateInput>;
-  update?: Maybe<
-    | AppVersionUpdateWithWhereUniqueNestedInput[]
-    | AppVersionUpdateWithWhereUniqueNestedInput
-  >;
-  upsert?: Maybe<
-    | AppVersionUpsertWithWhereUniqueNestedInput[]
-    | AppVersionUpsertWithWhereUniqueNestedInput
-  >;
-  delete?: Maybe<AppVersionWhereUniqueInput[] | AppVersionWhereUniqueInput>;
-  connect?: Maybe<AppVersionWhereUniqueInput[] | AppVersionWhereUniqueInput>;
-  set?: Maybe<AppVersionWhereUniqueInput[] | AppVersionWhereUniqueInput>;
-  disconnect?: Maybe<AppVersionWhereUniqueInput[] | AppVersionWhereUniqueInput>;
-  deleteMany?: Maybe<AppVersionScalarWhereInput[] | AppVersionScalarWhereInput>;
-  updateMany?: Maybe<
-    | AppVersionUpdateManyWithWhereNestedInput[]
-    | AppVersionUpdateManyWithWhereNestedInput
-  >;
-}
-
-export interface UserCreateOneInput {
-  create?: Maybe<UserCreateInput>;
-  connect?: Maybe<UserWhereUniqueInput>;
-}
-
-export interface AppVersionUpdateWithWhereUniqueNestedInput {
-  where: AppVersionWhereUniqueInput;
-  data: AppVersionUpdateDataInput;
-}
-
-export interface AppCreateManyWithoutCreatedByInput {
-  create?: Maybe<
-    AppCreateWithoutCreatedByInput[] | AppCreateWithoutCreatedByInput
-  >;
-  connect?: Maybe<AppWhereUniqueInput[] | AppWhereUniqueInput>;
-}
-
-export interface AppVersionUpdateDataInput {
-  name?: Maybe<String>;
-  stories?: Maybe<StoryUpdateManyWithoutAppVersionsInput>;
-}
-
-export interface AppCategoryCreateOneInput {
-  create?: Maybe<AppCategoryCreateInput>;
-  connect?: Maybe<AppCategoryWhereUniqueInput>;
-}
-
-export interface StoryUpdateManyWithoutAppVersionsInput {
-  create?: Maybe<
-    StoryCreateWithoutAppVersionsInput[] | StoryCreateWithoutAppVersionsInput
-  >;
-  delete?: Maybe<StoryWhereUniqueInput[] | StoryWhereUniqueInput>;
-  connect?: Maybe<StoryWhereUniqueInput[] | StoryWhereUniqueInput>;
-  set?: Maybe<StoryWhereUniqueInput[] | StoryWhereUniqueInput>;
-  disconnect?: Maybe<StoryWhereUniqueInput[] | StoryWhereUniqueInput>;
-  update?: Maybe<
-    | StoryUpdateWithWhereUniqueWithoutAppVersionsInput[]
-    | StoryUpdateWithWhereUniqueWithoutAppVersionsInput
-  >;
-  upsert?: Maybe<
-    | StoryUpsertWithWhereUniqueWithoutAppVersionsInput[]
-    | StoryUpsertWithWhereUniqueWithoutAppVersionsInput
-  >;
-  deleteMany?: Maybe<StoryScalarWhereInput[] | StoryScalarWhereInput>;
-}
-
-export interface StoryCreateManyInput {
-  create?: Maybe<StoryCreateInput[] | StoryCreateInput>;
-  connect?: Maybe<StoryWhereUniqueInput[] | StoryWhereUniqueInput>;
-}
-
-export interface StoryUpdateWithWhereUniqueWithoutAppVersionsInput {
-  where: StoryWhereUniqueInput;
-  data: StoryUpdateWithoutAppVersionsDataInput;
-}
-
-export interface AppCreateOneWithoutStoriesInput {
-  create?: Maybe<AppCreateWithoutStoriesInput>;
-  connect?: Maybe<AppWhereUniqueInput>;
-}
-
-export interface StoryUpdateWithoutAppVersionsDataInput {
-  createdBy?: Maybe<UserUpdateOneRequiredInput>;
-  app?: Maybe<AppUpdateOneRequiredWithoutStoriesInput>;
-  storyCategories?: Maybe<StoryCategoryUpdateManyWithoutStoriesInput>;
-  storyElements?: Maybe<StoryElementUpdateManyWithoutStoriesInput>;
-  libraries?: Maybe<LibraryUpdateManyWithoutStoriesInput>;
-  video?: Maybe<VideoUpdateOneRequiredInput>;
-  thumbnail?: Maybe<FileUpdateOneRequiredInput>;
-}
-
-export interface AppVersionCreateManyInput {
-  create?: Maybe<AppVersionCreateInput[] | AppVersionCreateInput>;
-  connect?: Maybe<AppVersionWhereUniqueInput[] | AppVersionWhereUniqueInput>;
-}
-
-export interface StoryCategoryUpdateManyWithoutStoriesInput {
-  create?: Maybe<
-    | StoryCategoryCreateWithoutStoriesInput[]
-    | StoryCategoryCreateWithoutStoriesInput
-  >;
-  delete?: Maybe<
-    StoryCategoryWhereUniqueInput[] | StoryCategoryWhereUniqueInput
-  >;
-  connect?: Maybe<
-    StoryCategoryWhereUniqueInput[] | StoryCategoryWhereUniqueInput
-  >;
-  set?: Maybe<StoryCategoryWhereUniqueInput[] | StoryCategoryWhereUniqueInput>;
-  disconnect?: Maybe<
-    StoryCategoryWhereUniqueInput[] | StoryCategoryWhereUniqueInput
-  >;
-  update?: Maybe<
-    | StoryCategoryUpdateWithWhereUniqueWithoutStoriesInput[]
-    | StoryCategoryUpdateWithWhereUniqueWithoutStoriesInput
-  >;
-  upsert?: Maybe<
-    | StoryCategoryUpsertWithWhereUniqueWithoutStoriesInput[]
-    | StoryCategoryUpsertWithWhereUniqueWithoutStoriesInput
-  >;
-  deleteMany?: Maybe<
-    StoryCategoryScalarWhereInput[] | StoryCategoryScalarWhereInput
-  >;
-  updateMany?: Maybe<
-    | StoryCategoryUpdateManyWithWhereNestedInput[]
-    | StoryCategoryUpdateManyWithWhereNestedInput
-  >;
-}
-
-export interface StoryCreateManyWithoutAppVersionsInput {
-  create?: Maybe<
-    StoryCreateWithoutAppVersionsInput[] | StoryCreateWithoutAppVersionsInput
-  >;
-  connect?: Maybe<StoryWhereUniqueInput[] | StoryWhereUniqueInput>;
-}
-
-export interface StoryCategoryUpdateWithWhereUniqueWithoutStoriesInput {
-  where: StoryCategoryWhereUniqueInput;
-  data: StoryCategoryUpdateWithoutStoriesDataInput;
-}
-
-export interface StoryCategoryCreateManyWithoutStoriesInput {
-  create?: Maybe<
-    | StoryCategoryCreateWithoutStoriesInput[]
-    | StoryCategoryCreateWithoutStoriesInput
-  >;
-  connect?: Maybe<
-    StoryCategoryWhereUniqueInput[] | StoryCategoryWhereUniqueInput
-  >;
-}
-
-export interface StoryCategoryUpdateWithoutStoriesDataInput {
-  name?: Maybe<String>;
-}
-
-export interface StoryElementCreateManyWithoutStoriesInput {
-  create?: Maybe<
-    | StoryElementCreateWithoutStoriesInput[]
-    | StoryElementCreateWithoutStoriesInput
-  >;
-  connect?: Maybe<
-    StoryElementWhereUniqueInput[] | StoryElementWhereUniqueInput
-  >;
-}
-
-export interface StoryCategoryUpsertWithWhereUniqueWithoutStoriesInput {
-  where: StoryCategoryWhereUniqueInput;
-  update: StoryCategoryUpdateWithoutStoriesDataInput;
-  create: StoryCategoryCreateWithoutStoriesInput;
-}
-
-export interface VideoSubscriptionWhereInput {
-  mutation_in?: Maybe<MutationType[] | MutationType>;
-  updatedFields_contains?: Maybe<String>;
-  updatedFields_contains_every?: Maybe<String[] | String>;
-  updatedFields_contains_some?: Maybe<String[] | String>;
-  node?: Maybe<VideoWhereInput>;
-  AND?: Maybe<VideoSubscriptionWhereInput[] | VideoSubscriptionWhereInput>;
-  OR?: Maybe<VideoSubscriptionWhereInput[] | VideoSubscriptionWhereInput>;
-  NOT?: Maybe<VideoSubscriptionWhereInput[] | VideoSubscriptionWhereInput>;
-}
-
-export interface StoryCategoryScalarWhereInput {
-  id?: Maybe<ID_Input>;
-  id_not?: Maybe<ID_Input>;
-  id_in?: Maybe<ID_Input[] | ID_Input>;
-  id_not_in?: Maybe<ID_Input[] | ID_Input>;
-  id_lt?: Maybe<ID_Input>;
-  id_lte?: Maybe<ID_Input>;
-  id_gt?: Maybe<ID_Input>;
-  id_gte?: Maybe<ID_Input>;
-  id_contains?: Maybe<ID_Input>;
-  id_not_contains?: Maybe<ID_Input>;
-  id_starts_with?: Maybe<ID_Input>;
-  id_not_starts_with?: Maybe<ID_Input>;
-  id_ends_with?: Maybe<ID_Input>;
-  id_not_ends_with?: Maybe<ID_Input>;
-  name?: Maybe<String>;
-  name_not?: Maybe<String>;
-  name_in?: Maybe<String[] | String>;
-  name_not_in?: Maybe<String[] | String>;
-  name_lt?: Maybe<String>;
-  name_lte?: Maybe<String>;
-  name_gt?: Maybe<String>;
-  name_gte?: Maybe<String>;
-  name_contains?: Maybe<String>;
-  name_not_contains?: Maybe<String>;
-  name_starts_with?: Maybe<String>;
-  name_not_starts_with?: Maybe<String>;
-  name_ends_with?: Maybe<String>;
-  name_not_ends_with?: Maybe<String>;
-  createdAt?: Maybe<DateTimeInput>;
-  createdAt_not?: Maybe<DateTimeInput>;
-  createdAt_in?: Maybe<DateTimeInput[] | DateTimeInput>;
-  createdAt_not_in?: Maybe<DateTimeInput[] | DateTimeInput>;
-  createdAt_lt?: Maybe<DateTimeInput>;
-  createdAt_lte?: Maybe<DateTimeInput>;
-  createdAt_gt?: Maybe<DateTimeInput>;
-  createdAt_gte?: Maybe<DateTimeInput>;
-  updatedAt?: Maybe<DateTimeInput>;
-  updatedAt_not?: Maybe<DateTimeInput>;
-  updatedAt_in?: Maybe<DateTimeInput[] | DateTimeInput>;
-  updatedAt_not_in?: Maybe<DateTimeInput[] | DateTimeInput>;
-  updatedAt_lt?: Maybe<DateTimeInput>;
-  updatedAt_lte?: Maybe<DateTimeInput>;
-  updatedAt_gt?: Maybe<DateTimeInput>;
-  updatedAt_gte?: Maybe<DateTimeInput>;
-  AND?: Maybe<StoryCategoryScalarWhereInput[] | StoryCategoryScalarWhereInput>;
-  OR?: Maybe<StoryCategoryScalarWhereInput[] | StoryCategoryScalarWhereInput>;
-  NOT?: Maybe<StoryCategoryScalarWhereInput[] | StoryCategoryScalarWhereInput>;
-}
-
-export interface StoryElementSubscriptionWhereInput {
-  mutation_in?: Maybe<MutationType[] | MutationType>;
-  updatedFields_contains?: Maybe<String>;
-  updatedFields_contains_every?: Maybe<String[] | String>;
-  updatedFields_contains_some?: Maybe<String[] | String>;
-  node?: Maybe<StoryElementWhereInput>;
-  AND?: Maybe<
-    StoryElementSubscriptionWhereInput[] | StoryElementSubscriptionWhereInput
-  >;
-  OR?: Maybe<
-    StoryElementSubscriptionWhereInput[] | StoryElementSubscriptionWhereInput
-  >;
-  NOT?: Maybe<
-    StoryElementSubscriptionWhereInput[] | StoryElementSubscriptionWhereInput
-  >;
-}
-
-export interface StoryCategoryUpdateManyWithWhereNestedInput {
-  where: StoryCategoryScalarWhereInput;
-  data: StoryCategoryUpdateManyDataInput;
-}
-
-export interface StorySubscriptionWhereInput {
-  mutation_in?: Maybe<MutationType[] | MutationType>;
-  updatedFields_contains?: Maybe<String>;
-  updatedFields_contains_every?: Maybe<String[] | String>;
-  updatedFields_contains_some?: Maybe<String[] | String>;
-  node?: Maybe<StoryWhereInput>;
-  AND?: Maybe<StorySubscriptionWhereInput[] | StorySubscriptionWhereInput>;
-  OR?: Maybe<StorySubscriptionWhereInput[] | StorySubscriptionWhereInput>;
-  NOT?: Maybe<StorySubscriptionWhereInput[] | StorySubscriptionWhereInput>;
-}
-
-export interface StoryCategoryUpdateManyDataInput {
-  name?: Maybe<String>;
-}
-
-export interface AppVersionSubscriptionWhereInput {
-  mutation_in?: Maybe<MutationType[] | MutationType>;
-  updatedFields_contains?: Maybe<String>;
-  updatedFields_contains_every?: Maybe<String[] | String>;
-  updatedFields_contains_some?: Maybe<String[] | String>;
-  node?: Maybe<AppVersionWhereInput>;
-  AND?: Maybe<
-    AppVersionSubscriptionWhereInput[] | AppVersionSubscriptionWhereInput
-  >;
-  OR?: Maybe<
-    AppVersionSubscriptionWhereInput[] | AppVersionSubscriptionWhereInput
-  >;
-  NOT?: Maybe<
-    AppVersionSubscriptionWhereInput[] | AppVersionSubscriptionWhereInput
-  >;
-}
-
-export interface StoryElementUpdateManyWithoutStoriesInput {
-  create?: Maybe<
-    | StoryElementCreateWithoutStoriesInput[]
-    | StoryElementCreateWithoutStoriesInput
-  >;
-  delete?: Maybe<StoryElementWhereUniqueInput[] | StoryElementWhereUniqueInput>;
-  connect?: Maybe<
-    StoryElementWhereUniqueInput[] | StoryElementWhereUniqueInput
-  >;
-  set?: Maybe<StoryElementWhereUniqueInput[] | StoryElementWhereUniqueInput>;
-  disconnect?: Maybe<
-    StoryElementWhereUniqueInput[] | StoryElementWhereUniqueInput
-  >;
-  update?: Maybe<
-    | StoryElementUpdateWithWhereUniqueWithoutStoriesInput[]
-    | StoryElementUpdateWithWhereUniqueWithoutStoriesInput
-  >;
-  upsert?: Maybe<
-    | StoryElementUpsertWithWhereUniqueWithoutStoriesInput[]
-    | StoryElementUpsertWithWhereUniqueWithoutStoriesInput
-  >;
-  deleteMany?: Maybe<
-    StoryElementScalarWhereInput[] | StoryElementScalarWhereInput
-  >;
-  updateMany?: Maybe<
-    | StoryElementUpdateManyWithWhereNestedInput[]
-    | StoryElementUpdateManyWithWhereNestedInput
-  >;
-}
-
-export type AppCategoryWhereUniqueInput = AtLeastOne<{
-  id: Maybe<ID_Input>;
-  name?: Maybe<String>;
-}>;
-
-export interface StoryElementUpdateWithWhereUniqueWithoutStoriesInput {
-  where: StoryElementWhereUniqueInput;
-  data: StoryElementUpdateWithoutStoriesDataInput;
-}
-
-export interface StoryUpsertWithWhereUniqueWithoutStoryElementsInput {
-  where: StoryWhereUniqueInput;
-  update: StoryUpdateWithoutStoryElementsDataInput;
-  create: StoryCreateWithoutStoryElementsInput;
-}
-
-export interface StoryElementUpdateWithoutStoriesDataInput {
-  name?: Maybe<String>;
-}
-
-export interface StoryUpdateManyWithoutStoryElementsInput {
-  create?: Maybe<
-    | StoryCreateWithoutStoryElementsInput[]
-    | StoryCreateWithoutStoryElementsInput
-  >;
-  delete?: Maybe<StoryWhereUniqueInput[] | StoryWhereUniqueInput>;
-  connect?: Maybe<StoryWhereUniqueInput[] | StoryWhereUniqueInput>;
-  set?: Maybe<StoryWhereUniqueInput[] | StoryWhereUniqueInput>;
-  disconnect?: Maybe<StoryWhereUniqueInput[] | StoryWhereUniqueInput>;
-  update?: Maybe<
-    | StoryUpdateWithWhereUniqueWithoutStoryElementsInput[]
-    | StoryUpdateWithWhereUniqueWithoutStoryElementsInput
-  >;
-  upsert?: Maybe<
-    | StoryUpsertWithWhereUniqueWithoutStoryElementsInput[]
-    | StoryUpsertWithWhereUniqueWithoutStoryElementsInput
-  >;
-  deleteMany?: Maybe<StoryScalarWhereInput[] | StoryScalarWhereInput>;
-}
-
-export interface StoryElementUpsertWithWhereUniqueWithoutStoriesInput {
-  where: StoryElementWhereUniqueInput;
-  update: StoryElementUpdateWithoutStoriesDataInput;
-  create: StoryElementCreateWithoutStoriesInput;
-}
-
-export interface StoryCreateManyWithoutStoryElementsInput {
-  create?: Maybe<
-    | StoryCreateWithoutStoryElementsInput[]
-    | StoryCreateWithoutStoryElementsInput
-  >;
-  connect?: Maybe<StoryWhereUniqueInput[] | StoryWhereUniqueInput>;
-}
-
-export interface StoryElementScalarWhereInput {
-  id?: Maybe<ID_Input>;
-  id_not?: Maybe<ID_Input>;
-  id_in?: Maybe<ID_Input[] | ID_Input>;
-  id_not_in?: Maybe<ID_Input[] | ID_Input>;
-  id_lt?: Maybe<ID_Input>;
-  id_lte?: Maybe<ID_Input>;
-  id_gt?: Maybe<ID_Input>;
-  id_gte?: Maybe<ID_Input>;
-  id_contains?: Maybe<ID_Input>;
-  id_not_contains?: Maybe<ID_Input>;
-  id_starts_with?: Maybe<ID_Input>;
-  id_not_starts_with?: Maybe<ID_Input>;
-  id_ends_with?: Maybe<ID_Input>;
-  id_not_ends_with?: Maybe<ID_Input>;
-  name?: Maybe<String>;
-  name_not?: Maybe<String>;
-  name_in?: Maybe<String[] | String>;
-  name_not_in?: Maybe<String[] | String>;
-  name_lt?: Maybe<String>;
-  name_lte?: Maybe<String>;
-  name_gt?: Maybe<String>;
-  name_gte?: Maybe<String>;
-  name_contains?: Maybe<String>;
-  name_not_contains?: Maybe<String>;
-  name_starts_with?: Maybe<String>;
-  name_not_starts_with?: Maybe<String>;
-  name_ends_with?: Maybe<String>;
-  name_not_ends_with?: Maybe<String>;
-  createdAt?: Maybe<DateTimeInput>;
-  createdAt_not?: Maybe<DateTimeInput>;
-  createdAt_in?: Maybe<DateTimeInput[] | DateTimeInput>;
-  createdAt_not_in?: Maybe<DateTimeInput[] | DateTimeInput>;
-  createdAt_lt?: Maybe<DateTimeInput>;
-  createdAt_lte?: Maybe<DateTimeInput>;
-  createdAt_gt?: Maybe<DateTimeInput>;
-  createdAt_gte?: Maybe<DateTimeInput>;
-  updatedAt?: Maybe<DateTimeInput>;
-  updatedAt_not?: Maybe<DateTimeInput>;
-  updatedAt_in?: Maybe<DateTimeInput[] | DateTimeInput>;
-  updatedAt_not_in?: Maybe<DateTimeInput[] | DateTimeInput>;
-  updatedAt_lt?: Maybe<DateTimeInput>;
-  updatedAt_lte?: Maybe<DateTimeInput>;
-  updatedAt_gt?: Maybe<DateTimeInput>;
-  updatedAt_gte?: Maybe<DateTimeInput>;
-  AND?: Maybe<StoryElementScalarWhereInput[] | StoryElementScalarWhereInput>;
-  OR?: Maybe<StoryElementScalarWhereInput[] | StoryElementScalarWhereInput>;
-  NOT?: Maybe<StoryElementScalarWhereInput[] | StoryElementScalarWhereInput>;
-}
-
-export interface StoryUpsertWithWhereUniqueWithoutStoryCategoriesInput {
-  where: StoryWhereUniqueInput;
-  update: StoryUpdateWithoutStoryCategoriesDataInput;
-  create: StoryCreateWithoutStoryCategoriesInput;
-}
-
-export interface StoryElementUpdateManyWithWhereNestedInput {
-  where: StoryElementScalarWhereInput;
-  data: StoryElementUpdateManyDataInput;
-}
-
-export interface StoryUpdateManyWithoutStoryCategoriesInput {
-  create?: Maybe<
-    | StoryCreateWithoutStoryCategoriesInput[]
-    | StoryCreateWithoutStoryCategoriesInput
-  >;
-  delete?: Maybe<StoryWhereUniqueInput[] | StoryWhereUniqueInput>;
-  connect?: Maybe<StoryWhereUniqueInput[] | StoryWhereUniqueInput>;
-  set?: Maybe<StoryWhereUniqueInput[] | StoryWhereUniqueInput>;
-  disconnect?: Maybe<StoryWhereUniqueInput[] | StoryWhereUniqueInput>;
-  update?: Maybe<
-    | StoryUpdateWithWhereUniqueWithoutStoryCategoriesInput[]
-    | StoryUpdateWithWhereUniqueWithoutStoryCategoriesInput
-  >;
-  upsert?: Maybe<
-    | StoryUpsertWithWhereUniqueWithoutStoryCategoriesInput[]
-    | StoryUpsertWithWhereUniqueWithoutStoryCategoriesInput
-  >;
-  deleteMany?: Maybe<StoryScalarWhereInput[] | StoryScalarWhereInput>;
-}
-
-export interface StoryElementUpdateManyDataInput {
-  name?: Maybe<String>;
-}
-
-export interface StoryCreateManyWithoutStoryCategoriesInput {
-  create?: Maybe<
-    | StoryCreateWithoutStoryCategoriesInput[]
-    | StoryCreateWithoutStoryCategoriesInput
-  >;
-  connect?: Maybe<StoryWhereUniqueInput[] | StoryWhereUniqueInput>;
-}
-
-export interface LibraryUpdateManyWithoutStoriesInput {
-  create?: Maybe<
-    LibraryCreateWithoutStoriesInput[] | LibraryCreateWithoutStoriesInput
-  >;
-  delete?: Maybe<LibraryWhereUniqueInput[] | LibraryWhereUniqueInput>;
-  connect?: Maybe<LibraryWhereUniqueInput[] | LibraryWhereUniqueInput>;
-  set?: Maybe<LibraryWhereUniqueInput[] | LibraryWhereUniqueInput>;
-  disconnect?: Maybe<LibraryWhereUniqueInput[] | LibraryWhereUniqueInput>;
-  update?: Maybe<
-    | LibraryUpdateWithWhereUniqueWithoutStoriesInput[]
-    | LibraryUpdateWithWhereUniqueWithoutStoriesInput
-  >;
-  upsert?: Maybe<
-    | LibraryUpsertWithWhereUniqueWithoutStoriesInput[]
-    | LibraryUpsertWithWhereUniqueWithoutStoriesInput
-  >;
-  deleteMany?: Maybe<LibraryScalarWhereInput[] | LibraryScalarWhereInput>;
-  updateMany?: Maybe<
-    | LibraryUpdateManyWithWhereNestedInput[]
-    | LibraryUpdateManyWithWhereNestedInput
-  >;
-}
-
-export interface LibraryUpdateManyMutationInput {
-  name?: Maybe<String>;
-  custom_updatedAt?: Maybe<DateTimeInput>;
-}
-
-export interface LibraryUpdateWithWhereUniqueWithoutStoriesInput {
-  where: LibraryWhereUniqueInput;
-  data: LibraryUpdateWithoutStoriesDataInput;
-}
-
-export interface JobUpdateManyMutationInput {
-  name?: Maybe<String>;
-}
-
-export interface LibraryUpdateWithoutStoriesDataInput {
-  createdBy?: Maybe<UserUpdateOneRequiredWithoutLibrariesInput>;
-  name?: Maybe<String>;
-  custom_updatedAt?: Maybe<DateTimeInput>;
-}
-
-export interface FileUpdateInput {
-  filename?: Maybe<String>;
-  mimetype?: Maybe<String>;
-  encoding?: Maybe<String>;
-  url?: Maybe<String>;
-}
-
-export interface UserUpdateOneRequiredWithoutLibrariesInput {
-  create?: Maybe<UserCreateWithoutLibrariesInput>;
-  update?: Maybe<UserUpdateWithoutLibrariesDataInput>;
-  upsert?: Maybe<UserUpsertWithoutLibrariesInput>;
-  connect?: Maybe<UserWhereUniqueInput>;
-}
-
-export type VideoWhereUniqueInput = AtLeastOne<{
-  id: Maybe<ID_Input>;
-}>;
-
-export interface UserUpdateWithoutLibrariesDataInput {
-  email?: Maybe<String>;
-  password?: Maybe<String>;
-  full_name?: Maybe<String>;
-  job?: Maybe<JobUpdateOneInput>;
-  role?: Maybe<AccountType>;
-  profile_photo?: Maybe<FileUpdateOneInput>;
-  customer_id?: Maybe<ID_Input>;
-  subscription_id?: Maybe<ID_Input>;
-  apps?: Maybe<AppUpdateManyWithoutCreatedByInput>;
-  google_accessToken?: Maybe<String>;
-  facebook_accessToken?: Maybe<String>;
-  oauth_id?: Maybe<String>;
-}
-
-export interface LibraryUpsertWithWhereUniqueWithoutCreatedByInput {
-  where: LibraryWhereUniqueInput;
-  update: LibraryUpdateWithoutCreatedByDataInput;
-  create: LibraryCreateWithoutCreatedByInput;
-}
-
-export interface UserUpsertWithoutLibrariesInput {
-  update: UserUpdateWithoutLibrariesDataInput;
-  create: UserCreateWithoutLibrariesInput;
-}
-
-export interface UserCreateWithoutAppsInput {
-  id?: Maybe<ID_Input>;
-  email: String;
-  password: String;
-  full_name: String;
-  job?: Maybe<JobCreateOneInput>;
-  role: AccountType;
-  profile_photo?: Maybe<FileCreateOneInput>;
-  customer_id?: Maybe<ID_Input>;
-  subscription_id?: Maybe<ID_Input>;
-  libraries?: Maybe<LibraryCreateManyWithoutCreatedByInput>;
-  google_accessToken?: Maybe<String>;
-  facebook_accessToken?: Maybe<String>;
-  oauth_id?: Maybe<String>;
-}
-
-export interface LibraryUpsertWithWhereUniqueWithoutStoriesInput {
-  where: LibraryWhereUniqueInput;
-  update: LibraryUpdateWithoutStoriesDataInput;
-  create: LibraryCreateWithoutStoriesInput;
-}
-
-export interface FileCreateInput {
-  id?: Maybe<ID_Input>;
-  filename: String;
-  mimetype: String;
-  encoding: String;
-  url: String;
-}
-
-export interface LibraryScalarWhereInput {
-  id?: Maybe<ID_Input>;
-  id_not?: Maybe<ID_Input>;
-  id_in?: Maybe<ID_Input[] | ID_Input>;
-  id_not_in?: Maybe<ID_Input[] | ID_Input>;
-  id_lt?: Maybe<ID_Input>;
-  id_lte?: Maybe<ID_Input>;
-  id_gt?: Maybe<ID_Input>;
-  id_gte?: Maybe<ID_Input>;
-  id_contains?: Maybe<ID_Input>;
-  id_not_contains?: Maybe<ID_Input>;
-  id_starts_with?: Maybe<ID_Input>;
-  id_not_starts_with?: Maybe<ID_Input>;
-  id_ends_with?: Maybe<ID_Input>;
-  id_not_ends_with?: Maybe<ID_Input>;
-  name?: Maybe<String>;
-  name_not?: Maybe<String>;
-  name_in?: Maybe<String[] | String>;
-  name_not_in?: Maybe<String[] | String>;
-  name_lt?: Maybe<String>;
-  name_lte?: Maybe<String>;
-  name_gt?: Maybe<String>;
-  name_gte?: Maybe<String>;
-  name_contains?: Maybe<String>;
-  name_not_contains?: Maybe<String>;
-  name_starts_with?: Maybe<String>;
-  name_not_starts_with?: Maybe<String>;
-  name_ends_with?: Maybe<String>;
-  name_not_ends_with?: Maybe<String>;
-  custom_updatedAt?: Maybe<DateTimeInput>;
-  custom_updatedAt_not?: Maybe<DateTimeInput>;
-  custom_updatedAt_in?: Maybe<DateTimeInput[] | DateTimeInput>;
-  custom_updatedAt_not_in?: Maybe<DateTimeInput[] | DateTimeInput>;
-  custom_updatedAt_lt?: Maybe<DateTimeInput>;
-  custom_updatedAt_lte?: Maybe<DateTimeInput>;
-  custom_updatedAt_gt?: Maybe<DateTimeInput>;
-  custom_updatedAt_gte?: Maybe<DateTimeInput>;
-  createdAt?: Maybe<DateTimeInput>;
-  createdAt_not?: Maybe<DateTimeInput>;
-  createdAt_in?: Maybe<DateTimeInput[] | DateTimeInput>;
-  createdAt_not_in?: Maybe<DateTimeInput[] | DateTimeInput>;
-  createdAt_lt?: Maybe<DateTimeInput>;
-  createdAt_lte?: Maybe<DateTimeInput>;
-  createdAt_gt?: Maybe<DateTimeInput>;
-  createdAt_gte?: Maybe<DateTimeInput>;
-  updatedAt?: Maybe<DateTimeInput>;
-  updatedAt_not?: Maybe<DateTimeInput>;
-  updatedAt_in?: Maybe<DateTimeInput[] | DateTimeInput>;
-  updatedAt_not_in?: Maybe<DateTimeInput[] | DateTimeInput>;
-  updatedAt_lt?: Maybe<DateTimeInput>;
-  updatedAt_lte?: Maybe<DateTimeInput>;
-  updatedAt_gt?: Maybe<DateTimeInput>;
-  updatedAt_gte?: Maybe<DateTimeInput>;
-  AND?: Maybe<LibraryScalarWhereInput[] | LibraryScalarWhereInput>;
-  OR?: Maybe<LibraryScalarWhereInput[] | LibraryScalarWhereInput>;
-  NOT?: Maybe<LibraryScalarWhereInput[] | LibraryScalarWhereInput>;
-}
-
-export interface StoryCreateWithoutLibrariesInput {
-  id?: Maybe<ID_Input>;
-  createdBy: UserCreateOneInput;
-  app: AppCreateOneWithoutStoriesInput;
-  appVersions?: Maybe<AppVersionCreateManyWithoutStoriesInput>;
-  storyCategories?: Maybe<StoryCategoryCreateManyWithoutStoriesInput>;
-  storyElements?: Maybe<StoryElementCreateManyWithoutStoriesInput>;
-  video: VideoCreateOneInput;
-  thumbnail: FileCreateOneInput;
-}
-
-export interface LibraryUpdateManyWithWhereNestedInput {
-  where: LibraryScalarWhereInput;
-  data: LibraryUpdateManyDataInput;
-}
-
-export interface AppCreateWithoutCreatedByInput {
-  id?: Maybe<ID_Input>;
-  appCategory: AppCategoryCreateOneInput;
-  appVersions?: Maybe<AppVersionCreateManyInput>;
-  stories?: Maybe<StoryCreateManyWithoutAppInput>;
-  name: String;
-  description?: Maybe<String>;
-  company: String;
-  logo: FileCreateOneInput;
-  platform: Platform;
-}
-
-export interface LibraryUpdateManyDataInput {
-  name?: Maybe<String>;
-  custom_updatedAt?: Maybe<DateTimeInput>;
-}
-
-export interface StoryCreateInput {
-  id?: Maybe<ID_Input>;
-  createdBy: UserCreateOneInput;
-  app: AppCreateOneWithoutStoriesInput;
-  appVersions?: Maybe<AppVersionCreateManyWithoutStoriesInput>;
-  storyCategories?: Maybe<StoryCategoryCreateManyWithoutStoriesInput>;
-  storyElements?: Maybe<StoryElementCreateManyWithoutStoriesInput>;
-  libraries?: Maybe<LibraryCreateManyWithoutStoriesInput>;
-  video: VideoCreateOneInput;
-  thumbnail: FileCreateOneInput;
-}
-
-export interface VideoUpdateOneRequiredInput {
-  create?: Maybe<VideoCreateInput>;
-  update?: Maybe<VideoUpdateDataInput>;
-  upsert?: Maybe<VideoUpsertNestedInput>;
-  connect?: Maybe<VideoWhereUniqueInput>;
-}
-
 export interface AppVersionCreateInput {
   id?: Maybe<ID_Input>;
   name: String;
   stories?: Maybe<StoryCreateManyWithoutAppVersionsInput>;
-}
-
-export interface VideoUpdateDataInput {
-  file?: Maybe<FileUpdateOneRequiredInput>;
-}
-
-export interface StoryCategoryCreateWithoutStoriesInput {
-  id?: Maybe<ID_Input>;
-  name: String;
-}
-
-export interface FileUpdateOneRequiredInput {
-  create?: Maybe<FileCreateInput>;
-  update?: Maybe<FileUpdateDataInput>;
-  upsert?: Maybe<FileUpsertNestedInput>;
-  connect?: Maybe<FileWhereUniqueInput>;
-}
-
-export interface UserSubscriptionWhereInput {
-  mutation_in?: Maybe<MutationType[] | MutationType>;
-  updatedFields_contains?: Maybe<String>;
-  updatedFields_contains_every?: Maybe<String[] | String>;
-  updatedFields_contains_some?: Maybe<String[] | String>;
-  node?: Maybe<UserWhereInput>;
-  AND?: Maybe<UserSubscriptionWhereInput[] | UserSubscriptionWhereInput>;
-  OR?: Maybe<UserSubscriptionWhereInput[] | UserSubscriptionWhereInput>;
-  NOT?: Maybe<UserSubscriptionWhereInput[] | UserSubscriptionWhereInput>;
-}
-
-export interface VideoUpsertNestedInput {
-  update: VideoUpdateDataInput;
-  create: VideoCreateInput;
-}
-
-export interface JobSubscriptionWhereInput {
-  mutation_in?: Maybe<MutationType[] | MutationType>;
-  updatedFields_contains?: Maybe<String>;
-  updatedFields_contains_every?: Maybe<String[] | String>;
-  updatedFields_contains_some?: Maybe<String[] | String>;
-  node?: Maybe<JobWhereInput>;
-  AND?: Maybe<JobSubscriptionWhereInput[] | JobSubscriptionWhereInput>;
-  OR?: Maybe<JobSubscriptionWhereInput[] | JobSubscriptionWhereInput>;
-  NOT?: Maybe<JobSubscriptionWhereInput[] | JobSubscriptionWhereInput>;
-}
-
-export interface StoryUpsertWithWhereUniqueWithoutAppVersionsInput {
-  where: StoryWhereUniqueInput;
-  update: StoryUpdateWithoutAppVersionsDataInput;
-  create: StoryCreateWithoutAppVersionsInput;
-}
-
-export interface UserUpdateInput {
-  email?: Maybe<String>;
-  password?: Maybe<String>;
-  full_name?: Maybe<String>;
-  job?: Maybe<JobUpdateOneInput>;
-  role?: Maybe<AccountType>;
-  profile_photo?: Maybe<FileUpdateOneInput>;
-  customer_id?: Maybe<ID_Input>;
-  subscription_id?: Maybe<ID_Input>;
-  apps?: Maybe<AppUpdateManyWithoutCreatedByInput>;
-  libraries?: Maybe<LibraryUpdateManyWithoutCreatedByInput>;
-  google_accessToken?: Maybe<String>;
-  facebook_accessToken?: Maybe<String>;
-  oauth_id?: Maybe<String>;
-}
-
-export interface StoryScalarWhereInput {
-  id?: Maybe<ID_Input>;
-  id_not?: Maybe<ID_Input>;
-  id_in?: Maybe<ID_Input[] | ID_Input>;
-  id_not_in?: Maybe<ID_Input[] | ID_Input>;
-  id_lt?: Maybe<ID_Input>;
-  id_lte?: Maybe<ID_Input>;
-  id_gt?: Maybe<ID_Input>;
-  id_gte?: Maybe<ID_Input>;
-  id_contains?: Maybe<ID_Input>;
-  id_not_contains?: Maybe<ID_Input>;
-  id_starts_with?: Maybe<ID_Input>;
-  id_not_starts_with?: Maybe<ID_Input>;
-  id_ends_with?: Maybe<ID_Input>;
-  id_not_ends_with?: Maybe<ID_Input>;
-  createdAt?: Maybe<DateTimeInput>;
-  createdAt_not?: Maybe<DateTimeInput>;
-  createdAt_in?: Maybe<DateTimeInput[] | DateTimeInput>;
-  createdAt_not_in?: Maybe<DateTimeInput[] | DateTimeInput>;
-  createdAt_lt?: Maybe<DateTimeInput>;
-  createdAt_lte?: Maybe<DateTimeInput>;
-  createdAt_gt?: Maybe<DateTimeInput>;
-  createdAt_gte?: Maybe<DateTimeInput>;
-  updatedAt?: Maybe<DateTimeInput>;
-  updatedAt_not?: Maybe<DateTimeInput>;
-  updatedAt_in?: Maybe<DateTimeInput[] | DateTimeInput>;
-  updatedAt_not_in?: Maybe<DateTimeInput[] | DateTimeInput>;
-  updatedAt_lt?: Maybe<DateTimeInput>;
-  updatedAt_lte?: Maybe<DateTimeInput>;
-  updatedAt_gt?: Maybe<DateTimeInput>;
-  updatedAt_gte?: Maybe<DateTimeInput>;
-  AND?: Maybe<StoryScalarWhereInput[] | StoryScalarWhereInput>;
-  OR?: Maybe<StoryScalarWhereInput[] | StoryScalarWhereInput>;
-  NOT?: Maybe<StoryScalarWhereInput[] | StoryScalarWhereInput>;
-}
-
-export interface StoryElementUpdateInput {
-  name?: Maybe<String>;
-  stories?: Maybe<StoryUpdateManyWithoutStoryElementsInput>;
-}
-
-export interface AppVersionUpsertWithWhereUniqueNestedInput {
-  where: AppVersionWhereUniqueInput;
-  update: AppVersionUpdateDataInput;
-  create: AppVersionCreateInput;
-}
-
-export interface StoryUpdateWithWhereUniqueWithoutStoryCategoriesInput {
-  where: StoryWhereUniqueInput;
-  data: StoryUpdateWithoutStoryCategoriesDataInput;
-}
-
-export interface AppVersionScalarWhereInput {
-  id?: Maybe<ID_Input>;
-  id_not?: Maybe<ID_Input>;
-  id_in?: Maybe<ID_Input[] | ID_Input>;
-  id_not_in?: Maybe<ID_Input[] | ID_Input>;
-  id_lt?: Maybe<ID_Input>;
-  id_lte?: Maybe<ID_Input>;
-  id_gt?: Maybe<ID_Input>;
-  id_gte?: Maybe<ID_Input>;
-  id_contains?: Maybe<ID_Input>;
-  id_not_contains?: Maybe<ID_Input>;
-  id_starts_with?: Maybe<ID_Input>;
-  id_not_starts_with?: Maybe<ID_Input>;
-  id_ends_with?: Maybe<ID_Input>;
-  id_not_ends_with?: Maybe<ID_Input>;
-  name?: Maybe<String>;
-  name_not?: Maybe<String>;
-  name_in?: Maybe<String[] | String>;
-  name_not_in?: Maybe<String[] | String>;
-  name_lt?: Maybe<String>;
-  name_lte?: Maybe<String>;
-  name_gt?: Maybe<String>;
-  name_gte?: Maybe<String>;
-  name_contains?: Maybe<String>;
-  name_not_contains?: Maybe<String>;
-  name_starts_with?: Maybe<String>;
-  name_not_starts_with?: Maybe<String>;
-  name_ends_with?: Maybe<String>;
-  name_not_ends_with?: Maybe<String>;
-  createdAt?: Maybe<DateTimeInput>;
-  createdAt_not?: Maybe<DateTimeInput>;
-  createdAt_in?: Maybe<DateTimeInput[] | DateTimeInput>;
-  createdAt_not_in?: Maybe<DateTimeInput[] | DateTimeInput>;
-  createdAt_lt?: Maybe<DateTimeInput>;
-  createdAt_lte?: Maybe<DateTimeInput>;
-  createdAt_gt?: Maybe<DateTimeInput>;
-  createdAt_gte?: Maybe<DateTimeInput>;
-  updatedAt?: Maybe<DateTimeInput>;
-  updatedAt_not?: Maybe<DateTimeInput>;
-  updatedAt_in?: Maybe<DateTimeInput[] | DateTimeInput>;
-  updatedAt_not_in?: Maybe<DateTimeInput[] | DateTimeInput>;
-  updatedAt_lt?: Maybe<DateTimeInput>;
-  updatedAt_lte?: Maybe<DateTimeInput>;
-  updatedAt_gt?: Maybe<DateTimeInput>;
-  updatedAt_gte?: Maybe<DateTimeInput>;
-  AND?: Maybe<AppVersionScalarWhereInput[] | AppVersionScalarWhereInput>;
-  OR?: Maybe<AppVersionScalarWhereInput[] | AppVersionScalarWhereInput>;
-  NOT?: Maybe<AppVersionScalarWhereInput[] | AppVersionScalarWhereInput>;
-}
-
-export interface StoryUpdateInput {
-  createdBy?: Maybe<UserUpdateOneRequiredInput>;
-  app?: Maybe<AppUpdateOneRequiredWithoutStoriesInput>;
-  appVersions?: Maybe<AppVersionUpdateManyWithoutStoriesInput>;
-  storyCategories?: Maybe<StoryCategoryUpdateManyWithoutStoriesInput>;
-  storyElements?: Maybe<StoryElementUpdateManyWithoutStoriesInput>;
-  libraries?: Maybe<LibraryUpdateManyWithoutStoriesInput>;
-  video?: Maybe<VideoUpdateOneRequiredInput>;
-  thumbnail?: Maybe<FileUpdateOneRequiredInput>;
-}
-
-export interface AppVersionUpdateManyWithWhereNestedInput {
-  where: AppVersionScalarWhereInput;
-  data: AppVersionUpdateManyDataInput;
-}
-
-export interface FileUpdateManyMutationInput {
-  filename?: Maybe<String>;
-  mimetype?: Maybe<String>;
-  encoding?: Maybe<String>;
-  url?: Maybe<String>;
-}
-
-export interface AppVersionUpdateManyDataInput {
-  name?: Maybe<String>;
-}
-
-export interface AppUpdateManyMutationInput {
-  name?: Maybe<String>;
-  description?: Maybe<String>;
-  company?: Maybe<String>;
-  platform?: Maybe<Platform>;
-}
-
-export interface AppUpsertWithoutStoriesInput {
-  update: AppUpdateWithoutStoriesDataInput;
-  create: AppCreateWithoutStoriesInput;
-}
-
-export interface JobCreateInput {
-  id?: Maybe<ID_Input>;
-  name: String;
-}
-
-export interface AppVersionUpdateManyWithoutStoriesInput {
-  create?: Maybe<
-    AppVersionCreateWithoutStoriesInput[] | AppVersionCreateWithoutStoriesInput
-  >;
-  delete?: Maybe<AppVersionWhereUniqueInput[] | AppVersionWhereUniqueInput>;
-  connect?: Maybe<AppVersionWhereUniqueInput[] | AppVersionWhereUniqueInput>;
-  set?: Maybe<AppVersionWhereUniqueInput[] | AppVersionWhereUniqueInput>;
-  disconnect?: Maybe<AppVersionWhereUniqueInput[] | AppVersionWhereUniqueInput>;
-  update?: Maybe<
-    | AppVersionUpdateWithWhereUniqueWithoutStoriesInput[]
-    | AppVersionUpdateWithWhereUniqueWithoutStoriesInput
-  >;
-  upsert?: Maybe<
-    | AppVersionUpsertWithWhereUniqueWithoutStoriesInput[]
-    | AppVersionUpsertWithWhereUniqueWithoutStoriesInput
-  >;
-  deleteMany?: Maybe<AppVersionScalarWhereInput[] | AppVersionScalarWhereInput>;
-  updateMany?: Maybe<
-    | AppVersionUpdateManyWithWhereNestedInput[]
-    | AppVersionUpdateManyWithWhereNestedInput
-  >;
-}
-
-export interface UserCreateInput {
-  id?: Maybe<ID_Input>;
-  email: String;
-  password: String;
-  full_name: String;
-  job?: Maybe<JobCreateOneInput>;
-  role: AccountType;
-  profile_photo?: Maybe<FileCreateOneInput>;
-  customer_id?: Maybe<ID_Input>;
-  subscription_id?: Maybe<ID_Input>;
-  apps?: Maybe<AppCreateManyWithoutCreatedByInput>;
-  libraries?: Maybe<LibraryCreateManyWithoutCreatedByInput>;
-  google_accessToken?: Maybe<String>;
-  facebook_accessToken?: Maybe<String>;
-  oauth_id?: Maybe<String>;
-}
-
-export interface AppVersionUpdateWithWhereUniqueWithoutStoriesInput {
-  where: AppVersionWhereUniqueInput;
-  data: AppVersionUpdateWithoutStoriesDataInput;
-}
-
-export interface AppCreateWithoutStoriesInput {
-  id?: Maybe<ID_Input>;
-  createdBy: UserCreateOneWithoutAppsInput;
-  appCategory: AppCategoryCreateOneInput;
-  appVersions?: Maybe<AppVersionCreateManyInput>;
-  name: String;
-  description?: Maybe<String>;
-  company: String;
-  logo: FileCreateOneInput;
-  platform: Platform;
-}
-
-export interface AppVersionUpdateWithoutStoriesDataInput {
-  name?: Maybe<String>;
-}
-
-export interface StoryElementCreateWithoutStoriesInput {
-  id?: Maybe<ID_Input>;
-  name: String;
-}
-
-export interface AppVersionUpsertWithWhereUniqueWithoutStoriesInput {
-  where: AppVersionWhereUniqueInput;
-  update: AppVersionUpdateWithoutStoriesDataInput;
-  create: AppVersionCreateWithoutStoriesInput;
-}
-
-export interface AppSubscriptionWhereInput {
-  mutation_in?: Maybe<MutationType[] | MutationType>;
-  updatedFields_contains?: Maybe<String>;
-  updatedFields_contains_every?: Maybe<String[] | String>;
-  updatedFields_contains_some?: Maybe<String[] | String>;
-  node?: Maybe<AppWhereInput>;
-  AND?: Maybe<AppSubscriptionWhereInput[] | AppSubscriptionWhereInput>;
-  OR?: Maybe<AppSubscriptionWhereInput[] | AppSubscriptionWhereInput>;
-  NOT?: Maybe<AppSubscriptionWhereInput[] | AppSubscriptionWhereInput>;
-}
-
-export interface StoryUpsertWithWhereUniqueNestedInput {
-  where: StoryWhereUniqueInput;
-  update: StoryUpdateDataInput;
-  create: StoryCreateInput;
-}
-
-export type JobWhereUniqueInput = AtLeastOne<{
-  id: Maybe<ID_Input>;
-  name?: Maybe<String>;
-}>;
-
-export interface AppCategoryUpsertNestedInput {
-  update: AppCategoryUpdateDataInput;
-  create: AppCategoryCreateInput;
-}
-
-export interface LibraryCreateInput {
-  id?: Maybe<ID_Input>;
-  createdBy: UserCreateOneWithoutLibrariesInput;
-  stories?: Maybe<StoryCreateManyWithoutLibrariesInput>;
-  name: String;
-  custom_updatedAt: DateTimeInput;
-}
-
-export interface StoryUpdateManyWithoutAppInput {
-  create?: Maybe<StoryCreateWithoutAppInput[] | StoryCreateWithoutAppInput>;
-  delete?: Maybe<StoryWhereUniqueInput[] | StoryWhereUniqueInput>;
-  connect?: Maybe<StoryWhereUniqueInput[] | StoryWhereUniqueInput>;
-  set?: Maybe<StoryWhereUniqueInput[] | StoryWhereUniqueInput>;
-  disconnect?: Maybe<StoryWhereUniqueInput[] | StoryWhereUniqueInput>;
-  update?: Maybe<
-    | StoryUpdateWithWhereUniqueWithoutAppInput[]
-    | StoryUpdateWithWhereUniqueWithoutAppInput
-  >;
-  upsert?: Maybe<
-    | StoryUpsertWithWhereUniqueWithoutAppInput[]
-    | StoryUpsertWithWhereUniqueWithoutAppInput
-  >;
-  deleteMany?: Maybe<StoryScalarWhereInput[] | StoryScalarWhereInput>;
-}
-
-export interface AppCreateInput {
-  id?: Maybe<ID_Input>;
-  createdBy: UserCreateOneWithoutAppsInput;
-  appCategory: AppCategoryCreateOneInput;
-  appVersions?: Maybe<AppVersionCreateManyInput>;
-  stories?: Maybe<StoryCreateManyWithoutAppInput>;
-  name: String;
-  description?: Maybe<String>;
-  company: String;
-  logo: FileCreateOneInput;
-  platform: Platform;
-}
-
-export interface StoryUpdateWithWhereUniqueWithoutAppInput {
-  where: StoryWhereUniqueInput;
-  data: StoryUpdateWithoutAppDataInput;
-}
-
-export interface AppCategoryCreateInput {
-  id?: Maybe<ID_Input>;
-  name: String;
-  stories?: Maybe<StoryCreateManyInput>;
-}
-
-export interface StoryUpdateWithoutAppDataInput {
-  createdBy?: Maybe<UserUpdateOneRequiredInput>;
-  appVersions?: Maybe<AppVersionUpdateManyWithoutStoriesInput>;
-  storyCategories?: Maybe<StoryCategoryUpdateManyWithoutStoriesInput>;
-  storyElements?: Maybe<StoryElementUpdateManyWithoutStoriesInput>;
-  libraries?: Maybe<LibraryUpdateManyWithoutStoriesInput>;
-  video?: Maybe<VideoUpdateOneRequiredInput>;
-  thumbnail?: Maybe<FileUpdateOneRequiredInput>;
-}
-
-export interface StoryCategorySubscriptionWhereInput {
-  mutation_in?: Maybe<MutationType[] | MutationType>;
-  updatedFields_contains?: Maybe<String>;
-  updatedFields_contains_every?: Maybe<String[] | String>;
-  updatedFields_contains_some?: Maybe<String[] | String>;
-  node?: Maybe<StoryCategoryWhereInput>;
-  AND?: Maybe<
-    StoryCategorySubscriptionWhereInput[] | StoryCategorySubscriptionWhereInput
-  >;
-  OR?: Maybe<
-    StoryCategorySubscriptionWhereInput[] | StoryCategorySubscriptionWhereInput
-  >;
-  NOT?: Maybe<
-    StoryCategorySubscriptionWhereInput[] | StoryCategorySubscriptionWhereInput
-  >;
-}
-
-export interface StoryUpsertWithWhereUniqueWithoutAppInput {
-  where: StoryWhereUniqueInput;
-  update: StoryUpdateWithoutAppDataInput;
-  create: StoryCreateWithoutAppInput;
-}
-
-export interface StoryCreateWithoutStoryCategoriesInput {
-  id?: Maybe<ID_Input>;
-  createdBy: UserCreateOneInput;
-  app: AppCreateOneWithoutStoriesInput;
-  appVersions?: Maybe<AppVersionCreateManyWithoutStoriesInput>;
-  storyElements?: Maybe<StoryElementCreateManyWithoutStoriesInput>;
-  libraries?: Maybe<LibraryCreateManyWithoutStoriesInput>;
-  video: VideoCreateOneInput;
-  thumbnail: FileCreateOneInput;
-}
-
-export interface AppUpdateManyDataInput {
-  name?: Maybe<String>;
-  description?: Maybe<String>;
-  company?: Maybe<String>;
-  platform?: Maybe<Platform>;
-}
-
-export interface AppUpdateManyWithWhereNestedInput {
-  where: AppScalarWhereInput;
-  data: AppUpdateManyDataInput;
-}
-
-export interface AppScalarWhereInput {
-  id?: Maybe<ID_Input>;
-  id_not?: Maybe<ID_Input>;
-  id_in?: Maybe<ID_Input[] | ID_Input>;
-  id_not_in?: Maybe<ID_Input[] | ID_Input>;
-  id_lt?: Maybe<ID_Input>;
-  id_lte?: Maybe<ID_Input>;
-  id_gt?: Maybe<ID_Input>;
-  id_gte?: Maybe<ID_Input>;
-  id_contains?: Maybe<ID_Input>;
-  id_not_contains?: Maybe<ID_Input>;
-  id_starts_with?: Maybe<ID_Input>;
-  id_not_starts_with?: Maybe<ID_Input>;
-  id_ends_with?: Maybe<ID_Input>;
-  id_not_ends_with?: Maybe<ID_Input>;
-  name?: Maybe<String>;
-  name_not?: Maybe<String>;
-  name_in?: Maybe<String[] | String>;
-  name_not_in?: Maybe<String[] | String>;
-  name_lt?: Maybe<String>;
-  name_lte?: Maybe<String>;
-  name_gt?: Maybe<String>;
-  name_gte?: Maybe<String>;
-  name_contains?: Maybe<String>;
-  name_not_contains?: Maybe<String>;
-  name_starts_with?: Maybe<String>;
-  name_not_starts_with?: Maybe<String>;
-  name_ends_with?: Maybe<String>;
-  name_not_ends_with?: Maybe<String>;
-  description?: Maybe<String>;
-  description_not?: Maybe<String>;
-  description_in?: Maybe<String[] | String>;
-  description_not_in?: Maybe<String[] | String>;
-  description_lt?: Maybe<String>;
-  description_lte?: Maybe<String>;
-  description_gt?: Maybe<String>;
-  description_gte?: Maybe<String>;
-  description_contains?: Maybe<String>;
-  description_not_contains?: Maybe<String>;
-  description_starts_with?: Maybe<String>;
-  description_not_starts_with?: Maybe<String>;
-  description_ends_with?: Maybe<String>;
-  description_not_ends_with?: Maybe<String>;
-  company?: Maybe<String>;
-  company_not?: Maybe<String>;
-  company_in?: Maybe<String[] | String>;
-  company_not_in?: Maybe<String[] | String>;
-  company_lt?: Maybe<String>;
-  company_lte?: Maybe<String>;
-  company_gt?: Maybe<String>;
-  company_gte?: Maybe<String>;
-  company_contains?: Maybe<String>;
-  company_not_contains?: Maybe<String>;
-  company_starts_with?: Maybe<String>;
-  company_not_starts_with?: Maybe<String>;
-  company_ends_with?: Maybe<String>;
-  company_not_ends_with?: Maybe<String>;
-  platform?: Maybe<Platform>;
-  platform_not?: Maybe<Platform>;
-  platform_in?: Maybe<Platform[] | Platform>;
-  platform_not_in?: Maybe<Platform[] | Platform>;
-  createdAt?: Maybe<DateTimeInput>;
-  createdAt_not?: Maybe<DateTimeInput>;
-  createdAt_in?: Maybe<DateTimeInput[] | DateTimeInput>;
-  createdAt_not_in?: Maybe<DateTimeInput[] | DateTimeInput>;
-  createdAt_lt?: Maybe<DateTimeInput>;
-  createdAt_lte?: Maybe<DateTimeInput>;
-  createdAt_gt?: Maybe<DateTimeInput>;
-  createdAt_gte?: Maybe<DateTimeInput>;
-  updatedAt?: Maybe<DateTimeInput>;
-  updatedAt_not?: Maybe<DateTimeInput>;
-  updatedAt_in?: Maybe<DateTimeInput[] | DateTimeInput>;
-  updatedAt_not_in?: Maybe<DateTimeInput[] | DateTimeInput>;
-  updatedAt_lt?: Maybe<DateTimeInput>;
-  updatedAt_lte?: Maybe<DateTimeInput>;
-  updatedAt_gt?: Maybe<DateTimeInput>;
-  updatedAt_gte?: Maybe<DateTimeInput>;
-  AND?: Maybe<AppScalarWhereInput[] | AppScalarWhereInput>;
-  OR?: Maybe<AppScalarWhereInput[] | AppScalarWhereInput>;
-  NOT?: Maybe<AppScalarWhereInput[] | AppScalarWhereInput>;
-}
-
-export interface AppUpsertWithWhereUniqueWithoutCreatedByInput {
-  where: AppWhereUniqueInput;
-  update: AppUpdateWithoutCreatedByDataInput;
-  create: AppCreateWithoutCreatedByInput;
-}
-
-export interface AppVersionUpdateInput {
-  name?: Maybe<String>;
-  stories?: Maybe<StoryUpdateManyWithoutAppVersionsInput>;
-}
-
-export interface StoryUpdateWithoutStoryElementsDataInput {
-  createdBy?: Maybe<UserUpdateOneRequiredInput>;
-  app?: Maybe<AppUpdateOneRequiredWithoutStoriesInput>;
-  appVersions?: Maybe<AppVersionUpdateManyWithoutStoriesInput>;
-  storyCategories?: Maybe<StoryCategoryUpdateManyWithoutStoriesInput>;
-  libraries?: Maybe<LibraryUpdateManyWithoutStoriesInput>;
-  video?: Maybe<VideoUpdateOneRequiredInput>;
-  thumbnail?: Maybe<FileUpdateOneRequiredInput>;
-}
-
-export interface StoryCreateWithoutAppVersionsInput {
-  id?: Maybe<ID_Input>;
-  createdBy: UserCreateOneInput;
-  app: AppCreateOneWithoutStoriesInput;
-  storyCategories?: Maybe<StoryCategoryCreateManyWithoutStoriesInput>;
-  storyElements?: Maybe<StoryElementCreateManyWithoutStoriesInput>;
-  libraries?: Maybe<LibraryCreateManyWithoutStoriesInput>;
-  video: VideoCreateOneInput;
-  thumbnail: FileCreateOneInput;
-}
-
-export interface LibraryCreateWithoutCreatedByInput {
-  id?: Maybe<ID_Input>;
-  stories?: Maybe<StoryCreateManyWithoutLibrariesInput>;
-  name: String;
-  custom_updatedAt: DateTimeInput;
 }
 
 export interface NodeNode {
@@ -3411,6 +3752,22 @@ export interface AppCategoryConnectionSubscription
   aggregate: <T = AggregateAppCategorySubscription>() => T;
 }
 
+export interface BatchPayload {
+  count: Long;
+}
+
+export interface BatchPayloadPromise
+  extends Promise<BatchPayload>,
+    Fragmentable {
+  count: () => Promise<Long>;
+}
+
+export interface BatchPayloadSubscription
+  extends Promise<AsyncIterator<BatchPayload>>,
+    Fragmentable {
+  count: () => Promise<AsyncIterator<Long>>;
+}
+
 export interface AggregateVideo {
   count: Int;
 }
@@ -3425,27 +3782,6 @@ export interface AggregateVideoSubscription
   extends Promise<AsyncIterator<AggregateVideo>>,
     Fragmentable {
   count: () => Promise<AsyncIterator<Int>>;
-}
-
-export interface VideoConnection {
-  pageInfo: PageInfo;
-  edges: VideoEdge[];
-}
-
-export interface VideoConnectionPromise
-  extends Promise<VideoConnection>,
-    Fragmentable {
-  pageInfo: <T = PageInfoPromise>() => T;
-  edges: <T = FragmentableArray<VideoEdge>>() => T;
-  aggregate: <T = AggregateVideoPromise>() => T;
-}
-
-export interface VideoConnectionSubscription
-  extends Promise<AsyncIterator<VideoConnection>>,
-    Fragmentable {
-  pageInfo: <T = PageInfoSubscription>() => T;
-  edges: <T = Promise<AsyncIterator<VideoEdgeSubscription>>>() => T;
-  aggregate: <T = AggregateVideoSubscription>() => T;
 }
 
 export interface File {
@@ -3492,29 +3828,25 @@ export interface FileNullablePromise
   updatedAt: () => Promise<DateTimeOutput>;
 }
 
-export interface VideoSubscriptionPayload {
-  mutation: MutationType;
-  node: Video;
-  updatedFields: String[];
-  previousValues: VideoPreviousValues;
+export interface VideoConnection {
+  pageInfo: PageInfo;
+  edges: VideoEdge[];
 }
 
-export interface VideoSubscriptionPayloadPromise
-  extends Promise<VideoSubscriptionPayload>,
+export interface VideoConnectionPromise
+  extends Promise<VideoConnection>,
     Fragmentable {
-  mutation: () => Promise<MutationType>;
-  node: <T = VideoPromise>() => T;
-  updatedFields: () => Promise<String[]>;
-  previousValues: <T = VideoPreviousValuesPromise>() => T;
+  pageInfo: <T = PageInfoPromise>() => T;
+  edges: <T = FragmentableArray<VideoEdge>>() => T;
+  aggregate: <T = AggregateVideoPromise>() => T;
 }
 
-export interface VideoSubscriptionPayloadSubscription
-  extends Promise<AsyncIterator<VideoSubscriptionPayload>>,
+export interface VideoConnectionSubscription
+  extends Promise<AsyncIterator<VideoConnection>>,
     Fragmentable {
-  mutation: () => Promise<AsyncIterator<MutationType>>;
-  node: <T = VideoSubscription>() => T;
-  updatedFields: () => Promise<AsyncIterator<String[]>>;
-  previousValues: <T = VideoPreviousValuesSubscription>() => T;
+  pageInfo: <T = PageInfoSubscription>() => T;
+  edges: <T = Promise<AsyncIterator<VideoEdgeSubscription>>>() => T;
+  aggregate: <T = AggregateVideoSubscription>() => T;
 }
 
 export interface AggregateApp {
@@ -3919,20 +4251,22 @@ export interface AppCategoryPreviousValuesSubscription
   updatedAt: () => Promise<AsyncIterator<DateTimeOutput>>;
 }
 
-export interface LibraryEdge {
-  node: Library;
+export interface PageViewEdge {
+  node: PageView;
   cursor: String;
 }
 
-export interface LibraryEdgePromise extends Promise<LibraryEdge>, Fragmentable {
-  node: <T = LibraryPromise>() => T;
+export interface PageViewEdgePromise
+  extends Promise<PageViewEdge>,
+    Fragmentable {
+  node: <T = PageViewPromise>() => T;
   cursor: () => Promise<String>;
 }
 
-export interface LibraryEdgeSubscription
-  extends Promise<AsyncIterator<LibraryEdge>>,
+export interface PageViewEdgeSubscription
+  extends Promise<AsyncIterator<PageViewEdge>>,
     Fragmentable {
-  node: <T = LibrarySubscription>() => T;
+  node: <T = PageViewSubscription>() => T;
   cursor: () => Promise<AsyncIterator<String>>;
 }
 
@@ -3959,18 +4293,18 @@ export interface PageInfoSubscription
   endCursor: () => Promise<AsyncIterator<String>>;
 }
 
-export interface AggregateJob {
+export interface AggregateLibrary {
   count: Int;
 }
 
-export interface AggregateJobPromise
-  extends Promise<AggregateJob>,
+export interface AggregateLibraryPromise
+  extends Promise<AggregateLibrary>,
     Fragmentable {
   count: () => Promise<Int>;
 }
 
-export interface AggregateJobSubscription
-  extends Promise<AsyncIterator<AggregateJob>>,
+export interface AggregateLibrarySubscription
+  extends Promise<AsyncIterator<AggregateLibrary>>,
     Fragmentable {
   count: () => Promise<AsyncIterator<Int>>;
 }
@@ -4000,25 +4334,25 @@ export interface AppVersionSubscriptionPayloadSubscription
   previousValues: <T = AppVersionPreviousValuesSubscription>() => T;
 }
 
-export interface JobConnection {
+export interface LibraryConnection {
   pageInfo: PageInfo;
-  edges: JobEdge[];
+  edges: LibraryEdge[];
 }
 
-export interface JobConnectionPromise
-  extends Promise<JobConnection>,
+export interface LibraryConnectionPromise
+  extends Promise<LibraryConnection>,
     Fragmentable {
   pageInfo: <T = PageInfoPromise>() => T;
-  edges: <T = FragmentableArray<JobEdge>>() => T;
-  aggregate: <T = AggregateJobPromise>() => T;
+  edges: <T = FragmentableArray<LibraryEdge>>() => T;
+  aggregate: <T = AggregateLibraryPromise>() => T;
 }
 
-export interface JobConnectionSubscription
-  extends Promise<AsyncIterator<JobConnection>>,
+export interface LibraryConnectionSubscription
+  extends Promise<AsyncIterator<LibraryConnection>>,
     Fragmentable {
   pageInfo: <T = PageInfoSubscription>() => T;
-  edges: <T = Promise<AsyncIterator<JobEdgeSubscription>>>() => T;
-  aggregate: <T = AggregateJobSubscription>() => T;
+  edges: <T = Promise<AsyncIterator<LibraryEdgeSubscription>>>() => T;
+  aggregate: <T = AggregateLibrarySubscription>() => T;
 }
 
 export interface AppVersionPreviousValues {
@@ -4046,20 +4380,21 @@ export interface AppVersionPreviousValuesSubscription
   updatedAt: () => Promise<AsyncIterator<DateTimeOutput>>;
 }
 
-export interface AggregateFile {
-  count: Int;
+export interface JobEdge {
+  node: Job;
+  cursor: String;
 }
 
-export interface AggregateFilePromise
-  extends Promise<AggregateFile>,
-    Fragmentable {
-  count: () => Promise<Int>;
+export interface JobEdgePromise extends Promise<JobEdge>, Fragmentable {
+  node: <T = JobPromise>() => T;
+  cursor: () => Promise<String>;
 }
 
-export interface AggregateFileSubscription
-  extends Promise<AsyncIterator<AggregateFile>>,
+export interface JobEdgeSubscription
+  extends Promise<AsyncIterator<JobEdge>>,
     Fragmentable {
-  count: () => Promise<AsyncIterator<Int>>;
+  node: <T = JobSubscription>() => T;
+  cursor: () => Promise<AsyncIterator<String>>;
 }
 
 export interface AppConnection {
@@ -4083,25 +4418,34 @@ export interface AppConnectionSubscription
   aggregate: <T = AggregateAppSubscription>() => T;
 }
 
-export interface FileConnection {
-  pageInfo: PageInfo;
-  edges: FileEdge[];
+export interface Job {
+  id: ID_Output;
+  name: String;
+  createdAt: DateTimeOutput;
+  updatedAt: DateTimeOutput;
 }
 
-export interface FileConnectionPromise
-  extends Promise<FileConnection>,
-    Fragmentable {
-  pageInfo: <T = PageInfoPromise>() => T;
-  edges: <T = FragmentableArray<FileEdge>>() => T;
-  aggregate: <T = AggregateFilePromise>() => T;
+export interface JobPromise extends Promise<Job>, Fragmentable {
+  id: () => Promise<ID_Output>;
+  name: () => Promise<String>;
+  createdAt: () => Promise<DateTimeOutput>;
+  updatedAt: () => Promise<DateTimeOutput>;
 }
 
-export interface FileConnectionSubscription
-  extends Promise<AsyncIterator<FileConnection>>,
+export interface JobSubscription
+  extends Promise<AsyncIterator<Job>>,
     Fragmentable {
-  pageInfo: <T = PageInfoSubscription>() => T;
-  edges: <T = Promise<AsyncIterator<FileEdgeSubscription>>>() => T;
-  aggregate: <T = AggregateFileSubscription>() => T;
+  id: () => Promise<AsyncIterator<ID_Output>>;
+  name: () => Promise<AsyncIterator<String>>;
+  createdAt: () => Promise<AsyncIterator<DateTimeOutput>>;
+  updatedAt: () => Promise<AsyncIterator<DateTimeOutput>>;
+}
+
+export interface JobNullablePromise extends Promise<Job | null>, Fragmentable {
+  id: () => Promise<ID_Output>;
+  name: () => Promise<String>;
+  createdAt: () => Promise<DateTimeOutput>;
+  updatedAt: () => Promise<DateTimeOutput>;
 }
 
 export interface FileSubscriptionPayload {
@@ -4129,20 +4473,21 @@ export interface FileSubscriptionPayloadSubscription
   previousValues: <T = FilePreviousValuesSubscription>() => T;
 }
 
-export interface AggregateAppVersion {
-  count: Int;
+export interface FileEdge {
+  node: File;
+  cursor: String;
 }
 
-export interface AggregateAppVersionPromise
-  extends Promise<AggregateAppVersion>,
-    Fragmentable {
-  count: () => Promise<Int>;
+export interface FileEdgePromise extends Promise<FileEdge>, Fragmentable {
+  node: <T = FilePromise>() => T;
+  cursor: () => Promise<String>;
 }
 
-export interface AggregateAppVersionSubscription
-  extends Promise<AsyncIterator<AggregateAppVersion>>,
+export interface FileEdgeSubscription
+  extends Promise<AsyncIterator<FileEdge>>,
     Fragmentable {
-  count: () => Promise<AsyncIterator<Int>>;
+  node: <T = FileSubscription>() => T;
+  cursor: () => Promise<AsyncIterator<String>>;
 }
 
 export interface FilePreviousValues {
@@ -4179,25 +4524,53 @@ export interface FilePreviousValuesSubscription
   updatedAt: () => Promise<AsyncIterator<DateTimeOutput>>;
 }
 
-export interface AppVersionConnection {
-  pageInfo: PageInfo;
-  edges: AppVersionEdge[];
+export interface UserPreviousValues {
+  id: ID_Output;
+  email: String;
+  password: String;
+  full_name: String;
+  role: AccountType;
+  customer_id?: ID_Output;
+  subscription_id?: ID_Output;
+  createdAt: DateTimeOutput;
+  updatedAt: DateTimeOutput;
+  google_accessToken?: String;
+  facebook_accessToken?: String;
+  oauth_id?: String;
 }
 
-export interface AppVersionConnectionPromise
-  extends Promise<AppVersionConnection>,
+export interface UserPreviousValuesPromise
+  extends Promise<UserPreviousValues>,
     Fragmentable {
-  pageInfo: <T = PageInfoPromise>() => T;
-  edges: <T = FragmentableArray<AppVersionEdge>>() => T;
-  aggregate: <T = AggregateAppVersionPromise>() => T;
+  id: () => Promise<ID_Output>;
+  email: () => Promise<String>;
+  password: () => Promise<String>;
+  full_name: () => Promise<String>;
+  role: () => Promise<AccountType>;
+  customer_id: () => Promise<ID_Output>;
+  subscription_id: () => Promise<ID_Output>;
+  createdAt: () => Promise<DateTimeOutput>;
+  updatedAt: () => Promise<DateTimeOutput>;
+  google_accessToken: () => Promise<String>;
+  facebook_accessToken: () => Promise<String>;
+  oauth_id: () => Promise<String>;
 }
 
-export interface AppVersionConnectionSubscription
-  extends Promise<AsyncIterator<AppVersionConnection>>,
+export interface UserPreviousValuesSubscription
+  extends Promise<AsyncIterator<UserPreviousValues>>,
     Fragmentable {
-  pageInfo: <T = PageInfoSubscription>() => T;
-  edges: <T = Promise<AsyncIterator<AppVersionEdgeSubscription>>>() => T;
-  aggregate: <T = AggregateAppVersionSubscription>() => T;
+  id: () => Promise<AsyncIterator<ID_Output>>;
+  email: () => Promise<AsyncIterator<String>>;
+  password: () => Promise<AsyncIterator<String>>;
+  full_name: () => Promise<AsyncIterator<String>>;
+  role: () => Promise<AsyncIterator<AccountType>>;
+  customer_id: () => Promise<AsyncIterator<ID_Output>>;
+  subscription_id: () => Promise<AsyncIterator<ID_Output>>;
+  createdAt: () => Promise<AsyncIterator<DateTimeOutput>>;
+  updatedAt: () => Promise<AsyncIterator<DateTimeOutput>>;
+  google_accessToken: () => Promise<AsyncIterator<String>>;
+  facebook_accessToken: () => Promise<AsyncIterator<String>>;
+  oauth_id: () => Promise<AsyncIterator<String>>;
 }
 
 export interface AppCategory {
@@ -4259,20 +4632,23 @@ export interface AppCategoryNullablePromise
   updatedAt: () => Promise<DateTimeOutput>;
 }
 
-export interface BatchPayload {
-  count: Long;
+export interface AppVersionEdge {
+  node: AppVersion;
+  cursor: String;
 }
 
-export interface BatchPayloadPromise
-  extends Promise<BatchPayload>,
+export interface AppVersionEdgePromise
+  extends Promise<AppVersionEdge>,
     Fragmentable {
-  count: () => Promise<Long>;
+  node: <T = AppVersionPromise>() => T;
+  cursor: () => Promise<String>;
 }
 
-export interface BatchPayloadSubscription
-  extends Promise<AsyncIterator<BatchPayload>>,
+export interface AppVersionEdgeSubscription
+  extends Promise<AsyncIterator<AppVersionEdge>>,
     Fragmentable {
-  count: () => Promise<AsyncIterator<Long>>;
+  node: <T = AppVersionSubscription>() => T;
+  cursor: () => Promise<AsyncIterator<String>>;
 }
 
 export interface JobSubscriptionPayload {
@@ -4300,21 +4676,29 @@ export interface JobSubscriptionPayloadSubscription
   previousValues: <T = JobPreviousValuesSubscription>() => T;
 }
 
-export interface UserEdge {
-  node: User;
-  cursor: String;
+export interface VideoSubscriptionPayload {
+  mutation: MutationType;
+  node: Video;
+  updatedFields: String[];
+  previousValues: VideoPreviousValues;
 }
 
-export interface UserEdgePromise extends Promise<UserEdge>, Fragmentable {
-  node: <T = UserPromise>() => T;
-  cursor: () => Promise<String>;
-}
-
-export interface UserEdgeSubscription
-  extends Promise<AsyncIterator<UserEdge>>,
+export interface VideoSubscriptionPayloadPromise
+  extends Promise<VideoSubscriptionPayload>,
     Fragmentable {
-  node: <T = UserSubscription>() => T;
-  cursor: () => Promise<AsyncIterator<String>>;
+  mutation: () => Promise<MutationType>;
+  node: <T = VideoPromise>() => T;
+  updatedFields: () => Promise<String[]>;
+  previousValues: <T = VideoPreviousValuesPromise>() => T;
+}
+
+export interface VideoSubscriptionPayloadSubscription
+  extends Promise<AsyncIterator<VideoSubscriptionPayload>>,
+    Fragmentable {
+  mutation: () => Promise<AsyncIterator<MutationType>>;
+  node: <T = VideoSubscription>() => T;
+  updatedFields: () => Promise<AsyncIterator<String[]>>;
+  previousValues: <T = VideoPreviousValuesSubscription>() => T;
 }
 
 export interface JobPreviousValues {
@@ -4342,22 +4726,345 @@ export interface JobPreviousValuesSubscription
   updatedAt: () => Promise<AsyncIterator<DateTimeOutput>>;
 }
 
-export interface StoryElementEdge {
-  node: StoryElement;
+export interface User {
+  id: ID_Output;
+  email: String;
+  password: String;
+  full_name: String;
+  role: AccountType;
+  customer_id?: ID_Output;
+  subscription_id?: ID_Output;
+  createdAt: DateTimeOutput;
+  updatedAt: DateTimeOutput;
+  google_accessToken?: String;
+  facebook_accessToken?: String;
+  oauth_id?: String;
+}
+
+export interface UserPromise extends Promise<User>, Fragmentable {
+  id: () => Promise<ID_Output>;
+  email: () => Promise<String>;
+  password: () => Promise<String>;
+  full_name: () => Promise<String>;
+  job: <T = JobPromise>() => T;
+  role: () => Promise<AccountType>;
+  profile_photo: <T = FilePromise>() => T;
+  customer_id: () => Promise<ID_Output>;
+  subscription_id: () => Promise<ID_Output>;
+  apps: <T = FragmentableArray<App>>(args?: {
+    where?: AppWhereInput;
+    orderBy?: AppOrderByInput;
+    skip?: Int;
+    after?: String;
+    before?: String;
+    first?: Int;
+    last?: Int;
+  }) => T;
+  libraries: <T = FragmentableArray<Library>>(args?: {
+    where?: LibraryWhereInput;
+    orderBy?: LibraryOrderByInput;
+    skip?: Int;
+    after?: String;
+    before?: String;
+    first?: Int;
+    last?: Int;
+  }) => T;
+  createdAt: () => Promise<DateTimeOutput>;
+  updatedAt: () => Promise<DateTimeOutput>;
+  google_accessToken: () => Promise<String>;
+  facebook_accessToken: () => Promise<String>;
+  oauth_id: () => Promise<String>;
+  pageViews: <T = FragmentableArray<PageView>>(args?: {
+    where?: PageViewWhereInput;
+    orderBy?: PageViewOrderByInput;
+    skip?: Int;
+    after?: String;
+    before?: String;
+    first?: Int;
+    last?: Int;
+  }) => T;
+}
+
+export interface UserSubscription
+  extends Promise<AsyncIterator<User>>,
+    Fragmentable {
+  id: () => Promise<AsyncIterator<ID_Output>>;
+  email: () => Promise<AsyncIterator<String>>;
+  password: () => Promise<AsyncIterator<String>>;
+  full_name: () => Promise<AsyncIterator<String>>;
+  job: <T = JobSubscription>() => T;
+  role: () => Promise<AsyncIterator<AccountType>>;
+  profile_photo: <T = FileSubscription>() => T;
+  customer_id: () => Promise<AsyncIterator<ID_Output>>;
+  subscription_id: () => Promise<AsyncIterator<ID_Output>>;
+  apps: <T = Promise<AsyncIterator<AppSubscription>>>(args?: {
+    where?: AppWhereInput;
+    orderBy?: AppOrderByInput;
+    skip?: Int;
+    after?: String;
+    before?: String;
+    first?: Int;
+    last?: Int;
+  }) => T;
+  libraries: <T = Promise<AsyncIterator<LibrarySubscription>>>(args?: {
+    where?: LibraryWhereInput;
+    orderBy?: LibraryOrderByInput;
+    skip?: Int;
+    after?: String;
+    before?: String;
+    first?: Int;
+    last?: Int;
+  }) => T;
+  createdAt: () => Promise<AsyncIterator<DateTimeOutput>>;
+  updatedAt: () => Promise<AsyncIterator<DateTimeOutput>>;
+  google_accessToken: () => Promise<AsyncIterator<String>>;
+  facebook_accessToken: () => Promise<AsyncIterator<String>>;
+  oauth_id: () => Promise<AsyncIterator<String>>;
+  pageViews: <T = Promise<AsyncIterator<PageViewSubscription>>>(args?: {
+    where?: PageViewWhereInput;
+    orderBy?: PageViewOrderByInput;
+    skip?: Int;
+    after?: String;
+    before?: String;
+    first?: Int;
+    last?: Int;
+  }) => T;
+}
+
+export interface UserNullablePromise
+  extends Promise<User | null>,
+    Fragmentable {
+  id: () => Promise<ID_Output>;
+  email: () => Promise<String>;
+  password: () => Promise<String>;
+  full_name: () => Promise<String>;
+  job: <T = JobPromise>() => T;
+  role: () => Promise<AccountType>;
+  profile_photo: <T = FilePromise>() => T;
+  customer_id: () => Promise<ID_Output>;
+  subscription_id: () => Promise<ID_Output>;
+  apps: <T = FragmentableArray<App>>(args?: {
+    where?: AppWhereInput;
+    orderBy?: AppOrderByInput;
+    skip?: Int;
+    after?: String;
+    before?: String;
+    first?: Int;
+    last?: Int;
+  }) => T;
+  libraries: <T = FragmentableArray<Library>>(args?: {
+    where?: LibraryWhereInput;
+    orderBy?: LibraryOrderByInput;
+    skip?: Int;
+    after?: String;
+    before?: String;
+    first?: Int;
+    last?: Int;
+  }) => T;
+  createdAt: () => Promise<DateTimeOutput>;
+  updatedAt: () => Promise<DateTimeOutput>;
+  google_accessToken: () => Promise<String>;
+  facebook_accessToken: () => Promise<String>;
+  oauth_id: () => Promise<String>;
+  pageViews: <T = FragmentableArray<PageView>>(args?: {
+    where?: PageViewWhereInput;
+    orderBy?: PageViewOrderByInput;
+    skip?: Int;
+    after?: String;
+    before?: String;
+    first?: Int;
+    last?: Int;
+  }) => T;
+}
+
+export interface PageView {
+  id: ID_Output;
+  pathname: String;
+  agent: String;
+  createdAt: DateTimeOutput;
+  updatedAt: DateTimeOutput;
+}
+
+export interface PageViewPromise extends Promise<PageView>, Fragmentable {
+  id: () => Promise<ID_Output>;
+  user: <T = UserPromise>() => T;
+  pathname: () => Promise<String>;
+  agent: () => Promise<String>;
+  createdAt: () => Promise<DateTimeOutput>;
+  updatedAt: () => Promise<DateTimeOutput>;
+}
+
+export interface PageViewSubscription
+  extends Promise<AsyncIterator<PageView>>,
+    Fragmentable {
+  id: () => Promise<AsyncIterator<ID_Output>>;
+  user: <T = UserSubscription>() => T;
+  pathname: () => Promise<AsyncIterator<String>>;
+  agent: () => Promise<AsyncIterator<String>>;
+  createdAt: () => Promise<AsyncIterator<DateTimeOutput>>;
+  updatedAt: () => Promise<AsyncIterator<DateTimeOutput>>;
+}
+
+export interface PageViewNullablePromise
+  extends Promise<PageView | null>,
+    Fragmentable {
+  id: () => Promise<ID_Output>;
+  user: <T = UserPromise>() => T;
+  pathname: () => Promise<String>;
+  agent: () => Promise<String>;
+  createdAt: () => Promise<DateTimeOutput>;
+  updatedAt: () => Promise<DateTimeOutput>;
+}
+
+export interface Library {
+  id: ID_Output;
+  name: String;
+  custom_updatedAt: DateTimeOutput;
+  createdAt: DateTimeOutput;
+  updatedAt: DateTimeOutput;
+}
+
+export interface LibraryPromise extends Promise<Library>, Fragmentable {
+  id: () => Promise<ID_Output>;
+  createdBy: <T = UserPromise>() => T;
+  stories: <T = FragmentableArray<Story>>(args?: {
+    where?: StoryWhereInput;
+    orderBy?: StoryOrderByInput;
+    skip?: Int;
+    after?: String;
+    before?: String;
+    first?: Int;
+    last?: Int;
+  }) => T;
+  name: () => Promise<String>;
+  custom_updatedAt: () => Promise<DateTimeOutput>;
+  createdAt: () => Promise<DateTimeOutput>;
+  updatedAt: () => Promise<DateTimeOutput>;
+}
+
+export interface LibrarySubscription
+  extends Promise<AsyncIterator<Library>>,
+    Fragmentable {
+  id: () => Promise<AsyncIterator<ID_Output>>;
+  createdBy: <T = UserSubscription>() => T;
+  stories: <T = Promise<AsyncIterator<StorySubscription>>>(args?: {
+    where?: StoryWhereInput;
+    orderBy?: StoryOrderByInput;
+    skip?: Int;
+    after?: String;
+    before?: String;
+    first?: Int;
+    last?: Int;
+  }) => T;
+  name: () => Promise<AsyncIterator<String>>;
+  custom_updatedAt: () => Promise<AsyncIterator<DateTimeOutput>>;
+  createdAt: () => Promise<AsyncIterator<DateTimeOutput>>;
+  updatedAt: () => Promise<AsyncIterator<DateTimeOutput>>;
+}
+
+export interface LibraryNullablePromise
+  extends Promise<Library | null>,
+    Fragmentable {
+  id: () => Promise<ID_Output>;
+  createdBy: <T = UserPromise>() => T;
+  stories: <T = FragmentableArray<Story>>(args?: {
+    where?: StoryWhereInput;
+    orderBy?: StoryOrderByInput;
+    skip?: Int;
+    after?: String;
+    before?: String;
+    first?: Int;
+    last?: Int;
+  }) => T;
+  name: () => Promise<String>;
+  custom_updatedAt: () => Promise<DateTimeOutput>;
+  createdAt: () => Promise<DateTimeOutput>;
+  updatedAt: () => Promise<DateTimeOutput>;
+}
+
+export interface LibrarySubscriptionPayload {
+  mutation: MutationType;
+  node: Library;
+  updatedFields: String[];
+  previousValues: LibraryPreviousValues;
+}
+
+export interface LibrarySubscriptionPayloadPromise
+  extends Promise<LibrarySubscriptionPayload>,
+    Fragmentable {
+  mutation: () => Promise<MutationType>;
+  node: <T = LibraryPromise>() => T;
+  updatedFields: () => Promise<String[]>;
+  previousValues: <T = LibraryPreviousValuesPromise>() => T;
+}
+
+export interface LibrarySubscriptionPayloadSubscription
+  extends Promise<AsyncIterator<LibrarySubscriptionPayload>>,
+    Fragmentable {
+  mutation: () => Promise<AsyncIterator<MutationType>>;
+  node: <T = LibrarySubscription>() => T;
+  updatedFields: () => Promise<AsyncIterator<String[]>>;
+  previousValues: <T = LibraryPreviousValuesSubscription>() => T;
+}
+
+export interface AggregateStoryCategory {
+  count: Int;
+}
+
+export interface AggregateStoryCategoryPromise
+  extends Promise<AggregateStoryCategory>,
+    Fragmentable {
+  count: () => Promise<Int>;
+}
+
+export interface AggregateStoryCategorySubscription
+  extends Promise<AsyncIterator<AggregateStoryCategory>>,
+    Fragmentable {
+  count: () => Promise<AsyncIterator<Int>>;
+}
+
+export interface LibraryPreviousValues {
+  id: ID_Output;
+  name: String;
+  custom_updatedAt: DateTimeOutput;
+  createdAt: DateTimeOutput;
+  updatedAt: DateTimeOutput;
+}
+
+export interface LibraryPreviousValuesPromise
+  extends Promise<LibraryPreviousValues>,
+    Fragmentable {
+  id: () => Promise<ID_Output>;
+  name: () => Promise<String>;
+  custom_updatedAt: () => Promise<DateTimeOutput>;
+  createdAt: () => Promise<DateTimeOutput>;
+  updatedAt: () => Promise<DateTimeOutput>;
+}
+
+export interface LibraryPreviousValuesSubscription
+  extends Promise<AsyncIterator<LibraryPreviousValues>>,
+    Fragmentable {
+  id: () => Promise<AsyncIterator<ID_Output>>;
+  name: () => Promise<AsyncIterator<String>>;
+  custom_updatedAt: () => Promise<AsyncIterator<DateTimeOutput>>;
+  createdAt: () => Promise<AsyncIterator<DateTimeOutput>>;
+  updatedAt: () => Promise<AsyncIterator<DateTimeOutput>>;
+}
+
+export interface StoryEdge {
+  node: Story;
   cursor: String;
 }
 
-export interface StoryElementEdgePromise
-  extends Promise<StoryElementEdge>,
-    Fragmentable {
-  node: <T = StoryElementPromise>() => T;
+export interface StoryEdgePromise extends Promise<StoryEdge>, Fragmentable {
+  node: <T = StoryPromise>() => T;
   cursor: () => Promise<String>;
 }
 
-export interface StoryElementEdgeSubscription
-  extends Promise<AsyncIterator<StoryElementEdge>>,
+export interface StoryEdgeSubscription
+  extends Promise<AsyncIterator<StoryEdge>>,
     Fragmentable {
-  node: <T = StoryElementSubscription>() => T;
+  node: <T = StorySubscription>() => T;
   cursor: () => Promise<AsyncIterator<String>>;
 }
 
@@ -4392,111 +5099,110 @@ export interface VideoNullablePromise
   updatedAt: () => Promise<DateTimeOutput>;
 }
 
-export interface StoryCategoryConnection {
+export interface PageViewConnection {
   pageInfo: PageInfo;
-  edges: StoryCategoryEdge[];
+  edges: PageViewEdge[];
 }
 
-export interface StoryCategoryConnectionPromise
-  extends Promise<StoryCategoryConnection>,
+export interface PageViewConnectionPromise
+  extends Promise<PageViewConnection>,
     Fragmentable {
   pageInfo: <T = PageInfoPromise>() => T;
-  edges: <T = FragmentableArray<StoryCategoryEdge>>() => T;
-  aggregate: <T = AggregateStoryCategoryPromise>() => T;
+  edges: <T = FragmentableArray<PageViewEdge>>() => T;
+  aggregate: <T = AggregatePageViewPromise>() => T;
 }
 
-export interface StoryCategoryConnectionSubscription
-  extends Promise<AsyncIterator<StoryCategoryConnection>>,
+export interface PageViewConnectionSubscription
+  extends Promise<AsyncIterator<PageViewConnection>>,
     Fragmentable {
   pageInfo: <T = PageInfoSubscription>() => T;
-  edges: <T = Promise<AsyncIterator<StoryCategoryEdgeSubscription>>>() => T;
-  aggregate: <T = AggregateStoryCategorySubscription>() => T;
+  edges: <T = Promise<AsyncIterator<PageViewEdgeSubscription>>>() => T;
+  aggregate: <T = AggregatePageViewSubscription>() => T;
 }
 
-export interface LibrarySubscriptionPayload {
+export interface PageViewSubscriptionPayload {
   mutation: MutationType;
-  node: Library;
+  node: PageView;
   updatedFields: String[];
-  previousValues: LibraryPreviousValues;
+  previousValues: PageViewPreviousValues;
 }
 
-export interface LibrarySubscriptionPayloadPromise
-  extends Promise<LibrarySubscriptionPayload>,
+export interface PageViewSubscriptionPayloadPromise
+  extends Promise<PageViewSubscriptionPayload>,
     Fragmentable {
   mutation: () => Promise<MutationType>;
-  node: <T = LibraryPromise>() => T;
+  node: <T = PageViewPromise>() => T;
   updatedFields: () => Promise<String[]>;
-  previousValues: <T = LibraryPreviousValuesPromise>() => T;
+  previousValues: <T = PageViewPreviousValuesPromise>() => T;
 }
 
-export interface LibrarySubscriptionPayloadSubscription
-  extends Promise<AsyncIterator<LibrarySubscriptionPayload>>,
+export interface PageViewSubscriptionPayloadSubscription
+  extends Promise<AsyncIterator<PageViewSubscriptionPayload>>,
     Fragmentable {
   mutation: () => Promise<AsyncIterator<MutationType>>;
-  node: <T = LibrarySubscription>() => T;
+  node: <T = PageViewSubscription>() => T;
   updatedFields: () => Promise<AsyncIterator<String[]>>;
-  previousValues: <T = LibraryPreviousValuesSubscription>() => T;
+  previousValues: <T = PageViewPreviousValuesSubscription>() => T;
 }
 
-export interface AggregateLibrary {
+export interface AggregateJob {
   count: Int;
 }
 
-export interface AggregateLibraryPromise
-  extends Promise<AggregateLibrary>,
+export interface AggregateJobPromise
+  extends Promise<AggregateJob>,
     Fragmentable {
   count: () => Promise<Int>;
 }
 
-export interface AggregateLibrarySubscription
-  extends Promise<AsyncIterator<AggregateLibrary>>,
+export interface AggregateJobSubscription
+  extends Promise<AsyncIterator<AggregateJob>>,
     Fragmentable {
   count: () => Promise<AsyncIterator<Int>>;
 }
 
-export interface LibraryPreviousValues {
+export interface PageViewPreviousValues {
   id: ID_Output;
-  name: String;
-  custom_updatedAt: DateTimeOutput;
+  pathname: String;
+  agent: String;
   createdAt: DateTimeOutput;
   updatedAt: DateTimeOutput;
 }
 
-export interface LibraryPreviousValuesPromise
-  extends Promise<LibraryPreviousValues>,
+export interface PageViewPreviousValuesPromise
+  extends Promise<PageViewPreviousValues>,
     Fragmentable {
   id: () => Promise<ID_Output>;
-  name: () => Promise<String>;
-  custom_updatedAt: () => Promise<DateTimeOutput>;
+  pathname: () => Promise<String>;
+  agent: () => Promise<String>;
   createdAt: () => Promise<DateTimeOutput>;
   updatedAt: () => Promise<DateTimeOutput>;
 }
 
-export interface LibraryPreviousValuesSubscription
-  extends Promise<AsyncIterator<LibraryPreviousValues>>,
+export interface PageViewPreviousValuesSubscription
+  extends Promise<AsyncIterator<PageViewPreviousValues>>,
     Fragmentable {
   id: () => Promise<AsyncIterator<ID_Output>>;
-  name: () => Promise<AsyncIterator<String>>;
-  custom_updatedAt: () => Promise<AsyncIterator<DateTimeOutput>>;
+  pathname: () => Promise<AsyncIterator<String>>;
+  agent: () => Promise<AsyncIterator<String>>;
   createdAt: () => Promise<AsyncIterator<DateTimeOutput>>;
   updatedAt: () => Promise<AsyncIterator<DateTimeOutput>>;
 }
 
-export interface JobEdge {
-  node: Job;
-  cursor: String;
+export interface AggregateFile {
+  count: Int;
 }
 
-export interface JobEdgePromise extends Promise<JobEdge>, Fragmentable {
-  node: <T = JobPromise>() => T;
-  cursor: () => Promise<String>;
-}
-
-export interface JobEdgeSubscription
-  extends Promise<AsyncIterator<JobEdge>>,
+export interface AggregateFilePromise
+  extends Promise<AggregateFile>,
     Fragmentable {
-  node: <T = JobSubscription>() => T;
-  cursor: () => Promise<AsyncIterator<String>>;
+  count: () => Promise<Int>;
+}
+
+export interface AggregateFileSubscription
+  extends Promise<AsyncIterator<AggregateFile>>,
+    Fragmentable {
+  count: () => Promise<AsyncIterator<Int>>;
 }
 
 export interface StoryElement {
@@ -4560,21 +5266,20 @@ export interface StoryElementNullablePromise
   }) => T;
 }
 
-export interface FileEdge {
-  node: File;
-  cursor: String;
+export interface AggregateAppVersion {
+  count: Int;
 }
 
-export interface FileEdgePromise extends Promise<FileEdge>, Fragmentable {
-  node: <T = FilePromise>() => T;
-  cursor: () => Promise<String>;
-}
-
-export interface FileEdgeSubscription
-  extends Promise<AsyncIterator<FileEdge>>,
+export interface AggregateAppVersionPromise
+  extends Promise<AggregateAppVersion>,
     Fragmentable {
-  node: <T = FileSubscription>() => T;
-  cursor: () => Promise<AsyncIterator<String>>;
+  count: () => Promise<Int>;
+}
+
+export interface AggregateAppVersionSubscription
+  extends Promise<AsyncIterator<AggregateAppVersion>>,
+    Fragmentable {
+  count: () => Promise<AsyncIterator<Int>>;
 }
 
 export interface StorySubscriptionPayload {
@@ -4602,22 +5307,20 @@ export interface StorySubscriptionPayloadSubscription
   previousValues: <T = StoryPreviousValuesSubscription>() => T;
 }
 
-export interface AppVersionEdge {
-  node: AppVersion;
+export interface VideoEdge {
+  node: Video;
   cursor: String;
 }
 
-export interface AppVersionEdgePromise
-  extends Promise<AppVersionEdge>,
-    Fragmentable {
-  node: <T = AppVersionPromise>() => T;
+export interface VideoEdgePromise extends Promise<VideoEdge>, Fragmentable {
+  node: <T = VideoPromise>() => T;
   cursor: () => Promise<String>;
 }
 
-export interface AppVersionEdgeSubscription
-  extends Promise<AsyncIterator<AppVersionEdge>>,
+export interface VideoEdgeSubscription
+  extends Promise<AsyncIterator<VideoEdge>>,
     Fragmentable {
-  node: <T = AppVersionSubscription>() => T;
+  node: <T = VideoSubscription>() => T;
   cursor: () => Promise<AsyncIterator<String>>;
 }
 
@@ -4643,128 +5346,23 @@ export interface StoryPreviousValuesSubscription
   updatedAt: () => Promise<AsyncIterator<DateTimeOutput>>;
 }
 
-export interface User {
-  id: ID_Output;
-  email: String;
-  password: String;
-  full_name: String;
-  role: AccountType;
-  customer_id?: ID_Output;
-  subscription_id?: ID_Output;
-  createdAt: DateTimeOutput;
-  updatedAt: DateTimeOutput;
-  google_accessToken?: String;
-  facebook_accessToken?: String;
-  oauth_id?: String;
+export interface StoryElementEdge {
+  node: StoryElement;
+  cursor: String;
 }
 
-export interface UserPromise extends Promise<User>, Fragmentable {
-  id: () => Promise<ID_Output>;
-  email: () => Promise<String>;
-  password: () => Promise<String>;
-  full_name: () => Promise<String>;
-  job: <T = JobPromise>() => T;
-  role: () => Promise<AccountType>;
-  profile_photo: <T = FilePromise>() => T;
-  customer_id: () => Promise<ID_Output>;
-  subscription_id: () => Promise<ID_Output>;
-  apps: <T = FragmentableArray<App>>(args?: {
-    where?: AppWhereInput;
-    orderBy?: AppOrderByInput;
-    skip?: Int;
-    after?: String;
-    before?: String;
-    first?: Int;
-    last?: Int;
-  }) => T;
-  libraries: <T = FragmentableArray<Library>>(args?: {
-    where?: LibraryWhereInput;
-    orderBy?: LibraryOrderByInput;
-    skip?: Int;
-    after?: String;
-    before?: String;
-    first?: Int;
-    last?: Int;
-  }) => T;
-  createdAt: () => Promise<DateTimeOutput>;
-  updatedAt: () => Promise<DateTimeOutput>;
-  google_accessToken: () => Promise<String>;
-  facebook_accessToken: () => Promise<String>;
-  oauth_id: () => Promise<String>;
-}
-
-export interface UserSubscription
-  extends Promise<AsyncIterator<User>>,
+export interface StoryElementEdgePromise
+  extends Promise<StoryElementEdge>,
     Fragmentable {
-  id: () => Promise<AsyncIterator<ID_Output>>;
-  email: () => Promise<AsyncIterator<String>>;
-  password: () => Promise<AsyncIterator<String>>;
-  full_name: () => Promise<AsyncIterator<String>>;
-  job: <T = JobSubscription>() => T;
-  role: () => Promise<AsyncIterator<AccountType>>;
-  profile_photo: <T = FileSubscription>() => T;
-  customer_id: () => Promise<AsyncIterator<ID_Output>>;
-  subscription_id: () => Promise<AsyncIterator<ID_Output>>;
-  apps: <T = Promise<AsyncIterator<AppSubscription>>>(args?: {
-    where?: AppWhereInput;
-    orderBy?: AppOrderByInput;
-    skip?: Int;
-    after?: String;
-    before?: String;
-    first?: Int;
-    last?: Int;
-  }) => T;
-  libraries: <T = Promise<AsyncIterator<LibrarySubscription>>>(args?: {
-    where?: LibraryWhereInput;
-    orderBy?: LibraryOrderByInput;
-    skip?: Int;
-    after?: String;
-    before?: String;
-    first?: Int;
-    last?: Int;
-  }) => T;
-  createdAt: () => Promise<AsyncIterator<DateTimeOutput>>;
-  updatedAt: () => Promise<AsyncIterator<DateTimeOutput>>;
-  google_accessToken: () => Promise<AsyncIterator<String>>;
-  facebook_accessToken: () => Promise<AsyncIterator<String>>;
-  oauth_id: () => Promise<AsyncIterator<String>>;
+  node: <T = StoryElementPromise>() => T;
+  cursor: () => Promise<String>;
 }
 
-export interface UserNullablePromise
-  extends Promise<User | null>,
+export interface StoryElementEdgeSubscription
+  extends Promise<AsyncIterator<StoryElementEdge>>,
     Fragmentable {
-  id: () => Promise<ID_Output>;
-  email: () => Promise<String>;
-  password: () => Promise<String>;
-  full_name: () => Promise<String>;
-  job: <T = JobPromise>() => T;
-  role: () => Promise<AccountType>;
-  profile_photo: <T = FilePromise>() => T;
-  customer_id: () => Promise<ID_Output>;
-  subscription_id: () => Promise<ID_Output>;
-  apps: <T = FragmentableArray<App>>(args?: {
-    where?: AppWhereInput;
-    orderBy?: AppOrderByInput;
-    skip?: Int;
-    after?: String;
-    before?: String;
-    first?: Int;
-    last?: Int;
-  }) => T;
-  libraries: <T = FragmentableArray<Library>>(args?: {
-    where?: LibraryWhereInput;
-    orderBy?: LibraryOrderByInput;
-    skip?: Int;
-    after?: String;
-    before?: String;
-    first?: Int;
-    last?: Int;
-  }) => T;
-  createdAt: () => Promise<DateTimeOutput>;
-  updatedAt: () => Promise<DateTimeOutput>;
-  google_accessToken: () => Promise<String>;
-  facebook_accessToken: () => Promise<String>;
-  oauth_id: () => Promise<String>;
+  node: <T = StoryElementSubscription>() => T;
+  cursor: () => Promise<AsyncIterator<String>>;
 }
 
 export interface StoryCategory {
@@ -4828,18 +5426,18 @@ export interface StoryCategoryNullablePromise
   }) => T;
 }
 
-export interface AggregateStoryCategory {
+export interface AggregatePageView {
   count: Int;
 }
 
-export interface AggregateStoryCategoryPromise
-  extends Promise<AggregateStoryCategory>,
+export interface AggregatePageViewPromise
+  extends Promise<AggregatePageView>,
     Fragmentable {
   count: () => Promise<Int>;
 }
 
-export interface AggregateStoryCategorySubscription
-  extends Promise<AsyncIterator<AggregateStoryCategory>>,
+export interface AggregatePageViewSubscription
+  extends Promise<AsyncIterator<AggregatePageView>>,
     Fragmentable {
   count: () => Promise<AsyncIterator<Int>>;
 }
@@ -4869,74 +5467,46 @@ export interface StoryCategorySubscriptionPayloadSubscription
   previousValues: <T = StoryCategoryPreviousValuesSubscription>() => T;
 }
 
-export interface LibraryConnection {
+export interface JobConnection {
   pageInfo: PageInfo;
-  edges: LibraryEdge[];
+  edges: JobEdge[];
 }
 
-export interface LibraryConnectionPromise
-  extends Promise<LibraryConnection>,
+export interface JobConnectionPromise
+  extends Promise<JobConnection>,
     Fragmentable {
   pageInfo: <T = PageInfoPromise>() => T;
-  edges: <T = FragmentableArray<LibraryEdge>>() => T;
-  aggregate: <T = AggregateLibraryPromise>() => T;
+  edges: <T = FragmentableArray<JobEdge>>() => T;
+  aggregate: <T = AggregateJobPromise>() => T;
 }
 
-export interface LibraryConnectionSubscription
-  extends Promise<AsyncIterator<LibraryConnection>>,
+export interface JobConnectionSubscription
+  extends Promise<AsyncIterator<JobConnection>>,
     Fragmentable {
   pageInfo: <T = PageInfoSubscription>() => T;
-  edges: <T = Promise<AsyncIterator<LibraryEdgeSubscription>>>() => T;
-  aggregate: <T = AggregateLibrarySubscription>() => T;
+  edges: <T = Promise<AsyncIterator<JobEdgeSubscription>>>() => T;
+  aggregate: <T = AggregateJobSubscription>() => T;
 }
 
-export interface UserPreviousValues {
-  id: ID_Output;
-  email: String;
-  password: String;
-  full_name: String;
-  role: AccountType;
-  customer_id?: ID_Output;
-  subscription_id?: ID_Output;
-  createdAt: DateTimeOutput;
-  updatedAt: DateTimeOutput;
-  google_accessToken?: String;
-  facebook_accessToken?: String;
-  oauth_id?: String;
+export interface AppVersionConnection {
+  pageInfo: PageInfo;
+  edges: AppVersionEdge[];
 }
 
-export interface UserPreviousValuesPromise
-  extends Promise<UserPreviousValues>,
+export interface AppVersionConnectionPromise
+  extends Promise<AppVersionConnection>,
     Fragmentable {
-  id: () => Promise<ID_Output>;
-  email: () => Promise<String>;
-  password: () => Promise<String>;
-  full_name: () => Promise<String>;
-  role: () => Promise<AccountType>;
-  customer_id: () => Promise<ID_Output>;
-  subscription_id: () => Promise<ID_Output>;
-  createdAt: () => Promise<DateTimeOutput>;
-  updatedAt: () => Promise<DateTimeOutput>;
-  google_accessToken: () => Promise<String>;
-  facebook_accessToken: () => Promise<String>;
-  oauth_id: () => Promise<String>;
+  pageInfo: <T = PageInfoPromise>() => T;
+  edges: <T = FragmentableArray<AppVersionEdge>>() => T;
+  aggregate: <T = AggregateAppVersionPromise>() => T;
 }
 
-export interface UserPreviousValuesSubscription
-  extends Promise<AsyncIterator<UserPreviousValues>>,
+export interface AppVersionConnectionSubscription
+  extends Promise<AsyncIterator<AppVersionConnection>>,
     Fragmentable {
-  id: () => Promise<AsyncIterator<ID_Output>>;
-  email: () => Promise<AsyncIterator<String>>;
-  password: () => Promise<AsyncIterator<String>>;
-  full_name: () => Promise<AsyncIterator<String>>;
-  role: () => Promise<AsyncIterator<AccountType>>;
-  customer_id: () => Promise<AsyncIterator<ID_Output>>;
-  subscription_id: () => Promise<AsyncIterator<ID_Output>>;
-  createdAt: () => Promise<AsyncIterator<DateTimeOutput>>;
-  updatedAt: () => Promise<AsyncIterator<DateTimeOutput>>;
-  google_accessToken: () => Promise<AsyncIterator<String>>;
-  facebook_accessToken: () => Promise<AsyncIterator<String>>;
-  oauth_id: () => Promise<AsyncIterator<String>>;
+  pageInfo: <T = PageInfoSubscription>() => T;
+  edges: <T = Promise<AsyncIterator<AppVersionEdgeSubscription>>>() => T;
+  aggregate: <T = AggregateAppVersionSubscription>() => T;
 }
 
 export interface StoryElementPreviousValues {
@@ -5073,134 +5643,80 @@ export interface StoryCategoryPreviousValuesSubscription
   updatedAt: () => Promise<AsyncIterator<DateTimeOutput>>;
 }
 
-export interface VideoEdge {
-  node: Video;
+export interface UserEdge {
+  node: User;
   cursor: String;
 }
 
-export interface VideoEdgePromise extends Promise<VideoEdge>, Fragmentable {
-  node: <T = VideoPromise>() => T;
+export interface UserEdgePromise extends Promise<UserEdge>, Fragmentable {
+  node: <T = UserPromise>() => T;
   cursor: () => Promise<String>;
 }
 
-export interface VideoEdgeSubscription
-  extends Promise<AsyncIterator<VideoEdge>>,
+export interface UserEdgeSubscription
+  extends Promise<AsyncIterator<UserEdge>>,
     Fragmentable {
-  node: <T = VideoSubscription>() => T;
+  node: <T = UserSubscription>() => T;
   cursor: () => Promise<AsyncIterator<String>>;
 }
 
-export interface Job {
-  id: ID_Output;
-  name: String;
-  createdAt: DateTimeOutput;
-  updatedAt: DateTimeOutput;
+export interface FileConnection {
+  pageInfo: PageInfo;
+  edges: FileEdge[];
 }
 
-export interface JobPromise extends Promise<Job>, Fragmentable {
-  id: () => Promise<ID_Output>;
-  name: () => Promise<String>;
-  createdAt: () => Promise<DateTimeOutput>;
-  updatedAt: () => Promise<DateTimeOutput>;
-}
-
-export interface JobSubscription
-  extends Promise<AsyncIterator<Job>>,
+export interface FileConnectionPromise
+  extends Promise<FileConnection>,
     Fragmentable {
-  id: () => Promise<AsyncIterator<ID_Output>>;
-  name: () => Promise<AsyncIterator<String>>;
-  createdAt: () => Promise<AsyncIterator<DateTimeOutput>>;
-  updatedAt: () => Promise<AsyncIterator<DateTimeOutput>>;
+  pageInfo: <T = PageInfoPromise>() => T;
+  edges: <T = FragmentableArray<FileEdge>>() => T;
+  aggregate: <T = AggregateFilePromise>() => T;
 }
 
-export interface JobNullablePromise extends Promise<Job | null>, Fragmentable {
-  id: () => Promise<ID_Output>;
-  name: () => Promise<String>;
-  createdAt: () => Promise<DateTimeOutput>;
-  updatedAt: () => Promise<DateTimeOutput>;
+export interface FileConnectionSubscription
+  extends Promise<AsyncIterator<FileConnection>>,
+    Fragmentable {
+  pageInfo: <T = PageInfoSubscription>() => T;
+  edges: <T = Promise<AsyncIterator<FileEdgeSubscription>>>() => T;
+  aggregate: <T = AggregateFileSubscription>() => T;
 }
 
-export interface StoryEdge {
-  node: Story;
+export interface LibraryEdge {
+  node: Library;
   cursor: String;
 }
 
-export interface StoryEdgePromise extends Promise<StoryEdge>, Fragmentable {
-  node: <T = StoryPromise>() => T;
+export interface LibraryEdgePromise extends Promise<LibraryEdge>, Fragmentable {
+  node: <T = LibraryPromise>() => T;
   cursor: () => Promise<String>;
 }
 
-export interface StoryEdgeSubscription
-  extends Promise<AsyncIterator<StoryEdge>>,
+export interface LibraryEdgeSubscription
+  extends Promise<AsyncIterator<LibraryEdge>>,
     Fragmentable {
-  node: <T = StorySubscription>() => T;
+  node: <T = LibrarySubscription>() => T;
   cursor: () => Promise<AsyncIterator<String>>;
 }
 
-export interface Library {
-  id: ID_Output;
-  name: String;
-  custom_updatedAt: DateTimeOutput;
-  createdAt: DateTimeOutput;
-  updatedAt: DateTimeOutput;
+export interface StoryCategoryConnection {
+  pageInfo: PageInfo;
+  edges: StoryCategoryEdge[];
 }
 
-export interface LibraryPromise extends Promise<Library>, Fragmentable {
-  id: () => Promise<ID_Output>;
-  createdBy: <T = UserPromise>() => T;
-  stories: <T = FragmentableArray<Story>>(args?: {
-    where?: StoryWhereInput;
-    orderBy?: StoryOrderByInput;
-    skip?: Int;
-    after?: String;
-    before?: String;
-    first?: Int;
-    last?: Int;
-  }) => T;
-  name: () => Promise<String>;
-  custom_updatedAt: () => Promise<DateTimeOutput>;
-  createdAt: () => Promise<DateTimeOutput>;
-  updatedAt: () => Promise<DateTimeOutput>;
-}
-
-export interface LibrarySubscription
-  extends Promise<AsyncIterator<Library>>,
+export interface StoryCategoryConnectionPromise
+  extends Promise<StoryCategoryConnection>,
     Fragmentable {
-  id: () => Promise<AsyncIterator<ID_Output>>;
-  createdBy: <T = UserSubscription>() => T;
-  stories: <T = Promise<AsyncIterator<StorySubscription>>>(args?: {
-    where?: StoryWhereInput;
-    orderBy?: StoryOrderByInput;
-    skip?: Int;
-    after?: String;
-    before?: String;
-    first?: Int;
-    last?: Int;
-  }) => T;
-  name: () => Promise<AsyncIterator<String>>;
-  custom_updatedAt: () => Promise<AsyncIterator<DateTimeOutput>>;
-  createdAt: () => Promise<AsyncIterator<DateTimeOutput>>;
-  updatedAt: () => Promise<AsyncIterator<DateTimeOutput>>;
+  pageInfo: <T = PageInfoPromise>() => T;
+  edges: <T = FragmentableArray<StoryCategoryEdge>>() => T;
+  aggregate: <T = AggregateStoryCategoryPromise>() => T;
 }
 
-export interface LibraryNullablePromise
-  extends Promise<Library | null>,
+export interface StoryCategoryConnectionSubscription
+  extends Promise<AsyncIterator<StoryCategoryConnection>>,
     Fragmentable {
-  id: () => Promise<ID_Output>;
-  createdBy: <T = UserPromise>() => T;
-  stories: <T = FragmentableArray<Story>>(args?: {
-    where?: StoryWhereInput;
-    orderBy?: StoryOrderByInput;
-    skip?: Int;
-    after?: String;
-    before?: String;
-    first?: Int;
-    last?: Int;
-  }) => T;
-  name: () => Promise<String>;
-  custom_updatedAt: () => Promise<DateTimeOutput>;
-  createdAt: () => Promise<DateTimeOutput>;
-  updatedAt: () => Promise<DateTimeOutput>;
+  pageInfo: <T = PageInfoSubscription>() => T;
+  edges: <T = Promise<AsyncIterator<StoryCategoryEdgeSubscription>>>() => T;
+  aggregate: <T = AggregateStoryCategorySubscription>() => T;
 }
 
 /*
@@ -5208,13 +5724,13 @@ The `Int` scalar type represents non-fractional signed whole numeric values. Int
 */
 export type Int = number;
 
+export type Long = string;
+
 /*
 The `ID` scalar type represents a unique identifier, often used to refetch an object or as key for a cache. The ID type appears in a JSON response as a String; however, it is not intended to be human-readable. When expected as an input type, any string (such as `"4"`) or integer (such as `4`) input value will be accepted as an ID.
 */
 export type ID_Input = string | number;
 export type ID_Output = string;
-
-export type Long = string;
 
 /*
 The `String` scalar type represents textual data, represented as UTF-8 character sequences. The String type is most often used by GraphQL to represent free-form human-readable text.
@@ -5259,6 +5775,10 @@ export const models: Model[] = [
   },
   {
     name: "Job",
+    embedded: false
+  },
+  {
+    name: "PageView",
     embedded: false
   },
   {

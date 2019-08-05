@@ -19,12 +19,6 @@ class _Table extends React.Component {
 	render(){
 		let showFields = []
 		this.props.fields.map(field => !field.hideTable ? showFields.push(field) : null);
-		let get_obj_connection_variables = {
-			connection_type: this.props.connection_type,
-			fields: showFields.map(field => field.fetch ? field.fetch : field),
-			filterBy: this.props.filterBy.concat([this.props.skipBy]),
-			where: this.props.where
-		}
 		return (
 		<Query 
         	query={getObjectConnectionQuery}
@@ -134,6 +128,7 @@ class _Table extends React.Component {
 			                      <tr id={object.id} ref={node => this.refs = Object.assign({[object.id]:node},this.refs)}>
 			                      {
 			                      	Object.keys(object).map(key => {
+										  console.log(key)
 			                      		if (key === "id"){
 			                      			return  <th scope="row">{object[key]}</th>
 			                      		}
@@ -167,7 +162,7 @@ class _Table extends React.Component {
 															<Link to={{
 																pathname:`/admin/${this.props.typename_url_friendly}/${object.id}`,
 																state:{
-																	get_obj_connection_variables
+																	variables: this.props.get_obj_connection_variables
 																}	
 															}}>
 			                            <button className="btn btn-sm btn-outline-light">Edit</button>
