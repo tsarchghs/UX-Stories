@@ -76,3 +76,15 @@
 .filter-dropdown {
   z-index: 1;
 }
+
+.memory-usage-charts {
+  display: inline;
+}
+
+.memory-usage-charts canvas {
+  display: inline;
+}
+
+.memory-usage-charts div canvas {
+  display: inline;
+}
