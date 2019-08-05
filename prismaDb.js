@@ -3,7 +3,7 @@ const { Prisma } = require("prisma-binding");
 
 const prismaDb = new Prisma({
 	typeDefs:prismaTypeDefs,
-	endpoint:"http://localhost:4466/",
+	endpoint:"https://eu1.prisma.sh/gjergj-kadriu-c6f550/stories/dev",
 	debug: false
 })
 console.log(prismaDb.mutation.executeRaw)
