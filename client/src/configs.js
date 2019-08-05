@@ -1,5 +1,5 @@
 
-const URI = "http://uxstories.herokuapp.com";
+const URI = "https://uxstories.herokuapp.com/";
 
 export {
     URI
