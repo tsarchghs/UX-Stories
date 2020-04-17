@@ -88,3 +88,104 @@
 .memory-usage-charts div canvas {
   display: inline;
 }
+
+
+.card-layout {
+  display: none;
+  align-items: center;
+  justify-content: center;
+  font-family: sans-serif;
+  width: 100%;
+}
+.card-layout.toggle {
+  display: flex;
+}
+.card {
+  width: 770px;
+  border-radius: 16px;
+  background-color: #fff;
+  padding: 25px;
+}
+.card__header {
+  display: flex;
+  position: relative;
+  align-items: center;
+  justify-content: center;
+  padding: 0px 0 30px 0;
+}
+.card__header .logo {
+  font-size: 35px;
+  color: #484253;
+}
+.card__header .close {
+  position: absolute;
+  right: 25px;
+  cursor: pointer;
+}
+.card__body {
+  padding: 0 100px;
+}
+.card__body .title {
+  font-size: 20px;
+  font-weight: 500;
+  text-align: center;
+  color: #484253;
+  padding: 0 20px;
+  margin-bottom: 20px;
+}
+.card__body .subtitle {
+  opacity: 0.7;
+  font-size: 14px;
+  line-height: 1.43;
+  padding: 0 20px;
+  text-align: center;
+  color: #707487;
+  margin-bottom: 40px;
+}
+.card__body .subs-card {
+  height: 333px;
+  border-radius: 20px;
+  background-color: #c75875;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 25px 70px;
+  color: #fff;
+}
+.card__body .subs-card h4 {
+  font-size: 20px;
+  font-weight: 500;
+  color: #fff;
+}
+.card__body .subs-card h2 {
+  font-size: 42px;
+  font-weight: bold;
+  line-height: 0.81;
+  color: #fff;
+  margin-bottom: 5px;
+}
+.card__body .subs-card .button {
+  margin-top: 25px;
+  background-color: #000;
+  color: #fff;
+  border: none;
+  padding: 10px 35px;
+  border-radius: 7px;
+  font-size: 15px;
+}
+.card__body .subs-card .plan p {
+  margin-bottom: 30px;
+}
+.card__body .stripe {
+  text-align: center;
+  margin-top: 25px;
+}
+.toggle-card {
+  padding: 10px 25px;
+  background-color: #000;
+  color: #fff;
+  font-size: 19px;
+  margin: 20px;
+  display: inline-block;
+  text-decoration: none;
+}
