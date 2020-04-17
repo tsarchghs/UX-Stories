@@ -6,14 +6,14 @@ class Loading extends React.Component {
 			return (
 				<React.Fragment>
 					{this.props.show_logo ? <div><img src="/assets/toolkit/images/logo.svg" alt /><br/></div> : ""}
-					<img style={this.props.style} src="https://loading.io/spinners/rolling/lg.curve-bars-loading-indicator.gif" />
+					<img style={this.props.style} src="/assets/gifs/loading.gif" />
 				</React.Fragment>
 			)
 		}
 		return (
 	        <center>
 				{this.props.show_logo ? <div><img src="/assets/toolkit/images/logo.svg" alt /><br /></div> : ""}
-				<img style={this.props.style} src="https://loading.io/spinners/rolling/lg.curve-bars-loading-indicator.gif" />
+				<img style={this.props.style} src="/assets/gifs/loading.gif" />
 			</center>
 		);
 	}
