@@ -32,7 +32,7 @@ class PickMembershipModal extends React.Component {
       >
           <div className="card">
             <div className="card__header">
-              <div className="logo">Logo</div>
+            <img src="/assets/toolkit/images/logo.svg" />
               <div onClick={this.props.closeModal} className="close">X</div>
             </div>
             <div className="card__body">
