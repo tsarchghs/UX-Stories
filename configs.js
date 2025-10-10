@@ -6,7 +6,7 @@ module.exports = {
 	PRODUCTION: false,
 	auth: {
 		user: "gjergjk71@gmail.com",
-		pass: "gjergji.123"
+		pass: "somepass"
 	},
 	mailgun:{
 		apiKey:'36b77ddc5691055f9e2d350ab165913e-2416cf28-0ca40814',
