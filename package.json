@@ -9,7 +9,7 @@
     "dev": "nodemon app"
   },
   "engines": {
-    "node": "10.15.1"
+    "node": "24.x"
   },
   "keywords": [],
   "author": "",
