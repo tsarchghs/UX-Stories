@@ -33,12 +33,12 @@ const processUpload = async (upload, mimetype, context, save_encoding = false) =
 	}
 
 	S3.putObject(s3_data, console.log)
-	console.log(`http://uxstories.s3.amazonaws.com/${filename}`);
+	console.log(`http://gkrp-porfolio-bucket.s3.amazonaws.com/${filename}`);
 	let fileData = {
 		filename: filename,
 		mimetype: mimetype,
 		encoding: "",
-		url: `http://uxstories.s3.amazonaws.com/${filename}`
+		url: `http://gkrp-porfolio-bucket.s3.amazonaws.com/${filename}`
 	}
 	let file = context.db.mutation.createFile({
 		data: fileData

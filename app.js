@@ -11,6 +11,7 @@ const prismaDb = require("./prismaDb");
 const cors = require("cors");
 const Sentry = require("./sentryClient");
 const middlewares = require("./middlewares/index")
+var https = require('https');
 // soft algolia sync script
 // require("./algolia/init")();
 
@@ -75,10 +76,24 @@ if (process.env.PRODUCTION){
 server.express.use(bodyParser.urlencoded({limit:"1000mb",extended:true}))
 server.express.use(bodyParser.json({limit:"1000mb"}))
 
-const options = {
-	formatError
-};
-
 server.express.use(Sentry.Handlers.errorHandler());
 
-server.start(options,() => console.log("Running on port 4000"));
+var privateKey  = fs.readFileSync('sslcert/server.key', 'utf8');
+var certificate = fs.readFileSync('sslcert/server.crt', 'utf8');
+
+
+const options = {
+  port: 4000,
+  host: "0.0.0.0",
+  formatError,
+	  https: {
+    key: privateKey,
+    cert: certificate
+  }
+
+};
+
+server.start(options, () => {
+  console.log("Running on port 4000");
+});
+

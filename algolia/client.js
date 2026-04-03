@@ -2,7 +2,7 @@ const algoliasearch = require("algoliasearch");
 const configs = require("../configs");
 
 const client = algoliasearch(
-    'VEF3IFWRPG',
+    'NTZEWWQ1TV',
     configs.algolia_key
 );
 

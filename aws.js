@@ -8,7 +8,7 @@ aws.config.update({
 })
 
 const S3 = new aws.S3({
-    params: { Bucket: "uxstories" }
+    params: { Bucket: "gkrp-porfolio-bucket" }
 });
 
 module.exports = {

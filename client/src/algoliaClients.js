@@ -3,8 +3,8 @@ import algoliasearchHelper from "algoliasearch-helper";
 
 
 const searchClient = algoliasearch(
-    "VEF3IFWRPG",
-    "49819d66e76fc2b6ffb830f6ebd46717"
+    "NTZEWWQ1TV",
+    "12cc23032aa7443964459acf480c66bb"
 );
 
 const appsIndexHelper = algoliasearchHelper(searchClient,"apps_index",{

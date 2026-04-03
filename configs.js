@@ -12,10 +12,10 @@ module.exports = {
 		apiKey:'36b77ddc5691055f9e2d350ab165913e-2416cf28-0ca40814',
 		DOMAIN:'sandbox7c10cba56e9a4f0f9b23c09194475167.mailgun.org'
 	},
-	algolia_key: "d861c249b744152a7acbd71bc4d4ef15",
-	s3: {
-		bucketName: "uxstories",
-		accessKeyId: "AKIAU7ZLBUXTEV6MN7W7",
-		secretAccessKey: "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"
+	algolia_key: "12cc23032aa7443964459acf480c66bb",
+        s3: {
+                bucketName: "gkrp-porfolio-bucket",
+                accessKeyId: "AKIASNCBWGELY5S2FZR7",
+		secretAccessKey: "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"
 	}
 }
