@@ -1,0 +1,162 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+enum Platform {
+  IOS
+  ANDROID
+}
+
+enum AccountType {
+  MEMBER
+  ADMIN
+}
+
+model File {
+  id             String  @id @default(cuid())
+  filename       String
+  mimetype       String
+  encoding       String
+  url            String  @unique
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+  profile_photos User[]  @relation("UserProfilePhoto")
+  logos          App[]   @relation("AppLogo")
+  thumbnails     Story[] @relation("StoryThumbnail")
+  videos         Video[] @relation("VideoFile")
+}
+
+model Video {
+  id        String   @id @default(cuid())
+  file      File     @relation("VideoFile", fields: [fileId], references: [id])
+  fileId    String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  stories   Story[]
+}
+
+model Job {
+  id        String   @id @default(cuid())
+  name      String   @unique
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  users     User[]
+}
+
+model PageView {
+  id        String   @id @default(cuid())
+  user      User?    @relation(fields: [userId], references: [id])
+  userId    String?
+  pathname  String
+  agent     String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model User {
+  id                   String      @id @default(cuid())
+  email                String      @unique
+  password             String
+  full_name            String
+  job                  Job?        @relation(fields: [jobId], references: [id])
+  jobId                String?
+  role                 AccountType
+  profile_photo        File?       @relation("UserProfilePhoto", fields: [profile_photoId], references: [id])
+  profile_photoId      String?
+  customer_id          String?
+  subscription_id      String?
+  apps                 App[]       @relation("AppCreatedBy")
+  libraries            Library[]   @relation("LibraryCreatedBy")
+  stories              Story[]     @relation("StoryCreatedBy")
+  createdAt            DateTime    @default(now())
+  updatedAt            DateTime    @updatedAt
+  google_accessToken   String?     @db.Text
+  facebook_accessToken String?     @db.Text
+  oauth_id             String?
+  pageViews            PageView[]
+}
+
+model AppVersion {
+  id        String  @id @default(cuid())
+  name      String  @unique
+  stories   Story[] @relation("StoryAppVersions")
+  apps      App[]   @relation("AppAppVersions")
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model AppCategory {
+  id        String   @id @default(cuid())
+  name      String   @unique
+  apps      App[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model StoryCategory {
+  id        String   @id @default(cuid())
+  name      String   @unique
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  stories   Story[]  @relation("StoryStoryCategories")
+}
+
+model StoryElement {
+  id        String   @id @default(cuid())
+  name      String   @unique
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  stories   Story[]  @relation("StoryStoryElements")
+}
+
+model App {
+  id            String       @id @default(cuid())
+  createdBy     User         @relation("AppCreatedBy", fields: [createdById], references: [id])
+  createdById   String
+  appCategory   AppCategory  @relation(fields: [appCategoryId], references: [id])
+  appCategoryId String
+  appVersions   AppVersion[] @relation("AppAppVersions")
+  stories       Story[]
+  name          String
+  description   String?
+  company       String
+  logo          File         @relation("AppLogo", fields: [logoId], references: [id])
+  logoId        String
+  platform      Platform
+  createdAt     DateTime     @default(now())
+  updatedAt     DateTime     @updatedAt
+}
+
+model Story {
+  id              String          @id @default(cuid())
+  createdBy       User            @relation("StoryCreatedBy", fields: [createdById], references: [id])
+  createdById     String
+  app             App             @relation(fields: [appId], references: [id])
+  appId           String
+  appVersions     AppVersion[]    @relation("StoryAppVersions")
+  storyCategories StoryCategory[] @relation("StoryStoryCategories")
+  storyElements   StoryElement[]  @relation("StoryStoryElements")
+  libraries       Library[]       @relation("StoryLibraries")
+  video           Video           @relation(fields: [videoId], references: [id])
+  videoId         String
+  thumbnail       File            @relation("StoryThumbnail", fields: [thumbnailId], references: [id])
+  thumbnailId     String
+  createdAt       DateTime        @default(now())
+  updatedAt       DateTime        @updatedAt
+}
+
+model Library {
+  id               String   @id @default(cuid())
+  createdBy        User     @relation("LibraryCreatedBy", fields: [createdById], references: [id])
+  createdById      String
+  stories          Story[]  @relation("StoryLibraries")
+  name             String
+  custom_updatedAt DateTime
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+}

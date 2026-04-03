@@ -1,6 +1,13 @@
 const os = require("os");
-const memwatch = require('node-memwatch');
 const { getSystemCpuUsage } = require("./cpuUsage");
+
+let memwatch;
+try {
+    memwatch = require("node-memwatch");
+} catch (error) {
+    memwatch = null;
+    console.warn("node-memwatch is unavailable; memwatch subscriptions are disabled.");
+}
 
 const CHANNEL_GET_SYSTEM_CPU_USAGE = "CHANNEL_GET_SYSTEM_CPU_USAGE" 
 const GET_MEMWATCH_LEAK = "GET_MEMWATCH_LEAK";
@@ -10,6 +17,9 @@ const GET_MEMORY_USAGE = "GET_MEMORY_USAGE";
 module.exports = {
     getMemwatchStats: {
         subscribe: (parent, args, { pubsub }) => {
+            if (!memwatch) {
+                return pubsub.asyncIterator(GET_MEMWATCH_STATS);
+            }
             memwatch.on('stats', stats => {
                 console.log(stats)
                 pubsub.publish(GET_MEMWATCH_STATS, { getMemwatchStats: stats })
@@ -19,6 +29,9 @@ module.exports = {
     },
     getMemwatchLeak: {
         subscribe: (parent, args, { pubsub }) => {
+            if (!memwatch) {
+                return pubsub.asyncIterator(GET_MEMWATCH_LEAK);
+            }
             memwatch.on('leak', info => {
                 console.log(info)
                 pubsub.publish(GET_MEMWATCH_LEAK, { getMemwatchLeak: info })

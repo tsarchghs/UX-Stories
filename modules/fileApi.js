@@ -40,10 +40,9 @@ const processUpload = async (upload, mimetype, context, save_encoding = false) =
 		encoding: "",
 		url: `http://gkrp-porfolio-bucket.s3.amazonaws.com/${filename}`
 	}
-	let file = context.db.mutation.createFile({
+	return context.db.file.create({
 		data: fileData
-	})
-	return file;
+	});
 }
 
 module.exports = {

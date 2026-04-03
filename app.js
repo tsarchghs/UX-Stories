@@ -40,7 +40,7 @@ const server = new GraphQLServer({
 				return decoded
 			});
 			if (decoded){
-				user = await prismaDb.query.user({where:{id:decoded.userId}})
+				user = await prismaDb.user.findUnique({ where: { id: decoded.userId } })
 				loggedIn = true;
 			}
 		}
