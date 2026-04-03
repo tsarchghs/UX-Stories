@@ -13,12 +13,21 @@ import { getGraphqlErrors } from "../helpers";
 import FacebookLogin from 'react-facebook-login';
 import { FACEBOOK_APP_ID, GOOGLE_CLIENT_ID } from "../configs";
 
+const getPrefilledEmail = (location) => {
+  if (location && location.state && location.state.email) {
+    return location.state.email;
+  }
+
+  const searchParams = new URLSearchParams(location?.search || "");
+  return searchParams.get("email") || "";
+};
+
 class _SignUp extends React.Component {
 	constructor(props) {
 		super(props);
 		this.state = {
 			jobs: undefined,
-			email: this.props.location.state && this.props.location.state.email ? this.props.location.state.email : "",
+			email: getPrefilledEmail(this.props.location),
 			password: undefined,
 			job: undefined,
 			full_name: undefined,
@@ -43,8 +52,9 @@ class _SignUp extends React.Component {
 			  	query={JOBS_QUERY}>
 				{ ({loading,error,data:jobsData}) => {
 					if (error) return <p>{error.message}</p>
-					let jobs = jobsData.jobs;
-					let jobsLoading = loading
+					const jobs = jobsData?.jobs || [];
+					const jobsLoading = loading && jobs.length === 0;
+					const selectedJobId = this.state.job || jobs[0]?.id;
 
 					return (
 						<Mutation
@@ -77,11 +87,14 @@ class _SignUp extends React.Component {
 							return (
 								<form className="login" onSubmit={(e) => {
 									e.preventDefault();
+									if (!selectedJobId) {
+										return;
+									}
 									signUp({variables:{
 										full_name: this.state.full_name,
 										email: this.state.email,
 										password: this.state.password,
-										job: this.state.job || jobsData.jobs[0].id
+										job: selectedJobId
 									}})
 								}}>
 							        <div className="login__container">
@@ -101,7 +114,8 @@ class _SignUp extends React.Component {
 												}
 														
 											{
-												jobsLoading ? <Loading /> :                  
+												jobsLoading ? <Loading /> :
+												!jobs.length ? <Alert red={true} message="No jobs available right now. Please try again later." /> :
 														<div className="input__wo-border">
 																<input 
 																	onChange={e => this.onChange(e, "full_name")}
@@ -120,7 +134,7 @@ class _SignUp extends React.Component {
 																<div className="select__div fmt wo-border">
 																<select 
 																	onChange={e => this.onChange(e, "job")}
-																	value={this.state.job}
+																	value={selectedJobId || ""}
 																>
 																	{
 																		jobs.map(job => <option id={job.name} value={job.id}>{job.name}</option>)

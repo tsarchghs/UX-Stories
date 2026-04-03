@@ -32,7 +32,6 @@ class _SingleApp extends React.Component {
       for (let type in this.state.filterBy){ // Sync up algolia index helper with state filterBy
         let dict = this.state.filterBy[type];
         for (let key in dict){
-          console.log(type,key)
           if (type === "appCategory"){
             storiesIndexHelper_singleApp.toggleFacetRefinement(`app.appCategory.name`, key);   
           } else {
@@ -40,8 +39,6 @@ class _SingleApp extends React.Component {
           }
         }
       }
-
-      console.log(this.state)
     } else {
       this.state = {
         app: undefined,
@@ -77,7 +74,6 @@ class _SingleApp extends React.Component {
     this.onScroll = this.onScroll.bind(this)
   } 
   onScroll() {
-    console.log(414)
     this.setState({
       scrollPos: {
         scrollX: window.scrollX,
@@ -127,14 +123,18 @@ class _SingleApp extends React.Component {
 
     storiesIndexHelper_singleApp.search();
     onAlgoliaError(storiesIndexHelper_singleApp, this.setState, { show_loading: false })
+    if (typeof storiesIndexHelper_singleApp.removeAllListeners === "function") {
+      storiesIndexHelper_singleApp.removeAllListeners("result");
+    }
     storiesIndexHelper_singleApp.on("result", data => {
-      let stories = data.hits;
+      let stories = data?.hits || [];
       this.setState(prevState => {
+        const currentStories = Array.isArray(prevState.stories) ? prevState.stories : [];
         let state = prevState;
         state.reached_end = stories.length < storiesIndexHelper_singleApp.state.hitsPerPage
         if (pagination) {
-          let new_stories = stories.slice(state.stories.length, 999)
-          state.stories = state.stories.concat(new_stories);
+          let new_stories = stories.slice(currentStories.length, 999)
+          state.stories = currentStories.concat(new_stories);
         } else {
           state.stories = stories
         }
@@ -190,11 +190,9 @@ class _SingleApp extends React.Component {
     },this.updateResults);
   }
   componentWillMount(){
-    console.log(5555555)
   }
   unFilter(type, obj) {
     gaEvents.unFilter("SingleApp",type,obj)
-    console.log(type,obj)
     if (this.state.stories) {
       this.setState({
         stories: undefined,
@@ -209,7 +207,6 @@ class _SingleApp extends React.Component {
       } else {
         let facets = storiesIndexHelper_singleApp.state.facetsRefinements[`${type}.name`];
         let obj_name = obj
-        console.log(storiesIndexHelper_singleApp.state.facetsRefinements,obj_name)
         storiesIndexHelper_singleApp.state.facetsRefinements[`${type}.name`] = facets.filter(x => x !== obj_name);
         state.filterBy[type][obj] = false;
       }

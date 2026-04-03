@@ -1,0 +1,8 @@
+{
+  "generatedAt": "2026-04-03T15:03:41.438Z",
+  "source": "current Prisma database reconstructed from the old export",
+  "indexes": {
+    "apps_index": 8,
+    "stories_index": 61
+  }
+}

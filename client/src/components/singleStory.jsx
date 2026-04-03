@@ -24,7 +24,6 @@ import gaEvents from "../gaEvents";
 class SingleStory extends React.Component {
 	constructor(props) {
 		super(props);
-		console.log(this.props.location)
 		this.state = {
 			app: props.app ? props.app : undefined,
 			storyCategories: undefined,
@@ -64,8 +63,10 @@ class SingleStory extends React.Component {
 	}
 	async componentDidMount() {
 		storiesIndexHelper_singleStory.search()
+		if (typeof storiesIndexHelper_singleStory.removeAllListeners === "function") {
+			storiesIndexHelper_singleStory.removeAllListeners("result");
+		}
 		storiesIndexHelper_singleStory.on("result", data => {
-			console.log(storiesIndexHelper_singleStory,data)
 			let story = data.hits[0];
 			if (!story){
 				this.setState({
@@ -81,8 +82,6 @@ class SingleStory extends React.Component {
 				},() => {
 					if (!this.props.location.state || !this.props.location.state.stories){
 						this.setDefaultStories()
-					} else {
-						console.log(this.props.location.state,123512)
 					}
 				})
 			}
@@ -94,14 +93,11 @@ class SingleStory extends React.Component {
 		})
 	}
 	goToStoryMinus(minus){
-		console.log(this.state)
 		if (this.state.stories && this.state.index !== undefined){
-			console.log(this.props.location.state)
 			let stories = this.state.stories;
 			let i = this.state.index - (minus);
 			let type = minus === 1 ? "PreviousClick" : "NextClick"
 			gaEvents.SingleStory.goToStoryMinus(type,i,this.state.stories.length)
-			console.log(i,9999)
 			let state = this.props.location.state || {};
 			state["stories"] = this.state.stories;
 			state["index"] = i;
@@ -112,13 +108,15 @@ class SingleStory extends React.Component {
 		}
 	}
 	setDefaultStories(){
-		console.log(55)
 		appsIndexHelper_singleApp.clearRefinements();
 		appsIndexHelper_singleApp.state.facetsRefinements["id"] = [this.state.app.id]
 		appsIndexHelper_singleApp.search()
+		if (typeof appsIndexHelper_singleApp.removeAllListeners === "function") {
+			appsIndexHelper_singleApp.removeAllListeners("result");
+		}
 		appsIndexHelper_singleApp.on("result", data => {
 			let index;
-			let stories = data.hits[0].stories;
+			let stories = data?.hits?.[0]?.stories || [];
 			for (var x in stories) {
 				let story = stories[x];
 				if (story.id === this.story_id) {
@@ -133,7 +131,6 @@ class SingleStory extends React.Component {
 				show_next: index != stories.length - 1,
 				index
 			})
-			console.log(stories,index)
 		})
 	}
 	render() {

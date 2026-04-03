@@ -1,4 +1,5 @@
 import React from "react";
+import "subscriptions-transport-ws";
 import {
   useApolloClient,
   useMutation,

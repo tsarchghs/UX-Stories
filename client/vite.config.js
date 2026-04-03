@@ -8,6 +8,9 @@ export default defineConfig({
     outDir: "build",
     emptyOutDir: true
   },
+  optimizeDeps: {
+    include: ["graphql", "graphql-tag", "subscriptions-transport-ws"]
+  },
   resolve: {
     alias: {
       "react-apollo": path.resolve(__dirname, "src/lib/reactApolloCompat.jsx"),

@@ -22,12 +22,10 @@ class _Home extends React.Component {
     }
     if (this.props.location && this.props.location.state && this.props.location.state.filterBy) {
       filterBy = this.props.location.state.filterBy
-      console.log(filterBy)
       if (filterBy.appCategory && filterBy.appCategory !== "all"){
         appsIndexHelper.toggleFacetRefinement("appCategory.name",filterBy.appCategory);
       }
       this.state = this.props.location.state.savedState
-      console.log(this.state,911)
     } else {
       this.state = {
         appCategories:undefined,
@@ -87,32 +85,29 @@ class _Home extends React.Component {
     // lesson learned. use refs next time
     appsIndexHelper.setQuery(this.state.appName_contains).search();
     onAlgoliaError(appsIndexHelper,this.setState, { show_skeleton: false })
+    if (typeof appsIndexHelper.removeAllListeners === "function") {
+      appsIndexHelper.removeAllListeners("result");
+    }
     appsIndexHelper.on("result",data => {
-      let apps = data._rawResults[0].hits;
-      for (var x in apps){
-        let app = apps[x];
-        app.stories = app.stories.slice(0,3)
-      }
+      const apps = (data?._rawResults?.[0]?.hits || []).map((app) => ({
+        ...app,
+        appCategory: app.appCategory || {},
+        logo: app.logo || {},
+        stories: Array.isArray(app.stories) ? app.stories.slice(0, 3) : []
+      }));
 
-      this.setState(prevState => {
-        let state = prevState;
-        if (!state.apps){
-          state.apps = []  
-        }
-        state.apps = apps
-        state.reached_end = data.nbPages < 2 
-        state.show_skeleton = false
-        state.nothing_to_show = apps.length === 0
-        return prevState
+      this.setState({
+        apps,
+        reached_end: (data?.nbPages || 0) < 2,
+        show_skeleton: false,
+        nothing_to_show: apps.length === 0
       })
     })
-    console.log(appsIndexHelper)
   }
   toggle(value) {
     this.setState(prevState => {
       let last_value = prevState["currentDropdown"];
       prevState["currentDropdown"] = last_value === value ? undefined : value
-      console.log(last_value,55,value)  
       return prevState;
     })
   }
@@ -167,7 +162,15 @@ class _Home extends React.Component {
                    style={{display: "inline"}}
                    onSubmit={e => {
                      e.preventDefault()
-                     this.setState({currentModal: "PickMembershipModal"})
+                     const email = (this.state.email || "").trim()
+                     this.props.history.push({
+                      pathname: "/register",
+                      search: `?email=${encodeURIComponent(email)}`,
+                      state: {
+                        email,
+                        from: "/"
+                      }
+                     })
                   }}>
                     <input
                         onChange={e => {
@@ -273,7 +276,7 @@ class _Home extends React.Component {
                       <div className="apps__main-category">
                         <div>
                           <p className="apps__small-title light-gray">Category</p>
-                          <p>{app.appCategory.name}</p>
+                          <p>{app.appCategory?.name}</p>
                         </div>
                       <Link to={to}>
                         <button className="button naked pink">View Stories</button>
@@ -281,11 +284,11 @@ class _Home extends React.Component {
                       </div>
                       <div className="apps__main-images">
                       {
-                        app.stories.length ? ""
+                        app.stories?.length ? ""
                         : <center>No stories to show</center>
                       }
                       {
-                        app.stories.map(story => {
+                        (app.stories || []).map(story => {
                           return (
                             <Link to={to}>
                               <div className="app__images">

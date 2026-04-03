@@ -80,8 +80,8 @@ class _Stories extends React.Component {
   }
   hasActiveFitlers(){
     return (this.state.filterBy.appCategory && !(this.state.filterBy.appCategory === "all")) || 
-          (this.state.filterBy.storyCategories && this.state.filterBy.storyCategories.length) ||
-          (this.state.filterBy.storyElements && this.state.filterBy.storyElements.length)
+          getActiveFilters(this.state, "storyCategories").length ||
+          getActiveFilters(this.state, "storyElements").length
   }
   async componentDidMount() {
     this.search("",true);
@@ -101,15 +101,18 @@ class _Stories extends React.Component {
     
     storiesIndexHelper.setQuery(storyName_contains).search();
     onAlgoliaError(storiesIndexHelper, this.setState, { pagination_skeleton: false })
+    if (typeof storiesIndexHelper.removeAllListeners === "function") {
+      storiesIndexHelper.removeAllListeners("result");
+    }
     storiesIndexHelper.on("result",data => {
-      var results = { data: { stories: data.hits }}
-      let stories = results.data.stories;
+      let stories = data?.hits || [];
       this.setState(prevState => {
+        const currentStories = Array.isArray(prevState.stories) ? prevState.stories : [];
         let state = prevState;
         state.reached_end = stories.length < storiesIndexHelper.state.hitsPerPage
         if (pagination){
-          let new_stories = stories.slice(state.stories.length, 999)
-          state.stories = state.stories.concat(new_stories);
+          let new_stories = stories.slice(currentStories.length, 999)
+          state.stories = currentStories.concat(new_stories);
         } else {
           state.stories = stories
         }

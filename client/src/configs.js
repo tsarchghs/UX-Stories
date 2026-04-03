@@ -1,4 +1,4 @@
-const DEFAULT_API_URI = "https://54.209.236.62:4000/";
+const DEFAULT_API_URI = "http://localhost:4000/";
 const DEFAULT_GOOGLE_CLIENT_ID =
   "1039054242322-stv546o8fp15utap8tv7630rr4h8p9cl.apps.googleusercontent.com";
 const DEFAULT_FACEBOOK_APP_ID = "2450303615182439";

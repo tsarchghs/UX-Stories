@@ -8,15 +8,18 @@ import {
 
 export * from "react-router-dom";
 
-const navigateWithState = (navigate, to, replace = false) => {
+const getNavigationTarget = (to) => {
   if (typeof to === "string") {
-    navigate(to, { replace });
-    return;
+    return to;
   }
 
-  navigate(to.pathname || "", {
+  return `${to.pathname || ""}${to.search || ""}${to.hash || ""}`;
+};
+
+const navigateWithState = (navigate, to, replace = false) => {
+  navigate(getNavigationTarget(to), {
     replace,
-    state: to.state
+    state: typeof to === "string" ? undefined : to.state
   });
 };
 

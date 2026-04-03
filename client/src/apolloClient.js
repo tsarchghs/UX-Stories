@@ -1,3 +1,4 @@
+import { SubscriptionClient } from "subscriptions-transport-ws";
 import {
   ApolloClient,
   ApolloLink,
@@ -10,7 +11,6 @@ import { WebSocketLink } from "@apollo/client/link/ws";
 import { getMainDefinition } from "@apollo/client/utilities";
 import Cookies from "js-cookie";
 import { toast } from "react-toastify";
-import { SubscriptionClient } from "subscriptions-transport-ws";
 
 import { URI, WS_URI } from "./configs";
 

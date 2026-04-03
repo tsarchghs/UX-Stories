@@ -2,9 +2,8 @@ import gql from "graphql-tag";
 import { toast } from 'react-toastify';
 
 const if_user_call_func = (user,func,setState) => {
-  console.log(user);  
   if (user && user._subscription && user._subscription.status) func()
-  else setState({ currentModal:"PickMembershipModal"})
+  else if (setState) setState({ currentModal:"PickMembershipModal"})
 }
 
 const getStories = async (client) => {
@@ -110,10 +109,13 @@ const getQueryParams = function (url) {
   var parser = document.createElement('a');
   parser.href = url;
   var query = parser.search.substring(1);
+  if (!query) return params;
   var vars = query.split('&');
   for (var i = 0; i < vars.length; i++) {
     var pair = vars[i].split('=');
-    params[pair[0]] = decodeURIComponent(pair[1]);
+    if (pair[0]) {
+      params[pair[0]] = pair[1] ? decodeURIComponent(pair[1]) : "";
+    }
   }
   return params;
 };
@@ -155,7 +157,9 @@ const getGraphqlErrors = (error) => {
 }
 
 const onAlgoliaError = (indexHelpers,setState,obj) => {
-  console.log(indexHelpers,setState)
+  if (typeof indexHelpers.removeAllListeners === "function") {
+    indexHelpers.removeAllListeners("error");
+  }
   indexHelpers.on("error", e => {
     setState(obj)
     toast.error("Something unexcpected happened, please check your internet connection.",{

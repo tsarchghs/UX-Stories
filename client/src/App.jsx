@@ -57,7 +57,7 @@ const sendPageView = () => {
       query: GET_LOGGED_IN_USER_QUERY
     });
 
-    if (cache.getLoggedInUser) {
+    if (cache?.getLoggedInUser?.id) {
       userId = cache.getLoggedInUser.id;
     }
   } catch (error) {
@@ -82,7 +82,7 @@ const createHistory = (navigate) => ({
       return;
     }
 
-    navigate(to.pathname || "", {
+    navigate(`${to.pathname || ""}${to.search || ""}${to.hash || ""}`, {
       state: to.state
     });
   },
@@ -92,7 +92,7 @@ const createHistory = (navigate) => ({
       return;
     }
 
-    navigate(to.pathname || "", {
+    navigate(`${to.pathname || ""}${to.search || ""}${to.hash || ""}`, {
       replace: true,
       state: to.state
     });
@@ -242,28 +242,30 @@ class _App extends Component {
                 }
 
                 const user = data.getLoggedInUser;
-
-                if (user && !user.logout) {
-                  user.logout = async () => {
-                    Cookies.set("token", "");
-                    this.props.history.push("/");
-                    await client.resetStore();
-                    refetch();
-                  };
-                }
+                const userWithLogout = user
+                  ? {
+                      ...user,
+                      logout: async () => {
+                        Cookies.set("token", "");
+                        this.props.history.push("/");
+                        await client.resetStore();
+                        refetch();
+                      }
+                    }
+                  : user;
 
                 return (
                   <div>
                     <RouteChangeTracker onChange={this.handleRouteChange} />
                     <InitialSelectJobModal
                       closeModal={() => null}
-                      modalIsOpen={Boolean(user && !user.job)}
-                      user={user}
+                      modalIsOpen={Boolean(userWithLogout && !userWithLogout.job)}
+                      user={userWithLogout}
                     />
                     <Routes>
-                      <Route element={<Home refetchApp={refetch} user={user} />} path="/" />
+                      <Route element={<Home refetchApp={refetch} user={userWithLogout} />} path="/" />
                       <Route
-                        element={<Stories client={client} user={user} />}
+                        element={<Stories client={client} user={userWithLogout} />}
                         path="/stories"
                       />
                       <Route
@@ -282,7 +284,7 @@ class _App extends Component {
                           !user ? (
                             <Redirect to="/register" />
                           ) : (
-                            <StripePage component={Payment} user={user} />
+                            <StripePage component={Payment} user={userWithLogout} />
                           )
                         }
                         path="/payment"
@@ -292,7 +294,7 @@ class _App extends Component {
                           !user ? (
                             <Redirect to="/login?success=invoices" />
                           ) : (
-                            <StripePage component={Invoices} user={user} />
+                            <StripePage component={Invoices} user={userWithLogout} />
                           )
                         }
                         path="/invoices"
@@ -315,11 +317,11 @@ class _App extends Component {
                         path="/forget_password"
                       />
                       <Route
-                        element={<RouteElement component={ResetPassword} user={user} />}
+                        element={<RouteElement component={ResetPassword} user={userWithLogout} />}
                         path="/reset/:token"
                       />
                       <Route
-                        element={<RouteElement component={SingleStory} user={user} />}
+                        element={<RouteElement component={SingleStory} user={userWithLogout} />}
                         path="/story/:id"
                       />
                       <Route
@@ -332,7 +334,7 @@ class _App extends Component {
                                   this.props.history.push(to);
                                 }
                               }}
-                              user={user}
+                              user={userWithLogout}
                             />
                           ) : (
                             <Redirect to="/login?success=profile" />
@@ -343,7 +345,7 @@ class _App extends Component {
                       <Route
                         element={
                           user ? (
-                            <RouteElement component={Library} user={user} />
+                            <RouteElement component={Library} user={userWithLogout} />
                           ) : (
                             <RouteElement
                               component={({ match }) => (
@@ -355,11 +357,11 @@ class _App extends Component {
                         path="/library/:id"
                       />
                       <Route
-                        element={<RouteElement component={SingleApp} user={user} />}
+                        element={<RouteElement component={SingleApp} user={userWithLogout} />}
                         path="/app/:id"
                       />
                       <Route
-                        element={<AdminRoutes user={user} />}
+                        element={<AdminRoutes user={userWithLogout} />}
                         path="/admin/*"
                       />
                       <Route element={<E404 />} path="*" />
