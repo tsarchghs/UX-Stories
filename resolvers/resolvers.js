@@ -13,6 +13,7 @@ const generalResolvers = require("./general");
 const algoliaResolvers = require("./algolia");
 const paymentResolvers = require("./payment");
 const pageViewResolvers = require("./models/PageView");
+const videoResolvers = require("./models/Video");
 const monitorResolvers = require("./monitor/");
 
 module.exports = {
@@ -96,7 +97,11 @@ module.exports = {
 		uploadFile: fileResolvers.uploadFile
 	},
 	App: {
-		stories: appResolvers.stories
+		...appResolvers.App
 	},
-	User: userResolvers.User
+	Story: storyResolvers.Story,
+	Library: libraryResolvers.Library,
+	User: userResolvers.User,
+	Video: videoResolvers.Video,
+	PageView: pageViewResolvers.PageView
 }

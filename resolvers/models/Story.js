@@ -1,252 +1,298 @@
 const fileHandling = require("../../modules/fileApi");
 const permissions = require("../permissions");
+const { legacyOrderBy } = require("../../prismaHelpers");
 
-const countStories = async (root,args,context) => {
-	let data = await context.db.query.storiesConnection({},`
-			{
-				aggregate { count }
-			}
-		`)
-	return data.aggregate.count;
-} 
+const countStories = async (root, args, context) => {
+	return context.db.story.count();
+};
 
-const story = async (root,args,context,info) => {
-	return await context.db.query.story({where:{id:args.id}},info);
-}
+const story = async (root, args, context) => {
+	return context.db.story.findUnique({
+		where: { id: args.id }
+	});
+};
 
-const stories = async (root,args,context,info) => {
-	const filterBy = {where:{AND:[]}};
-	if (args.storiesFilterInput){
-		if (args.storiesFilterInput.app){
-			filterBy["where"]["app"] = {
-				id: args.storiesFilterInput.app
-			}
+const stories = async (root, args, context) => {
+	const where = { AND: [] };
+	if (args.storiesFilterInput) {
+		if (args.storiesFilterInput.app) {
+			where.appId = args.storiesFilterInput.app;
 		}
-		if (args.storiesFilterInput.inLibrary){
-			filterBy["where"]["libraries_some"] = {
-				id: args.storiesFilterInput.inLibrary
-			}
+		if (args.storiesFilterInput.inLibrary) {
+			where.libraries = {
+				some: { id: args.storiesFilterInput.inLibrary }
+			};
 		}
-		if (args.storiesFilterInput.storyName_contains){
-			filterBy["where"]["AND"] = [{
-				storyCategories_some:{
-					name_contains: args.storiesFilterInput.storyName_contains
-				}
-			}]
-		}
-		if (args.storiesFilterInput.appCategory){
-			if (!(args.storiesFilterInput.appCategory === "all")){
-				filterBy["where"]["app"] = {
-					"appCategory": {
-						id: args.storiesFilterInput.appCategory
+		if (args.storiesFilterInput.storyName_contains) {
+			where.AND = [{
+				storyCategories: {
+					some: {
+						name: { contains: args.storiesFilterInput.storyName_contains }
 					}
 				}
-			}
+			}];
 		}
-		if (args.storiesFilterInput.storyCategories && args.storiesFilterInput.storyCategories.length){
-			filterBy["where"]["AND"] = filterBy["where"]["AND"].concat(
+		if (args.storiesFilterInput.appCategory && args.storiesFilterInput.appCategory !== "all") {
+			where.app = {
+				is: {
+					appCategoryId: args.storiesFilterInput.appCategory
+				}
+			};
+		}
+		if (args.storiesFilterInput.storyCategories && args.storiesFilterInput.storyCategories.length) {
+			where.AND = where.AND.concat(
 				args.storiesFilterInput.storyCategories.map(storyCategory => ({
-					storyCategories_some: {
-						id: storyCategory
+					storyCategories: {
+						some: { id: storyCategory }
 					}
 				}))
-			)
+			);
 		}
-		if (args.storiesFilterInput.storyElements && args.storiesFilterInput.storyElements.length){
-			filterBy["where"]["AND"] = filterBy["where"]["AND"].concat(
-				args.storiesFilterInput.storyElements.map(storyElement => (
-					{
-						"storyElements_some": {
-							id: storyElement
-						}
+		if (args.storiesFilterInput.storyElements && args.storiesFilterInput.storyElements.length) {
+			where.AND = where.AND.concat(
+				args.storiesFilterInput.storyElements.map(storyElement => ({
+					storyElements: {
+						some: { id: storyElement }
 					}
-				)))
+				}))
+			);
 		}
-		if (args.storiesFilterInput.appVersions && args.storiesFilterInput.appVersions.length){
-			filterBy["where"]["AND"] = filterBy["where"]["AND"].concat(
-				args.storiesFilterInput.appVersions.map(appVersion => (
-					{
-						"appVersions_some": {
-							id: appVersion
-						}
+		if (args.storiesFilterInput.appVersions && args.storiesFilterInput.appVersions.length) {
+			where.AND = where.AND.concat(
+				args.storiesFilterInput.appVersions.map(appVersion => ({
+					appVersions: {
+						some: { id: appVersion }
 					}
-				)))
+				}))
+			);
 		}
-		if (args.storiesFilterInput.first){
-			filterBy["first"] = args.storiesFilterInput.first
-		}
-		if (args.storiesFilterInput.skip){
-			filterBy["skip"] = args.storiesFilterInput.skip
-		}
-		if (args.storiesFilterInput.orderBy) filterBy["orderBy"] = args.storiesFilterInput.orderBy 
 	}
-	const storiesL = context.db.query.stories(filterBy,info);
-	return storiesL;
-}
 
-const createStory = async (root,args,context,info) => {
-	permissions.loginPermission(context,"ADMIN")
-	if (
-		!args.app || 
-		!args.video ||
-		!args.thumbnail || 
-		!args.appVersions ||
-		!args.storyCategories ||
-		!args.storyElements
-	){
+	const prismaArgs = {
+		where
+	};
+	if (args.storiesFilterInput && args.storiesFilterInput.first) {
+		prismaArgs.take = args.storiesFilterInput.first;
+	}
+	if (args.storiesFilterInput && args.storiesFilterInput.skip) {
+		prismaArgs.skip = args.storiesFilterInput.skip;
+	}
+	if (args.storiesFilterInput && args.storiesFilterInput.orderBy) {
+		prismaArgs.orderBy = legacyOrderBy(args.storiesFilterInput.orderBy);
+	}
+	return context.db.story.findMany(prismaArgs);
+};
+
+const createStory = async (root, args, context) => {
+	permissions.loginPermission(context, "ADMIN");
+	if (!args.app || !args.video || !args.thumbnail || !args.appVersions ||
+		!args.storyCategories || !args.storyElements) {
 		throw new Error("Please make sure that all of your arguments are non empty!");
 	}
-	const createBy = context.user
-	const videoFile = await fileHandling.processUpload(args.video.base64,
-													args.video.mimetype,
-													context);
-	const thumbnail = await fileHandling.processUpload(args.thumbnail.base64,
-														args.thumbnail.mimetype,
-														context);
 
-	const connectAppVersions = args.appVersions.map(x => ({id: x}));
-	const connectAppCategories = args.storyCategories.map(x => ({id: x}));
-	const connectStoryElements = args.storyElements.map(x => ({id: x}));
-	const story = await context.db.mutation.createStory({
-		data:{
+	const videoFile = await fileHandling.processUpload(args.video.base64, args.video.mimetype, context);
+	const thumbnail = await fileHandling.processUpload(args.thumbnail.base64, args.thumbnail.mimetype, context);
+
+	return context.db.story.create({
+		data: {
 			createdBy: {
-				connect: {
-					id: createBy.id
-				}
+				connect: { id: context.user.id }
 			},
 			app: {
-				connect: {
-					id: args.app
-				}
+				connect: { id: args.app }
 			},
 			video: {
-				create:{
+				create: {
 					file: {
-						connect:{
-							id: videoFile.id
-						}
+						connect: { id: videoFile.id }
 					}
 				}
 			},
 			thumbnail: {
-				connect: {
-					id: thumbnail.id
-				}
+				connect: { id: thumbnail.id }
 			},
 			appVersions: {
-				connect: [...connectAppVersions,]
+				connect: args.appVersions.map(id => ({ id }))
 			},
 			storyCategories: {
-				connect: [...connectAppCategories]
+				connect: args.storyCategories.map(id => ({ id }))
 			},
 			storyElements: {
-				connect: [...connectStoryElements]
+				connect: args.storyElements.map(id => ({ id }))
 			}
 		}
-	},info)
-	return story
-}
+	});
+};
 
-const editStory = async (root,args,context,info) =>{
-	permissions.loginPermission(context,"ADMIN")
-	if (!args.id){
+const editStory = async (root, args, context) => {
+	permissions.loginPermission(context, "ADMIN");
+	if (!args.id) {
 		throw new Error("id argument is required");
 	}
-	if (args.app || (args.appVersions && args.appVersions.length) ||
+	if (
+		args.app ||
+		(args.appVersions && args.appVersions.length) ||
 		(args.storyCategories && args.storyCategories.length) ||
 		(args.storyElements && args.storyElements.length) ||
 		(args.video && args.video.base64 && args.video.mimetype) ||
-		(args.thumbnail && args.thumbnail.base64 && args.thumbnail.mimetype) 
-	){
-		let data = {}
+		(args.thumbnail && args.thumbnail.base64 && args.thumbnail.mimetype)
+	) {
+		const data = {};
 		if (args.app) {
-			data["app"] = {
-				connect:{id:args.app}
+			data.app = {
+				connect: { id: args.app }
+			};
+		}
+		if (args.storyElements && args.storyElements.length) {
+			const connect = [];
+			const disconnect = [];
+			args.storyElements.forEach(item => {
+				if (item.type === "connect") {
+					connect.push({ id: item.storyElement });
+				}
+				if (item.type === "disconnect") {
+					disconnect.push({ id: item.storyElement });
+				}
+			});
+			data.storyElements = {};
+			if (connect.length) {
+				data.storyElements.connect = connect;
+			}
+			if (disconnect.length) {
+				data.storyElements.disconnect = disconnect;
 			}
 		}
-		if (args.storyElements && args.storyElements.length){
-			let links = {}
-			args.storyElements.map(x => {
-				links[x.type] = {id:x.storyElement}
+		if (args.appVersions && args.appVersions.length) {
+			const connect = [];
+			const disconnect = [];
+			args.appVersions.forEach(item => {
+				if (item.type === "connect") {
+					connect.push({ id: item.appVersion });
+				}
+				if (item.type === "disconnect") {
+					disconnect.push({ id: item.appVersion });
+				}
 			});
-			data["storyElements"] = links
+			data.appVersions = {};
+			if (connect.length) {
+				data.appVersions.connect = connect;
+			}
+			if (disconnect.length) {
+				data.appVersions.disconnect = disconnect;
+			}
 		}
-		if (args.appVersions && args.appVersions.length){
-			let links = {}
-			args.appVersion.map(x => {
-				links[x.type] = {id:x.appVersion}
+		if (args.storyCategories && args.storyCategories.length) {
+			const connect = [];
+			const disconnect = [];
+			args.storyCategories.forEach(item => {
+				if (item.type === "connect") {
+					connect.push({ id: item.storyCategory });
+				}
+				if (item.type === "disconnect") {
+					disconnect.push({ id: item.storyCategory });
+				}
 			});
-
-			data["appVersions"] = links
+			data.storyCategories = {};
+			if (connect.length) {
+				data.storyCategories.connect = connect;
+			}
+			if (disconnect.length) {
+				data.storyCategories.disconnect = disconnect;
+			}
 		}
-		if (args.storyCategories && args.storyCategories.length){
-			let links = {}
-			args.storyCategories.map(x => {
-				links[x.type] = {id:x.storyCategory}
-			});
-			data["storyCategories"] = links
+		if (args.thumbnail && args.thumbnail.base64 && args.thumbnail.mimetype) {
+			const thumbnail = await fileHandling.processUpload(args.thumbnail.base64, args.thumbnail.mimetype, context);
+			data.thumbnail = { connect: { id: thumbnail.id } };
 		}
-		if (args.thumbnail && args.thumbnail.base64 && args.thumbnail.mimetype){
-			const thumbnail = await fileHandling.processUpload(args.thumbnail.base64,
-																args.thumbnail.mimetype,
-																context);
-			data["thumbnail"] = {connect:{id:thumbnail.id}};
-		}
-		if (args.video && args.video.base64 && args.video.mimetype){
-			const videoFile = await fileHandling.processUpload(args.video.base64,
-															args.video.mimetype,
-															context);
-			data["video"] = {
-				create:{
-					file:{
-						connect:{
-							id:videoFile.id}
-						}
+		if (args.video && args.video.base64 && args.video.mimetype) {
+			const videoFile = await fileHandling.processUpload(args.video.base64, args.video.mimetype, context);
+			const video = await context.db.video.create({
+				data: {
+					file: {
+						connect: { id: videoFile.id }
 					}
-				} 
+				}
+			});
+			data.video = { connect: { id: video.id } };
 		}
-		const story = await context.db.mutation.updateStory({
+		return context.db.story.update({
 			data,
-			where:{id:args.id}
-		},info)
-		return story;
-	} else {
-		throw new Error("At least an argument other than id must be specified");
+			where: { id: args.id }
+		});
 	}
-}
+	throw new Error("At least an argument other than id must be specified");
+};
 
-const storyToLibrary = async (root,args,context,info) => {
-	permissions.loginPermission(context,"MEMBER")
+const storyToLibrary = async (root, args, context) => {
+	permissions.loginPermission(context, "MEMBER");
 	if (!args.story || !args.library) {
-		throw new Error("Please check that all of your arguments are not empty!")
+		throw new Error("Please check that all of your arguments are not empty!");
 	}
-	await permissions.storyToLibraryPermission(context,args.library);
-	const library = await context.db.mutation.updateLibrary({
+	await permissions.storyToLibraryPermission(context, args.library);
+	return context.db.library.update({
 		where: { id: args.library },
 		data: {
 			stories: {
-				[args.type]: { id:args.story }
+				[args.type]: { id: args.story }
 			}
 		}
-	},info)
-	return library;
-}
+	});
+};
 
-const storyToApp = async (root,args,context,info) => {
-	permissions.loginPermission(context,"ADMIN")
+const storyToApp = async (root, args, context) => {
+	permissions.loginPermission(context, "ADMIN");
 	if (!args.story || !args.app) {
-		throw new Error("Please check that all of your arguments are not empty!")
+		throw new Error("Please check that all of your arguments are not empty!");
 	}
-	const app = await context.db.mutation.updateApp({
-		where: { id: args.app },
+	return context.db.story.update({
+		where: { id: args.story },
 		data: {
-			stories: {
-				[args.type]: { id:args.story }
+			app: {
+				connect: { id: args.app }
 			}
 		}
-	},info)
-	return app;
-}
+	});
+};
+
+const Story = {
+	app: (parent, args, context) => context.db.app.findUnique({
+		where: { id: parent.appId }
+	}),
+	appVersions: async (parent, args, context) => {
+		const record = await context.db.story.findUnique({
+			where: { id: parent.id },
+			select: { appVersions: true }
+		});
+		return record ? record.appVersions : [];
+	},
+	storyCategories: async (parent, args, context) => {
+		const record = await context.db.story.findUnique({
+			where: { id: parent.id },
+			select: { storyCategories: true }
+		});
+		return record ? record.storyCategories : [];
+	},
+	storyElements: async (parent, args, context) => {
+		const record = await context.db.story.findUnique({
+			where: { id: parent.id },
+			select: { storyElements: true }
+		});
+		return record ? record.storyElements : [];
+	},
+	libraries: async (parent, args, context) => {
+		const record = await context.db.story.findUnique({
+			where: { id: parent.id },
+			select: { libraries: true }
+		});
+		return record ? record.libraries : [];
+	},
+	video: (parent, args, context) => context.db.video.findUnique({
+		where: { id: parent.videoId }
+	}),
+	thumbnail: (parent, args, context) => context.db.file.findUnique({
+		where: { id: parent.thumbnailId }
+	})
+};
 
 module.exports = {
 	countStories,
@@ -255,5 +301,6 @@ module.exports = {
 	storyToLibrary,
 	storyToApp,
 	editStory,
-	story
-}
+	story,
+	Story
+};

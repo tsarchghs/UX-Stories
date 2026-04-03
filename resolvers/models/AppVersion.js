@@ -1,88 +1,85 @@
 const permissions = require("../permissions");
 
-const appVersions = (root,args,context,info) => {
-	let filterBy = {"where":{}}
-	if (args.app){
-		filterBy["where"]["stories_some"] = {
-			app: { id_in : args.app }
-		}
+const appVersions = (root, args, context) => {
+	const where = {};
+	if (args.app) {
+		where.stories = {
+			some: {
+				appId: args.app
+			}
+		};
 	}
-	return context.db.query.appVersions(filterBy,info);
-}
+	return context.db.appVersion.findMany({ where });
+};
 
-const createAppVersion = async (root,args,context,info) => {
-	permissions.loginPermission(context,"ADMIN")
+const createAppVersion = async (root, args, context) => {
+	permissions.loginPermission(context, "ADMIN");
 	if (!args.name) {
-		throw new Error("name argument is empty")
+		throw new Error("name argument is empty");
 	}
-	const appVersion = await context.db.mutation.createAppVersion({
-		data:{
+	return context.db.appVersion.create({
+		data: {
 			name: args.name
 		}
-	},info)
-	return appVersion
-}
+	});
+};
 
-const appVersionToApp = async (root,args,context,info) => {
-	permissions.loginPermission(context,"ADMIN")
+const appVersionToApp = async (root, args, context) => {
+	permissions.loginPermission(context, "ADMIN");
 	if (!args.appVersion || !args.app) {
-		throw new Error("appVersion and/or app argument is empty")
+		throw new Error("appVersion and/or app argument is empty");
 	}
-	const app = await context.db.mutation.updateApp({
-		where: {id:args.app},
+	return context.db.app.update({
+		where: { id: args.app },
 		data: {
 			appVersions: {
 				[args.type]: { id: args.appVersion }
 			}
 		}
-	},info);
-	return app
-}
+	});
+};
 
-const appVersionToStory = async (root,args,context,info) => {
-	permissions.loginPermission(context,"ADMIN")
+const appVersionToStory = async (root, args, context) => {
+	permissions.loginPermission(context, "ADMIN");
 	if (!args.appVersion || !args.story) {
-		throw new Error("appVersion and/or story argument is empty")
+		throw new Error("appVersion and/or story argument is empty");
 	}
-	const story = await context.db.mutation.updateStory({
-		where: {id:args.story},
+	return context.db.story.update({
+		where: { id: args.story },
 		data: {
 			appVersions: {
 				[args.type]: { id: args.appVersion }
 			}
 		}
-	},info)
-	return story
-}
+	});
+};
 
-const editAppVersion = async (root,args,context,info) => {
-	permissions.loginPermission(context,"ADMIN")
+const editAppVersion = async (root, args, context) => {
+	permissions.loginPermission(context, "ADMIN");
 	if (!args.name || !args.id) {
-		throw new Error("version/id argument is empty")
+		throw new Error("version/id argument is empty");
 	}
-	const appVersion = await context.db.mutation.updateAppVersion({
+	return context.db.appVersion.update({
 		where: {
 			id: args.id
 		},
 		data: {
-			name: args.name	
+			name: args.name
 		}
-	},info)
-	return appVersion
-}
+	});
+};
 
-const deleteAppVersion = async (root,args,context,info) => {
-	permissions.loginPermission(context,"ADMIN")
+const deleteAppVersion = async (root, args, context) => {
+	permissions.loginPermission(context, "ADMIN");
 	if (!args.id) {
-		throw new Error("id argument is empty")
+		throw new Error("id argument is empty");
 	}
-	const appVersion = await context.db.mutation.deleteAppVersion({
-		where:{
+	return context.db.appVersion.delete({
+		where: {
 			id: args.id
 		}
-	},info)
-	return appVersion
-}
+	});
+};
 
 module.exports = {
 	appVersions,
@@ -91,4 +88,4 @@ module.exports = {
 	appVersionToStory,
 	editAppVersion,
 	deleteAppVersion
-}
+};

@@ -1,89 +1,85 @@
-import { ApolloClient } from 'apollo-client';
-import { InMemoryCache } from 'apollo-cache-inmemory';
-import { HttpLink } from 'apollo-link-http';
-import { onError } from 'apollo-link-error';
-import { ApolloLink, Observable } from 'apollo-link';
+import {
+  ApolloClient,
+  ApolloLink,
+  HttpLink,
+  InMemoryCache,
+  split
+} from "@apollo/client";
+import { onError } from "@apollo/client/link/error";
+import { WebSocketLink } from "@apollo/client/link/ws";
+import { getMainDefinition } from "@apollo/client/utilities";
 import Cookies from "js-cookie";
-import { URI } from "./configs";
-import { toast } from 'react-toastify';
-import { split } from 'apollo-link'
-import { WebSocketLink } from 'apollo-link-ws'
-import { getMainDefinition } from 'apollo-utilities'
+import { toast } from "react-toastify";
+import { SubscriptionClient } from "subscriptions-transport-ws";
 
-const request = async (operation) => {
+import { URI, WS_URI } from "./configs";
+
+const LEGACY_SUBSCRIPTION_NAMES = new Set([
+  "GetMemoryUsage",
+  "GetMemwatchLeak",
+  "GetMemwatchStats",
+  "GetSystemCpuUsage"
+]);
+
+const authLink = new ApolloLink((operation, forward) => {
   const token = Cookies.get("token");
-  console.log(token,555)
-  operation.setContext({
+
+  operation.setContext(({ headers = {} }) => ({
     headers: {
-      authorization: `Bearer ${token}`
+      ...headers,
+      authorization: token ? `Bearer ${token}` : ""
     }
-  });
-};
+  }));
 
-const requestLink = new ApolloLink((operation, forward) =>
-  new Observable(observer => {
-    let handle;
-    Promise.resolve(operation)
-      .then(oper => request(oper))
-      .then(() => {
-        handle = forward(operation).subscribe({
-          next: observer.next.bind(observer),
-          error: observer.error.bind(observer),
-          complete: observer.complete.bind(observer),
-        });
-      })
-      .catch(observer.error.bind(observer));
+  return forward(operation);
+});
 
-    return () => {
-      if (handle) handle.unsubscribe();
-    };
-  })
-);
+const errorLink = onError(({ networkError }) => {
+  if (networkError?.message?.includes("Failed")) {
+    toast.error("No internet connection!", { toastId: "InternetError" });
+    return;
+  }
+
+  if (networkError?.statusCode === 401) {
+    toast.error("Not logged in!");
+    window.location.href = window.location.href;
+  }
+});
 
 const httpLink = ApolloLink.from([
-  onError(({ graphQLErrors, networkError,forward,operation }) => {
-    console.log(graphQLErrors, networkError)
-    if (networkError && networkError.message.indexOf("Failed") !== -1) {
-      toast.error("No internet connection!", { toastId: "InternetError" })
-      return;
-    }
-    if (networkError && networkError.statusCode === 401) {
-      toast.error("Not logged in!")
-      window.location.href = window.location.href;
-      return;
-    }
-    console.log(graphQLErrors)
-    forward(operation)
-  }),
-  requestLink,
+  errorLink,
+  authLink,
   new HttpLink({
-    uri: URI,
-    credentials: 'same-origin'
+    credentials: "same-origin",
+    uri: URI
   })
-])
+]);
 
-const wsLink = new WebSocketLink({
-  uri: `ws://localhost:4000`,
-  options: {
-    reconnect: true,
-    connectionParams: {
-      authToken: Cookies.get("token")
-    }
-  }
-})
+const subscriptionClient = new SubscriptionClient(WS_URI, {
+  connectionParams: () => ({
+    authToken: Cookies.get("token")
+  }),
+  reconnect: true
+});
+
+const wsLink = new WebSocketLink(subscriptionClient);
 
 const link = split(
   ({ query }) => {
-    const { kind, operation } = getMainDefinition(query)
-    return kind === 'OperationDefinition' && operation === 'subscription'
+    const definition = getMainDefinition(query);
+    return (
+      definition.kind === "OperationDefinition" &&
+      definition.operation === "subscription" &&
+      LEGACY_SUBSCRIPTION_NAMES.has(definition.name?.value)
+    );
   },
   wsLink,
   httpLink
-)
+);
 
 const client = new ApolloClient({
-  link,
-  cache: new InMemoryCache()
+  cache: new InMemoryCache(),
+  link
 });
 
 export default client;

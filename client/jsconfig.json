@@ -1,8 +1,5 @@
 {
   "compilerOptions": {
-    "baseUrl": "src",
-    "paths": {
-      "react-router-dom": ["./RedirectPatch.js"]
-    }
+    "baseUrl": "src"
   }
 }

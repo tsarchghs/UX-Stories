@@ -15,7 +15,7 @@ const payment = async (root,args,context) => {
             },
         ]
     })
-    context.db.mutation.updateUser({
+    context.db.user.update({
         where: { id: context.user.id },
         data: {
             customer_id: customer.id,

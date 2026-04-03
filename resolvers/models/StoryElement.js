@@ -1,75 +1,77 @@
 const permissions = require("../permissions");
 
-const storyElements = (root,args,context,info) => {
-	let filterBy = { "where": {} }
+const storyElements = (root, args, context) => {
+	const where = {};
 	if (args.app || args.library) {
-		let stories_some = {}
-		if (args.app) stories_some["app"] = { id_in: args.app }
-		if (args.library) stories_some["libraries_some"] = { id: args.library }
-		filterBy["where"]["stories_some"] = stories_some
+		const storiesSome = {};
+		if (args.app) {
+			storiesSome.appId = args.app;
+		}
+		if (args.library) {
+			storiesSome.libraries = {
+				some: { id: args.library }
+			};
+		}
+		where.stories = {
+			some: storiesSome
+		};
 	}
-	return context.db.query.storyElements(filterBy,info);
-}
+	return context.db.storyElement.findMany({ where });
+};
 
-const createStoryElement = async (root,args,context,info) => {
-	permissions.loginPermission(context,"ADMIN")
+const createStoryElement = async (root, args, context) => {
+	permissions.loginPermission(context, "ADMIN");
 	if (!args.name) {
-		throw new Error("Please check that all of your arguments are not empty!")
+		throw new Error("Please check that all of your arguments are not empty!");
 	}
-	const storyElement = await context.db.mutation.createStoryElement({
-		data:{
+	return context.db.storyElement.create({
+		data: {
 			name: args.name
 		}
-	},info)
-	return storyElement;
-}
+	});
+};
 
-const storyElementToStory = async (root,args,context,info) => {
-	permissions.loginPermission(context,"ADMIN")
-	if (!args.storyElement || !args.story){
-		throw new Error("Please check that all of your arguments are not empty!")
+const storyElementToStory = async (root, args, context) => {
+	permissions.loginPermission(context, "ADMIN");
+	if (!args.storyElement || !args.story) {
+		throw new Error("Please check that all of your arguments are not empty!");
 	}
-	const story = await context.db.mutation.updateStory({
-		where:{ id: args.story },
+	return context.db.story.update({
+		where: { id: args.story },
 		data: {
 			storyElements: {
 				[args.type]: { id: args.storyElement }
 			}
 		}
-	},info)
-	return story;
-}
+	});
+};
 
-const editStoryElement = async (root,args,context,info) => {
-	permissions.loginPermission(context,"ADMIN")
+const editStoryElement = async (root, args, context) => {
+	permissions.loginPermission(context, "ADMIN");
 	if (!args.name || !args.id) {
-		throw new Error("Please check that all of your arguments are not empty!")
+		throw new Error("Please check that all of your arguments are not empty!");
 	}
-	const storyElement = await context.db.mutation.updateStoryElement({
+	return context.db.storyElement.update({
 		where: {
 			id: args.id
 		},
 		data: {
 			name: args.name
 		}
-	},info)
-	return storyElement
-}
+	});
+};
 
-const deleteStoryElement = async (root,args,context,info) => {
-	permissions.loginPermission(context,"ADMIN")
+const deleteStoryElement = async (root, args, context) => {
+	permissions.loginPermission(context, "ADMIN");
 	if (!args.id) {
-		throw new Error("Please check that all of your arguments are not empty!")
+		throw new Error("Please check that all of your arguments are not empty!");
 	}
-	const storyElement = await context.db.mutation.deleteStoryElement({
-		where:{
+	return context.db.storyElement.delete({
+		where: {
 			id: args.id
 		}
-	},info)
-	return storyElement;
-}
-
-
+	});
+};
 
 module.exports = {
 	storyElements,
@@ -77,4 +79,4 @@ module.exports = {
 	storyElementToStory,
 	editStoryElement,
 	deleteStoryElement
-}
+};
