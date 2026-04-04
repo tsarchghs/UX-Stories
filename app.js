@@ -2,6 +2,7 @@ require('dotenv').config()
 const { GraphQLServer, PubSub } = require("graphql-yoga");
 const resolvers = require("./resolvers/resolvers");
 const { static } = require("express");
+const fs = require("fs");
 const path = require("path");
 const bodyParser = require("body-parser");
 const jwt = require("jsonwebtoken");
@@ -14,12 +15,16 @@ const middlewares = require("./middlewares/index")
 // require("./algolia/init")();
 
 const isVercel = Boolean(process.env.VERCEL);
+const shouldServeClient = isVercel || process.env.PRODUCTION || process.env.NODE_ENV === "production";
 const graphqlEndpoint = "/api/graphql";
-const clientBuildPath = path.join(__dirname, "client", "build");
+const publicPath = path.join(__dirname, "public");
+const publicIndexPath = path.join(publicPath, "index.html");
+const schemaPath = path.join(__dirname, "schema.graphql");
+const typeDefs = fs.readFileSync(schemaPath, "utf8");
 
 let pubsub = new PubSub();
 const server = new GraphQLServer({
-	typeDefs: "./schema.graphql", 
+	typeDefs,
 	resolvers,
 	middlewares,
 	context: async (data) => {
@@ -60,18 +65,18 @@ server.express.use(Sentry.Handlers.requestHandler());
 
 
 // the __dirname is the current directory from where the script is running
-server.express.use('/static', static(path.join(__dirname, 'public')))
-if (process.env.PRODUCTION){
-	server.express.use(static(clientBuildPath));
+server.express.use('/static', static(publicPath))
+server.express.use(static(publicPath));
+if (shouldServeClient){
 
 	server.express.get(/^\/(?!api(?:\/|$)).*/, async (req, res) => {
-		res.sendFile(path.join(clientBuildPath, 'index.html'));
+		res.sendFile(publicIndexPath);
 	});
 }
 
 server.express.use(bodyParser.urlencoded({limit:"1000mb",extended:true}))
 server.express.use(bodyParser.json({limit:"1000mb"}))
- 
+  
 server.express.use(Sentry.Handlers.errorHandler());
 
 const options = {
@@ -94,4 +99,3 @@ if (!isVercel && require.main === module) {
 module.exports = server.express;
 module.exports.graphqlServer = server;
 module.exports.httpServer = httpServer;
-
