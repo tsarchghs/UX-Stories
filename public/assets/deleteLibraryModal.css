@@ -1,0 +1,14 @@
+.vcenter {
+    display: inline-block;
+    vertical-align: middle;
+    float: none;
+}
+.bg-danger {
+  background: #ef5350;
+ 
+}
+.deleteDialogEntityType {
+  font-weight:bold; 
+  padding-left: 2px; 
+  padding-right: 2px;  
+}

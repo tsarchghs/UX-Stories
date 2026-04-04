@@ -1,0 +1,144 @@
+@import "variables";
+
+@font-face {
+  font-family: 'icomoon';
+  src:  url('#{$icomoon-font-path}/icomoon.eot?c9nm38');
+  src:  url('#{$icomoon-font-path}/icomoon.eot?c9nm38#iefix') format('embedded-opentype'),
+    url('#{$icomoon-font-path}/icomoon.ttf?c9nm38') format('truetype'),
+    url('#{$icomoon-font-path}/icomoon.woff?c9nm38') format('woff'),
+    url('#{$icomoon-font-path}/icomoon.svg?c9nm38#icomoon') format('svg');
+  font-weight: normal;
+  font-style: normal;
+}
+
+[class^="icon-"], [class*=" icon-"] {
+  /* use !important to prevent issues with browser extensions that change fonts */
+  font-family: 'icomoon' !important;
+  speak: none;
+  font-style: normal;
+  font-weight: normal;
+  font-variant: normal;
+  text-transform: none;
+  line-height: 1;
+
+  /* Better Font Rendering =========== */
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.icon-cart {
+  &:before {
+    content: $icon-cart;
+  }
+}
+.icon-envelop {
+  &:before {
+    content: $icon-envelop;
+  }
+}
+.icon-location {
+  &:before {
+    content: $icon-location;
+  }
+}
+.icon-search {
+  &:before {
+    content: $icon-search;
+  }
+}
+.icon-cog {
+  &:before {
+    content: $icon-cog;
+  }
+}
+.icon-plus {
+  &:before {
+    content: $icon-plus;
+  }
+}
+.icon-minus {
+  &:before {
+    content: $icon-minus;
+  }
+}
+.icon-cross {
+  &:before {
+    content: $icon-cross;
+  }
+}
+.icon-arrow-up2 {
+  &:before {
+    content: $icon-arrow-up2;
+  }
+}
+.icon-arrow-right2 {
+  &:before {
+    content: $icon-arrow-right2;
+  }
+}
+.icon-arrow-down2 {
+  &:before {
+    content: $icon-arrow-down2;
+  }
+}
+.icon-arrow-left2 {
+  &:before {
+    content: $icon-arrow-left2;
+  }
+}
+.icon-circle-up {
+  &:before {
+    content: $icon-circle-up;
+  }
+}
+.icon-circle-right {
+  &:before {
+    content: $icon-circle-right;
+  }
+}
+.icon-circle-down {
+  &:before {
+    content: $icon-circle-down;
+  }
+}
+.icon-circle-left {
+  &:before {
+    content: $icon-circle-left;
+  }
+}
+.icon-google-plus {
+  &:before {
+    content: $icon-google-plus;
+  }
+}
+.icon-facebook {
+  &:before {
+    content: $icon-facebook;
+  }
+}
+.icon-instagram {
+  &:before {
+    content: $icon-instagram;
+  }
+}
+.icon-twitter {
+  &:before {
+    content: $icon-twitter;
+  }
+}
+.icon-youtube {
+  &:before {
+    content: $icon-youtube;
+  }
+}
+.icon-behance {
+  &:before {
+    content: $icon-behance;
+  }
+}
+.icon-linkedin2 {
+  &:before {
+    content: $icon-linkedin2;
+  }
+}
+

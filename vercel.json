@@ -1,20 +1,12 @@
 {
-  "rewrites": [
-    {
-      "source": "/assets/:path*",
-      "destination": "/client/build/assets/:path*"
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "framework": "express",
+  "functions": {
+    "app.js": {
+      "includeFiles": "schema.graphql"
     },
-    {
-      "source": "/favicon.ico",
-      "destination": "/client/build/favicon.ico"
-    },
-    {
-      "source": "/manifest.json",
-      "destination": "/client/build/manifest.json"
-    },
-    {
-      "source": "/((?!api/).*)",
-      "destination": "/client/build/index.html"
+    "api/graphql.js": {
+      "includeFiles": "schema.graphql"
     }
-  ]
+  }
 }
