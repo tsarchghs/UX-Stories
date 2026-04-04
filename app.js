@@ -83,12 +83,12 @@ var certificate = fs.readFileSync('sslcert/server.crt', 'utf8');
 
 
 const options = {
-  port: 4000,
+  port: process.env.PORT || 4000,
   host: "0.0.0.0",
   formatError,
 };
 
 server.start(options, () => {
-  console.log("Running on port 4000");
+  console.log("Running on port process.env.PORT || 4000");
 });
 
