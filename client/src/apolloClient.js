@@ -12,7 +12,7 @@ import { getMainDefinition } from "@apollo/client/utilities";
 import Cookies from "js-cookie";
 import { toast } from "react-toastify";
 
-import { URI, WS_URI } from "./configs";
+import { API_URI, DISABLE_WS_SUBSCRIPTIONS, WS_URI } from "./configs";
 
 const LEGACY_SUBSCRIPTION_NAMES = new Set([
   "GetMemoryUsage",
@@ -51,31 +51,35 @@ const httpLink = ApolloLink.from([
   authLink,
   new HttpLink({
     credentials: "same-origin",
-    uri: URI
+    uri: API_URI
   })
 ]);
 
-const subscriptionClient = new SubscriptionClient(WS_URI, {
-  connectionParams: () => ({
-    authToken: Cookies.get("token")
-  }),
-  reconnect: true
-});
+let link = httpLink;
 
-const wsLink = new WebSocketLink(subscriptionClient);
+if (!DISABLE_WS_SUBSCRIPTIONS && typeof window !== "undefined") {
+  const subscriptionClient = new SubscriptionClient(WS_URI, {
+    connectionParams: () => ({
+      authToken: Cookies.get("token")
+    }),
+    reconnect: true
+  });
 
-const link = split(
-  ({ query }) => {
-    const definition = getMainDefinition(query);
-    return (
-      definition.kind === "OperationDefinition" &&
-      definition.operation === "subscription" &&
-      LEGACY_SUBSCRIPTION_NAMES.has(definition.name?.value)
-    );
-  },
-  wsLink,
-  httpLink
-);
+  const wsLink = new WebSocketLink(subscriptionClient);
+
+  link = split(
+    ({ query }) => {
+      const definition = getMainDefinition(query);
+      return (
+        definition.kind === "OperationDefinition" &&
+        definition.operation === "subscription" &&
+        LEGACY_SUBSCRIPTION_NAMES.has(definition.name?.value)
+      );
+    },
+    wsLink,
+    httpLink
+  );
+}
 
 const client = new ApolloClient({
   cache: new InMemoryCache(),

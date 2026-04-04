@@ -1,0 +1,20 @@
+{
+  "rewrites": [
+    {
+      "source": "/assets/:path*",
+      "destination": "/client/build/assets/:path*"
+    },
+    {
+      "source": "/favicon.ico",
+      "destination": "/client/build/favicon.ico"
+    },
+    {
+      "source": "/manifest.json",
+      "destination": "/client/build/manifest.json"
+    },
+    {
+      "source": "/((?!api/).*)",
+      "destination": "/client/build/index.html"
+    }
+  ]
+}

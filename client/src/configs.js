@@ -1,4 +1,5 @@
-const DEFAULT_API_URI = "http://localhost:4000/";
+const DEFAULT_SITE_URI =
+  typeof window !== "undefined" ? window.location.origin : "http://localhost:4000";
 const DEFAULT_GOOGLE_CLIENT_ID =
   "1039054242322-stv546o8fp15utap8tv7630rr4h8p9cl.apps.googleusercontent.com";
 const DEFAULT_FACEBOOK_APP_ID = "2450303615182439";
@@ -6,7 +7,10 @@ const DEFAULT_STRIPE_PUBLISHABLE_KEY = "pk_test_N1sdoxQTHRHokGxvtutLWw0x00HDZ2RD
 
 const normalizeBaseUrl = (value) => value.replace(/\/+$/, "");
 
-const URI = import.meta.env.VITE_API_URI || DEFAULT_API_URI;
+const URI = normalizeBaseUrl(import.meta.env.VITE_SITE_URI || DEFAULT_SITE_URI);
+const API_URI = normalizeBaseUrl(
+  import.meta.env.VITE_API_URI || `${URI}/api/graphql`
+);
 const GOOGLE_CLIENT_ID =
   import.meta.env.VITE_GOOGLE_CLIENT_ID || DEFAULT_GOOGLE_CLIENT_ID;
 const FACEBOOK_APP_ID =
@@ -14,9 +18,22 @@ const FACEBOOK_APP_ID =
 const STRIPE_PUBLISHABLE_KEY =
   import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY || DEFAULT_STRIPE_PUBLISHABLE_KEY;
 const GA_MEASUREMENT_ID = import.meta.env.VITE_GA_MEASUREMENT_ID || "";
-const WS_URI = normalizeBaseUrl(URI).replace(/^http/i, "ws");
+const WS_URI = normalizeBaseUrl(
+  import.meta.env.VITE_WS_URI || API_URI
+).replace(/^http/i, "ws");
+const isVercelHostedSite =
+  typeof window !== "undefined" &&
+  window.location.hostname.endsWith(".vercel.app");
+const DISABLE_WS_SUBSCRIPTIONS =
+  import.meta.env.VITE_DISABLE_WS_SUBSCRIPTIONS === "true" ||
+  (
+    import.meta.env.VITE_DISABLE_WS_SUBSCRIPTIONS !== "false" &&
+    isVercelHostedSite
+  );
 
 export {
+  API_URI,
+  DISABLE_WS_SUBSCRIPTIONS,
   FACEBOOK_APP_ID,
   GA_MEASUREMENT_ID,
   GOOGLE_CLIENT_ID,

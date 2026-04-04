@@ -1,0 +1,8 @@
+.env
+.env.*
+!.env.example
+.export
+algolia-export
+data.zip
+nano.exe.stackdump
+sslcert
